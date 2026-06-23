@@ -12,7 +12,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T6 · Registration fields — `feat(auth): capture username and phone on registration`
 - [x] T7 · Public reviews — `feat(review): add public app reviews with guest submission`
 - [x] T8 · UI foundation — `feat(ui): add ocean palette and layout foundation`
-- [ ] T9 · Pages — `feat(ui): add landing, catalog and role dashboards`
+- [x] T9 · Pages — `feat(ui): add landing, catalog and role dashboards`
 - [ ] T10 · Demo seeder — `feat(db): seed demo users and roles`
 
 ## Tests
@@ -26,8 +26,8 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 ## Visual QA (Playwright MCP)
 
 - [x] T8 — layouts + role badge/switcher screenshotted at 360/768/1280/1920
-- [ ] T9 — all pages + empty/loading/error states screenshotted at 360/768/1280/1920
-- [x] Dark-mode pass (T8 only; T9 still pending)
+- [x] T9 — all pages + empty/loading/error states screenshotted at 360/768/1280/1920
+- [x] Dark-mode pass (T8 + T9)
 
 ## Notes / deviations recorded
 
@@ -185,3 +185,38 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
   planned as a Sprint 1 T9 (`docs(planning): add sprint1 T9 i18n task`), then the owner decided to
   defer it instead ("kayaknya skip ke sprint 2 aja") — reverted before any code was written; see
   deviation #9 in `plan.md`. T9/T10 below are back to their original Pages/Demo-seeder scope.
+- T9: resolved an internal `plan.md` tension — T9's file list says build "role-aware dashboard
+  shells (Admin/Seller/Buyer/Driver)" while "Out of scope" lists "admin dashboard → Sprint 5".
+  Read as: T9 ships a minimal placeholder *shell* for every role including admin (StatCards +
+  EmptyState, same bar as Buyer/Seller/Driver); the *full* admin feature set (user management,
+  overdue sweep, reports) stays Sprint 5 scope. `dashboard/Admin.vue`'s EmptyState says so
+  explicitly so it reads as a placeholder, not a missing feature.
+- T9: `DashboardController` replaced the kit's `Route::inertia('dashboard', 'Dashboard')` with a
+  real controller; `DashboardService::buildView(Request)` is the single service call that decides
+  the shell (`is_admin` bypasses active role entirely; `RoleName::Buyer, null` is the explicit
+  fallback shell for a user owning no role, matching the pre-existing
+  `DashboardTest::test_authenticated_users_can_visit_the_dashboard` bare-factory-user expectation).
+  Admin's stats are real `whereHas('roles', ...)` counts, not dummy data — trivial enough not to
+  need its own service, but still routed through `DashboardService` to keep the controller thin.
+  Deleted the now-unreferenced kit `pages/Dashboard.vue` (PlaceholderPattern boxes) it replaced.
+- T9: catalog (`CatalogController` + `CatalogService`) is hardcoded campus-marketplace dummy data
+  (8 products) per plan.md's "dummy data ok" — kept behind `CatalogService::index()/find()` so
+  Sprint 2's real DB-backed catalog only has to change this one class, not the controller or Vue
+  pages. Search (`?q=`) and the 404 product-detail path double as the empty/error states Playwright
+  QA verifies, alongside the EmptyState component for "no products found".
+- T9: new page copy (Landing, Catalog, dashboards) is written in Bahasa Indonesia — the locked
+  Indonesian order-status precedent (TDD §15.3) and the competition's Indonesian-speaking audience
+  make it the more defensible default until the i18n toggle (deferred to Sprint 2) exists. T8's
+  already-committed chrome (`Navbar`'s "Log in"/"Register", `Footer`'s "Home"/"Reviews",
+  `BottomNav`'s "Dashboard"/"Settings") was deliberately **not** touched to keep this slice's diff
+  focused — that chrome stays English until the real i18n retrofit, producing a known, temporary
+  mixed-language UI. Flagged here so it isn't mistaken for an oversight.
+- T9: discovered `sail artisan wayfinder:generate` (bare, no flag) silently drops the `.form`
+  static helper from every regenerated route/action file — breaks `Register.vue`, `Login.vue`,
+  `Profile.vue`, `Security.vue`, `reviews/Index.vue`, `DeleteUser.vue`, anything calling `.form()`.
+  Always pass `--with-form`. Not a TDD deviation, just a tooling footgun worth recording since it's
+  easy to regenerate routes again later in the project and forget the flag.
+- T9: Playwright QA for the four dashboard shells used the real `qa_tester_t8` account (buyer+
+  seller, from T8 QA) plus two throwaway tinker-created accounts (`qa.driver@example.test`,
+  `qa.admin@example.test`) since T10's demo seeder doesn't exist yet. These are plain dev-DB rows,
+  not in any seeder/migration — `migrate:fresh --seed` (T10) will wipe them; no cleanup needed.
