@@ -4,7 +4,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 
 ## Tasks
 
-- [ ] T1 · Roles foundation — `feat(role): add roles, pivot and user relations`
+- [x] T1 · Roles foundation — `feat(role): add roles, pivot and user relations`
 - [ ] T2 · Wallet entry point — `feat(wallet): add wallet table and user relation`
 - [ ] T3 · Settings table — `feat(db): add settings key-value table`
 - [ ] T4 · Sanctum API tokens — `feat(auth): issue role-scoped sanctum tokens`
@@ -34,3 +34,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - Deployment relocated to Sprint 6 (deviation #1).
 - Ocean palette final hex tokens — to be recorded in `plan.md` deviation #2 after T8.
 - Implementation runs on Claude Sonnet (deviation #7); visual QA via Playwright MCP (deviation #8).
+- Enum named `RoleName` (not `RoleEnum` as drafted in plan.md) to match TDD §2.5's exact example name.
+- T1 known transient failure: `RegistrationTest::test_new_users_can_register` fails after T1 because
+  `username` is now required on `users` but Fortify's `CreateNewUser` doesn't set it yet — fixed by T6
+  (registration fields). Tracked here so it isn't mistaken for a regression; must be green by end of T6.
