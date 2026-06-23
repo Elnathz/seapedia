@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid, Store } from '@lucide/vue';
+import { LayoutGrid, Package, Store } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -16,6 +16,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as indexSellerProducts } from '@/routes/seller/products';
 import { show as showSellerStore } from '@/routes/seller/store';
 import { useAuthStore } from '@/stores/auth';
 import type { NavItem } from '@/types';
@@ -32,11 +33,18 @@ const mainNavItems = computed<NavItem[]>(() => {
     ];
 
     if (auth.activeRole === 'seller') {
-        items.push({
-            title: 'Toko Saya',
-            href: showSellerStore(),
-            icon: Store,
-        });
+        items.push(
+            {
+                title: 'Toko Saya',
+                href: showSellerStore(),
+                icon: Store,
+            },
+            {
+                title: 'Produk',
+                href: indexSellerProducts(),
+                icon: Package,
+            },
+        );
     }
 
     return items;

@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\AppReviewController;
 use App\Http\Controllers\Web\CatalogController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\RoleController;
+use App\Http\Controllers\Web\SellerProductController;
 use App\Http\Controllers\Web\SellerStoreController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('store', [SellerStoreController::class, 'show'])->name('store.show');
         Route::post('store', [SellerStoreController::class, 'store'])->name('store.store');
         Route::put('store/{store}', [SellerStoreController::class, 'update'])->name('store.update');
+
+        Route::get('products', [SellerProductController::class, 'index'])->name('products.index');
+        Route::get('products/create', [SellerProductController::class, 'create'])->name('products.create');
+        Route::post('products', [SellerProductController::class, 'store'])->name('products.store');
+        Route::get('products/{product}/edit', [SellerProductController::class, 'edit'])->name('products.edit');
+        Route::put('products/{product}', [SellerProductController::class, 'update'])->name('products.update');
+        Route::delete('products/{product}', [SellerProductController::class, 'destroy'])->name('products.destroy');
     });
 });
 

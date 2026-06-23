@@ -5,7 +5,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 ## Tasks
 
 - [x] T1 · Stores foundation — `feat(store): add seller store create and update`
-- [ ] T2 · Product CRUD + image upload — `feat(product): add seller product crud with image upload`
+- [x] T2 · Product CRUD + image upload — `feat(product): add seller product crud with image upload`
 - [ ] T3 · Real public catalog — `feat(catalog): read public catalog and detail from database`
 - [ ] T4 · Public store detail page — `feat(store): add public store detail page`
 - [ ] T5 · Catalog API + Swagger — `feat(api): expose public catalog endpoints with swagger`
@@ -16,7 +16,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 ## Tests
 
 - [x] Duplicate store name → 422; cross-seller store update → 403 (T1)
-- [ ] Cross-seller product update → 403; cross-seller delete → 403; CRUD own-only; invalid price/stock → 422 (T2)
+- [x] Cross-seller product update → 403; cross-seller delete → 403; CRUD own-only; invalid price/stock → 422 (T2)
 - [ ] Catalog returns only active products of active stores; search filters; inactive detail → 404 (T3)
 - [ ] Store page lists only that store's active products; inactive store → 404 (T4)
 - [ ] `GET /api/v1/catalog` returns only active products (T5)
@@ -60,3 +60,22 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
   and a direct `/seller/store` hit while active-role=buyer correctly renders 403.
 - T1: dev DB (`seapedia`) needed `sail artisan migrate` run by the owner before the page would load
   (table only existed in the `testing` DB via Pest's `RefreshDatabase`) — expected, not a bug.
+- T2: `products.slug` given a DB-level `unique()` even though TDD §7 doesn't say UNIQUE for it
+  (only `stores.name`/`stores.slug` are marked UNIQUE) — needed because the public catalog resolves a
+  product by slug alone (`CatalogService::find($slug)`), and two different stores could otherwise sell
+  same-named products and collide. Same `uniqueSlug()` collision-suffix pattern as `StoreService`.
+  Simplest §5-consistent choice for an underspecified column, per CLAUDE.md "When unsure."
+- T2: product creation resolves the store implicitly via `$request->user()->store` (no `{store}`
+  route param) — there is no cross-seller create attack surface to test, unlike update/delete which
+  use a `{product}` route param + `ProductPolicy` so a cross-seller attempt is representable/testable.
+- T2: hit a real `defineOptions()` compiler limit in `seller/products/Form.vue` — its content is
+  hoisted out of `<script setup>`'s closure, so it cannot reference `props` (tried a dynamic
+  breadcrumb title for create vs. edit). Fixed by dropping to a single static "Produk" breadcrumb;
+  `<Head :title="...">` already carries the create/edit distinction. Caught by `sail npm run build`
+  failing — `vue-tsc`/lint did not catch it.
+- T2: owner ceded `migrate`/`seed`/`storage:link` to Claude too (memory updated) — verbatim "jalankan
+  sendiri mulai sekarang" after being asked twice to run `sail artisan migrate` for `stores`/`products`
+  on the dev DB. Still hand off: `sail up`, `sail npm run dev`, `shadcn-vue add`.
+- T2: visual QA used a hand-built minimal valid JPEG (no `PIL`/ImageMagick in the sandbox) — confirms
+  upload → preview → storage → thumbnail render end-to-end, even though the image itself is a blank
+  1×1 swatch (not a meaningful visual check of image *content*, only of the upload pipeline).
