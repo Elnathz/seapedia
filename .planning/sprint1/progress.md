@@ -10,7 +10,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T4 · Sanctum API tokens — `feat(auth): issue role-scoped sanctum tokens`
 - [x] T5 · Active-role core — `feat(role): enforce active-role via EnsureActiveRole middleware`
 - [x] T6 · Registration fields — `feat(auth): capture username and phone on registration`
-- [ ] T7 · Public reviews — `feat(review): add public app reviews with guest submission`
+- [x] T7 · Public reviews — `feat(review): add public app reviews with guest submission`
 - [ ] T8 · UI foundation — `feat(ui): add ocean palette and layout foundation`
 - [ ] T9 · Pages — `feat(ui): add landing, catalog and role dashboards`
 - [ ] T10 · Demo seeder — `feat(db): seed demo users and roles`
@@ -21,7 +21,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] `EnsureActiveRole` 403 on role mismatch (T5)
 - [x] Buyer token blocked from seller API route (T5)
 - [x] Duplicate username rejected on registration (T6)
-- [ ] Guest submits valid review; invalid rating → 422 (T7)
+- [x] Guest submits valid review; invalid rating → session errors, no row created (T7)
 
 ## Visual QA (Playwright MCP)
 
@@ -84,3 +84,23 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
   in two Response classes.
 - T6: registration form now lets the user pick role(s) via checkboxes (TDD line 704 "user registers,
   picks role"). At least one role is required; multiple roles are allowed in one registration.
+- T7: no `/api/v1` mirror built, matching T5's precedent — plan.md's T7 file list never lists an Api
+  controller for reviews, only the web Inertia surface (`Web\AppReviewController`). TDD §8 documents
+  `GET /reviews` / `POST /reviews` as public, which the web routes alone already satisfy.
+- T7: the 1–5 rating input is a plain native `<input type="radio">` group, not the shadcn `Select`
+  (confirmed it *could* bubble through the native `<Form>` via its `name` prop) — simpler and more
+  semantically correct for a small discrete choice; no shadcn "rating" component exists to substitute
+  for, so this isn't a Golden Rule 12 violation.
+- T7: shadcn `Textarea` was installed (`npx shadcn-vue add textarea`) ahead of its originally-planned T8
+  slot, since the review comment field needed a real multi-line input now. Installed before use per
+  Golden Rule 12, not hand-rolled.
+- T7: discovered this app's `bootstrap/app.php` registers `shouldRenderJsonWhen(fn ($r) =>
+  $r->is('api/*'))`, overriding Laravel's default `expectsJson()` check. Consequence: a failed
+  FormRequest validation on any web-only route (like `/reviews`, which has no API mirror) always
+  renders as a 302 redirect with flashed session errors — never a 422 JSON body, regardless of an
+  `Accept: application/json` header. The initial test wrongly assumed `postJson()` + `assertStatus(422)`
+  would work; it doesn't, and chasing the resulting `assertStatus` failure-message crash wasted time
+  before the real cause (wrong assumption, not an app bug) was found. Fixed by testing the same way
+  `RegistrationTest.php` already does for web validation: `assertSessionHasErrors('rating')` +
+  `assertDatabaseMissing`. No app code changed for this — it's the correct, intentional behavior given
+  T7's web-only scope.
