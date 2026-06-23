@@ -13,7 +13,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T7 · Public reviews — `feat(review): add public app reviews with guest submission`
 - [x] T8 · UI foundation — `feat(ui): add ocean palette and layout foundation`
 - [x] T9 · Pages — `feat(ui): add landing, catalog and role dashboards`
-- [ ] T10 · Demo seeder — `feat(db): seed demo users and roles`
+- [x] T10 · Demo seeder — `feat(db): seed demo users and roles`
 
 ## Tests
 
@@ -220,3 +220,26 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
   seller, from T8 QA) plus two throwaway tinker-created accounts (`qa.driver@example.test`,
   `qa.admin@example.test`) since T10's demo seeder doesn't exist yet. These are plain dev-DB rows,
   not in any seeder/migration — `migrate:fresh --seed` (T10) will wipe them; no cleanup needed.
+- T10: scoped to exactly plan.md's file list — `admin`/`seller1`/`buyer1`/`driver1`/`multi1`, no
+  stores/products/orders/discounts (those need models/migrations that don't exist until Sprint
+  2-4). New `DemoUserSeeder` (constructor-injects `RoleService`, resolved by Laravel's seeder
+  container) is the single place role assignment happens; `DatabaseSeeder` just calls it, keeping
+  the "logic lives in Services" rule even for seed data. `buyer1`'s "funded placeholder" wallet
+  (TDD §12) is a direct `wallet->update(['balance' => 500_000])` — not a real top-up, since
+  `wallet_transactions`/top-up don't exist until Sprint 3 (deviation #6). `buyer1`'s "default
+  address" is skipped per plan.md's own "can wait to S3" note — no addresses table exists yet.
+  Every demo account's password is the factory's default ("password"), matching plan.md's literal
+  `admin/password` credential.
+- T10: added the required README credential block — this project had **no README at all** before
+  T10 (confirmed via `find`), so one was created from scratch (setup steps, the demo credentials
+  table, the Sprint 1 demo path, current status, test/format commands) rather than just appending
+  a table to nothing.
+- T10: fixed `APP_NAME` (`.env`, `.env.example`) from the kit's default `Laravel` to `SEAPEDIA` —
+  every page title was rendering as "‹Page› - Laravel"; caught while confirming T10's "demoable
+  world" acceptance criterion, since a judge-facing demo showing "Laravel" in the browser tab is a
+  real, visible polish gap. Committed separately (`fix(ui): set app name to SEAPEDIA in page
+  titles`), not bundled into the seeder commit, matching this sprint's practice of splitting
+  unrelated one-line fixes out of feature commits.
+- Sprint 1 demo flow verified end-to-end via Playwright after `migrate:fresh --seed`: guest
+  landing → catalog → product → review; `multi1` login → role-select modal (buyer/seller/driver
+  all offered) → pick a role → correct dashboard, page titles reading "‹Page› - SEAPEDIA" throughout.
