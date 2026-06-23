@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
-import { home } from '@/routes';
 import { store } from '@/routes/reviews';
 
 interface ReviewItem {
@@ -32,14 +31,11 @@ defineProps<{
 <template>
     <Head title="Reviews" />
 
-    <div class="min-h-screen bg-background p-6 lg:p-10">
+    <div class="p-6 lg:p-10">
         <div class="mx-auto flex max-w-4xl flex-col gap-8">
-            <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-semibold">What people say about SEAPEDIA</h1>
-                <Link :href="home()" class="text-sm text-muted-foreground hover:underline">
-                    Back to home
-                </Link>
-            </div>
+            <h1 class="text-2xl font-semibold">
+                What people say about SEAPEDIA
+            </h1>
 
             <Card>
                 <CardHeader>
@@ -98,7 +94,11 @@ defineProps<{
                             <InputError :message="errors.comment" />
                         </div>
 
-                        <Button type="submit" class="w-fit" :disabled="processing">
+                        <Button
+                            type="submit"
+                            class="w-fit"
+                            :disabled="processing"
+                        >
                             <Spinner v-if="processing" />
                             Submit review
                         </Button>
@@ -109,25 +109,42 @@ defineProps<{
             <div class="flex flex-col gap-4">
                 <h2 class="text-lg font-medium">Recent reviews</h2>
 
-                <p v-if="reviews.data.length === 0" class="text-sm text-muted-foreground">
+                <p
+                    v-if="reviews.data.length === 0"
+                    class="text-sm text-muted-foreground"
+                >
                     No reviews yet — be the first to share your experience.
                 </p>
 
                 <Card v-for="review in reviews.data" :key="review.id">
                     <CardContent class="flex flex-col gap-1 py-4">
                         <div class="flex items-center justify-between">
-                            <span class="font-medium">{{ review.reviewer_name }}</span>
-                            <span class="text-sm text-muted-foreground">{{ review.rating }} / 5</span>
+                            <span class="font-medium">{{
+                                review.reviewer_name
+                            }}</span>
+                            <span class="text-sm text-muted-foreground"
+                                >{{ review.rating }} / 5</span
+                            >
                         </div>
                         <p class="text-sm">{{ review.comment }}</p>
                     </CardContent>
                 </Card>
 
                 <div class="flex justify-center gap-2">
-                    <Button v-if="reviews.prev_page_url" as-child variant="outline" size="sm">
+                    <Button
+                        v-if="reviews.prev_page_url"
+                        as-child
+                        variant="outline"
+                        size="sm"
+                    >
                         <Link :href="reviews.prev_page_url">Previous</Link>
                     </Button>
-                    <Button v-if="reviews.next_page_url" as-child variant="outline" size="sm">
+                    <Button
+                        v-if="reviews.next_page_url"
+                        as-child
+                        variant="outline"
+                        size="sm"
+                    >
                         <Link :href="reviews.next_page_url">Next</Link>
                     </Button>
                 </div>

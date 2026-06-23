@@ -1,7 +1,9 @@
 import { createInertiaApp } from '@inertiajs/vue3';
+import { createPinia } from 'pinia';
 import { initializeTheme } from '@/composables/useAppearance';
-import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
+import DashboardLayout from '@/layouts/DashboardLayout.vue';
+import GuestLayout from '@/layouts/GuestLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
 
@@ -16,17 +18,20 @@ createInertiaApp({
             case name.startsWith('role/'):
                 return null;
             case name.startsWith('reviews/'):
-                return null;
+                return GuestLayout;
             case name.startsWith('auth/'):
                 return AuthLayout;
             case name.startsWith('settings/'):
-                return [AppLayout, SettingsLayout];
+                return [DashboardLayout, SettingsLayout];
             default:
-                return AppLayout;
+                return DashboardLayout;
         }
     },
     progress: {
         color: '#4B5563',
+    },
+    withApp: (app) => {
+        app.use(createPinia());
     },
 });
 

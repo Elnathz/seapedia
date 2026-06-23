@@ -2,11 +2,14 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\RoleService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    public function __construct(private readonly RoleService $roleService) {}
+
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -35,11 +38,15 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
+                'roles' => $user ? array_map(fn ($role) => $role->value, $user->ownedRoles()) : [],
+                'activeRole' => $user ? $this->roleService->resolveActiveRole($request)?->value : null,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

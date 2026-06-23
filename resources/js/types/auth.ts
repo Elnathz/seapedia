@@ -9,6 +9,10 @@ export type User = {
     [key: string]: unknown;
 };
 
+export type RoleName = 'buyer' | 'seller' | 'driver';
+
 export type Auth = {
-    user: User;
+    user: User | null;
+    roles: RoleName[];
+    activeRole: RoleName | null;
 };

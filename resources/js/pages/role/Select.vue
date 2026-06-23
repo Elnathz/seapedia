@@ -25,9 +25,7 @@ function selectRole(role: string) {
 <template>
     <Head title="Choose your role" />
 
-    <div
-        class="flex min-h-svh items-center justify-center bg-background p-4"
-    >
+    <div class="flex min-h-svh items-center justify-center bg-background p-4">
         <Dialog :open="true">
             <DialogContent
                 class="sm:max-w-md"
@@ -38,9 +36,8 @@ function selectRole(role: string) {
                 <DialogHeader>
                     <DialogTitle>Choose how you want to continue</DialogTitle>
                     <DialogDescription>
-                        Your account owns multiple roles. Pick one to
-                        continue — you can switch later from the role
-                        switcher.
+                        Your account owns multiple roles. Pick one to continue —
+                        you can switch later from the role switcher.
                     </DialogDescription>
                 </DialogHeader>
 
