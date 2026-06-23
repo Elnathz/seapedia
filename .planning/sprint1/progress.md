@@ -12,8 +12,9 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T6 · Registration fields — `feat(auth): capture username and phone on registration`
 - [x] T7 · Public reviews — `feat(review): add public app reviews with guest submission`
 - [x] T8 · UI foundation — `feat(ui): add ocean palette and layout foundation`
-- [ ] T9 · Pages — `feat(ui): add landing, catalog and role dashboards`
-- [ ] T10 · Demo seeder — `feat(db): seed demo users and roles`
+- [ ] T9 · i18n foundation (ID/EN toggle) — `feat(i18n): add indonesian and english language toggle`
+- [ ] T10 · Pages (was T9) — `feat(ui): add landing, catalog and role dashboards`
+- [ ] T11 · Demo seeder (was T10) — `feat(db): seed demo users and roles`
 
 ## Tests
 
@@ -22,12 +23,14 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] Buyer token blocked from seller API route (T5)
 - [x] Duplicate username rejected on registration (T6)
 - [x] Guest submits valid review; invalid rating → session errors, no row created (T7)
+- [ ] `HandleLocale` defaults to `id`; `locale=en` cookie flips `App::getLocale()` (T9)
 
 ## Visual QA (Playwright MCP)
 
 - [x] T8 — layouts + role badge/switcher screenshotted at 360/768/1280/1920
-- [ ] T9 — all pages + empty/loading/error states screenshotted at 360/768/1280
-- [x] Dark-mode pass (T8 only; T9 still pending)
+- [ ] T9 — language switcher screenshotted in both locales at 360/768/1280/1920
+- [ ] T10 — all pages + empty/loading/error states screenshotted at 360/768/1280/1920
+- [x] Dark-mode pass (T8 only; T9/T10 still pending)
 
 ## Notes / deviations recorded
 
