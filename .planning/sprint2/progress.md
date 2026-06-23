@@ -6,7 +6,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 
 - [x] T1 · Stores foundation — `feat(store): add seller store create and update`
 - [x] T2 · Product CRUD + image upload — `feat(product): add seller product crud with image upload`
-- [ ] T3 · Real public catalog — `feat(catalog): read public catalog and detail from database`
+- [x] T3 · Real public catalog — `feat(catalog): read public catalog and detail from database`
 - [ ] T4 · Public store detail page — `feat(store): add public store detail page`
 - [ ] T5 · Catalog API + Swagger — `feat(api): expose public catalog endpoints with swagger`
 - [ ] T6 · i18n infrastructure — `feat(i18n): add hybrid id/en locale infrastructure`
@@ -17,7 +17,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 
 - [x] Duplicate store name → 422; cross-seller store update → 403 (T1)
 - [x] Cross-seller product update → 403; cross-seller delete → 403; CRUD own-only; invalid price/stock → 422 (T2)
-- [ ] Catalog returns only active products of active stores; search filters; inactive detail → 404 (T3)
+- [x] Catalog returns only active products of active stores; search filters; inactive detail → 404 (T3)
 - [ ] Store page lists only that store's active products; inactive store → 404 (T4)
 - [ ] `GET /api/v1/catalog` returns only active products (T5)
 - [ ] Default locale `id`; `SetLocale` applies cookie locale (T6)
@@ -79,3 +79,12 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - T2: visual QA used a hand-built minimal valid JPEG (no `PIL`/ImageMagick in the sandbox) — confirms
   upload → preview → storage → thumbnail render end-to-end, even though the image itself is a blank
   1×1 swatch (not a meaningful visual check of image *content*, only of the upload pipeline).
+- T3: the "both locales" visual QA checkbox below is intentionally left unchecked — ID-only QA passed
+  (search band, grid, pagination via reka-ui `PaginationRoot`, store info block, empty-search state,
+  360/768/1280/1920, light+dark) but EN doesn't exist until T6/T7. Will re-verify both locales once
+  i18n ships, then check the box.
+- T3: catalog grid's product-card store name is plain text (not a link to the store page) — that link
+  only exists on the **product detail's** store info block, added in T4. Keeps T3 self-contained/
+  buildable without referencing a route T4 hasn't created yet.
+- T3: temporarily seeded 13 extra factory products via tinker to visually confirm pagination renders
+  (>12 items); deleted them after the QA pass — dev-DB-only, not part of any seeder/migration.
