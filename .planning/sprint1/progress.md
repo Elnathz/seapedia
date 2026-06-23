@@ -8,7 +8,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T2 · Wallet entry point — `feat(wallet): add wallet table and user relation`
 - [x] T3 · Settings table — `feat(db): add settings key-value table`
 - [x] T4 · Sanctum API tokens — `feat(auth): issue role-scoped sanctum tokens`
-- [ ] T5 · Active-role core — `feat(role): enforce active-role via EnsureActiveRole middleware`
+- [x] T5 · Active-role core — `feat(role): enforce active-role via EnsureActiveRole middleware`
 - [ ] T6 · Registration fields — `feat(auth): capture username and phone on registration`
 - [ ] T7 · Public reviews — `feat(review): add public app reviews with guest submission`
 - [ ] T8 · UI foundation — `feat(ui): add ocean palette and layout foundation`
@@ -17,9 +17,9 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 
 ## Tests
 
-- [ ] Multi-role login → role-selection; single-role auto-select (T5)
-- [ ] `EnsureActiveRole` 403 on role mismatch (T5)
-- [ ] Buyer token blocked from seller API route (T5)
+- [x] Multi-role login → role-selection; single-role auto-select (T5)
+- [x] `EnsureActiveRole` 403 on role mismatch (T5)
+- [x] Buyer token blocked from seller API route (T5)
 - [ ] Duplicate username rejected on registration (T6)
 - [ ] Guest submits valid review; invalid rating → 422 (T7)
 
@@ -47,3 +47,24 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
   controller/route stay in T5 per plan.md's file grouping. Verified via `route:list` + an authenticated
   curl call with a real Bearer token (manual tinker traversal of `currentAccessToken()` doesn't work —
   that accessor is only populated by the `auth:sanctum` guard during a real HTTP request).
+- T5: `EnsureActiveRole` resolves the active role via one guard-agnostic `RoleService::resolveActiveRole()`
+  — Sanctum `PersonalAccessToken` → token ability; anything else (session guard, or a stateful-SPA
+  `TransientToken` if ever enabled) → session `active_role`. One middleware class satisfies §4.3 for
+  both web and api, registered as the `active_role` alias in `bootstrap/app.php`.
+- T5: a custom Fortify `LoginResponse` (bound in `FortifyServiceProvider::register()`) implements §4.2:
+  admin → dashboard (no real admin dashboard yet — Sprint 5 — so it's the generic kit dashboard for
+  now); exactly one owned role → session-set + dashboard; 2+ owned roles → `role.select`, never a
+  dashboard. Zero owned roles (not a case the TDD defines) falls through to the generic dashboard,
+  matching the kit's existing `AuthenticationTest` expectation for a bare factory user.
+- T5: full TDD §8 API auth surface (`POST /api/v1/login`, `POST /api/v1/role/select`) is **not** built —
+  plan.md's T4/T5 file lists only ever scoped `/api/v1/me` + the token-issuance service method, not a
+  standalone API login flow. The TDD-mandated mechanism (a role-scoped Sanctum token enforced by
+  `EnsureActiveRole`) is fully implemented and tested; only the convenience network endpoint to mint
+  that token is deferred. Tests mint tokens directly via `RoleService::issueApiToken`.
+- T5: new controllers follow TDD §2.5's `Http/Controllers/Web/` + `Http/Controllers/Api/` split exactly
+  (`Web/RoleController`, already-existing `Api/MeController`). The kit's pre-existing
+  `Controllers/Settings/*` controllers predate this convention and are left as-is — out of scope to
+  relocate.
+- Unrelated tiny lint fix surfaced while running `npm run lint` for this slice: an unused `Link` import
+  in `resources/js/pages/settings/Profile.vue`, left over from the earlier 2FA/passkey strip commit.
+  Committed separately (`fix(ui): remove unused Link import in profile settings`), not bundled into T5.

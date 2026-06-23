@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Enums\RoleName;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Laravel\Sanctum\NewAccessToken;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class RoleService
 {
@@ -34,5 +36,41 @@ class RoleService
             ->first(fn (string $ability) => str_starts_with($ability, 'role:'));
 
         return $ability ? RoleName::from(substr($ability, 5)) : null;
+    }
+
+    /**
+     * Persist the chosen active role for a web (session-guard) request (§4.1).
+     */
+    public function setActiveRoleInSession(Request $request, RoleName $role): void
+    {
+        $request->session()->put('active_role', $role->value);
+    }
+
+    /**
+     * Read the active role stashed in the session by a web request.
+     */
+    public function activeRoleFromSession(Request $request): ?RoleName
+    {
+        $value = $request->session()->get('active_role');
+
+        return $value ? RoleName::tryFrom($value) : null;
+    }
+
+    /**
+     * Resolve the active role for the current request regardless of guard:
+     * a Sanctum-token request reads the token ability, a session-guard
+     * request reads the session. This is what `EnsureActiveRole` checks (§4.3).
+     */
+    public function resolveActiveRole(Request $request): ?RoleName
+    {
+        $user = $request->user();
+
+        if (! $user) {
+            return null;
+        }
+
+        return $user->currentAccessToken() instanceof PersonalAccessToken
+            ? $this->activeRoleFromToken($user)
+            : $this->activeRoleFromSession($request);
     }
 }
