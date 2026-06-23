@@ -23,7 +23,14 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [ ] Duplicate username rejected on registration (T6)
 - [ ] Guest submits valid review; invalid rating → 422 (T7)
 
+## Visual QA (Playwright MCP)
+
+- [ ] T8 — layouts + role badge/switcher screenshotted at 360/768/1280
+- [ ] T9 — all pages + empty/loading/error states screenshotted at 360/768/1280
+- [ ] Dark-mode pass
+
 ## Notes / deviations recorded
 
 - Deployment relocated to Sprint 6 (deviation #1).
 - Ocean palette final hex tokens — to be recorded in `plan.md` deviation #2 after T8.
+- Implementation runs on Claude Sonnet (deviation #7); visual QA via Playwright MCP (deviation #8).

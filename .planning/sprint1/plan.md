@@ -53,6 +53,54 @@ Sail/local — no deployment this sprint.
 6. **⏸️ `wallet_transactions` deferred to Sprint 3.** Day 1 lists wallets as the "entry point" only.
    Sprint 1 seeds the `wallets` table (balance) and the per-role balance summary is a **placeholder**;
    real ledger + top-up arrive in Sprint 3.
+7. **➕ Process: implementation runs on Claude Sonnet.** Opus authored/approved this plan; the slices
+   T1–T10 are implemented in this session after the owner switches `/model` → Sonnet. The TDD says
+   nothing about model choice — this is a workflow decision. See "Instructions for the Sonnet
+   implementer" below.
+8. **➕ Process: visual QA via Playwright MCP.** UI slices (T8, T9) and the end-of-sprint demo are
+   verified by driving a real browser through the Playwright MCP server (navigate, screenshot,
+   check responsive breakpoints), not by eyeballing code alone. The TDD asks for empty/error/loading
+   states and responsiveness (§11) — Playwright is how we prove it.
+
+## Instructions for the Sonnet implementer (READ FIRST)
+
+You are implementing Sprint 1. Opus already wrote and the owner approved this plan — do not re-plan.
+
+- **Authoritative sources, in order:** this `plan.md` → `SEAPEDIA_TDD.md` (§ cited per task) →
+  `CLAUDE.md` golden rules. If they ever conflict, the TDD wins; flag the conflict in `progress.md`.
+- **One slice = one commit.** Implement T1→T10 in order. Do not batch multiple tasks into one commit.
+- **Follow the `vertical-feature` skill order** for every slice (migration → model → factory/seeder →
+  FormRequest → policy → service → controller → route → api → page → test → commit).
+- **Honor the golden rules:** thin controllers, logic in Services, Eloquent only, no `v-html` on UGC,
+  integer IDR, Policies for ownership, `EnsureActiveRole` for role-gating, active role resolved
+  server-side. Models use the kit's `#[Fillable]` attribute style (see deviation #4).
+- **Before every commit:** run `./vendor/bin/sail pint` and `npm run lint`; run the `code-review`
+  skill as a self-check; run relevant Pest tests. A slice is not done until format + lint + tests pass.
+- **Use the skills:** `vertical-feature` (each slice), `money-and-checkout`/`order-lifecycle` (later
+  sprints, n/a here), `commit-message` (every commit), `ui-ux-pro-max` + `frontend-design` (T8/T9
+  visuals), `security-pass` (light check on the review/auth slices).
+- **Update `progress.md`** — check off each task and its tests as you commit. Record the final Ocean
+  palette hex tokens into deviation #2 of this file after T8.
+- **Any new deviation from the TDD you introduce MUST be added to the deviations list above**, with
+  the reason — that is a hard requirement from the owner.
+- **Pushing:** commit locally only. The environment has no GitHub credentials; the owner pushes.
+
+## Visual verification (Playwright MCP)
+
+For T8, T9, and the demo, after assets build (`sail npm run dev`), drive the app via the Playwright
+MCP server (`mcp__playwright__*` tools):
+
+1. Navigate to each new/changed page (landing, catalog, product detail, login, register, each role
+   dashboard, the review page).
+2. Screenshot at **360px, 768px, 1280px** (TDD §11 responsive targets) — confirm no overflow/broken
+   layout; mobile shows `BottomNav`, desktop shows sidebar.
+3. Verify the **empty / loading / error states** render (e.g. catalog with no items, review list empty).
+4. Verify the **active-role badge + role-switcher** flow visually: multi-role login → role modal →
+   pick role → correct dashboard → switch role.
+5. Light **dark-mode** pass (kit's `HandleAppearance` is wired).
+6. Attach/notes the screenshots in the slice's verification; fix layout issues before committing T8/T9.
+
+
 
 ## shadcn-vue components needed
 
@@ -134,6 +182,8 @@ Each slice follows the `vertical-feature` skill order. Run `pint` + ESLint/Prett
   - Rules: §11; Golden rules 11–13, 17 (components presentation-only); responsive 360/768/1280.
   - Acceptance: layouts render guest vs authed; role switcher re-runs selection; dark mode works.
   - Skills: `ui-ux-pro-max` (palette + layout/UX review), `frontend-design` (visual refinement).
+  - **Visual QA (Playwright MCP):** screenshot layouts + role badge/switcher at 360/768/1280 per the
+    "Visual verification" section; fix layout issues before commit.
   - **Record final Ocean hex tokens back into deviation #2 once chosen.**
   - Commit(s): `feat(ui): add ocean palette and layout foundation`
 
@@ -142,6 +192,8 @@ Each slice follows the `vertical-feature` skill order. Run `pint` + ESLint/Prett
     (Admin / Seller / Buyer / Driver) with balance placeholder + empty/loading/error states.
   - Rules: §11; §13 Day 1 pages; dummy data acceptable (real catalog = Sprint 2).
   - Acceptance: each role sees its own shell; guest browses all public pages; states present.
+  - **Visual QA (Playwright MCP):** navigate every page, screenshot empty/loading/error states at the
+    three breakpoints; confirm bottom-nav (mobile) vs sidebar (desktop).
   - Commit: `feat(ui): add landing, catalog and role dashboards`
 
 - **T10 · Demo seeder**
@@ -166,7 +218,7 @@ Each slice follows the `vertical-feature` skill order. Run `pint` + ESLint/Prett
    active-role badge → "Switch role" → Buyer → buyer dashboard.
 3. Single-role user logs in → skips modal → goes straight to their dashboard.
 4. Logout → Sanctum token revoked (row deleted).
-5. Responsive check at 360px / 768px / 1280px.
+5. Responsive check at 360px / 768px / 1280px — **verified via Playwright MCP screenshots**.
 
 ## Risks / open questions
 
