@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowLeft } from '@lucide/vue';
+import { useI18n } from 'vue-i18n';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -31,6 +32,7 @@ interface Product {
 defineProps<{ product: Product }>();
 
 const { getInitials } = useInitials();
+const { t } = useI18n();
 </script>
 
 <template>
@@ -42,7 +44,7 @@ const { getInitials } = useInitials();
             class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
             <ArrowLeft class="size-4" />
-            Kembali ke katalog
+            {{ t('catalog.backToCatalog') }}
         </Link>
 
         <Card class="mt-6 overflow-hidden">
@@ -71,7 +73,7 @@ const { getInitials } = useInitials();
                         {{ product.description }}
                     </p>
                     <p class="text-sm">
-                        Stok:
+                        {{ t('catalog.stock') }}:
                         <span class="font-medium tabular-nums">{{
                             product.stock
                         }}</span>
@@ -95,7 +97,7 @@ const { getInitials } = useInitials();
                                 variant="secondary"
                                 class="mt-0.5"
                             >
-                                Toko Aktif
+                                {{ t('catalog.storeActive') }}
                             </Badge>
                         </div>
                     </Link>

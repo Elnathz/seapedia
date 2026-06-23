@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, Link, router } from '@inertiajs/vue3';
 import { Package, Pencil, Plus, Trash2 } from '@lucide/vue';
+import { useI18n } from 'vue-i18n';
 import SellerProductController from '@/actions/App/Http/Controllers/Web/SellerProductController';
 import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
@@ -39,22 +40,24 @@ interface ProductRow {
 defineProps<{
     products: ProductRow[];
 }>();
+
+const { t } = useI18n();
 </script>
 
 <template>
-    <Head title="Produk" />
+    <Head :title="t('product.title')" />
 
     <div class="flex flex-col gap-6">
         <div class="flex items-center justify-between">
             <Heading
                 variant="small"
-                title="Produk"
-                description="Kelola produk di toko Anda."
+                :title="t('product.title')"
+                :description="t('product.manageDescription')"
             />
             <Button as-child>
                 <Link :href="createProduct()">
                     <Plus class="size-4" />
-                    Tambah Produk
+                    {{ t('product.add') }}
                 </Link>
             </Button>
         </div>
@@ -62,21 +65,23 @@ defineProps<{
         <EmptyState
             v-if="products.length === 0"
             :icon="Package"
-            title="Belum ada produk"
-            description="Tambahkan produk pertama Anda agar muncul di katalog publik."
-            action-label="Tambah Produk"
+            :title="t('product.emptyTitle')"
+            :description="t('product.emptyDescription')"
+            :action-label="t('product.add')"
             @action="router.visit(createProduct().url)"
         />
 
         <Table v-else>
             <TableHeader>
                 <TableRow>
-                    <TableHead>Gambar</TableHead>
-                    <TableHead>Nama</TableHead>
-                    <TableHead>Harga</TableHead>
-                    <TableHead>Stok</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead class="text-right">Aksi</TableHead>
+                    <TableHead>{{ t('product.columnImage') }}</TableHead>
+                    <TableHead>{{ t('product.columnName') }}</TableHead>
+                    <TableHead>{{ t('product.columnPrice') }}</TableHead>
+                    <TableHead>{{ t('product.columnStock') }}</TableHead>
+                    <TableHead>{{ t('product.columnStatus') }}</TableHead>
+                    <TableHead class="text-right">{{
+                        t('product.columnActions')
+                    }}</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -111,7 +116,11 @@ defineProps<{
                                 product.is_active ? 'secondary' : 'outline'
                             "
                         >
-                            {{ product.is_active ? 'Aktif' : 'Nonaktif' }}
+                            {{
+                                product.is_active
+                                    ? t('product.active')
+                                    : t('product.inactive')
+                            }}
                         </Badge>
                     </TableCell>
                     <TableCell class="text-right">
@@ -125,9 +134,11 @@ defineProps<{
                                     "
                                 >
                                     <Pencil class="size-4" />
-                                    <span class="sr-only"
-                                        >Edit {{ product.name }}</span
-                                    >
+                                    <span class="sr-only">{{
+                                        t('product.edit', {
+                                            name: product.name,
+                                        })
+                                    }}</span>
                                 </Link>
                             </Button>
 
@@ -135,9 +146,11 @@ defineProps<{
                                 <DialogTrigger as-child>
                                     <Button size="sm" variant="destructive">
                                         <Trash2 class="size-4" />
-                                        <span class="sr-only"
-                                            >Hapus {{ product.name }}</span
-                                        >
+                                        <span class="sr-only">{{
+                                            t('product.delete', {
+                                                name: product.name,
+                                            })
+                                        }}</span>
                                     </Button>
                                 </DialogTrigger>
                                 <DialogContent>
@@ -151,29 +164,32 @@ defineProps<{
                                         v-slot="{ processing }"
                                     >
                                         <DialogHeader class="space-y-3">
-                                            <DialogTitle
-                                                >Hapus "{{
-                                                    product.name
-                                                }}"?</DialogTitle
-                                            >
+                                            <DialogTitle>{{
+                                                t(
+                                                    'product.deleteConfirmTitle',
+                                                    { name: product.name },
+                                                )
+                                            }}</DialogTitle>
                                             <DialogDescription>
-                                                Tindakan ini tidak dapat
-                                                dibatalkan. Produk akan hilang
-                                                dari katalog publik.
+                                                {{
+                                                    t(
+                                                        'product.deleteConfirmDescription',
+                                                    )
+                                                }}
                                             </DialogDescription>
                                         </DialogHeader>
                                         <DialogFooter class="mt-4 gap-2">
                                             <DialogClose as-child>
-                                                <Button variant="secondary"
-                                                    >Batal</Button
-                                                >
+                                                <Button variant="secondary">{{
+                                                    t('common.cancel')
+                                                }}</Button>
                                             </DialogClose>
                                             <Button
                                                 type="submit"
                                                 variant="destructive"
                                                 :disabled="processing"
                                             >
-                                                Hapus
+                                                {{ t('product.deleteConfirm') }}
                                             </Button>
                                         </DialogFooter>
                                     </Form>

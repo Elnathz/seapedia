@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { LayoutGrid, Settings } from '@lucide/vue';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { dashboard } from '@/routes';
 import { edit as editProfile } from '@/routes/profile';
 import type { NavItem } from '@/types';
 
-const items: NavItem[] = [
-    { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
-    { title: 'Settings', href: editProfile(), icon: Settings },
-];
+const { t } = useI18n();
+
+const items = computed<NavItem[]>(() => [
+    { title: t('nav.dashboard'), href: dashboard(), icon: LayoutGrid },
+    { title: t('nav.settings'), href: editProfile(), icon: Settings },
+]);
 
 const { isCurrentOrParentUrl } = useCurrentUrl();
 </script>

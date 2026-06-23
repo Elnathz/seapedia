@@ -1,4 +1,4 @@
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, router } from '@inertiajs/vue3';
 import { createPinia } from 'pinia';
 import { createI18n } from 'vue-i18n';
 import { initializeTheme } from '@/composables/useAppearance';
@@ -35,6 +35,21 @@ const i18n = createI18n({
     locale: resolveInitialLocale(),
     fallbackLocale: 'id',
     messages: { id, en },
+});
+
+/**
+ * The server's resolved locale can change between SPA visits independently
+ * of the toggle (e.g. a guest browsing in `en` logs into an account whose
+ * saved preference is `id` — the user's column always wins server-side).
+ * Re-sync the client instance after every Inertia visit so it never drifts
+ * from what the server just rendered.
+ */
+router.on('navigate', (event) => {
+    const locale = event.detail.page.props.locale;
+
+    if (locale === 'id' || locale === 'en') {
+        i18n.global.locale.value = locale;
+    }
 });
 
 createInertiaApp({

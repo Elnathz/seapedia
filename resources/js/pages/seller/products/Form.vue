@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import SellerProductController from '@/actions/App/Http/Controllers/Web/SellerProductController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
@@ -48,19 +49,21 @@ function onImageChange(event: Event) {
           ? `/storage/${props.product.image_path}`
           : null;
 }
+
+const { t } = useI18n();
 </script>
 
 <template>
-    <Head :title="product ? 'Edit Produk' : 'Tambah Produk'" />
+    <Head :title="product ? t('product.editTitle') : t('product.addTitle')" />
 
     <div class="flex flex-col gap-6">
         <Heading
             variant="small"
-            :title="product ? 'Edit Produk' : 'Tambah Produk'"
+            :title="product ? t('product.editTitle') : t('product.addTitle')"
             :description="
                 product
-                    ? 'Perbarui informasi produk Anda.'
-                    : 'Lengkapi detail produk baru.'
+                    ? t('product.editDescription')
+                    : t('product.addDescription')
             "
         />
 
@@ -71,7 +74,8 @@ function onImageChange(event: Event) {
         >
             <div class="grid gap-2">
                 <Label for="name"
-                    >Nama produk <span class="text-destructive">*</span></Label
+                    >{{ t('product.nameLabel') }}
+                    <span class="text-destructive">*</span></Label
                 >
                 <Input
                     id="name"
@@ -79,20 +83,22 @@ function onImageChange(event: Event) {
                     :default-value="product?.name"
                     required
                     maxlength="255"
-                    placeholder="Contoh: Kopi Susu Gula Aren"
+                    :placeholder="t('product.namePlaceholder')"
                 />
                 <InputError :message="errors.name" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="description">Deskripsi</Label>
+                <Label for="description">{{
+                    t('product.descriptionLabel')
+                }}</Label>
                 <Textarea
                     id="description"
                     name="description"
                     :default-value="product?.description ?? ''"
                     maxlength="2000"
                     rows="4"
-                    placeholder="Ceritakan tentang produk ini..."
+                    :placeholder="t('product.descriptionPlaceholder')"
                 />
                 <InputError :message="errors.description" />
             </div>
@@ -100,7 +106,7 @@ function onImageChange(event: Event) {
             <div class="grid grid-cols-2 gap-4">
                 <div class="grid gap-2">
                     <Label for="price"
-                        >Harga (Rp)
+                        >{{ t('product.priceLabel') }}
                         <span class="text-destructive">*</span></Label
                     >
                     <Input
@@ -117,7 +123,8 @@ function onImageChange(event: Event) {
                 </div>
                 <div class="grid gap-2">
                     <Label for="stock"
-                        >Stok <span class="text-destructive">*</span></Label
+                        >{{ t('product.stockLabel') }}
+                        <span class="text-destructive">*</span></Label
                     >
                     <Input
                         id="stock"
@@ -134,7 +141,7 @@ function onImageChange(event: Event) {
             </div>
 
             <div class="grid gap-2">
-                <Label for="image">Gambar produk</Label>
+                <Label for="image">{{ t('product.imageLabel') }}</Label>
                 <Input
                     id="image"
                     name="image"
@@ -146,13 +153,13 @@ function onImageChange(event: Event) {
                 <img
                     v-if="previewUrl"
                     :src="previewUrl"
-                    alt="Pratinjau gambar produk"
+                    :alt="t('product.imagePreviewAlt')"
                     class="mt-2 size-32 rounded-md border border-border object-cover"
                 />
             </div>
 
             <Button :disabled="processing" type="submit">
-                {{ product ? 'Simpan' : 'Tambah Produk' }}
+                {{ product ? t('common.save') : t('product.addTitle') }}
             </Button>
         </Form>
     </div>

@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { LayoutGrid, Package, Store } from '@lucide/vue';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -22,11 +23,12 @@ import { useAuthStore } from '@/stores/auth';
 import type { NavItem } from '@/types';
 
 const auth = useAuthStore();
+const { t } = useI18n();
 
 const mainNavItems = computed<NavItem[]>(() => {
     const items: NavItem[] = [
         {
-            title: 'Dashboard',
+            title: t('nav.dashboard'),
             href: dashboard(),
             icon: LayoutGrid,
         },
@@ -35,12 +37,12 @@ const mainNavItems = computed<NavItem[]>(() => {
     if (auth.activeRole === 'seller') {
         items.push(
             {
-                title: 'Toko Saya',
+                title: t('nav.myStore'),
                 href: showSellerStore(),
                 icon: Store,
             },
             {
-                title: 'Produk',
+                title: t('nav.products'),
                 href: indexSellerProducts(),
                 icon: Package,
             },

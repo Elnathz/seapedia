@@ -2,6 +2,7 @@
 import { Form, Head } from '@inertiajs/vue3';
 import { Store as StoreIcon } from '@lucide/vue';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import SellerStoreController from '@/actions/App/Http/Controllers/Web/SellerStoreController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
@@ -35,19 +36,21 @@ const formBinding = computed(() =>
         ? SellerStoreController.update.form(props.store.id)
         : SellerStoreController.store.form(),
 );
+
+const { t } = useI18n();
 </script>
 
 <template>
-    <Head title="Toko Saya" />
+    <Head :title="t('store.myStore')" />
 
     <div class="flex flex-col gap-6">
         <Heading
             variant="small"
-            :title="store ? store.name : 'Buat toko'"
+            :title="store ? store.name : t('store.createTitle')"
             :description="
                 store
-                    ? 'Kelola informasi toko Anda.'
-                    : 'Lengkapi informasi toko sebelum mulai menambahkan produk.'
+                    ? t('store.editDescription')
+                    : t('store.createDescription')
             "
         />
 
@@ -57,9 +60,11 @@ const formBinding = computed(() =>
         >
             <StoreIcon class="size-10 text-muted-foreground" />
             <div class="space-y-1">
-                <p class="font-medium text-foreground">Belum ada toko</p>
+                <p class="font-medium text-foreground">
+                    {{ t('store.emptyTitle') }}
+                </p>
                 <p class="text-sm text-muted-foreground">
-                    Buat toko Anda untuk mulai berjualan di SEAPEDIA.
+                    {{ t('store.emptyDescription') }}
                 </p>
             </div>
         </div>
@@ -71,7 +76,8 @@ const formBinding = computed(() =>
         >
             <div class="grid gap-2">
                 <Label for="name"
-                    >Nama toko <span class="text-destructive">*</span></Label
+                    >{{ t('store.nameLabel') }}
+                    <span class="text-destructive">*</span></Label
                 >
                 <Input
                     id="name"
@@ -79,29 +85,33 @@ const formBinding = computed(() =>
                     :default-value="store?.name"
                     required
                     maxlength="255"
-                    placeholder="Contoh: Toko Berkah"
+                    :placeholder="t('store.namePlaceholder')"
                 />
                 <InputError :message="errors.name" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="description">Deskripsi</Label>
+                <Label for="description">{{
+                    t('store.descriptionLabel')
+                }}</Label>
                 <Textarea
                     id="description"
                     name="description"
                     :default-value="store?.description ?? ''"
                     maxlength="2000"
                     rows="4"
-                    placeholder="Ceritakan tentang toko Anda..."
+                    :placeholder="t('store.descriptionPlaceholder')"
                 />
                 <InputError :message="errors.description" />
             </div>
 
             <div class="flex items-center gap-3">
                 <Button :disabled="processing" type="submit">
-                    {{ store ? 'Simpan' : 'Buat Toko' }}
+                    {{ store ? t('common.save') : t('store.create') }}
                 </Button>
-                <Badge v-if="store?.is_active" variant="secondary">Aktif</Badge>
+                <Badge v-if="store?.is_active" variant="secondary">{{
+                    t('store.active')
+                }}</Badge>
             </div>
         </Form>
     </div>

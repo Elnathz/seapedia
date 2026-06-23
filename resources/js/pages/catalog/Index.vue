@@ -2,6 +2,7 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Search } from '@lucide/vue';
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import EmptyState from '@/components/EmptyState.vue';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import { Badge } from '@/components/ui/badge';
@@ -53,6 +54,7 @@ const props = defineProps<{
 
 const query = ref(props.search ?? '');
 const loading = ref(false);
+const { t } = useI18n();
 
 function applySearch() {
     visit(query.value ? { q: query.value } : {});
@@ -77,17 +79,17 @@ function visit(params: Record<string, string | number>) {
 </script>
 
 <template>
-    <Head title="Katalog" />
+    <Head :title="t('catalog.title')" />
 
     <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <div
             class="overflow-hidden rounded-2xl bg-gradient-to-br from-primary/15 via-secondary/40 to-background px-6 py-10 sm:px-10 sm:py-14"
         >
             <h1 class="text-2xl font-semibold sm:text-3xl">
-                Temukan produk &amp; jasa kampus
+                {{ t('catalog.heroTitle') }}
             </h1>
             <p class="mt-2 max-w-md text-sm text-muted-foreground sm:text-base">
-                Jelajahi produk dan jasa dari toko-toko di SEAPEDIA.
+                {{ t('catalog.heroSubtitle') }}
             </p>
             <div class="mt-6 flex max-w-md items-center gap-2">
                 <div class="relative flex-1">
@@ -96,7 +98,7 @@ function visit(params: Record<string, string | number>) {
                     />
                     <Input
                         v-model="query"
-                        placeholder="Cari produk..."
+                        :placeholder="t('catalog.searchPlaceholder')"
                         class="pl-9"
                         @keyup.enter="applySearch"
                         @blur="applySearch"
@@ -108,8 +110,8 @@ function visit(params: Record<string, string | number>) {
 
         <EmptyState
             v-if="products.data.length === 0"
-            title="Produk tidak ditemukan"
-            description="Coba kata kunci lain atau lihat semua produk."
+            :title="t('catalog.emptyTitle')"
+            :description="t('catalog.emptyDescription')"
             class="mt-10"
         />
 

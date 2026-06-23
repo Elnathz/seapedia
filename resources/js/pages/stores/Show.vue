@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowLeft } from '@lucide/vue';
+import { useI18n } from 'vue-i18n';
 import EmptyState from '@/components/EmptyState.vue';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -30,6 +31,7 @@ interface Store {
 defineProps<{ store: Store }>();
 
 const { getInitials } = useInitials();
+const { t } = useI18n();
 </script>
 
 <template>
@@ -41,7 +43,7 @@ const { getInitials } = useInitials();
             class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
             <ArrowLeft class="size-4" />
-            Kembali ke katalog
+            {{ t('catalog.backToCatalog') }}
         </Link>
 
         <div class="mt-6 flex items-center gap-4">
@@ -53,9 +55,9 @@ const { getInitials } = useInitials();
             <div>
                 <div class="flex items-center gap-2">
                     <h1 class="text-xl font-semibold">{{ store.name }}</h1>
-                    <Badge v-if="store.is_active" variant="secondary"
-                        >Toko Aktif</Badge
-                    >
+                    <Badge v-if="store.is_active" variant="secondary">{{
+                        t('catalog.storeActive')
+                    }}</Badge>
                 </div>
                 <p
                     v-if="store.description"
@@ -68,8 +70,8 @@ const { getInitials } = useInitials();
 
         <EmptyState
             v-if="store.products.length === 0"
-            title="Belum ada produk"
-            description="Toko ini belum menambahkan produk."
+            :title="t('store.noProductsTitle')"
+            :description="t('store.noProductsDescription')"
             class="mt-10"
         />
 

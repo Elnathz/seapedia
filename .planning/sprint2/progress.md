@@ -10,7 +10,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T4 · Public store detail page — `feat(store): add public store detail page`
 - [x] T5 · Catalog API + Swagger — `feat(api): expose public catalog endpoints with swagger`
 - [x] T6 · i18n infrastructure — `feat(i18n): add hybrid id/en locale infrastructure`
-- [ ] T7 · Locale switcher + translate — `feat(i18n): add navbar and settings language switcher`
+- [x] T7 · Locale switcher + translate — `feat(i18n): add navbar and settings language switcher`
 - [ ] T8 · Demo seed (stores + products) — `feat(db): seed demo stores and products`
 
 ## Tests
@@ -21,15 +21,15 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] Store page lists only that store's active products; inactive store → 404 (T4)
 - [x] `GET /api/v1/catalog` returns only active products (T5)
 - [x] Default locale `id`; `SetLocale` applies cookie locale (T6)
-- [ ] Authenticated locale update persists to `users.locale`; guest update sets cookie (T7)
+- [x] Authenticated locale update persists to `users.locale`; guest update sets cookie (T7)
 
 ## Visual QA (Playwright MCP)
 
-- [ ] Catalog (grid/search/empty/loading/error) at 360/768/1280/1920, both locales, light + dark
-- [ ] Product detail + store info block at all breakpoints/locales/themes
-- [ ] Public store detail page
-- [ ] Seller store onboarding + product list + create/edit form (image upload + delete dialog)
-- [ ] Navbar locale toggle (guest + authed) + Settings locale preference
+- [x] Catalog (grid/search/empty/loading/error) at 360/768/1280/1920, both locales, light + dark
+- [x] Product detail + store info block at all breakpoints/locales/themes
+- [x] Public store detail page
+- [x] Seller store onboarding + product list + create/edit form (image upload + delete dialog)
+- [x] Navbar locale toggle (guest + authed) + Settings locale preference
 
 ## Notes / deviations recorded
 
@@ -146,3 +146,40 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
   `appearance`/`sidebar_state` — same category (small client-readable preference cookie, not a secret).
   `SetLocale` is registered **before** `HandleInertiaRequests` in the `web` group so `App::getLocale()`
   is already correct by the time Inertia shares props for that request.
+- T7: scoped translation strictly to what the plan named — Navbar/Footer/BottomNav (+ the
+  visually-adjacent `AppSidebar`/`NavMain`/`RoleBadge` chrome pieces, same nav surface) and the
+  catalog/product/store pages built in T1–T4. Sprint 1's `dashboard/*`, `reviews/Index`, `Welcome`,
+  `auth/*`, and `settings/{Profile,Security}` pages stay Indonesian/English-as-already-written —
+  deliberately out of scope, same as Sprint 1 left chrome English while content was Indonesian. Flagged
+  here, not a silent gap.
+- T7: found and fixed a real cross-navigation bug the design doc didn't anticipate — vue-i18n's
+  `locale` ref only gets seeded from the server **once**, at the very first full page load
+  (`resolveInitialLocale()` in `app.ts`). A guest browsing in `en` (cookie) who then logs into an
+  account whose saved `users.locale` is `id` would keep seeing English after the post-login SPA
+  redirect, because Inertia visits don't re-run `app.ts`'s boot code. Fixed with a
+  `router.on('navigate', ...)` listener in `app.ts` that re-syncs `i18n.global.locale.value` to
+  `event.detail.page.props.locale` after every Inertia visit — confirmed via Playwright: logged out,
+  set the guest cookie to `en` directly, logged back in as `multi1` (DB `locale: 'id'`) through the
+  real login form (SPA navigation throughout, no hard reload), and the dashboard correctly rendered
+  Indonesian immediately.
+- T7: the plan only said "LocaleToggle in Navbar (works for guests)" — `Navbar.vue` is the
+  **guest-style** header (`GuestLayout`-driven pages: home/catalog/reviews/stores). Authenticated
+  dashboard pages use a completely different chrome (`AppSidebar` + `AppSidebarHeader`), which never
+  renders `Navbar.vue` at all — so an authenticated seller on `/seller/store` etc. would have had *no*
+  quick toggle, only the Settings-page route. Added `<LocaleToggle />` to `AppSidebarHeader.vue` too
+  (visible on every authenticated page) so both chrome surfaces get the one-click switch, matching the
+  design doc's "two switch points" intent rather than just the plan's literal wording.
+- T7: known limitation, not fixed — breadcrumb titles passed through `defineOptions({layout:
+  {breadcrumbs}})` (e.g. "Toko Saya" / "Produk" in `seller/store/Show.vue`, `seller/products/Form.vue`)
+  stay in whichever language they were hardcoded in and do **not** flip with the toggle. Same root
+  cause as the T2 deviation: `defineOptions()`'s content is hoisted out of `<script setup>`'s closure,
+  so it cannot call `t(...)` (a composable). The page heading directly below each breadcrumb (which
+  *does* use `t(...)`) is correct in both languages — only the small breadcrumb trail above it lags.
+  Fixing this properly would mean changing the shared `BreadcrumbItem` contract used by several
+  Sprint-1 pages outside this sprint's scope; left as a cosmetic gap rather than expanding scope.
+- T7: Pest gotcha distinct from T6's — `TestResponse::assertCookie($name, $value)` defaults
+  `$encrypted = true` and tries to **decrypt the response cookie** before comparing, throwing the same
+  `DecryptException("The payload is invalid.")` for any cookie in `encryptCookies(except: [...])`. Fix:
+  `assertCookie('locale', 'en', false)` — third arg `false` skips the decrypt attempt. Different fix
+  from T6's `withUnencryptedCookie()` (that's for *outgoing* test-request cookies; this is for
+  *incoming* response-cookie assertions).

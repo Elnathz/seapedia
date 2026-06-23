@@ -3,6 +3,7 @@
 use App\Http\Controllers\Web\AppReviewController;
 use App\Http\Controllers\Web\CatalogController;
 use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\RoleController;
 use App\Http\Controllers\Web\SellerProductController;
 use App\Http\Controllers\Web\SellerStoreController;
@@ -10,6 +11,8 @@ use App\Http\Controllers\Web\StoreController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
+
+Route::post('locale', [LocaleController::class, 'update'])->name('locale.update');
 
 Route::get('catalog', [CatalogController::class, 'index'])->name('catalog.index');
 Route::get('catalog/{product}', [CatalogController::class, 'show'])->name('catalog.show');
