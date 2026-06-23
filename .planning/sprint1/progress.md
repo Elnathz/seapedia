@@ -7,7 +7,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T1 · Roles foundation — `feat(role): add roles, pivot and user relations`
 - [x] T2 · Wallet entry point — `feat(wallet): add wallet table and user relation`
 - [x] T3 · Settings table — `feat(db): add settings key-value table`
-- [ ] T4 · Sanctum API tokens — `feat(auth): issue role-scoped sanctum tokens`
+- [x] T4 · Sanctum API tokens — `feat(auth): issue role-scoped sanctum tokens`
 - [ ] T5 · Active-role core — `feat(role): enforce active-role via EnsureActiveRole middleware`
 - [ ] T6 · Registration fields — `feat(auth): capture username and phone on registration`
 - [ ] T7 · Public reviews — `feat(review): add public app reviews with guest submission`
@@ -42,3 +42,8 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
   new `UserObserver` (auto-creates a `Wallet` on `User::created`) for every seeded user, breaking the
   §5.1b "one wallet per user" invariant for T10's demo seeder. Not a TDD deviation — just removing a
   kit default that conflicted with a TDD-mandated invariant.
+- T4: scope limited to Sanctum token infrastructure (`RoleService::issueApiToken`/`activeRoleFromToken`)
+  and a read-only `GET /api/v1/me`. `EnsureActiveRole` middleware and the role-selection
+  controller/route stay in T5 per plan.md's file grouping. Verified via `route:list` + an authenticated
+  curl call with a real Bearer token (manual tinker traversal of `currentAccessToken()` doesn't work —
+  that accessor is only populated by the `auth:sanctum` guard during a real HTTP request).
