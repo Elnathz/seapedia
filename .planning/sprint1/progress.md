@@ -5,7 +5,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 ## Tasks
 
 - [x] T1 · Roles foundation — `feat(role): add roles, pivot and user relations`
-- [ ] T2 · Wallet entry point — `feat(wallet): add wallet table and user relation`
+- [x] T2 · Wallet entry point — `feat(wallet): add wallet table and user relation`
 - [ ] T3 · Settings table — `feat(db): add settings key-value table`
 - [ ] T4 · Sanctum API tokens — `feat(auth): issue role-scoped sanctum tokens`
 - [ ] T5 · Active-role core — `feat(role): enforce active-role via EnsureActiveRole middleware`
@@ -38,3 +38,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - T1 known transient failure: `RegistrationTest::test_new_users_can_register` fails after T1 because
   `username` is now required on `users` but Fortify's `CreateNewUser` doesn't set it yet — fixed by T6
   (registration fields). Tracked here so it isn't mistaken for a regression; must be green by end of T6.
+- T2: removed kit's `WithoutModelEvents` trait from `DatabaseSeeder` — it would silently suppress the
+  new `UserObserver` (auto-creates a `Wallet` on `User::created`) for every seeded user, breaking the
+  §5.1b "one wallet per user" invariant for T10's demo seeder. Not a TDD deviation — just removing a
+  kit default that conflicted with a TDD-mandated invariant.
