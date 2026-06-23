@@ -65,6 +65,14 @@ class User extends Authenticatable
         return $this->hasOne(Wallet::class);
     }
 
+    /**
+     * @return HasOne<Store, $this>
+     */
+    public function store(): HasOne
+    {
+        return $this->hasOne(Store::class);
+    }
+
     public function hasRole(RoleName $role): bool
     {
         return $this->roles->contains('name', $role->value);
