@@ -6,7 +6,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 
 - [x] T1 · Roles foundation — `feat(role): add roles, pivot and user relations`
 - [x] T2 · Wallet entry point — `feat(wallet): add wallet table and user relation`
-- [ ] T3 · Settings table — `feat(db): add settings key-value table`
+- [x] T3 · Settings table — `feat(db): add settings key-value table`
 - [ ] T4 · Sanctum API tokens — `feat(auth): issue role-scoped sanctum tokens`
 - [ ] T5 · Active-role core — `feat(role): enforce active-role via EnsureActiveRole middleware`
 - [ ] T6 · Registration fields — `feat(auth): capture username and phone on registration`
