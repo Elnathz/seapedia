@@ -9,7 +9,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T3 · Real public catalog — `feat(catalog): read public catalog and detail from database`
 - [x] T4 · Public store detail page — `feat(store): add public store detail page`
 - [x] T5 · Catalog API + Swagger — `feat(api): expose public catalog endpoints with swagger`
-- [ ] T6 · i18n infrastructure — `feat(i18n): add hybrid id/en locale infrastructure`
+- [x] T6 · i18n infrastructure — `feat(i18n): add hybrid id/en locale infrastructure`
 - [ ] T7 · Locale switcher + translate — `feat(i18n): add navbar and settings language switcher`
 - [ ] T8 · Demo seed (stores + products) — `feat(db): seed demo stores and products`
 
@@ -20,7 +20,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] Catalog returns only active products of active stores; search filters; inactive detail → 404 (T3)
 - [x] Store page lists only that store's active products; inactive store → 404 (T4)
 - [x] `GET /api/v1/catalog` returns only active products (T5)
-- [ ] Default locale `id`; `SetLocale` applies cookie locale (T6)
+- [x] Default locale `id`; `SetLocale` applies cookie locale (T6)
 - [ ] Authenticated locale update persists to `users.locale`; guest update sets cookie (T7)
 
 ## Visual QA (Playwright MCP)
@@ -110,3 +110,39 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
   Resource class — matches `Api/MeController`'s existing precedent of hand-built `response()->json([...])`,
   and the plan doesn't ask for Resources this sprint. Revisit if/when the API surface grows enough to
   need consistent envelope shaping.
+- T6: resolved the "vue-i18n SSR hydration" risk from the design doc differently than its own fallback
+  assumption — instead of seeding the i18n instance from `withApp`'s reactive page state (timing with
+  Inertia's plugin registration is ambiguous), `app.ts` reads the locale synchronously straight out of
+  the embedded `<script data-page>` JSON in the HTML (present before Vue ever mounts) via a small
+  `resolveInitialLocale()` helper. Confirmed via Playwright: `<html lang>` and the shared `locale` prop
+  always agree, zero console warnings on boot, in both locales.
+- T6: added `App\Enums\Locale` (`Indonesian = 'id'`, `English = 'en'`) — a fixed two-value set, same
+  treatment as `RoleName` (golden rule 13: enums for fixed sets, no magic strings). `SetLocale`
+  validates against it so a garbage/unsupported cookie value can never reach `App::setLocale()`.
+  Verified directly: a `locale=fr` cookie falls back to the default rather than erroring.
+  Test gotcha: Pest's `withCookie()` test helper **encrypts** the value before sending (matching
+  prod browser+`EncryptCookies` behavior) — since `'locale'` is in `encryptCookies(except: [...])`,
+  the middleware never decrypts it, so a `withCookie()`-set value arrives as ciphertext, not plaintext.
+  Must use `withUnencryptedCookie()` in tests for any cookie added to that `except` list.
+- T6: `lang/id/validation.php` is a full Indonesian translation of Laravel's stock
+  `validation.php` (published once via `artisan lang:publish`, both files customized with our own
+  `attributes` array — name/username/price/stock/image/etc. — so messages read like "harga harus..."
+  not "the :attribute..."). `artisan lang:publish` also generated `auth.php`/`pagination.php`/
+  `passwords.php` — deleted those (out of T6's stated scope: "validation + a flash file" only); not
+  needed for English (Laravel's vendor-shipped `en` lang ships those as a fallback) and not requested
+  for Indonesian this sprint.
+- T6: "a flash file" was implemented as **`lang/id.json` + `lang/en.json`** (JSON translation files at
+  the lang root), not a PHP array file — because every existing flash call
+  (`Inertia::flash('toast', ['message' => __('Store created.')])` in Seller{Store,Product}Controller,
+  pre-existing `__('Profile updated.')`/`__('Password updated.')` in Settings controllers) already uses
+  Laravel's "translation string as the key" pattern, which is JSON-file territory, not array-key
+  territory. This translates those four pre-existing Sprint-1/2 calls into Indonesian automatically
+  with zero changes to their PHP — confirmed via tinker (`__('Store created.')` → "Toko berhasil
+  dibuat." under `id`, unchanged under `en`).
+- T6: `.env`/`.env.example` (`APP_LOCALE=id`, `APP_FALLBACK_LOCALE=id`) are owner-edited only per a new
+  hard rule — Claude never touches `.env*` files in this project, full stop (not even with permission
+  asked first); see CLAUDE.md-adjacent memory, not written into CLAUDE.md itself.
+- T6: `bootstrap/app.php`'s `encryptCookies(except: [...])` gained `'locale'` alongside the existing
+  `appearance`/`sidebar_state` — same category (small client-readable preference cookie, not a secret).
+  `SetLocale` is registered **before** `HandleInertiaRequests` in the `web` group so `App::getLocale()`
+  is already correct by the time Inertia shares props for that request.

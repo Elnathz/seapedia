@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Services\RoleService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -49,6 +50,7 @@ class HandleInertiaRequests extends Middleware
                 'activeRole' => $user ? $this->roleService->resolveActiveRole($request)?->value : null,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'locale' => App::getLocale(),
         ];
     }
 }

@@ -21,6 +21,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $username
  * @property string $email
  * @property string|null $phone
+ * @property string $locale
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property bool $is_admin
@@ -28,7 +29,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'username', 'email', 'phone', 'password'])]
+#[Fillable(['name', 'username', 'email', 'phone', 'password', 'locale'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
