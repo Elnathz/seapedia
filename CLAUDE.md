@@ -16,6 +16,16 @@ Laravel 13 (PHP 8.3) · Inertia · Vue 3 + TypeScript · shadcn-vue · Tailwind 
    - During the sprint, keep `.planning/sprint{N}/progress.md` updated (check off tasks as committed).
    - The `.planning/` folder is committed (`docs(planning): add sprint{N} plan`).
 
+## Execution model (EVERY sprint)
+
+- **Planning is done on Opus; implementation is done on Claude Sonnet.** After a plan is approved, the
+  feature slices are implemented with the model set to Sonnet. Every sprint plan must carry an
+  "Instructions for the Sonnet implementer" section. (Owner switches `/model` → Sonnet to implement.)
+- **Every UI slice is visually verified with the Playwright MCP server** (`mcp__playwright__*`): after
+  `sail npm run dev`, navigate each new/changed page, screenshot at **360 / 768 / 1280px**, and confirm
+  empty/loading/error states, responsive nav (mobile bottom-nav vs desktop sidebar), and dark mode
+  before committing. Every sprint plan lists its Playwright visual-QA checks.
+
 ## Golden rules
 
 1. **Controllers are thin.** Validate via FormRequest → call ONE Service method → return Inertia/JSON. No business logic in controllers.
@@ -45,6 +55,7 @@ Laravel 13 (PHP 8.3) · Inertia · Vue 3 + TypeScript · shadcn-vue · Tailwind 
 - FormRequest + Policy (if ownership) + Service method (transactional where needed). Files placed per §2.5 structure.
 - Controller (web) + route behind correct middleware. Add `/api/v1` + Swagger annotation for core flows.
 - Inertia page + reuses the UI kit; responsive; has empty/error/loading states.
+- UI slices are **visually verified via Playwright MCP** (screenshots at 360/768/1280, states, dark mode).
 - A Pest feature test for any concurrency/idempotency-critical path.
 - **`pint` + ESLint/Prettier pass.**
 - One focused commit. Conventional message: `feat(scope): ...`, `fix(scope): ...`.
