@@ -27,9 +27,3 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-
-# AI and Planning files
-SEAPEDIA_TDD.md
-CLAUDE.md
-.planning/
-.claude/

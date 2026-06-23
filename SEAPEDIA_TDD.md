@@ -193,6 +193,18 @@ This is where most submissions get subtly wrong. Read carefully.
 
 The challenge leaves these open but demands consistency + documentation. **These are final. Document each in the README.**
 
+### 5.0 Authentication mechanism (LOCKED — answers Level 1 "token, JWT, or session-based")
+The spec offers three options ("token, JWT, or session-based") — **one is sufficient**. We choose **Sanctum**, which satisfies the requirement via two layers simultaneously:
+
+| Surface | Mechanism | Why |
+|---|---|---|
+| **Web / Inertia dashboards** | Laravel **session** (cookie-based, stateful) | Native, zero config, CSRF-protected, pairs with Inertia automatically. |
+| **`/api/v1` JSON endpoints** | Sanctum **opaque token** (DB-stored, scoped to active role) | One-line issuance, instant revocation on logout (row deleted from DB — trivially proves Level 7 "logout invalidates token"). |
+
+**JWT is deliberately NOT used.** Reasons: (a) requires `tymon/jwt-auth` package (extra dependency under a 6-day deadline), (b) stateless → logout cannot truly revoke an in-flight token without a blacklist — harder to satisfy Level 7's "logout invalidates token correctly", (c) JWT claim encoding for active-role adds complexity where Sanctum token abilities do the same thing natively.
+
+**Active-role scoping on tokens:** when a user picks an active role and calls `POST /role/select` on the API, we issue a Sanctum token with an ability matching the role (`createToken('session', ['role:buyer'])`). The `EnsureActiveRole` middleware verifies `$token->can('role:buyer')` server-side. The frontend never dictates the role — the token's ability does. Document in README: "Sanctum opaque tokens, one per active-role session, revoked on logout."
+
 ### 5.1 Money representation
 - All monetary values stored as **integers in rupiah** (no decimals; IDR has no sub-unit in practice here). Avoids float rounding bugs. Column type: `BIGINT UNSIGNED`.
 
@@ -1140,7 +1152,7 @@ For each task:
 3. Setup: Docker run, env vars table, `migrate:fresh --seed`.
 4. **Demo accounts** (admin/seller/buyer/driver/multi-role) + passwords.
 5. **Admin setup** instructions.
-6. **Locked business rules:** single-store checkout, discount combination + PPN 12% base, driver earning (80% of fee), overdue SLA per method + how to simulate time (`seapedia:advance-day` / admin trigger).
+6. **Locked business rules:** auth mechanism (Sanctum session for web, opaque token for API — no JWT; token revoked on logout), single-store checkout, discount combination + PPN 12% base, driver earning (80% of fee), overdue SLA per method + how to simulate time (`seapedia:advance-day` / admin trigger).
 7. **Security notes:** SQLi, XSS, input validation, session/token behavior, RBAC.
 8. iPaymu config + how to switch fake/real.
 9. API docs link (Swagger) / Postman collection.
