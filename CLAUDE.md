@@ -3,6 +3,13 @@
 You are building SEAPEDIA, a multi-role marketplace, per `SEAPEDIA_TDD.md`.
 Read the TDD's Locked Decisions (§5) and Schema (§7) before any task. They are authoritative.
 
+## Source of truth (order of authority)
+
+When implementing any sprint, read sources in this order:
+`.planning/sprint{N}/plan.md` → the sprint's design doc (`docs/superpowers/specs/...`, if one exists)
+→ `SEAPEDIA_TDD.md` (the § cited per task) → this `CLAUDE.md` (golden rules).
+**If they ever conflict, the TDD wins** — flag the conflict in `progress.md`.
+
 ## Stack
 
 Laravel 13 (PHP 8.3) · Inertia · Vue 3 + TypeScript · shadcn-vue · Tailwind 4 · MySQL 8 · Docker · Sanctum · Pest · iPaymu (v2). TypeScript is kept loose (`any` allowed where it unblocks).
