@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\RoleName;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\NewAccessToken;
@@ -72,5 +73,42 @@ class RoleService
         return $user->currentAccessToken() instanceof PersonalAccessToken
             ? $this->activeRoleFromToken($user)
             : $this->activeRoleFromSession($request);
+    }
+
+    /**
+     * Attach the chosen role(s) to a newly registered user (§13 "registers,
+     * picks role"). Caller validates $roleNames against RoleName first.
+     *
+     * @param  array<int, string>  $roleNames
+     */
+    public function assignRoles(User $user, array $roleNames): void
+    {
+        $user->roles()->attach(
+            Role::query()->whereIn('name', $roleNames)->pluck('id'),
+        );
+    }
+
+    /**
+     * Decide where a freshly authenticated user should land and, if they
+     * own exactly one role, commit it as active (§4.2). Shared by the
+     * login and register Fortify responses so the rule lives in one place.
+     */
+    public function resolvePostAuthRedirect(Request $request): string
+    {
+        $user = $request->user();
+
+        if (! $user->is_admin) {
+            $ownedRoles = $user->ownedRoles();
+
+            if (count($ownedRoles) > 1) {
+                return route('role.select');
+            }
+
+            if (count($ownedRoles) === 1) {
+                $this->setActiveRoleInSession($request, $ownedRoles[0]);
+            }
+        }
+
+        return route('dashboard', absolute: false);
     }
 }

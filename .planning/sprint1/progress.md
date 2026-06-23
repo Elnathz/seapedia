@@ -9,7 +9,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T3 · Settings table — `feat(db): add settings key-value table`
 - [x] T4 · Sanctum API tokens — `feat(auth): issue role-scoped sanctum tokens`
 - [x] T5 · Active-role core — `feat(role): enforce active-role via EnsureActiveRole middleware`
-- [ ] T6 · Registration fields — `feat(auth): capture username and phone on registration`
+- [x] T6 · Registration fields — `feat(auth): capture username and phone on registration`
 - [ ] T7 · Public reviews — `feat(review): add public app reviews with guest submission`
 - [ ] T8 · UI foundation — `feat(ui): add ocean palette and layout foundation`
 - [ ] T9 · Pages — `feat(ui): add landing, catalog and role dashboards`
@@ -20,7 +20,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] Multi-role login → role-selection; single-role auto-select (T5)
 - [x] `EnsureActiveRole` 403 on role mismatch (T5)
 - [x] Buyer token blocked from seller API route (T5)
-- [ ] Duplicate username rejected on registration (T6)
+- [x] Duplicate username rejected on registration (T6)
 - [ ] Guest submits valid review; invalid rating → 422 (T7)
 
 ## Visual QA (Playwright MCP)
@@ -68,3 +68,19 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - Unrelated tiny lint fix surfaced while running `npm run lint` for this slice: an unused `Link` import
   in `resources/js/pages/settings/Profile.vue`, left over from the earlier 2FA/passkey strip commit.
   Committed separately (`fix(ui): remove unused Link import in profile settings`), not bundled into T5.
+- T6: `username`/`phone` validation rules added as their own `usernameRules()`/`phoneRules()` methods on
+  `ProfileValidationRules` rather than merged into the shared `profileRules()` — merging would have made
+  them required on every profile *update* too, breaking the settings page (which never submits those
+  fields). Verified `ProfileUpdateTest` only posts name/email; no regression.
+- T6: no standalone `RegisterRequest` FormRequest class exists. Fortify's `CreatesNewUsers::create(array
+  $input)` contract is called directly by Fortify's own internal controller — there is no FormRequest
+  injection point for it. Validation is done manually via `Validator::make()->validate()` inside
+  `CreateNewUser`, matching the kit's pre-existing pattern (`PasswordValidationRules`/
+  `ProfileValidationRules` traits). Not a TDD violation — the TDD never mandates a literal FormRequest
+  class for this specific Fortify extension point, and §10's validation rules are still fully enforced.
+- T6: extracted `RoleService::resolvePostAuthRedirect()` as the single shared §4.2 decision point reused
+  by both `LoginResponse` and the new `RegisterResponse`, so registering with 2+ roles routes to
+  `role.select` exactly like multi-role login does, instead of duplicating the admin/single/multi branch
+  in two Response classes.
+- T6: registration form now lets the user pick role(s) via checkboxes (TDD line 704 "user registers,
+  picks role"). At least one role is required; multiple roles are allowed in one registration.

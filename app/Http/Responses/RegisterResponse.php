@@ -4,16 +4,16 @@ namespace App\Http\Responses;
 
 use App\Services\RoleService;
 use Illuminate\Http\RedirectResponse;
-use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
+use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 
-class LoginResponse implements LoginResponseContract
+class RegisterResponse implements RegisterResponseContract
 {
     public function __construct(private readonly RoleService $roleService) {}
 
     /**
-     * §4.2 login flow: admin bypasses role selection; exactly one owned role
-     * auto-selects and proceeds; multiple owned roles must not reach any
-     * dashboard until the user picks one via the role-selection screen.
+     * A fresh registration is treated as a first login (§4.2): the roles
+     * chosen at signup decide whether the user lands on a dashboard or the
+     * role-selection screen.
      */
     public function toResponse($request): RedirectResponse
     {
