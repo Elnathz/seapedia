@@ -19,6 +19,7 @@ createInertiaApp({
                 return null;
             case name.startsWith('reviews/'):
             case name.startsWith('catalog/'):
+            case name.startsWith('stores/'):
                 return GuestLayout;
             case name.startsWith('auth/'):
                 return AuthLayout;

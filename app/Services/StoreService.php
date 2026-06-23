@@ -38,6 +38,19 @@ class StoreService
         return $store->refresh();
     }
 
+    /**
+     * Public store page: only an active store, with only its active
+     * products eager-loaded (no N+1).
+     */
+    public function publicShow(string $slug): ?Store
+    {
+        return Store::query()
+            ->with(['products' => fn ($query) => $query->where('is_active', true)->latest()])
+            ->where('slug', $slug)
+            ->where('is_active', true)
+            ->first();
+    }
+
     private function uniqueSlug(string $name, ?int $ignoreId = null): string
     {
         $base = Str::slug($name);

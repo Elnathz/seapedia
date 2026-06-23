@@ -6,12 +6,15 @@ use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\RoleController;
 use App\Http\Controllers\Web\SellerProductController;
 use App\Http\Controllers\Web\SellerStoreController;
+use App\Http\Controllers\Web\StoreController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
 
 Route::get('catalog', [CatalogController::class, 'index'])->name('catalog.index');
 Route::get('catalog/{product}', [CatalogController::class, 'show'])->name('catalog.show');
+
+Route::get('stores/{store}', [StoreController::class, 'show'])->name('stores.show');
 
 Route::get('reviews', [AppReviewController::class, 'index'])->name('reviews.index');
 Route::post('reviews', [AppReviewController::class, 'store'])->name('reviews.store');

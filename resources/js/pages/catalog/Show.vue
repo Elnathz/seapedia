@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useInitials } from '@/composables/useInitials';
 import { formatIDR } from '@/lib/utils';
 import { index as catalogIndex } from '@/routes/catalog';
+import { show as storeShow } from '@/routes/stores';
 
 interface Store {
     id: number;
@@ -76,8 +77,9 @@ const { getInitials } = useInitials();
                         }}</span>
                     </p>
 
-                    <div
-                        class="mt-2 flex items-center gap-3 rounded-xl border border-border p-3"
+                    <Link
+                        :href="storeShow.url(product.store.slug)"
+                        class="mt-2 flex items-center gap-3 rounded-xl border border-border p-3 transition-colors hover:border-primary"
                     >
                         <Avatar class="size-9">
                             <AvatarFallback>{{
@@ -96,7 +98,7 @@ const { getInitials } = useInitials();
                                 Toko Aktif
                             </Badge>
                         </div>
-                    </div>
+                    </Link>
                 </CardContent>
             </div>
         </Card>

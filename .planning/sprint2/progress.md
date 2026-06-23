@@ -7,7 +7,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T1 · Stores foundation — `feat(store): add seller store create and update`
 - [x] T2 · Product CRUD + image upload — `feat(product): add seller product crud with image upload`
 - [x] T3 · Real public catalog — `feat(catalog): read public catalog and detail from database`
-- [ ] T4 · Public store detail page — `feat(store): add public store detail page`
+- [x] T4 · Public store detail page — `feat(store): add public store detail page`
 - [ ] T5 · Catalog API + Swagger — `feat(api): expose public catalog endpoints with swagger`
 - [ ] T6 · i18n infrastructure — `feat(i18n): add hybrid id/en locale infrastructure`
 - [ ] T7 · Locale switcher + translate — `feat(i18n): add navbar and settings language switcher`
@@ -18,7 +18,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] Duplicate store name → 422; cross-seller store update → 403 (T1)
 - [x] Cross-seller product update → 403; cross-seller delete → 403; CRUD own-only; invalid price/stock → 422 (T2)
 - [x] Catalog returns only active products of active stores; search filters; inactive detail → 404 (T3)
-- [ ] Store page lists only that store's active products; inactive store → 404 (T4)
+- [x] Store page lists only that store's active products; inactive store → 404 (T4)
 - [ ] `GET /api/v1/catalog` returns only active products (T5)
 - [ ] Default locale `id`; `SetLocale` applies cookie locale (T6)
 - [ ] Authenticated locale update persists to `users.locale`; guest update sets cookie (T7)
@@ -88,3 +88,11 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
   buildable without referencing a route T4 hasn't created yet.
 - T3: temporarily seeded 13 extra factory products via tinker to visually confirm pagination renders
   (>12 items); deleted them after the QA pass — dev-DB-only, not part of any seeder/migration.
+- T4: `Web/StoreController` (public, singular) sits alongside the existing `Web/SellerStoreController`
+  (authenticated seller side) — two controllers by design, not a naming collision; route names
+  `stores.show` (public) vs `seller.store.show` (own dashboard) stay unambiguous too.
+- T4: as planned in T3's notes, the catalog product detail's store info block went from plain text to
+  a real `<Link>` to `/stores/{slug}` only now that the target route exists — added `stores/` to
+  `app.ts`'s `GuestLayout` switch (same bucket as `catalog/`/`reviews/`, since it's public).
+  Catalog **grid** card's store name stays plain text (not linked) — only the plan's two named spots
+  (product-detail store info block, store page itself) got the link treatment.
