@@ -61,13 +61,14 @@ Sail/local — no deployment this sprint.
    verified by driving a real browser through the Playwright MCP server (navigate, screenshot,
    check responsive breakpoints), not by eyeballing code alone. The TDD asks for empty/error/loading
    states and responsiveness (§11) — Playwright is how we prove it.
-9. **➕ Indonesian/English UI language toggle added (T9, new), not in the TDD.** Owner request after
-   T8 shipped. TDD §15.3 locks order-status *display labels* (`sedang_dikemas` → ... →
-   `dikembalikan`) as Indonesian, "never remove" — those stay Indonesian in BOTH locales; the toggle
-   only translates general UI chrome (nav, buttons, headings, empty states, form copy), never order
-   status text or any backend enum value. Inserted as the new **T9**, before the page-building work,
-   so T9's renumbered successor (pages) is authored translation-ready from the start rather than
-   retrofitted; the old T9 (Pages) and T10 (Demo seeder) shift to **T10** and **T11**.
+9. **⏸️ Indonesian/English UI language toggle deferred to Sprint 2.** Owner requested it right after
+   T8 shipped; briefly planned as a Sprint 1 T9 (see git history:
+   `docs(planning): add sprint1 T9 i18n task`), then owner decided to push it out instead — "kayaknya
+   skip ke sprint 2 aja. lanjut ke yang lain untuk switch bahasanya." Not in the TDD. When it's
+   eventually planned, remember: TDD §15.3 locks order-status *display labels* (`sedang_dikemas` →
+   ... → `dikembalikan`) as Indonesian, "never remove" — those must stay Indonesian in BOTH locales;
+   the toggle only ever translates general UI chrome, never order status text or any backend enum
+   value. T9/T10 below revert to their original numbering (Pages / Demo seeder).
 
 ## Instructions for the Sonnet implementer (READ FIRST)
 
@@ -106,9 +107,7 @@ Playwright MCP server (`mcp__plugin_playwright_playwright__*` tools):
 4. Verify the **active-role badge + role-switcher** flow visually: multi-role login → role modal →
    pick role → correct dashboard → switch role.
 5. Light **dark-mode** pass (kit's `HandleAppearance` is wired).
-6. Verify the **language switcher** (T9): both locales render correctly, no overflow from longer
-   strings, order-status text (once present) stays Indonesian in both.
-7. Attach/notes the screenshots in the slice's verification; fix layout issues before committing.
+6. Attach/notes the screenshots in the slice's verification; fix layout issues before committing.
 
 
 
@@ -197,48 +196,16 @@ Each slice follows the `vertical-feature` skill order. Run `pint` + ESLint/Prett
   - **Record final Ocean hex tokens back into deviation #2 once chosen.**
   - Commit(s): `feat(ui): add ocean palette and layout foundation`
 
-- **T9 · i18n foundation (Indonesian/English toggle)** — new, see deviation #9
-  - Files:
-    - `app/Http/Middleware/HandleLocale.php` — mirrors the kit's `HandleAppearance`: reads the
-      `locale` cookie (`id` default), calls `App::setLocale()`, shares `locale` via `View::share()`
-      for blade-rendered bits; registered globally in `bootstrap/app.php` ahead of
-      `HandleInertiaRequests`.
-    - `lang/id/*`, `lang/en/*` — Laravel validation/Fortify message translations (only what
-      SEAPEDIA's FormRequests actually trigger; don't translate the whole framework default set).
-    - `resources/js/lib/i18n/id.ts`, `en.ts` — flat keyed dictionaries for Vue-rendered UI chrome
-      (nav labels, buttons, headings, empty-state copy, form labels) introduced in T6–T8.
-    - `resources/js/composables/useLocale.ts` — cookie-backed reactive `locale` ref + `t(key)`
-      lookup, mirroring `useAppearance.ts`'s pattern; `initializeLocale()` called once from `app.ts`.
-    - `resources/js/components/LanguageSwitcher.vue` — reuses the already-installed `Select` (or
-      `DropdownMenu`); mounted in `Navbar` and `AppSidebar` next to `RoleBadge`/`AppearanceTabs`.
-    - Extend `HandleInertiaRequests::share()` with `locale` (server-resolved, avoids flash-of-wrong-
-      language on first paint) — same pattern as the existing `auth`/`sidebarOpen` shares.
-    - Retrofit T6–T8's hardcoded UI strings (`Navbar`, `Footer`, `BottomNav`, `RoleBadge`,
-      `AppSidebar`, `EmptyState` defaults, `role/Select.vue`, `reviews/Index.vue`, register/login
-      form labels) to call `t()` instead of literal English text.
-  - Rules: TDD §15.3 — order-status display text is excluded from translation, always Indonesian,
-    regardless of locale (applies once T10's dashboards render any status). Golden Rule 17
-    (translator is a presentation-layer concern only, no business logic in components).
-  - Acceptance: switching the `LanguageSwitcher` re-renders all retrofitted UI text instantly
-    client-side; choice persists across reload/login/logout via cookie; a Laravel-generated string
-    (e.g. a validation error) also reflects the selected locale.
-  - Tests (Pest): `HandleLocale` defaults to `id` with no cookie; `locale=en` cookie flips
-    `App::getLocale()` for that request.
-  - **Visual QA (Playwright MCP):** screenshot the switcher + 2–3 representative pages in both
-    locales at 360/768/1280/1920; confirm no overflow from longer strings in either language.
-  - Commit: `feat(i18n): add indonesian and english language toggle`
-
-- **T10 · Pages** (was T9 — renumbered per deviation #9)
+- **T9 · Pages**
   - Files: Landing, catalog (dummy data ok), product detail, role-aware dashboard shells
-    (Admin / Seller / Buyer / Driver) with balance placeholder + empty/loading/error states. Author
-    new page copy through T9's `t()` translator from the start.
+    (Admin / Seller / Buyer / Driver) with balance placeholder + empty/loading/error states.
   - Rules: §11; §13 Day 1 pages; dummy data acceptable (real catalog = Sprint 2).
   - Acceptance: each role sees its own shell; guest browses all public pages; states present.
   - **Visual QA (Playwright MCP):** navigate every page, screenshot empty/loading/error states at
-    360/768/1280/1920; confirm bottom-nav (mobile) vs sidebar (desktop); spot-check both locales.
+    360/768/1280/1920; confirm bottom-nav (mobile) vs sidebar (desktop).
   - Commit: `feat(ui): add landing, catalog and role dashboards`
 
-- **T11 · Demo seeder** (was T10 — renumbered per deviation #9)
+- **T10 · Demo seeder**
   - Files: `DatabaseSeeder` — `admin/password` (is_admin), `seller1`, `buyer1` (funded placeholder +
     default address can wait to S3), `driver1`, `multi1` (buyer+seller+driver). README credential block.
   - Rules: §12 (Level 1 subset — stores/products/orders/discounts come in later sprints).
@@ -252,7 +219,6 @@ Each slice follows the `vertical-feature` skill order. Run `pint` + ESLint/Prett
 - Buyer-scoped Sanctum token cannot call a seller-only API route (T5).
 - Guest can submit a valid review; invalid rating rejected by FormRequest (T7).
 - Duplicate username rejected on registration (T6).
-- `HandleLocale` defaults to `id`; `locale=en` cookie flips `App::getLocale()` (T9).
 
 ## Demo checklist (end of sprint)
 
@@ -261,9 +227,7 @@ Each slice follows the `vertical-feature` skill order. Run `pint` + ESLint/Prett
    active-role badge → "Switch role" → Buyer → buyer dashboard.
 3. Single-role user logs in → skips modal → goes straight to their dashboard.
 4. Logout → Sanctum token revoked (row deleted).
-5. Switch language ID ⇄ EN → UI chrome retranslates instantly; order-status text (once present)
-   stays Indonesian in both.
-6. Responsive check at 360px / 768px / 1280px / 1920px — **verified via Playwright MCP screenshots**.
+5. Responsive check at 360px / 768px / 1280px / 1920px — **verified via Playwright MCP screenshots**.
 
 ## Risks / open questions
 
@@ -271,16 +235,13 @@ Each slice follows the `vertical-feature` skill order. Run `pint` + ESLint/Prett
 - Fortify customization surface: registering extra fields (username/phone) via `CreateNewUser` is the
   simplest §5-consistent path; if Fortify fights it, fall back to a thin custom register controller
   (document in README).
-- **T9 i18n approach — needs your sign-off before implementation:** hand-rolled cookie + flat TS
-  dictionary + Laravel `lang/` files (mirrors the existing `useAppearance` pattern already in the
-  kit, zero new dependency) vs. installing `vue-i18n` (richer pluralization/interpolation, but a new
-  library with no concrete TDD-stated need per the Golden Rules). **Recommendation: hand-rolled**,
-  matching the project's existing pattern and "don't add libraries without a concrete need." Will
-  proceed with the recommendation unless you say otherwise.
 
 ## Out of scope (deferred to later sprints)
 
 - Real stores & products + catalog from DB → **Sprint 2**.
+- Indonesian/English UI language toggle → **Sprint 2** (deviation #9; needs its own plan when
+  picked up — recommended approach if/when planned: hand-rolled cookie + flat TS dictionary +
+  Laravel `lang/` files, mirroring the existing `useAppearance` pattern, no new library).
 - `wallet_transactions`, top-up, addresses, cart, checkout → **Sprint 3**.
 - Discounts, seller order processing, reports → **Sprint 4**.
 - Driver, `ClockService`/clock advance, overdue sweep, admin dashboard → **Sprint 5**.
