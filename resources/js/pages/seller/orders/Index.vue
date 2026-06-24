@@ -98,6 +98,12 @@ function goToPage(page: number) {
                     <TableRow
                         v-for="order in props.orders.data"
                         :key="order.id"
+                        class="cursor-pointer hover:bg-muted/50"
+                        @click="
+                            router.visit(
+                                SellerOrderController.show.url(order.id),
+                            )
+                        "
                     >
                         <TableCell class="font-medium">{{
                             order.code

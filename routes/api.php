@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\BuyerWalletController;
 use App\Http\Controllers\Api\CatalogController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\MeController;
+use App\Http\Controllers\Api\Seller\OrderController as SellerOrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
@@ -38,6 +39,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
         Route::get('orders', [BuyerOrderController::class, 'index'])->name('orders.index');
         Route::get('orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
+    });
+
+    Route::middleware(['auth:sanctum', 'active_role:seller'])->prefix('seller')->name('seller.')->group(function () {
+        Route::post('orders/{order}/process', [SellerOrderController::class, 'process'])->name('orders.process');
     });
 
     Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {

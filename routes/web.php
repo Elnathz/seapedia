@@ -47,6 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('products/{product}', [SellerProductController::class, 'destroy'])->name('products.destroy');
 
         Route::get('orders', [SellerOrderController::class, 'index'])->name('orders.index');
+        Route::get('orders/{order}', [SellerOrderController::class, 'show'])->name('orders.show');
+        Route::post('orders/{order}/process', [SellerOrderController::class, 'process'])->name('orders.process');
     });
 
     Route::middleware('active_role:buyer')->prefix('buyer')->name('buyer.')->group(function () {

@@ -220,5 +220,10 @@ export default {
         columnStatus: 'Status',
         columnTotal: 'Total',
         columnDate: 'Date',
+        processAction: 'Process Order',
+        processConfirmTitle: 'Process this order?',
+        processConfirmDescription:
+            'Order {code} will move to Menunggu Pengirim and become visible to drivers. Continue?',
+        processConfirm: 'Yes, Process',
     },
 };

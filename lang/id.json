@@ -27,5 +27,6 @@
     "This voucher code has expired.": "Kode voucher ini sudah kedaluwarsa.",
     "This voucher code has been fully redeemed.": "Kode voucher ini sudah mencapai batas penggunaan.",
     "Minimum spend of :amount required for this code.": "Minimal belanja Rp:amount untuk kode ini.",
-    "Percentage value cannot exceed 100.": "Nilai persentase tidak boleh lebih dari 100."
+    "Percentage value cannot exceed 100.": "Nilai persentase tidak boleh lebih dari 100.",
+    "Order processed.": "Pesanan berhasil diproses."
 }

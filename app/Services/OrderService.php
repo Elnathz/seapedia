@@ -97,8 +97,7 @@ class OrderService
     }
 
     /**
-     * A seller's incoming orders for their store, newest first — read-only
-     * this sprint (the "process" action arrives in Sprint 4).
+     * A seller's incoming orders for their store, newest first.
      */
     public function forSeller(Store $store, int $perPage = 10): LengthAwarePaginator
     {
@@ -107,6 +106,23 @@ class OrderService
             ->with('buyer:id,name')
             ->latest()
             ->paginate($perPage);
+    }
+
+    /**
+     * Full detail for one order from the seller's side — items, status
+     * history, and the owning store (with `user_id` for the policy check),
+     * eager-loaded (no N+1).
+     */
+    public function findForSeller(int $orderId): ?Order
+    {
+        return Order::query()
+            ->with([
+                'items',
+                'statusHistories' => fn ($query) => $query->oldest(),
+                'store:id,name,slug,user_id',
+                'buyer:id,name',
+            ])
+            ->find($orderId);
     }
 
     private function writeHistory(Order $order, OrderStatus $status, ?string $note, ?int $changedBy): void

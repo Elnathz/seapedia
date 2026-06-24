@@ -27,5 +27,6 @@
     "This voucher code has expired.": "This voucher code has expired.",
     "This voucher code has been fully redeemed.": "This voucher code has been fully redeemed.",
     "Minimum spend of :amount required for this code.": "Minimum spend of Rp:amount required for this code.",
-    "Percentage value cannot exceed 100.": "Percentage value cannot exceed 100."
+    "Percentage value cannot exceed 100.": "Percentage value cannot exceed 100.",
+    "Order processed.": "Order processed."
 }

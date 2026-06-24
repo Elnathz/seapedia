@@ -220,5 +220,10 @@ export default {
         columnStatus: 'Status',
         columnTotal: 'Total',
         columnDate: 'Tanggal',
+        processAction: 'Proses Pesanan',
+        processConfirmTitle: 'Proses pesanan ini?',
+        processConfirmDescription:
+            'Pesanan {code} akan berpindah ke Menunggu Pengirim dan tampil bagi kurir. Lanjutkan?',
+        processConfirm: 'Ya, Proses',
     },
 };

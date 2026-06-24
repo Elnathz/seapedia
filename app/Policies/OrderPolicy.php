@@ -8,12 +8,20 @@ use App\Models\User;
 class OrderPolicy
 {
     /**
-     * A buyer may only view their own orders (cross-buyer access → 403).
-     * Seller access to their store's orders is scoped at the query level
-     * in `SellerOrderController` (read-only list, no per-order detail yet).
+     * A buyer may view their own orders; a seller may view orders placed
+     * against their own store. Cross-user access → 403 either way.
      */
     public function view(User $user, Order $order): bool
     {
-        return $user->id === $order->buyer_id;
+        return $user->id === $order->buyer_id || $user->id === $order->store->user_id;
+    }
+
+    /**
+     * Only the owning seller may process an incoming order (§5.6) — never
+     * the buyer, and never a different seller's store.
+     */
+    public function process(User $user, Order $order): bool
+    {
+        return $user->id === $order->store->user_id;
     }
 }
