@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, Link, router } from '@inertiajs/vue3';
-import { Plus, Ticket } from '@lucide/vue';
+import { CalendarClock, Plus, Ticket } from '@lucide/vue';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AdminPromoController from '@/actions/App/Http/Controllers/Web/Admin/PromoController';
@@ -9,7 +9,6 @@ import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import {
     Dialog,
     DialogClose,
@@ -37,7 +36,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { discountStatusBadgeVariant } from '@/lib/discountStatus';
+import {
+    discountStatusAccent,
+    discountStatusBadgeVariant,
+} from '@/lib/discountStatus';
 import type { DiscountStatusKey } from '@/lib/discountStatus';
 import { formatIDR } from '@/lib/utils';
 
@@ -119,22 +121,24 @@ function goToPage(page: number) {
         />
 
         <template v-else>
-            <div class="flex flex-col gap-3">
-                <Card v-for="promo in props.promos.data" :key="promo.id">
-                    <CardContent
-                        class="flex flex-wrap items-center justify-between gap-4 pt-6"
-                    >
-                        <div class="min-w-0">
-                            <p class="font-mono font-medium">
+            <div class="grid gap-3 lg:grid-cols-2">
+                <div
+                    v-for="promo in props.promos.data"
+                    :key="promo.id"
+                    class="relative flex flex-wrap items-center justify-between gap-4 overflow-hidden rounded-xl border bg-card p-4 pl-5 transition-shadow hover:shadow-sm"
+                >
+                    <span
+                        class="absolute inset-y-0 left-0 w-1"
+                        :class="discountStatusAccent(promo.status)"
+                        aria-hidden="true"
+                    />
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <p
+                                class="truncate font-mono text-base font-semibold"
+                            >
                                 {{ promo.code }}
                             </p>
-                            <p class="text-sm text-muted-foreground">
-                                {{ valueLabel(promo) }} ·
-                                {{ t('admin.expiryDateLabel') }}:
-                                {{ promo.expiry_date.slice(0, 10) }}
-                            </p>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-2">
                             <Badge
                                 :variant="
                                     discountStatusBadgeVariant(promo.status)
@@ -142,40 +146,50 @@ function goToPage(page: number) {
                             >
                                 {{ t(statusLabelKey[promo.status]) }}
                             </Badge>
-                            <Button as-child size="sm" variant="outline">
-                                <Link
-                                    :href="
-                                        AdminPromoController.show.url(promo.id)
-                                    "
-                                >
-                                    {{ t('admin.viewDetail') }}
-                                </Link>
-                            </Button>
-                            <Form
-                                v-bind="
-                                    AdminPromoController.toggleActive.form(
-                                        promo.id,
-                                    )
-                                "
-                                :options="{ preserveScroll: true }"
-                                v-slot="{ processing }"
-                            >
-                                <Button
-                                    type="submit"
-                                    size="sm"
-                                    variant="outline"
-                                    :disabled="processing"
-                                >
-                                    {{
-                                        promo.is_active
-                                            ? t('admin.deactivateAction')
-                                            : t('admin.activateAction')
-                                    }}
-                                </Button>
-                            </Form>
                         </div>
-                    </CardContent>
-                </Card>
+                        <p
+                            class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm text-muted-foreground"
+                        >
+                            <span
+                                class="font-medium text-foreground tabular-nums"
+                                >{{ valueLabel(promo) }}</span
+                            >
+                            <span class="flex items-center gap-1 tabular-nums">
+                                <CalendarClock class="size-3.5" />
+                                {{ promo.expiry_date.slice(0, 10) }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <Button as-child size="sm" variant="ghost">
+                            <Link
+                                :href="AdminPromoController.show.url(promo.id)"
+                            >
+                                {{ t('admin.viewDetail') }}
+                            </Link>
+                        </Button>
+                        <Form
+                            v-bind="
+                                AdminPromoController.toggleActive.form(promo.id)
+                            "
+                            :options="{ preserveScroll: true }"
+                            v-slot="{ processing }"
+                        >
+                            <Button
+                                type="submit"
+                                size="sm"
+                                variant="outline"
+                                :disabled="processing"
+                            >
+                                {{
+                                    promo.is_active
+                                        ? t('admin.deactivateAction')
+                                        : t('admin.activateAction')
+                                }}
+                            </Button>
+                        </Form>
+                    </div>
+                </div>
             </div>
 
             <Pagination

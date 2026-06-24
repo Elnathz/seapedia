@@ -2,23 +2,24 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import {
     AlertTriangle,
+    ArrowRight,
     BadgePercent,
     Boxes,
     CalendarClock,
-    ShieldCheck,
+    CheckCircle2,
+    PackageCheck,
     ShoppingBag,
     Store,
     Ticket,
     Truck,
     Users,
 } from '@lucide/vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AdminClockController from '@/actions/App/Http/Controllers/Web/Admin/ClockController';
-import StatCard from '@/components/StatCard.vue';
-import { Badge } from '@/components/ui/badge';
+import StatBar from '@/components/StatBar.vue';
+import StatTile from '@/components/StatTile.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -27,13 +28,9 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Separator } from '@/components/ui/separator';
-import {
-    deliveryStatusBadgeVariant,
-    deliveryStatusLabel,
-} from '@/lib/deliveryStatus';
+import { deliveryStatusFill, deliveryStatusLabel } from '@/lib/deliveryStatus';
 import type { DeliveryStatusKey } from '@/lib/deliveryStatus';
-import { orderStatusBadgeVariant, orderStatusLabel } from '@/lib/orderStatus';
+import { orderStatusFill, orderStatusLabel } from '@/lib/orderStatus';
 import type { OrderStatusKey } from '@/lib/orderStatus';
 import { formatDateTime } from '@/lib/utils';
 import { index as indexAdminPromos } from '@/routes/admin/promos';
@@ -80,6 +77,24 @@ const ALL_DELIVERY_STATUSES: DeliveryStatusKey[] = [
     'completed',
 ];
 
+const orderCount = (s: OrderStatusKey) =>
+    props.snapshot.orders_by_status[s] ?? 0;
+const deliveryCount = (s: DeliveryStatusKey) =>
+    props.snapshot.deliveries_by_status[s] ?? 0;
+
+const ordersTotal = computed(() =>
+    ALL_ORDER_STATUSES.reduce((sum, s) => sum + orderCount(s), 0),
+);
+const deliveriesTotal = computed(() =>
+    ALL_DELIVERY_STATUSES.reduce((sum, s) => sum + deliveryCount(s), 0),
+);
+const ordersInFlight = computed(
+    () =>
+        orderCount('sedang_dikemas') +
+        orderCount('menunggu_pengirim') +
+        orderCount('sedang_dikirim'),
+);
+
 const confirmOpen = ref(false);
 const processing = ref(false);
 
@@ -98,17 +113,28 @@ function confirmAdvance() {
     <Head :title="t('admin.dashboardTitle')" />
 
     <div class="flex flex-col gap-6">
-        <Card>
-            <CardContent
-                class="flex flex-wrap items-center justify-between gap-4 pt-6"
+        <!-- Signature: "time machine" command bar -->
+        <section
+            class="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-card to-card p-5 sm:p-6"
+        >
+            <div
+                class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"
             >
-                <div class="flex items-center gap-3">
-                    <CalendarClock class="size-5 text-muted-foreground" />
-                    <div>
-                        <p class="text-sm text-muted-foreground">
-                            {{ t('admin.simulatedDateLabel') }}
+                <div class="flex items-center gap-4">
+                    <div
+                        class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary"
+                    >
+                        <CalendarClock class="size-6" />
+                    </div>
+                    <div class="min-w-0">
+                        <p
+                            class="text-[0.7rem] font-semibold tracking-wider text-primary uppercase"
+                        >
+                            {{ t('admin.opsEyebrow') }}
                         </p>
-                        <p class="font-medium tabular-nums">
+                        <p
+                            class="mt-0.5 truncate text-xl font-semibold tabular-nums sm:text-2xl"
+                        >
                             {{
                                 formatDateTime(
                                     props.snapshot.simulated_now,
@@ -116,198 +142,257 @@ function confirmAdvance() {
                                 )
                             }}
                         </p>
+                        <p class="mt-0.5 text-sm text-muted-foreground">
+                            {{ t('admin.opsSubtitle') }}
+                        </p>
                     </div>
                 </div>
-                <Button :disabled="processing" @click="confirmOpen = true">
+                <Button
+                    size="lg"
+                    class="shrink-0"
+                    :disabled="processing"
+                    @click="confirmOpen = true"
+                >
                     {{ t('admin.advanceDay') }}
+                    <ArrowRight class="size-4" />
                 </Button>
-            </CardContent>
-        </Card>
+            </div>
 
-        <div
-            v-if="props.snapshot.overdue_eligible_count > 0"
-            class="flex items-center gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-800 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-300"
-        >
-            <AlertTriangle class="size-5 shrink-0" />
-            <p class="text-sm">
-                {{
-                    t('admin.overdueEligibleDescription', {
-                        count: props.snapshot.overdue_eligible_count,
-                    })
-                }}
-            </p>
-        </div>
+            <div
+                v-if="props.snapshot.overdue_eligible_count > 0"
+                class="mt-5 flex items-center gap-3 rounded-xl border border-amber-300 bg-amber-50 p-3 text-amber-800 dark:border-amber-700/60 dark:bg-amber-950/50 dark:text-amber-300"
+            >
+                <AlertTriangle class="size-5 shrink-0" />
+                <p class="text-sm">
+                    {{
+                        t('admin.overdueEligibleDescription', {
+                            count: props.snapshot.overdue_eligible_count,
+                        })
+                    }}
+                </p>
+            </div>
+        </section>
 
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard
-                :label="t('admin.totalUsers')"
-                :value="props.snapshot.users.total"
-                :icon="Users"
-            />
-            <StatCard
-                :label="t('admin.totalAdmins')"
-                :value="props.snapshot.users.admins"
-                :icon="ShieldCheck"
-            />
-            <StatCard
-                :label="t('admin.totalSellers')"
-                :value="props.snapshot.users.sellers"
-                :icon="Store"
-            />
-            <StatCard
-                :label="t('admin.totalBuyers')"
-                :value="props.snapshot.users.buyers"
+        <!-- Operational KPI band -->
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <StatTile
+                :label="t('admin.ordersInFlight')"
+                :value="ordersInFlight"
+                :hint="t('admin.ordersInFlightHint')"
                 :icon="ShoppingBag"
+                accent="primary"
             />
-            <StatCard
-                :label="t('admin.totalDrivers')"
-                :value="props.snapshot.users.drivers"
-                :icon="Truck"
-            />
-            <StatCard
-                :label="t('admin.totalStores')"
-                :value="props.snapshot.stores_count"
-                :icon="Store"
-            />
-            <StatCard
-                :label="t('admin.totalProducts')"
-                :value="props.snapshot.products_count"
-                :icon="Boxes"
-            />
-            <StatCard
+            <StatTile
                 :label="t('admin.overdueEligible')"
                 :value="props.snapshot.overdue_eligible_count"
                 :icon="AlertTriangle"
+                :accent="
+                    props.snapshot.overdue_eligible_count > 0
+                        ? 'amber'
+                        : 'default'
+                "
+            />
+            <StatTile
+                :label="t('admin.jobsAvailable')"
+                :value="deliveryCount('available')"
+                :icon="Truck"
+                accent="sky"
+            />
+            <StatTile
+                :label="t('admin.completedOrders')"
+                :value="orderCount('pesanan_selesai')"
+                :icon="CheckCircle2"
+                accent="default"
             />
         </div>
 
+        <!-- Proportion breakdowns: structure encodes the distribution -->
         <div class="grid gap-4 lg:grid-cols-2">
-            <Card>
-                <CardHeader>
-                    <CardTitle
-                        class="text-sm font-medium text-muted-foreground"
-                    >
+            <section class="rounded-xl border bg-card p-5">
+                <div class="mb-4 flex items-center gap-2">
+                    <PackageCheck class="size-4 text-muted-foreground" />
+                    <h3 class="text-sm font-semibold">
                         {{ t('admin.ordersByStatusTitle') }}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent class="flex flex-col">
-                    <template
-                        v-for="(status, index) in ALL_ORDER_STATUSES"
-                        :key="status"
+                    </h3>
+                    <span
+                        class="ml-auto text-xs text-muted-foreground tabular-nums"
                     >
-                        <Separator v-if="index > 0" />
-                        <div class="flex items-center justify-between py-2">
-                            <Badge :variant="orderStatusBadgeVariant(status)">
-                                {{ orderStatusLabel(status) }}
-                            </Badge>
-                            <span class="text-sm font-semibold tabular-nums">
-                                {{
-                                    props.snapshot.orders_by_status[status] ?? 0
-                                }}
-                            </span>
-                        </div>
-                    </template>
-                </CardContent>
-            </Card>
+                        {{ ordersTotal }}
+                    </span>
+                </div>
+                <p
+                    v-if="ordersTotal === 0"
+                    class="py-2 text-sm text-muted-foreground"
+                >
+                    {{ t('admin.breakdownEmpty') }}
+                </p>
+                <div v-else class="flex flex-col gap-3">
+                    <StatBar
+                        v-for="status in ALL_ORDER_STATUSES"
+                        :key="status"
+                        :label="orderStatusLabel(status)"
+                        :value="orderCount(status)"
+                        :total="ordersTotal"
+                        :fill-class="orderStatusFill(status)"
+                    />
+                </div>
+            </section>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle
-                        class="text-sm font-medium text-muted-foreground"
-                    >
+            <section class="rounded-xl border bg-card p-5">
+                <div class="mb-4 flex items-center gap-2">
+                    <Truck class="size-4 text-muted-foreground" />
+                    <h3 class="text-sm font-semibold">
                         {{ t('admin.deliveriesByStatusTitle') }}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent class="flex flex-col">
-                    <template
-                        v-for="(status, index) in ALL_DELIVERY_STATUSES"
-                        :key="status"
+                    </h3>
+                    <span
+                        class="ml-auto text-xs text-muted-foreground tabular-nums"
                     >
-                        <Separator v-if="index > 0" />
-                        <div class="flex items-center justify-between py-2">
-                            <Badge
-                                :variant="deliveryStatusBadgeVariant(status)"
-                            >
-                                {{ deliveryStatusLabel(status) }}
-                            </Badge>
-                            <span class="text-sm font-semibold tabular-nums">
-                                {{
-                                    props.snapshot.deliveries_by_status[
-                                        status
-                                    ] ?? 0
-                                }}
-                            </span>
-                        </div>
-                    </template>
-                </CardContent>
-            </Card>
+                        {{ deliveriesTotal }}
+                    </span>
+                </div>
+                <p
+                    v-if="deliveriesTotal === 0"
+                    class="py-2 text-sm text-muted-foreground"
+                >
+                    {{ t('admin.breakdownEmpty') }}
+                </p>
+                <div v-else class="flex flex-col gap-3">
+                    <StatBar
+                        v-for="status in ALL_DELIVERY_STATUSES"
+                        :key="status"
+                        :label="deliveryStatusLabel(status)"
+                        :value="deliveryCount(status)"
+                        :total="deliveriesTotal"
+                        :fill-class="deliveryStatusFill(status)"
+                    />
+                </div>
+            </section>
         </div>
 
-        <Card>
-            <CardHeader>
-                <CardTitle class="text-sm font-medium text-muted-foreground">
-                    {{ t('admin.discountSummaryTitle') }}
-                </CardTitle>
-            </CardHeader>
-            <CardContent class="grid gap-4 sm:grid-cols-2">
-                <Link
-                    :href="indexAdminPromos.url()"
-                    class="flex items-start gap-3 rounded-lg p-2 transition-colors hover:bg-accent"
+        <!-- Discount management entry points -->
+        <div class="grid gap-3 sm:grid-cols-2">
+            <Link
+                :href="indexAdminPromos.url()"
+                class="group flex items-center gap-4 rounded-xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
+            >
+                <div
+                    class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
                 >
-                    <Ticket class="mt-1 size-5 text-muted-foreground" />
-                    <div class="flex-1">
-                        <p class="font-medium">{{ t('admin.promosLabel') }}</p>
-                        <div
-                            class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground"
-                        >
-                            <span
-                                >{{ t('admin.totalCount') }}:
-                                {{ props.snapshot.promos.total }}</span
-                            >
-                            <span
-                                >{{ t('admin.activeCount') }}:
-                                {{ props.snapshot.promos.active }}</span
-                            >
-                            <span
-                                >{{ t('admin.expiredCount') }}:
-                                {{ props.snapshot.promos.expired }}</span
-                            >
-                        </div>
-                    </div>
-                </Link>
-                <Link
-                    :href="indexAdminVouchers.url()"
-                    class="flex items-start gap-3 rounded-lg p-2 transition-colors hover:bg-accent"
+                    <Ticket class="size-5" />
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="font-medium">{{ t('admin.promosLabel') }}</p>
+                    <p class="text-sm text-muted-foreground tabular-nums">
+                        {{ props.snapshot.promos.active }}
+                        {{ t('admin.activeCount').toLowerCase() }} ·
+                        {{ props.snapshot.promos.total }}
+                        {{ t('admin.totalCount').toLowerCase() }}
+                    </p>
+                </div>
+                <ArrowRight
+                    class="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+                />
+            </Link>
+            <Link
+                :href="indexAdminVouchers.url()"
+                class="group flex items-center gap-4 rounded-xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
+            >
+                <div
+                    class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
                 >
-                    <BadgePercent class="mt-1 size-5 text-muted-foreground" />
-                    <div class="flex-1">
-                        <p class="font-medium">
-                            {{ t('admin.vouchersLabel') }}
+                    <BadgePercent class="size-5" />
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="font-medium">{{ t('admin.vouchersLabel') }}</p>
+                    <p class="text-sm text-muted-foreground tabular-nums">
+                        {{ props.snapshot.vouchers.active }}
+                        {{ t('admin.activeCount').toLowerCase() }} ·
+                        {{ props.snapshot.vouchers.used_up }}
+                        {{ t('admin.usedUpCount').toLowerCase() }}
+                    </p>
+                </div>
+                <ArrowRight
+                    class="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+                />
+            </Link>
+        </div>
+
+        <!-- Platform inventory: secondary, lower density -->
+        <section class="rounded-xl border bg-card p-5">
+            <h3 class="mb-4 text-sm font-semibold">
+                {{ t('admin.platformSectionTitle') }}
+            </h3>
+            <div
+                class="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-6"
+            >
+                <div class="flex items-center gap-3">
+                    <Users class="size-5 text-muted-foreground" />
+                    <div>
+                        <p class="text-lg font-semibold tabular-nums">
+                            {{ props.snapshot.users.total }}
                         </p>
-                        <div
-                            class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground"
-                        >
-                            <span
-                                >{{ t('admin.totalCount') }}:
-                                {{ props.snapshot.vouchers.total }}</span
-                            >
-                            <span
-                                >{{ t('admin.activeCount') }}:
-                                {{ props.snapshot.vouchers.active }}</span
-                            >
-                            <span
-                                >{{ t('admin.expiredCount') }}:
-                                {{ props.snapshot.vouchers.expired }}</span
-                            >
-                            <span
-                                >{{ t('admin.usedUpCount') }}:
-                                {{ props.snapshot.vouchers.used_up }}</span
-                            >
-                        </div>
+                        <p class="text-xs text-muted-foreground">
+                            {{ t('admin.totalUsers') }}
+                        </p>
                     </div>
-                </Link>
-            </CardContent>
-        </Card>
+                </div>
+                <div class="flex items-center gap-3">
+                    <ShoppingBag class="size-5 text-muted-foreground" />
+                    <div>
+                        <p class="text-lg font-semibold tabular-nums">
+                            {{ props.snapshot.users.buyers }}
+                        </p>
+                        <p class="text-xs text-muted-foreground">
+                            {{ t('admin.totalBuyers') }}
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <Store class="size-5 text-muted-foreground" />
+                    <div>
+                        <p class="text-lg font-semibold tabular-nums">
+                            {{ props.snapshot.users.sellers }}
+                        </p>
+                        <p class="text-xs text-muted-foreground">
+                            {{ t('admin.totalSellers') }}
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <Truck class="size-5 text-muted-foreground" />
+                    <div>
+                        <p class="text-lg font-semibold tabular-nums">
+                            {{ props.snapshot.users.drivers }}
+                        </p>
+                        <p class="text-xs text-muted-foreground">
+                            {{ t('admin.totalDrivers') }}
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <Store class="size-5 text-muted-foreground" />
+                    <div>
+                        <p class="text-lg font-semibold tabular-nums">
+                            {{ props.snapshot.stores_count }}
+                        </p>
+                        <p class="text-xs text-muted-foreground">
+                            {{ t('admin.totalStores') }}
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <Boxes class="size-5 text-muted-foreground" />
+                    <div>
+                        <p class="text-lg font-semibold tabular-nums">
+                            {{ props.snapshot.products_count }}
+                        </p>
+                        <p class="text-xs text-muted-foreground">
+                            {{ t('admin.totalProducts') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <Dialog v-model:open="confirmOpen">

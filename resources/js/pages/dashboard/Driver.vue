@@ -4,9 +4,8 @@ import { CheckCircle2, Truck, Wallet } from '@lucide/vue';
 import { useI18n } from 'vue-i18n';
 import DriverJobController from '@/actions/App/Http/Controllers/Web/DriverJobController';
 import EmptyState from '@/components/EmptyState.vue';
-import StatCard from '@/components/StatCard.vue';
+import StatTile from '@/components/StatTile.vue';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import {
     deliveryStatusBadgeVariant,
@@ -49,105 +48,96 @@ const { t, locale } = useI18n();
     <Head title="Dashboard Kurir" />
 
     <div class="flex flex-col gap-6">
-        <div class="grid gap-4 sm:grid-cols-2">
-            <StatCard
-                :label="t('driver.completedCount')"
-                :value="history.data.length"
-                :icon="CheckCircle2"
-            />
-            <StatCard
+        <div class="grid gap-3 sm:grid-cols-2">
+            <StatTile
                 :label="t('driver.totalEarnings')"
                 :value="formatIDR(totalEarnings)"
                 :icon="Wallet"
+                accent="primary"
+            />
+            <StatTile
+                :label="t('driver.completedCount')"
+                :value="history.data.length"
+                :icon="CheckCircle2"
+                accent="default"
             />
         </div>
 
-        <Card>
-            <CardContent class="pt-6">
-                <h3 class="mb-4 font-medium">
-                    {{ t('driver.activeJobTitle') }}
-                </h3>
+        <section class="rounded-xl border bg-card p-5">
+            <h3 class="mb-4 flex items-center gap-2 text-sm font-semibold">
+                <Truck class="size-4 text-muted-foreground" />
+                {{ t('driver.activeJobTitle') }}
+            </h3>
 
-                <EmptyState
-                    v-if="!activeJob"
-                    :icon="Truck"
-                    :title="t('driver.noActiveJobTitle')"
-                    :description="t('driver.noActiveJobDescription')"
-                    :action-label="t('driver.findJobs')"
-                    @action="router.visit(DriverJobController.index.url())"
+            <EmptyState
+                v-if="!activeJob"
+                :icon="Truck"
+                :title="t('driver.noActiveJobTitle')"
+                :description="t('driver.noActiveJobDescription')"
+                :action-label="t('driver.findJobs')"
+                @action="router.visit(DriverJobController.index.url())"
+            />
+
+            <Link
+                v-else
+                :href="DriverJobController.show.url(activeJob.id)"
+                class="group relative flex items-center justify-between gap-4 overflow-hidden rounded-xl border border-sky-300 bg-sky-50/60 p-4 pl-5 transition-colors hover:border-sky-400 dark:border-sky-800/70 dark:bg-sky-950/30"
+            >
+                <span
+                    class="absolute inset-y-0 left-0 w-1 bg-sky-500"
+                    aria-hidden="true"
                 />
+                <div class="min-w-0">
+                    <p class="font-mono font-semibold">
+                        {{ activeJob.order.code }}
+                    </p>
+                    <p class="text-sm text-muted-foreground">
+                        {{ activeJob.order.store.name }}
+                    </p>
+                    <p class="truncate text-xs text-muted-foreground">
+                        {{ activeJob.order.ship_address }}
+                    </p>
+                </div>
+                <Badge :variant="deliveryStatusBadgeVariant(activeJob.status)">
+                    {{ deliveryStatusLabel(activeJob.status) }}
+                </Badge>
+            </Link>
+        </section>
 
-                <Link v-else :href="DriverJobController.show.url(activeJob.id)">
-                    <Card class="transition-colors hover:border-primary">
-                        <CardContent
-                            class="flex items-center justify-between gap-4 pt-6"
-                        >
-                            <div class="min-w-0">
-                                <p class="font-medium">
-                                    {{ activeJob.order.code }}
-                                </p>
-                                <p class="text-sm text-muted-foreground">
-                                    {{ activeJob.order.store.name }}
-                                </p>
-                                <p
-                                    class="truncate text-xs text-muted-foreground"
-                                >
-                                    {{ activeJob.order.ship_address }}
-                                </p>
-                            </div>
-                            <Badge
-                                :variant="
-                                    deliveryStatusBadgeVariant(activeJob.status)
-                                "
-                            >
-                                {{ deliveryStatusLabel(activeJob.status) }}
-                            </Badge>
-                        </CardContent>
-                    </Card>
-                </Link>
-            </CardContent>
-        </Card>
+        <section class="rounded-xl border bg-card p-5">
+            <h3 class="mb-4 flex items-center gap-2 text-sm font-semibold">
+                <CheckCircle2 class="size-4 text-muted-foreground" />
+                {{ t('driver.historyTitle') }}
+            </h3>
 
-        <Card>
-            <CardContent class="pt-6">
-                <h3 class="mb-4 font-medium">
-                    {{ t('driver.historyTitle') }}
-                </h3>
+            <EmptyState
+                v-if="history.data.length === 0"
+                :icon="CheckCircle2"
+                :title="t('driver.historyEmptyTitle')"
+                :description="t('driver.historyEmptyDescription')"
+            />
 
-                <EmptyState
-                    v-if="history.data.length === 0"
-                    :icon="CheckCircle2"
-                    :title="t('driver.historyEmptyTitle')"
-                    :description="t('driver.historyEmptyDescription')"
-                />
-
-                <template v-else>
-                    <div v-for="(entry, index) in history.data" :key="entry.id">
-                        <div class="flex items-center justify-between py-2">
-                            <div>
-                                <p class="text-sm font-medium">
-                                    {{ entry.order.code }}
-                                </p>
-                                <p class="text-xs text-muted-foreground">
-                                    {{ entry.order.store.name }} ·
-                                    {{
-                                        formatDateTime(
-                                            entry.completed_at,
-                                            locale,
-                                        )
-                                    }}
-                                </p>
-                            </div>
-                            <p
-                                class="font-medium text-emerald-600 tabular-nums dark:text-emerald-400"
-                            >
-                                +{{ formatIDR(entry.earning_amount) }}
+            <template v-else>
+                <div v-for="(entry, index) in history.data" :key="entry.id">
+                    <div class="flex items-center justify-between py-2.5">
+                        <div class="min-w-0">
+                            <p class="font-mono text-sm font-medium">
+                                {{ entry.order.code }}
+                            </p>
+                            <p class="text-xs text-muted-foreground">
+                                {{ entry.order.store.name }} ·
+                                {{ formatDateTime(entry.completed_at, locale) }}
                             </p>
                         </div>
-                        <Separator v-if="index < history.data.length - 1" />
+                        <p
+                            class="font-semibold text-emerald-600 tabular-nums dark:text-emerald-400"
+                        >
+                            +{{ formatIDR(entry.earning_amount) }}
+                        </p>
                     </div>
-                </template>
-            </CardContent>
-        </Card>
+                    <Separator v-if="index < history.data.length - 1" />
+                </div>
+            </template>
+        </section>
     </div>
 </template>

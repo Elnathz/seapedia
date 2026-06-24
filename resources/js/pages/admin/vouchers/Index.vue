@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, Link, router } from '@inertiajs/vue3';
-import { BadgePercent, Plus } from '@lucide/vue';
+import { BadgePercent, CalendarClock, Plus } from '@lucide/vue';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AdminVoucherController from '@/actions/App/Http/Controllers/Web/Admin/VoucherController';
@@ -9,7 +9,6 @@ import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import {
     Dialog,
     DialogClose,
@@ -37,7 +36,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { discountStatusBadgeVariant } from '@/lib/discountStatus';
+import {
+    discountStatusAccent,
+    discountStatusBadgeVariant,
+} from '@/lib/discountStatus';
 import type { DiscountStatusKey } from '@/lib/discountStatus';
 import { formatIDR } from '@/lib/utils';
 
@@ -91,6 +93,14 @@ function valueLabel(row: { type: DiscountTypeKey; value: number }): string {
     return row.type === 'percentage' ? `${row.value}%` : formatIDR(row.value);
 }
 
+function usagePct(row: VoucherRow): number {
+    if (row.usage_limit <= 0) {
+        return 0;
+    }
+
+    return Math.min(100, Math.round((row.used_count / row.usage_limit) * 100));
+}
+
 function goToPage(page: number) {
     router.get(
         AdminVoucherController.index.url(),
@@ -122,33 +132,79 @@ function goToPage(page: number) {
         />
 
         <template v-else>
-            <div class="flex flex-col gap-3">
-                <Card v-for="voucher in props.vouchers.data" :key="voucher.id">
-                    <CardContent
-                        class="flex flex-wrap items-center justify-between gap-4 pt-6"
-                    >
+            <div class="grid gap-3 lg:grid-cols-2">
+                <div
+                    v-for="voucher in props.vouchers.data"
+                    :key="voucher.id"
+                    class="relative flex flex-col gap-4 overflow-hidden rounded-xl border bg-card p-4 transition-shadow hover:shadow-sm"
+                >
+                    <span
+                        class="absolute inset-y-0 left-0 w-1"
+                        :class="discountStatusAccent(voucher.status)"
+                        aria-hidden="true"
+                    />
+                    <div class="flex items-start justify-between gap-3 pl-2">
                         <div class="min-w-0">
-                            <p class="font-mono font-medium">
+                            <p
+                                class="truncate font-mono text-base font-semibold"
+                            >
                                 {{ voucher.code }}
                             </p>
-                            <p class="text-sm text-muted-foreground">
-                                {{ valueLabel(voucher) }} ·
-                                {{ voucher.used_count }}/{{
-                                    voucher.usage_limit
+                            <p class="mt-0.5 text-sm text-muted-foreground">
+                                <span
+                                    class="font-medium text-foreground tabular-nums"
+                                    >{{ valueLabel(voucher) }}</span
+                                >
+                                ·
+                                {{
+                                    voucher.type === 'percentage'
+                                        ? t('admin.typePercentage')
+                                        : t('admin.typeFixed')
                                 }}
-                                · {{ t('admin.expiryDateLabel') }}:
-                                {{ voucher.expiry_date.slice(0, 10) }}
                             </p>
                         </div>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <Badge
-                                :variant="
-                                    discountStatusBadgeVariant(voucher.status)
-                                "
-                            >
-                                {{ t(statusLabelKey[voucher.status]) }}
-                            </Badge>
-                            <Button as-child size="sm" variant="outline">
+                        <Badge
+                            :variant="
+                                discountStatusBadgeVariant(voucher.status)
+                            "
+                        >
+                            {{ t(statusLabelKey[voucher.status]) }}
+                        </Badge>
+                    </div>
+
+                    <div class="flex flex-col gap-1.5 pl-2">
+                        <div
+                            class="flex items-baseline justify-between text-xs text-muted-foreground"
+                        >
+                            <span>{{ t('admin.usedCountLabel') }}</span>
+                            <span class="tabular-nums">
+                                {{ voucher.used_count }} /
+                                {{ voucher.usage_limit }}
+                            </span>
+                        </div>
+                        <div
+                            class="h-1.5 overflow-hidden rounded-full bg-muted"
+                        >
+                            <div
+                                class="h-full rounded-full bg-sky-500 transition-[width] duration-500 motion-reduce:transition-none"
+                                :style="{ width: `${usagePct(voucher)}%` }"
+                            />
+                        </div>
+                    </div>
+
+                    <div
+                        class="flex flex-wrap items-center justify-between gap-3 pl-2"
+                    >
+                        <span
+                            class="flex items-center gap-1.5 text-xs text-muted-foreground"
+                        >
+                            <CalendarClock class="size-3.5" />
+                            <span class="tabular-nums">{{
+                                voucher.expiry_date.slice(0, 10)
+                            }}</span>
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <Button as-child size="sm" variant="ghost">
                                 <Link
                                     :href="
                                         AdminVoucherController.show.url(
@@ -182,8 +238,8 @@ function goToPage(page: number) {
                                 </Button>
                             </Form>
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </div>
 
             <Pagination

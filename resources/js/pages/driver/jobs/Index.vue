@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Truck } from '@lucide/vue';
+import { ArrowRight, MapPin, Store, Truck } from '@lucide/vue';
 import { useI18n } from 'vue-i18n';
 import DriverJobController from '@/actions/App/Http/Controllers/Web/DriverJobController';
 import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import {
     Pagination,
     PaginationContent,
@@ -83,50 +82,56 @@ function goToPage(page: number) {
         />
 
         <template v-else>
-            <div class="flex flex-col gap-3">
+            <div class="grid gap-3 lg:grid-cols-2">
                 <Link
                     v-for="job in props.jobs.data"
                     :key="job.id"
                     :href="DriverJobController.show.url(job.id)"
+                    class="group relative flex items-center justify-between gap-4 overflow-hidden rounded-xl border bg-card p-4 pl-5 transition-all hover:border-primary/50 hover:shadow-sm"
                 >
-                    <Card class="transition-colors hover:border-primary">
-                        <CardContent
-                            class="flex items-center justify-between gap-4 pt-6"
+                    <span
+                        class="absolute inset-y-0 left-0 w-1 bg-amber-500"
+                        aria-hidden="true"
+                    />
+                    <div class="min-w-0 space-y-1.5">
+                        <div class="flex items-center gap-2">
+                            <p class="font-mono font-semibold">
+                                {{ job.order.code }}
+                            </p>
+                            <Badge variant="outline">
+                                {{
+                                    t(methodLabelKey[job.order.delivery_method])
+                                }}
+                            </Badge>
+                        </div>
+                        <p
+                            class="flex items-center gap-1.5 text-sm text-muted-foreground"
                         >
-                            <div class="min-w-0">
-                                <p class="font-medium">
-                                    {{ job.order.code }}
-                                </p>
-                                <p class="text-sm text-muted-foreground">
-                                    {{ job.order.store.name }}
-                                </p>
-                                <p
-                                    class="truncate text-xs text-muted-foreground"
-                                >
-                                    {{ job.order.ship_address }}
-                                </p>
-                            </div>
-                            <div class="shrink-0 text-right">
-                                <Badge variant="outline">
-                                    {{
-                                        t(
-                                            methodLabelKey[
-                                                job.order.delivery_method
-                                            ],
-                                        )
-                                    }}
-                                </Badge>
-                                <p
-                                    class="mt-1 font-medium text-emerald-600 tabular-nums dark:text-emerald-400"
-                                >
-                                    +{{ formatIDR(job.earning_preview) }}
-                                </p>
-                                <p class="text-xs text-muted-foreground">
-                                    {{ t('driver.earningPreview') }}
-                                </p>
-                            </div>
-                        </CardContent>
-                    </Card>
+                            <Store class="size-3.5 shrink-0" />
+                            {{ job.order.store.name }}
+                        </p>
+                        <p
+                            class="flex items-center gap-1.5 truncate text-xs text-muted-foreground"
+                        >
+                            <MapPin class="size-3.5 shrink-0" />
+                            {{ job.order.ship_address }}
+                        </p>
+                    </div>
+                    <div class="flex shrink-0 items-center gap-3">
+                        <div class="text-right">
+                            <p
+                                class="font-semibold text-emerald-600 tabular-nums dark:text-emerald-400"
+                            >
+                                +{{ formatIDR(job.earning_preview) }}
+                            </p>
+                            <p class="text-xs text-muted-foreground">
+                                {{ t('driver.earningPreview') }}
+                            </p>
+                        </div>
+                        <ArrowRight
+                            class="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+                        />
+                    </div>
                 </Link>
             </div>
 

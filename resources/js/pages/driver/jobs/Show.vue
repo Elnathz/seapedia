@@ -16,7 +16,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Separator } from '@/components/ui/separator';
 import {
     deliveryStatusBadgeVariant,
     deliveryStatusLabel,
@@ -200,24 +199,34 @@ function confirmAction() {
 
             <Card class="min-w-0 lg:sticky lg:top-6 lg:self-start">
                 <CardContent class="space-y-4 pt-6">
-                    <h3 class="font-medium">
-                        {{ t('driver.earningPreview') }}
+                    <h3 class="text-sm font-semibold">
+                        {{ t('driver.payoutTitle') }}
                     </h3>
-                    <div class="flex justify-between font-semibold">
+
+                    <div
+                        class="flex items-center justify-between text-sm text-muted-foreground"
+                    >
                         <span>{{ t('order.deliveryFee') }}</span>
                         <span class="tabular-nums">{{
                             formatIDR(job.order.delivery_fee)
                         }}</span>
                     </div>
-                    <Separator />
-                    <div class="flex justify-between font-semibold">
-                        <span>{{
-                            job.status === 'completed'
-                                ? t('driver.totalEarnings')
-                                : t('driver.earningPreview')
-                        }}</span>
-                        <span
-                            class="text-lg text-emerald-600 tabular-nums dark:text-emerald-400"
+
+                    <!-- Signature: the 80/20 split, made legible -->
+                    <div
+                        class="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 dark:border-emerald-900/60 dark:bg-emerald-950/30"
+                    >
+                        <p
+                            class="text-xs font-medium text-emerald-700 dark:text-emerald-300"
+                        >
+                            {{
+                                job.status === 'completed'
+                                    ? t('driver.totalEarnings')
+                                    : t('driver.courierShare')
+                            }}
+                        </p>
+                        <p
+                            class="mt-1 text-2xl font-bold text-emerald-600 tabular-nums dark:text-emerald-400"
                         >
                             +{{
                                 formatIDR(
@@ -226,7 +235,18 @@ function confirmAction() {
                                         : job.earning_preview,
                                 )
                             }}
-                        </span>
+                        </p>
+                        <div
+                            class="mt-3 flex h-2 overflow-hidden rounded-full bg-emerald-100 dark:bg-emerald-900/50"
+                            aria-hidden="true"
+                        >
+                            <div class="h-full w-[80%] bg-emerald-500" />
+                        </div>
+                        <p
+                            class="mt-2 text-xs text-emerald-700/80 dark:text-emerald-300/80"
+                        >
+                            {{ t('driver.earningShareNote') }}
+                        </p>
                     </div>
 
                     <Button
