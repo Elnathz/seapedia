@@ -10,7 +10,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T4 · Cart with single-store guard — `feat(cart): add buyer cart with single-store guard`
 - [x] T5 · Checkout preview + commit + OrderService + ClockService — `feat(checkout): charge wallet and reduce stock in a locked transaction`
 - [x] T6 · Buyer order history + detail + seller incoming list — `feat(order): add buyer order history and seller incoming list`
-- [ ] T7 · API mirror + Swagger for buyer flows — `feat(api): expose buyer wallet, cart and checkout endpoints`
+- [x] T7 · API mirror + Swagger for buyer flows — `feat(api): expose buyer wallet, cart and checkout endpoints`
 - [ ] T8 · Demo seed (wallets, addresses, sample order) + README — `feat(db): seed buyer wallets, addresses and demo order`
 
 ## Deferred to final sprint (owner's decision)
@@ -27,7 +27,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] Oversell: two concurrent checkouts on last unit → one succeeds, one rejected, no negative stock (T5)
 - [x] Insufficient balance → rejected, no order/stock/charge side effects (T5)
 - [x] Buyer scoped to own orders; seller scoped to own store's orders (T6)
-- [ ] API checkout happy path returns order; insufficient balance → 422 (T7)
+- [x] API checkout happy path returns order; insufficient balance → 422 (T7)
 
 ## Visual QA (Playwright MCP) — 360/768/1280/1920, both locales, light + dark
 
@@ -107,3 +107,8 @@ code/tests and batch the whole visual-QA pass once Playwright reconnects, rather
   the "process" action and any seller order detail view are Sprint 4). Found and fixed a real Vue
   compiler error along the way: `defineOptions()` cannot reference `props.*` (it's hoisted out of
   setup()) — the order-detail breadcrumb dropped the dynamic order code and uses a static label.
+- **T7:** API routes follow §8's representative paths exactly (`POST /buyer/cart/items`,
+  `POST /buyer/checkout/preview`), which differ from the web routes' own paths (`/buyer/cart`,
+  no separate preview route — the web checkout page precomputes all three delivery methods up
+  front instead). Both surfaces call the identical Services underneath; only the route shape
+  differs per surface, per golden rule 2.
