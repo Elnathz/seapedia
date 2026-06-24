@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Checkout;
 
+use App\Enums\DeliveryMethod;
 use App\Enums\OrderStatus;
 use App\Enums\RoleName;
 use App\Models\Address;
@@ -12,6 +13,7 @@ use App\Models\Role;
 use App\Models\Store;
 use App\Models\User;
 use App\Services\CartService;
+use App\Services\CheckoutService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -67,6 +69,25 @@ class CheckoutTest extends TestCase
 
         $this->assertSame(0, CartItem::query()->count());
         $this->assertSame(1, $order->statusHistories()->count());
+    }
+
+    public function test_preview_uses_the_live_product_price_not_the_cart_snapshot(): void
+    {
+        $buyer = $this->buyer();
+        $store = Store::factory()->create();
+        $product = Product::factory()->create(['store_id' => $store->id, 'price' => 10_000, 'stock' => 10]);
+
+        // Snapshot is 10_000 at add-time; the seller then raises the price.
+        app(CartService::class)->addItem($buyer, $product, 1);
+        $product->update(['price' => 15_000]);
+
+        $preview = app(CheckoutService::class)->preview($buyer->refresh(), DeliveryMethod::Regular);
+
+        // Preview must reflect the live price (15_000) so it matches what
+        // commit() charges, not the stale 10_000 cart snapshot.
+        $this->assertSame(15_000, $preview['subtotal']);
+        $this->assertSame(1_800, $preview['tax_amount']);
+        $this->assertSame(21_800, $preview['grand_total']);
     }
 
     public function test_insufficient_balance_blocks_checkout_with_zero_side_effects(): void

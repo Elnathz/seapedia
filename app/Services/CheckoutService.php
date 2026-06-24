@@ -31,8 +31,12 @@ class CheckoutService
     {
         $cart = $this->carts->summary($user);
 
+        // Price from the live product (fallback to the cart snapshot if the
+        // product vanished) so the previewed total matches what commit()
+        // actually charges — commit re-prices from the live product under a
+        // lock, and the buyer must be charged exactly what the summary shows.
         $subtotal = $cart->items->sum(
-            fn ($item) => $item->price_snapshot * $item->quantity,
+            fn ($item) => ($item->product?->price ?? $item->price_snapshot) * $item->quantity,
         );
 
         // Discount is a zero placeholder this sprint — the math/summary
