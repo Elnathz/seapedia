@@ -7,7 +7,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T1 · Wallet ledger + locked WalletService — `feat(wallet): add wallet ledger and locked WalletService`
 - [x] T2 · Fake top-up (gateway interface + FakeGateway) + wallet page — `feat(wallet): add fake top-up via payment gateway interface`
 - [x] T3 · Delivery address management — `feat(buyer): add delivery address management`
-- [ ] T4 · Cart with single-store guard — `feat(cart): add buyer cart with single-store guard`
+- [x] T4 · Cart with single-store guard — `feat(cart): add buyer cart with single-store guard`
 - [ ] T5 · Checkout preview + commit + OrderService + ClockService — `feat(checkout): charge wallet and reduce stock in a locked transaction`
 - [ ] T6 · Buyer order history + detail + seller incoming list — `feat(order): add buyer order history and seller incoming list`
 - [ ] T7 · API mirror + Swagger for buyer flows — `feat(api): expose buyer wallet, cart and checkout endpoints`
@@ -23,7 +23,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] Concurrent credit+debit stay consistent (locked); over-debit rejected (T1)
 - [x] Fake top-up credits wallet + writes ledger; replay is idempotent (T2)
 - [x] Cross-user address update → 403; new default unsets previous (T3)
-- [ ] Add from different store → 422; clear-then-add succeeds; qty update changes line subtotal (T4)
+- [x] Add from different store → 422; clear-then-add succeeds; qty update changes line subtotal (T4)
 - [ ] Oversell: two concurrent checkouts on last unit → one succeeds, one rejected, no negative stock (T5)
 - [ ] Insufficient balance → rejected, no order/stock/charge side effects (T5)
 - [ ] Buyer scoped to own orders; seller scoped to own store's orders (T6)
@@ -66,3 +66,13 @@ code/tests and batch the whole visual-QA pass once Playwright reconnects, rather
   the create/edit dialog (matches the plan's wording exactly: "create/edit in a dialog; ... ;
   set-default action" are listed as separate things). `AddressService` still accepts an optional
   `is_default` key so the T8 seeder can mark one explicitly when seeding.
+- **T4:** `cart_items.price_snapshot` is taken when an item is *added* to the cart (display only —
+  shows the buyer what price they saw). It is deliberately NOT what gets charged: per TDD §7,
+  `order_items` has its own `price_snapshot`, taken fresh from the live `product.price` under lock
+  at checkout commit (T5). If a seller changes a price while it's in someone's cart, the checkout
+  preview shows the current price, not the stale cart one — no extra cart-side warning needed.
+  `CartService::addItem` accepts a `$replaceStore` flag (clear-then-add in one request/transaction)
+  instead of a separate clear-and-add endpoint. Ownership is enforced via a new `CartItemPolicy`
+  (`update`/`delete`), matching the `AddressPolicy`/`ProductPolicy` convention, not inline checks in
+  the service. `BuyerCartController::store` redirects `back()` (not to a fixed route) since it's
+  called from the catalog/product page as well as the cart page itself.
