@@ -70,6 +70,23 @@ locale only, via live click-throughs) before the instruction landed; the uncheck
   adding a `report.sellerBreakdownEmpty` explanatory message (`fix(report): explain why seller
   breakdown is empty under escrow`).
 
+## Design rework (post-review, 2026-06-25)
+
+Owner flagged that Sprint 5 UI shipped as generic shadcn defaults — the `ui-ux-pro-max` /
+`frontend-design` skills were never invoked during the Sonnet build because they weren't wired
+into CLAUDE.md or the project skills (the verbal request was lost across compaction/handoff). Fixed:
+
+- **Rule wired permanently** so it can't be dropped again: CLAUDE.md golden rule 11a + execution
+  model + DoD, the `vertical-feature` skill (step 10 + checklist), the `sprint-planner` skill
+  ("Design direction" section), and a memory entry (`docs(ui): require ui-ux-pro-max/frontend-design...`).
+- **Pages reworked through the design skills** (anchored on the existing teal "sea" brand tokens —
+  no new palette): admin ops dashboard (signature "time-machine" command bar + KPI band +
+  proportion bars), promo/voucher management lists (status-accent rows, voucher usage meter),
+  driver dashboard + jobs board + job detail (dispatch rows, prominent active-job slot, 80/20
+  payout split made legible). New primitives: `StatTile`, `StatBar` + status fill/accent tokens.
+- Verified: `vue-tsc`, ESLint, Prettier, `npm run build` clean; 42 dashboard/driver/admin Pest
+  tests pass. Visual QA still skipped per the no-Playwright instruction (1280px reasoning only).
+
 ## Notes / deviations recorded
 
 - **ESCROW (owner decision, 2026-06-25) — deviates from §5.9 as written.** Seller income is credited
