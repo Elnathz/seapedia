@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\BuyerAddressController;
 use App\Http\Controllers\Web\BuyerCartController;
 use App\Http\Controllers\Web\BuyerWalletController;
 use App\Http\Controllers\Web\CatalogController;
+use App\Http\Controllers\Web\CheckoutController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\RoleController;
@@ -59,6 +60,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('cart/{item}', [BuyerCartController::class, 'update'])->name('cart.update');
         Route::delete('cart/{item}', [BuyerCartController::class, 'destroy'])->name('cart.destroy');
         Route::delete('cart', [BuyerCartController::class, 'clear'])->name('cart.clear');
+
+        Route::get('checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+        Route::post('checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     });
 });
 

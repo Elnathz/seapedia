@@ -16,5 +16,9 @@
     "Item added to cart.": "Produk ditambahkan ke keranjang.",
     "Cart updated.": "Keranjang berhasil diperbarui.",
     "Item removed from cart.": "Produk dihapus dari keranjang.",
-    "Cart cleared.": "Keranjang berhasil dikosongkan."
+    "Cart cleared.": "Keranjang berhasil dikosongkan.",
+    "Your cart is empty.": "Keranjang Anda masih kosong.",
+    "Insufficient stock for :product (:stock left).": "Stok :product tinggal :stock.",
+    "Order :code placed.": "Pesanan :code berhasil dibuat.",
+    "Invalid order status transition.": "Perubahan status pesanan tidak valid."
 }

@@ -91,6 +91,14 @@ class User extends Authenticatable
         return $this->hasOne(Cart::class);
     }
 
+    /**
+     * @return HasMany<Order, $this>
+     */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'buyer_id');
+    }
+
     public function hasRole(RoleName $role): bool
     {
         return $this->roles->contains('name', $role->value);

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { Minus, Plus, ShoppingBag, Trash2 } from '@lucide/vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import BuyerCartController from '@/actions/App/Http/Controllers/Web/BuyerCartController';
+import CheckoutController from '@/actions/App/Http/Controllers/Web/CheckoutController';
 import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
@@ -184,17 +185,24 @@ function clearAll() {
 
             <Separator />
 
-            <div class="flex items-center justify-between">
+            <div class="flex flex-wrap items-center justify-between gap-4">
                 <Button variant="outline" @click="clearAll">
                     {{ t('cart.clearCart') }}
                 </Button>
-                <div class="text-right">
-                    <p class="text-sm text-muted-foreground">
-                        {{ t('cart.subtotal') }}
-                    </p>
-                    <p class="text-xl font-semibold tabular-nums">
-                        {{ formatIDR(subtotal) }}
-                    </p>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-sm text-muted-foreground">
+                            {{ t('cart.subtotal') }}
+                        </p>
+                        <p class="text-xl font-semibold tabular-nums">
+                            {{ formatIDR(subtotal) }}
+                        </p>
+                    </div>
+                    <Button as-child>
+                        <Link :href="CheckoutController.show.url()">{{
+                            t('cart.goToCheckout')
+                        }}</Link>
+                    </Button>
                 </div>
             </div>
         </template>

@@ -16,5 +16,9 @@
     "Item added to cart.": "Item added to cart.",
     "Cart updated.": "Cart updated.",
     "Item removed from cart.": "Item removed from cart.",
-    "Cart cleared.": "Cart cleared."
+    "Cart cleared.": "Cart cleared.",
+    "Your cart is empty.": "Your cart is empty.",
+    "Insufficient stock for :product (:stock left).": "Insufficient stock for :product (:stock left).",
+    "Order :code placed.": "Order :code placed.",
+    "Invalid order status transition.": "Invalid order status transition."
 }
