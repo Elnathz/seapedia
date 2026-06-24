@@ -144,3 +144,29 @@ coverage in `tests/Feature/DashboardTest.php`.
   cart and check out). Verified end-to-end via tinker after `migrate:fresh --seed`: buyer1 balance
   474,840 (500,000 − 25,160 grand_total), 2 ledger rows, 1 address, 1 order (Sedang Dikemas, 1 item,
   1 status history); seller1's store shows the same order in its incoming list with 18,000 credited.
+
+## Post-review findings (Opus, 2026-06-24, after T1–T8 shipped)
+
+5-layer `code-review` pass over the whole sprint diff. Security sweep clean (no `v-html` on user
+content, no raw SQL / `DB::raw`, no `$guarded = []`); transactions + locks correct; no N+1 in the
+read paths. Three findings:
+
+1. **[MEDIUM — FIXED] Checkout preview ≠ what commit charges.** `CheckoutService::preview()` summed
+   the cart `price_snapshot` (price at add-to-cart time) while `commit()` re-prices from the live
+   `product->price` under a lock. So if a seller changed a price after the buyer added the item, the
+   summary the buyer confirmed didn't match what they were actually charged — a trust bug in the
+   graded 10-pt checkout flow. (The T4 note above even claimed preview used the live price; the code
+   didn't.) Fixed: preview now reads the live `item.product.price` (already eager-loaded in the cart
+   summary) with a snapshot fallback, so shown total == charged total. Regression test added
+   (`test_preview_uses_the_live_product_price_not_the_cart_snapshot`). Commit `fix(checkout)`.
+2. **[MINOR — FIXED] Dead code.** `CartService::assertOwnership()` was left behind unused after T4
+   moved cart-item ownership to `CartItemPolicy`. Removed. Commit `refactor(cart)`.
+3. **[LOW — carried to Sprint 4 T2] Product-lock ordering.** `CheckoutService::commit()` locks
+   products in cart-item order; two concurrent multi-product checkouts that lock in opposite orders
+   could deadlock. InnoDB aborts one cleanly (acceptable — surfaces as a rollback, no oversell), so
+   not urgent, but sorting the `lockForUpdate` loop by `product_id` removes the window entirely.
+   Folded into Sprint 4 T2 (which re-touches `commit()` for the voucher lock anyway); see
+   `planning/sprint4/plan.md` carry-over.
+
+**Also surfaced & fixed during the post-review visual QA** (already logged above): the mobile
+dashboard padding bug (`fix(ui)`) and the dashboard widgets showing hardcoded 0 (`fix(dashboard)`).
