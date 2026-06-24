@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('code')->unique();
             $table->enum('type', ['percentage', 'fixed']);
-            $table->unsignedInteger('value');
+            // Holds a percentage (0–100) or a fixed IDR amount; money is
+            // BIGINT UNSIGNED per §7 / golden rule 5.
+            $table->unsignedBigInteger('value');
             $table->unsignedBigInteger('max_discount')->nullable();
             $table->unsignedBigInteger('min_spend')->nullable();
             $table->timestamp('expiry_date');
