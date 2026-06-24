@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\AppReviewController;
 use App\Http\Controllers\Web\BuyerAddressController;
 use App\Http\Controllers\Web\BuyerCartController;
 use App\Http\Controllers\Web\BuyerOrderController;
+use App\Http\Controllers\Web\BuyerReportController;
 use App\Http\Controllers\Web\BuyerWalletController;
 use App\Http\Controllers\Web\CatalogController;
 use App\Http\Controllers\Web\CheckoutController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\RoleController;
 use App\Http\Controllers\Web\SellerOrderController;
 use App\Http\Controllers\Web\SellerProductController;
+use App\Http\Controllers\Web\SellerReportController;
 use App\Http\Controllers\Web\SellerStoreController;
 use App\Http\Controllers\Web\StoreController;
 use Illuminate\Support\Facades\Route;
@@ -49,6 +51,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('orders', [SellerOrderController::class, 'index'])->name('orders.index');
         Route::get('orders/{order}', [SellerOrderController::class, 'show'])->name('orders.show');
         Route::post('orders/{order}/process', [SellerOrderController::class, 'process'])->name('orders.process');
+
+        Route::get('reports', [SellerReportController::class, 'index'])->name('reports.index');
     });
 
     Route::middleware('active_role:buyer')->prefix('buyer')->name('buyer.')->group(function () {
@@ -72,6 +76,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('orders', [BuyerOrderController::class, 'index'])->name('orders.index');
         Route::get('orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
+
+        Route::get('reports', [BuyerReportController::class, 'index'])->name('reports.index');
     });
 });
 

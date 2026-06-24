@@ -17,6 +17,7 @@ export default {
         addresses: 'Addresses',
         cart: 'Cart',
         myOrders: 'My Orders',
+        reports: 'Reports',
         platform: 'Platform',
         switchRole: 'Switch role',
         settings: 'Settings',
@@ -225,5 +226,22 @@ export default {
         processConfirmDescription:
             'Order {code} will move to Menunggu Pengirim and become visible to drivers. Continue?',
         processConfirm: 'Yes, Process',
+    },
+    report: {
+        buyerTitle: 'Spending Report',
+        sellerTitle: 'Income Report',
+        totalSpent: 'Total Spent',
+        totalIncome: 'Total Income',
+        orderCount: 'Orders',
+        incomingCount: 'Incoming Orders',
+        processedCount: 'Processed Orders',
+        breakdownTitle: 'Breakdown by Status',
+        columnOrders: 'Orders',
+        columnAmount: 'Amount',
+        emptyTitle: 'No orders yet',
+        buyerEmptyDescription:
+            'Your spending will show up here after you check out.',
+        sellerEmptyDescription:
+            'Your income will show up here once buyers check out from your store.',
     },
 };

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import {
+    BarChart3,
     Inbox,
     LayoutGrid,
     MapPin,
@@ -29,9 +30,11 @@ import { dashboard } from '@/routes';
 import { index as indexBuyerAddresses } from '@/routes/buyer/addresses';
 import { index as indexBuyerCart } from '@/routes/buyer/cart';
 import { index as indexBuyerOrders } from '@/routes/buyer/orders';
+import { index as indexBuyerReports } from '@/routes/buyer/reports';
 import { show as showBuyerWallet } from '@/routes/buyer/wallet';
 import { index as indexSellerOrders } from '@/routes/seller/orders';
 import { index as indexSellerProducts } from '@/routes/seller/products';
+import { index as indexSellerReports } from '@/routes/seller/reports';
 import { show as showSellerStore } from '@/routes/seller/store';
 import { useAuthStore } from '@/stores/auth';
 import type { NavItem } from '@/types';
@@ -65,6 +68,11 @@ const mainNavItems = computed<NavItem[]>(() => {
                 href: indexSellerOrders(),
                 icon: Inbox,
             },
+            {
+                title: t('nav.reports'),
+                href: indexSellerReports(),
+                icon: BarChart3,
+            },
         );
     }
 
@@ -89,6 +97,11 @@ const mainNavItems = computed<NavItem[]>(() => {
                 title: t('nav.myOrders'),
                 href: indexBuyerOrders(),
                 icon: Receipt,
+            },
+            {
+                title: t('nav.reports'),
+                href: indexBuyerReports(),
+                icon: BarChart3,
             },
         );
     }

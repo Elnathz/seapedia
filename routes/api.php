@@ -5,11 +5,13 @@ use App\Http\Controllers\Api\Admin\VoucherController;
 use App\Http\Controllers\Api\BuyerAddressController;
 use App\Http\Controllers\Api\BuyerCartController;
 use App\Http\Controllers\Api\BuyerOrderController;
+use App\Http\Controllers\Api\BuyerReportController;
 use App\Http\Controllers\Api\BuyerWalletController;
 use App\Http\Controllers\Api\CatalogController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\MeController;
 use App\Http\Controllers\Api\Seller\OrderController as SellerOrderController;
+use App\Http\Controllers\Api\SellerReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
@@ -39,10 +41,14 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
         Route::get('orders', [BuyerOrderController::class, 'index'])->name('orders.index');
         Route::get('orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
+
+        Route::get('reports', [BuyerReportController::class, 'index'])->name('reports.index');
     });
 
     Route::middleware(['auth:sanctum', 'active_role:seller'])->prefix('seller')->name('seller.')->group(function () {
         Route::post('orders/{order}/process', [SellerOrderController::class, 'process'])->name('orders.process');
+
+        Route::get('reports', [SellerReportController::class, 'index'])->name('reports.index');
     });
 
     Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {

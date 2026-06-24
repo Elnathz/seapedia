@@ -17,6 +17,7 @@ export default {
         addresses: 'Alamat',
         cart: 'Keranjang',
         myOrders: 'Pesanan Saya',
+        reports: 'Laporan',
         platform: 'Platform',
         switchRole: 'Ganti peran',
         settings: 'Pengaturan',
@@ -225,5 +226,22 @@ export default {
         processConfirmDescription:
             'Pesanan {code} akan berpindah ke Menunggu Pengirim dan tampil bagi kurir. Lanjutkan?',
         processConfirm: 'Ya, Proses',
+    },
+    report: {
+        buyerTitle: 'Laporan Pengeluaran',
+        sellerTitle: 'Laporan Pendapatan',
+        totalSpent: 'Total Pengeluaran',
+        totalIncome: 'Total Pendapatan',
+        orderCount: 'Pesanan',
+        incomingCount: 'Pesanan Masuk',
+        processedCount: 'Pesanan Diproses',
+        breakdownTitle: 'Rincian per Status',
+        columnOrders: 'Jumlah Pesanan',
+        columnAmount: 'Total',
+        emptyTitle: 'Belum ada pesanan',
+        buyerEmptyDescription:
+            'Pengeluaran Anda akan muncul di sini setelah checkout.',
+        sellerEmptyDescription:
+            'Pendapatan Anda akan muncul di sini setelah pembeli checkout dari toko Anda.',
     },
 };
