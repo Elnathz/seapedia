@@ -82,9 +82,9 @@ const { t, locale } = useI18n();
             </Badge>
         </div>
 
-        <div class="grid gap-6 lg:grid-cols-3">
-            <div class="flex flex-col gap-6 lg:col-span-2">
-                <Card>
+        <div class="grid min-w-0 gap-6 lg:grid-cols-3">
+            <div class="flex min-w-0 flex-col gap-6 lg:col-span-2">
+                <Card class="min-w-0">
                     <CardContent class="space-y-2 pt-6">
                         <h3 class="font-medium">
                             {{ t('order.shippingTitle') }}
@@ -110,7 +110,7 @@ const { t, locale } = useI18n();
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card class="min-w-0">
                     <CardContent class="pt-6">
                         <h3 class="mb-4 font-medium">
                             {{ t('order.itemsTitle') }}
@@ -172,7 +172,7 @@ const { t, locale } = useI18n();
                 </Card>
             </div>
 
-            <Card class="lg:sticky lg:top-6 lg:self-start">
+            <Card class="min-w-0 lg:sticky lg:top-6 lg:self-start">
                 <CardContent class="space-y-2 pt-6">
                     <h3 class="font-medium">
                         {{ t('order.summaryTitle') }}

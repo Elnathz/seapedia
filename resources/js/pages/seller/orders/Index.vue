@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { Inbox } from '@lucide/vue';
 import { useI18n } from 'vue-i18n';
 import SellerOrderController from '@/actions/App/Http/Controllers/Web/SellerOrderController';
 import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import {
     Pagination,
     PaginationContent,
@@ -16,14 +17,6 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 import { orderStatusBadgeVariant, orderStatusLabel } from '@/lib/orderStatus';
 import type { OrderStatusKey } from '@/lib/orderStatus';
 import { formatDateTime, formatIDR } from '@/lib/utils';
@@ -80,54 +73,46 @@ function goToPage(page: number) {
         />
 
         <template v-else>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>{{ t('order.columnCode') }}</TableHead>
-                        <TableHead>{{ t('order.columnBuyer') }}</TableHead>
-                        <TableHead>{{ t('order.columnStatus') }}</TableHead>
-                        <TableHead class="text-right">{{
-                            t('order.columnTotal')
-                        }}</TableHead>
-                        <TableHead class="text-right">{{
-                            t('order.columnDate')
-                        }}</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    <TableRow
-                        v-for="order in props.orders.data"
-                        :key="order.id"
-                        class="cursor-pointer hover:bg-muted/50"
-                        @click="
-                            router.visit(
-                                SellerOrderController.show.url(order.id),
-                            )
-                        "
-                    >
-                        <TableCell class="font-medium">{{
-                            order.code
-                        }}</TableCell>
-                        <TableCell>{{ order.buyer.name }}</TableCell>
-                        <TableCell>
-                            <Badge
-                                :variant="orderStatusBadgeVariant(order.status)"
-                            >
-                                {{ orderStatusLabel(order.status) }}
-                            </Badge>
-                        </TableCell>
-                        <TableCell class="text-right tabular-nums">{{
-                            formatIDR(order.grand_total)
-                        }}</TableCell>
-                        <TableCell
-                            class="text-right text-sm text-muted-foreground"
-                            >{{
-                                formatDateTime(order.created_sim_at, locale)
-                            }}</TableCell
+            <div class="flex flex-col gap-3">
+                <Link
+                    v-for="order in props.orders.data"
+                    :key="order.id"
+                    :href="SellerOrderController.show.url(order.id)"
+                >
+                    <Card class="transition-colors hover:border-primary">
+                        <CardContent
+                            class="flex items-center justify-between gap-4 pt-6"
                         >
-                    </TableRow>
-                </TableBody>
-            </Table>
+                            <div>
+                                <p class="font-medium">{{ order.code }}</p>
+                                <p class="text-sm text-muted-foreground">
+                                    {{ order.buyer.name }}
+                                </p>
+                                <p class="text-xs text-muted-foreground">
+                                    {{
+                                        formatDateTime(
+                                            order.created_sim_at,
+                                            locale,
+                                        )
+                                    }}
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                <Badge
+                                    :variant="
+                                        orderStatusBadgeVariant(order.status)
+                                    "
+                                >
+                                    {{ orderStatusLabel(order.status) }}
+                                </Badge>
+                                <p class="mt-1 font-medium tabular-nums">
+                                    {{ formatIDR(order.grand_total) }}
+                                </p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </Link>
+            </div>
 
             <Pagination
                 v-if="props.orders.last_page > 1"

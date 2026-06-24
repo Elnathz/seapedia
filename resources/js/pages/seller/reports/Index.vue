@@ -7,14 +7,7 @@ import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+import { Separator } from '@/components/ui/separator';
 import { orderStatusBadgeVariant, orderStatusLabel } from '@/lib/orderStatus';
 import type { OrderStatusKey } from '@/lib/orderStatus';
 import { formatIDR } from '@/lib/utils';
@@ -103,44 +96,37 @@ const { t } = useI18n();
                     <h3 class="mb-4 font-medium">
                         {{ t('report.breakdownTitle') }}
                     </h3>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>{{
-                                    t('order.columnStatus')
-                                }}</TableHead>
-                                <TableHead class="text-right">{{
-                                    t('report.columnOrders')
-                                }}</TableHead>
-                                <TableHead class="text-right">{{
-                                    t('report.columnAmount')
-                                }}</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            <TableRow
-                                v-for="row in props.report.breakdown"
-                                :key="row.status"
+                    <div class="flex flex-col">
+                        <template
+                            v-for="(row, index) in props.report.breakdown"
+                            :key="row.status"
+                        >
+                            <Separator v-if="index > 0" />
+                            <div
+                                class="flex items-center justify-between gap-3 py-3"
                             >
-                                <TableCell>
-                                    <Badge
-                                        :variant="
-                                            orderStatusBadgeVariant(row.status)
-                                        "
-                                    >
-                                        {{ orderStatusLabel(row.status) }}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell class="text-right tabular-nums">{{
-                                    row.count
-                                }}</TableCell>
-                                <TableCell
-                                    class="text-right font-medium tabular-nums"
-                                    >{{ formatIDR(row.total) }}</TableCell
+                                <Badge
+                                    :variant="
+                                        orderStatusBadgeVariant(row.status)
+                                    "
+                                    class="shrink-0"
                                 >
-                            </TableRow>
-                        </TableBody>
-                    </Table>
+                                    {{ orderStatusLabel(row.status) }}
+                                </Badge>
+                                <div
+                                    class="flex items-baseline gap-3 text-right"
+                                >
+                                    <span
+                                        class="text-sm text-muted-foreground tabular-nums"
+                                        >{{ row.count }}x</span
+                                    >
+                                    <span class="font-medium tabular-nums">{{
+                                        formatIDR(row.total)
+                                    }}</span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
                 </CardContent>
             </Card>
         </template>

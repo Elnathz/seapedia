@@ -216,11 +216,7 @@ export default {
         incomingOrdersTitle: 'Incoming Orders',
         incomingEmptyTitle: 'No incoming orders yet',
         incomingEmptyDescription: 'Orders from buyers will show up here.',
-        columnCode: 'Code',
         columnBuyer: 'Buyer',
-        columnStatus: 'Status',
-        columnTotal: 'Total',
-        columnDate: 'Date',
         processAction: 'Process Order',
         processConfirmTitle: 'Process this order?',
         processConfirmDescription:
@@ -236,8 +232,6 @@ export default {
         incomingCount: 'Incoming Orders',
         processedCount: 'Processed Orders',
         breakdownTitle: 'Breakdown by Status',
-        columnOrders: 'Orders',
-        columnAmount: 'Amount',
         emptyTitle: 'No orders yet',
         buyerEmptyDescription:
             'Your spending will show up here after you check out.',

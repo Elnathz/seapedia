@@ -216,11 +216,7 @@ export default {
         incomingOrdersTitle: 'Pesanan Masuk',
         incomingEmptyTitle: 'Belum ada pesanan masuk',
         incomingEmptyDescription: 'Pesanan dari pembeli akan muncul di sini.',
-        columnCode: 'Kode',
         columnBuyer: 'Pembeli',
-        columnStatus: 'Status',
-        columnTotal: 'Total',
-        columnDate: 'Tanggal',
         processAction: 'Proses Pesanan',
         processConfirmTitle: 'Proses pesanan ini?',
         processConfirmDescription:
@@ -236,8 +232,6 @@ export default {
         incomingCount: 'Pesanan Masuk',
         processedCount: 'Pesanan Diproses',
         breakdownTitle: 'Rincian per Status',
-        columnOrders: 'Jumlah Pesanan',
-        columnAmount: 'Total',
         emptyTitle: 'Belum ada pesanan',
         buyerEmptyDescription:
             'Pengeluaran Anda akan muncul di sini setelah checkout.',
