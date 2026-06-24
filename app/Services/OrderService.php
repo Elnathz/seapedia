@@ -2,11 +2,14 @@
 
 namespace App\Services;
 
+use App\Enums\DeliveryStatus;
 use App\Enums\OrderStatus;
+use App\Models\Delivery;
 use App\Models\Order;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -70,6 +73,26 @@ class OrderService
         $this->writeHistory($order, $to, $note, $changedBy);
 
         return $order->refresh();
+    }
+
+    /**
+     * The only seller-initiated transition (§5.6): Sedang Dikemas →
+     * Menunggu Pengirim, plus — in the same transaction — the auto-created
+     * `available` delivery job a driver will see (§13 Day 5). Idempotent:
+     * `firstOrCreate` never inserts a second delivery row for the order.
+     */
+    public function processBySeller(Order $order, int $changedBy): Order
+    {
+        return DB::transaction(function () use ($order, $changedBy) {
+            $this->transition($order, OrderStatus::MenungguPengirim, $changedBy, 'Diproses oleh penjual');
+
+            Delivery::query()->firstOrCreate(
+                ['order_id' => $order->id],
+                ['status' => DeliveryStatus::Available],
+            );
+
+            return $order;
+        });
     }
 
     /**

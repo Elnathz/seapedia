@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\Seller;
 
-use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\OrderService;
@@ -29,12 +28,7 @@ class OrderController extends Controller
     {
         $this->authorize('process', $order);
 
-        $updated = $this->orders->transition(
-            $order,
-            OrderStatus::MenungguPengirim,
-            $request->user()->id,
-            'Diproses oleh penjual',
-        );
+        $updated = $this->orders->processBySeller($order, $request->user()->id);
 
         return response()->json($updated->load('statusHistories'));
     }

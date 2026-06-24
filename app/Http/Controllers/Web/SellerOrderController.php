@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\OrderService;
@@ -44,19 +43,15 @@ class SellerOrderController extends Controller
 
     /**
      * The only seller-initiated transition this sprint (§5.6): Sedang
-     * Dikemas → Menunggu Pengirim. Ownership enforced by OrderPolicy;
-     * the transition table itself lives in OrderService.
+     * Dikemas → Menunggu Pengirim, which also creates the delivery job a
+     * driver will see. Ownership enforced by OrderPolicy; the transition
+     * table and the delivery auto-create both live in OrderService.
      */
     public function process(Request $request, Order $order): RedirectResponse
     {
         $this->authorize('process', $order);
 
-        $this->orders->transition(
-            $order,
-            OrderStatus::MenungguPengirim,
-            $request->user()->id,
-            'Diproses oleh penjual',
-        );
+        $this->orders->processBySeller($order, $request->user()->id);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Order processed.')]);
 

@@ -3,8 +3,10 @@
 namespace Tests\Feature\Order;
 
 use App\Enums\DeliveryMethod;
+use App\Enums\DeliveryStatus;
 use App\Enums\RoleName;
 use App\Models\Address;
+use App\Models\Delivery;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Role;
@@ -89,6 +91,7 @@ class SellerProcessOrderTest extends TestCase
             ->post(route('seller.orders.process', $order));
 
         $response->assertInvalid(['status']);
+        $this->assertSame(1, Delivery::query()->where('order_id', $order->id)->count());
         $this->assertSame('menunggu_pengirim', $order->refresh()->status->value);
     }
 
@@ -119,5 +122,31 @@ class SellerProcessOrderTest extends TestCase
             ->get(route('seller.orders.show', $order));
 
         $response->assertForbidden();
+    }
+
+    public function test_processing_an_order_creates_exactly_one_available_delivery(): void
+    {
+        $seller = $this->userWithRole(RoleName::Seller);
+        $store = Store::factory()->create(['user_id' => $seller->id]);
+        $order = $this->placeOrder($store);
+
+        $this->assertSame(0, Delivery::query()->where('order_id', $order->id)->count());
+
+        $this->actingAsRole($seller, RoleName::Seller)
+            ->post(route('seller.orders.process', $order));
+
+        $this->assertSame(1, Delivery::query()->where('order_id', $order->id)->count());
+        $delivery = Delivery::query()->where('order_id', $order->id)->first();
+        $this->assertSame(DeliveryStatus::Available, $delivery->status);
+        $this->assertNull($delivery->driver_id);
+    }
+
+    public function test_an_unprocessed_order_has_no_delivery_row(): void
+    {
+        $seller = $this->userWithRole(RoleName::Seller);
+        $store = Store::factory()->create(['user_id' => $seller->id]);
+        $order = $this->placeOrder($store);
+
+        $this->assertSame(0, Delivery::query()->where('order_id', $order->id)->count());
     }
 }
