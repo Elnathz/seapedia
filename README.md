@@ -26,16 +26,16 @@ and seller-uploaded product images to load — without it, product images
 
 ## Demo credentials
 
-Seeded by `migrate:fresh --seed` (`DemoUserSeeder` + `StoreProductSeeder`).
-Every account's password is `password`.
+Seeded by `migrate:fresh --seed` (`DemoUserSeeder` + `StoreProductSeeder` +
+`BuyerDemoSeeder`). Every account's password is `password`.
 
 | Username  | Role(s)                | Notes                                   |
 | --------- | ----------------------- | ---------------------------------------- |
 | `admin`   | Admin (`is_admin`)      | Lands on the admin dashboard shell       |
-| `seller1` | Seller                  | Single role — skips the role-select step. Owns store "Toko Berkah" (3 products, seeded images) |
-| `buyer1`  | Buyer                   | Wallet pre-funded with a placeholder balance (Rp 500.000) |
+| `seller1` | Seller                  | Single role — skips the role-select step. Owns store "Toko Berkah" (3 products, seeded images). Has one incoming order from `buyer1` |
+| `buyer1`  | Buyer                   | Wallet topped up via `TopupService` (Rp 500.000, with a real ledger entry); one saved address; one placed order against "Toko Berkah" |
 | `driver1` | Driver                  | Single role — skips the role-select step |
-| `multi1`  | Buyer, Seller, Driver   | Multi-role — shows the role-select modal on login. Owns store "Warung Mama Lia" (3 products, seeded images) |
+| `multi1`  | Buyer, Seller, Driver   | Multi-role — shows the role-select modal on login. Owns store "Warung Mama Lia" (3 products, seeded images). Wallet topped up (Rp 300.000) and one saved address as the buyer role |
 
 ## Demo path (Sprint 1)
 
@@ -67,13 +67,67 @@ Every account's password is `password`.
 6. `GET /api/v1/catalog` mirrors the same active-only data; Swagger UI at
    `/api/documentation` lists the `Catalog` endpoints.
 
+## Demo path (Sprint 3)
+
+1. Log in as `buyer1` → "Dompet" shows the seeded balance and one `topup`
+   ledger entry; top up again with a quick-pick amount → balance and ledger
+   update immediately.
+2. "Alamat" → add/edit an address, set a different one as default, delete
+   one (the remaining one is promoted to default automatically).
+3. Browse the catalog → add a product to the cart → "Keranjang" shows it
+   with a qty stepper and running subtotal → try adding a product from a
+   **different store** → blocked with a dialog → "Clear & add" replaces
+   the cart with the new store's item.
+4. "Lanjut ke Checkout" → pick the address + a delivery method (Instant /
+   Besok Sampai / Reguler) → the summary ledger shows subtotal, discount
+   (always 0 this sprint), delivery fee, and **PPN 12%** → confirm → wallet
+   debited, stock reduced, order created **Sedang Dikemas**, cart cleared.
+5. "Pesanan Saya" lists it with the money breakdown and status timeline.
+   Switch to `seller1` → "Pesanan Masuk" shows the same order (read-only —
+   the process action ships in Sprint 4).
+6. Lower the wallet balance below the order total (e.g. via repeated
+   top-ups elsewhere) and try checkout again → the "Bayar Sekarang" button
+   is disabled with a clear reason and a "Top up dompet" recovery link.
+7. `/api/v1/buyer/*` mirrors the whole flow (Sanctum, role-scoped token);
+   Swagger UI lists the `Buyer Wallet`, `Buyer Addresses`, `Buyer Cart`,
+   `Checkout`, and `Buyer Orders` tags.
+
+### Locked rules this sprint depends on
+
+- **Single-store cart (§5.8):** one cart per buyer, locked to whichever
+  store the first item came from. Adding a product from another store is
+  rejected (422) with a "Clear & add" recovery action — never silently
+  mixed.
+- **PPN 12% base (§5.2):** `taxable_base = subtotal − discount_total`;
+  `tax_amount = round(taxable_base × 0.12)`. Delivery fee is **not** taxed.
+  `grand_total = taxable_base + tax_amount + delivery_fee`. Discount is a
+  zero placeholder this sprint — Sprint 4 fills in real vouchers/promos
+  against the same formula, no checkout rework needed.
+- **Unified wallet model (§5.1b):** every buyer/seller/driver has exactly
+  one wallet; every movement is an immutable `wallet_transactions` row
+  (`type` + `direction` + `balance_after`) written inside a locked
+  transaction — never a raw balance write. Seller income settles
+  **instantly** at checkout (the product revenue only, excluding tax and
+  delivery fee) rather than waiting for delivery completion — a deliberate
+  simplification consistent with §5.1b's "spendable... instant settlement"
+  and what §5.9's overdue-refund reversal assumes already happened.
+- **Fake top-up gateway (§9):** `PAYMENT_GATEWAY=fake` (the default) credits
+  the wallet instantly via `FakeGateway`, so the demo never depends on
+  iPaymu uptime. `IpaymuGateway` is scaffolded behind the same
+  `PaymentGateway` interface; its real v2 call ships in Sprint 6. No
+  minimum top-up amount is locked by the TDD — 10,000 IDR
+  (`config('payment.topup.min_amount')`) was picked as the simplest
+  reasonable floor.
+
 ## Current status
 
-Sprint 2 (Level 2 — seller store + product CRUD with image upload, real
-DB-backed public catalog + store pages, `/api/v1/catalog` + Swagger, hybrid
-ID/EN i18n) is complete. See `planning/sprint2/progress.md` for the
-task-by-task log and documented deviations from the TDD. Sprint 1 (Level 1)
-log is at `planning/sprint1/progress.md`.
+Sprint 3 (Level 3 — buyer wallet + fake top-up, delivery addresses, cart
+with the single-store guard, checkout with PPN 12% in one locked
+transaction, order history + seller incoming list, `/api/v1/buyer/*` +
+Swagger) is complete. See `planning/sprint3/progress.md` for the
+task-by-task log and documented deviations from the TDD. Sprint 2 (Level 2)
+log is at `planning/sprint2/progress.md`; Sprint 1 (Level 1) log is at
+`planning/sprint1/progress.md`.
 
 ## Tests
 

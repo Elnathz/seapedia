@@ -38,7 +38,6 @@ class DemoUserSeeder extends Seeder
             'email' => 'buyer1@seapedia.test',
         ]);
         $this->roleService->assignRoles($buyer, [RoleName::Buyer->value]);
-        $buyer->wallet->update(['balance' => 500_000]);
 
         $driver = User::factory()->create([
             'name' => 'Driver One',
