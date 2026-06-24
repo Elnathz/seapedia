@@ -2,12 +2,21 @@
 
 namespace App\Services;
 
+use App\Enums\OrderStatus;
 use App\Enums\RoleName;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class DashboardService
 {
+    /**
+     * Orders that have reached a final state — not counted as "active".
+     */
+    private const array FINAL_ORDER_STATUSES = [
+        OrderStatus::PesananSelesai->value,
+        OrderStatus::Dikembalikan->value,
+    ];
+
     public function __construct(private readonly RoleService $roleService) {}
 
     /**
@@ -35,17 +44,28 @@ class DashboardService
         return match ($activeRole) {
             RoleName::Seller => [
                 'component' => 'dashboard/Seller',
-                'props' => ['balance' => $balance, 'activeProducts' => 0],
+                'props' => ['balance' => $balance, 'activeProducts' => $this->activeProductCount($user)],
             ],
+            // Delivery jobs don't exist until Sprint 5 — 0 is accurate, not a placeholder.
             RoleName::Driver => [
                 'component' => 'dashboard/Driver',
                 'props' => ['activeDeliveries' => 0],
             ],
             RoleName::Buyer, null => [
                 'component' => 'dashboard/Buyer',
-                'props' => ['balance' => $balance, 'activeOrders' => 0],
+                'props' => ['balance' => $balance, 'activeOrders' => $this->activeOrderCount($user)],
             ],
         };
+    }
+
+    private function activeProductCount(User $user): int
+    {
+        return $user->store?->products()->where('is_active', true)->count() ?? 0;
+    }
+
+    private function activeOrderCount(User $user): int
+    {
+        return $user->orders()->whereNotIn('status', self::FINAL_ORDER_STATUSES)->count();
     }
 
     /**
