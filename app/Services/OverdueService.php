@@ -53,6 +53,19 @@ class OverdueService
         return ['refunded_count' => $refunded];
     }
 
+    /**
+     * How many orders are currently overdue and eligible for the next
+     * sweep — used by the admin monitoring dashboard, read-only.
+     */
+    public function eligibleCount(): int
+    {
+        return Order::query()
+            ->whereIn('status', self::ELIGIBLE_STATUSES)
+            ->whereNull('refunded_at')
+            ->where('sla_due_at', '<', $this->clock->now())
+            ->count();
+    }
+
     private function refundOne(int $orderId, CarbonImmutable $now): bool
     {
         return DB::transaction(function () use ($orderId, $now) {

@@ -20,6 +20,7 @@ class DashboardService
     public function __construct(
         private readonly RoleService $roleService,
         private readonly DeliveryService $deliveries,
+        private readonly AdminMonitorService $adminMonitor,
     ) {}
 
     /**
@@ -37,7 +38,7 @@ class DashboardService
         if ($user->is_admin) {
             return [
                 'component' => 'dashboard/Admin',
-                'props' => ['stats' => $this->adminStats()],
+                'props' => ['snapshot' => $this->adminMonitor->snapshot()],
             ];
         }
 
@@ -72,25 +73,5 @@ class DashboardService
     private function activeOrderCount(User $user): int
     {
         return $user->orders()->whereNotIn('status', self::FINAL_ORDER_STATUSES)->count();
-    }
-
-    /**
-     * @return array{totalUsers: int, totalSellers: int, totalBuyers: int, totalDrivers: int}
-     */
-    private function adminStats(): array
-    {
-        return [
-            'totalUsers' => User::query()->count(),
-            'totalSellers' => $this->countByRole(RoleName::Seller),
-            'totalBuyers' => $this->countByRole(RoleName::Buyer),
-            'totalDrivers' => $this->countByRole(RoleName::Driver),
-        ];
-    }
-
-    private function countByRole(RoleName $role): int
-    {
-        return User::query()
-            ->whereHas('roles', fn ($query) => $query->where('name', $role->value))
-            ->count();
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Role;
 use App\Models\Store;
 use App\Models\User;
+use App\Models\Voucher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -65,5 +66,31 @@ class DashboardTest extends TestCase
 
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page->where('activeOrders', 2));
+    }
+
+    public function test_admin_dashboard_shows_a_live_resource_count_snapshot(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $seller = User::factory()->create();
+        $seller->roles()->attach(Role::query()->firstOrCreate(['name' => RoleName::Seller->value])->id);
+        $buyer = User::factory()->create();
+        $store = Store::factory()->create(['user_id' => $seller->id]);
+        Product::factory()->count(2)->create(['store_id' => $store->id]);
+        Order::factory()->create(['buyer_id' => $buyer->id, 'store_id' => $store->id, 'status' => 'sedang_dikemas']);
+        Order::factory()->create(['buyer_id' => $buyer->id, 'store_id' => $store->id, 'status' => 'sedang_dikemas']);
+        Voucher::factory()->create();
+
+        $response = $this->actingAs($admin)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->where('snapshot.users.total', 3)
+            ->where('snapshot.users.admins', 1)
+            ->where('snapshot.users.sellers', 1)
+            ->where('snapshot.stores_count', 1)
+            ->where('snapshot.products_count', 2)
+            ->where('snapshot.orders_by_status.sedang_dikemas', 2)
+            ->where('snapshot.vouchers.total', 1)
+        );
     }
 }
