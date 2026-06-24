@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property DeliveryMethod $delivery_method
  * @property int $subtotal
  * @property int $discount_total
+ * @property ?int $promo_id
+ * @property ?int $voucher_id
  * @property int $delivery_fee
  * @property int $tax_amount
  * @property int $grand_total
@@ -35,9 +37,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 #[Fillable([
     'code', 'buyer_id', 'store_id', 'ship_recipient', 'ship_phone', 'ship_address',
-    'delivery_method', 'subtotal', 'discount_total', 'delivery_fee', 'tax_amount',
-    'grand_total', 'seller_income_amount', 'status', 'created_sim_at', 'sla_due_at',
-    'paid_at', 'refunded_at',
+    'delivery_method', 'subtotal', 'discount_total', 'promo_id', 'voucher_id',
+    'delivery_fee', 'tax_amount', 'grand_total', 'seller_income_amount', 'status',
+    'created_sim_at', 'sla_due_at', 'paid_at', 'refunded_at',
 ])]
 class Order extends Model
 {
@@ -76,6 +78,22 @@ class Order extends Model
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
+    }
+
+    /**
+     * @return BelongsTo<Promo, $this>
+     */
+    public function promo(): BelongsTo
+    {
+        return $this->belongsTo(Promo::class);
+    }
+
+    /**
+     * @return BelongsTo<Voucher, $this>
+     */
+    public function voucher(): BelongsTo
+    {
+        return $this->belongsTo(Voucher::class);
     }
 
     /**

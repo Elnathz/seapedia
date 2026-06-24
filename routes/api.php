@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\PromoController;
+use App\Http\Controllers\Api\Admin\VoucherController;
 use App\Http\Controllers\Api\BuyerAddressController;
 use App\Http\Controllers\Api\BuyerCartController;
 use App\Http\Controllers\Api\BuyerOrderController;
@@ -36,5 +38,15 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
         Route::get('orders', [BuyerOrderController::class, 'index'])->name('orders.index');
         Route::get('orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
+    });
+
+    Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('promos', [PromoController::class, 'index'])->name('promos.index');
+        Route::post('promos', [PromoController::class, 'store'])->name('promos.store');
+        Route::get('promos/{promo}', [PromoController::class, 'show'])->name('promos.show');
+
+        Route::get('vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
+        Route::post('vouchers', [VoucherController::class, 'store'])->name('vouchers.store');
+        Route::get('vouchers/{voucher}', [VoucherController::class, 'show'])->name('vouchers.show');
     });
 });
