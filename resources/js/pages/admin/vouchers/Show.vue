@@ -73,56 +73,98 @@ function valueLabel(): string {
         <Card>
             <CardContent class="flex flex-col pt-6">
                 <div class="flex items-center justify-between py-2">
-                    <span class="font-mono text-lg font-semibold">{{ voucher.code }}</span>
-                    <Badge :variant="discountStatusBadgeVariant(voucher.status)">
+                    <span class="font-mono text-lg font-semibold">{{
+                        voucher.code
+                    }}</span>
+                    <Badge
+                        :variant="discountStatusBadgeVariant(voucher.status)"
+                    >
                         {{ t(statusLabelKey[voucher.status]) }}
                     </Badge>
                 </div>
                 <Separator />
                 <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-muted-foreground">{{ t('admin.typeLabel') }}</span>
+                    <span class="text-sm text-muted-foreground">{{
+                        t('admin.typeLabel')
+                    }}</span>
                     <span class="text-sm font-medium">
-                        {{ voucher.type === 'percentage' ? t('admin.typePercentage') : t('admin.typeFixed') }}
+                        {{
+                            voucher.type === 'percentage'
+                                ? t('admin.typePercentage')
+                                : t('admin.typeFixed')
+                        }}
                     </span>
                 </div>
                 <Separator />
                 <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-muted-foreground">{{ t('admin.valueLabel') }}</span>
-                    <span class="text-sm font-medium tabular-nums">{{ valueLabel() }}</span>
+                    <span class="text-sm text-muted-foreground">{{
+                        t('admin.valueLabel')
+                    }}</span>
+                    <span class="text-sm font-medium tabular-nums">{{
+                        valueLabel()
+                    }}</span>
                 </div>
                 <Separator />
                 <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-muted-foreground">{{ t('admin.maxDiscountLabel') }}</span>
+                    <span class="text-sm text-muted-foreground">{{
+                        t('admin.maxDiscountLabel')
+                    }}</span>
                     <span class="text-sm font-medium tabular-nums">
-                        {{ voucher.max_discount !== null ? formatIDR(voucher.max_discount) : '—' }}
+                        {{
+                            voucher.max_discount !== null
+                                ? formatIDR(voucher.max_discount)
+                                : '—'
+                        }}
                     </span>
                 </div>
                 <Separator />
                 <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-muted-foreground">{{ t('admin.minSpendLabel') }}</span>
+                    <span class="text-sm text-muted-foreground">{{
+                        t('admin.minSpendLabel')
+                    }}</span>
                     <span class="text-sm font-medium tabular-nums">
-                        {{ voucher.min_spend !== null ? formatIDR(voucher.min_spend) : '—' }}
+                        {{
+                            voucher.min_spend !== null
+                                ? formatIDR(voucher.min_spend)
+                                : '—'
+                        }}
                     </span>
                 </div>
                 <Separator />
                 <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-muted-foreground">{{ t('admin.expiryDateLabel') }}</span>
-                    <span class="text-sm font-medium tabular-nums">{{ voucher.expiry_date.slice(0, 10) }}</span>
+                    <span class="text-sm text-muted-foreground">{{
+                        t('admin.expiryDateLabel')
+                    }}</span>
+                    <span class="text-sm font-medium tabular-nums">{{
+                        voucher.expiry_date.slice(0, 10)
+                    }}</span>
                 </div>
                 <Separator />
                 <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-muted-foreground">{{ t('admin.usageLimitLabel') }}</span>
-                    <span class="text-sm font-medium tabular-nums">{{ voucher.usage_limit }}</span>
+                    <span class="text-sm text-muted-foreground">{{
+                        t('admin.usageLimitLabel')
+                    }}</span>
+                    <span class="text-sm font-medium tabular-nums">{{
+                        voucher.usage_limit
+                    }}</span>
                 </div>
                 <Separator />
                 <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-muted-foreground">{{ t('admin.usedCountLabel') }}</span>
-                    <span class="text-sm font-medium tabular-nums">{{ voucher.used_count }}</span>
+                    <span class="text-sm text-muted-foreground">{{
+                        t('admin.usedCountLabel')
+                    }}</span>
+                    <span class="text-sm font-medium tabular-nums">{{
+                        voucher.used_count
+                    }}</span>
                 </div>
                 <Separator />
                 <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-muted-foreground">{{ t('admin.remainingUsageLabel') }}</span>
-                    <span class="text-sm font-medium tabular-nums">{{ voucher.remaining_usage }}</span>
+                    <span class="text-sm text-muted-foreground">{{
+                        t('admin.remainingUsageLabel')
+                    }}</span>
+                    <span class="text-sm font-medium tabular-nums">{{
+                        voucher.remaining_usage
+                    }}</span>
                 </div>
             </CardContent>
         </Card>
@@ -133,7 +175,11 @@ function valueLabel(): string {
             v-slot="{ processing }"
         >
             <Button type="submit" variant="outline" :disabled="processing">
-                {{ voucher.is_active ? t('admin.deactivateAction') : t('admin.activateAction') }}
+                {{
+                    voucher.is_active
+                        ? t('admin.deactivateAction')
+                        : t('admin.activateAction')
+                }}
             </Button>
         </Form>
     </div>

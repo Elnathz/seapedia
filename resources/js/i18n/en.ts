@@ -238,6 +238,8 @@ export default {
             'Your spending will show up here after you check out.',
         sellerEmptyDescription:
             'Your income will show up here once buyers check out from your store.',
+        sellerBreakdownEmpty:
+            'No delivered orders yet — income only counts once an order reaches Pesanan Selesai.',
     },
     driver: {
         jobsTitle: 'Available Jobs',

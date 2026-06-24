@@ -96,7 +96,13 @@ const { t } = useI18n();
                     <h3 class="mb-4 font-medium">
                         {{ t('report.breakdownTitle') }}
                     </h3>
-                    <div class="flex flex-col">
+                    <p
+                        v-if="props.report.breakdown.length === 0"
+                        class="text-sm text-muted-foreground"
+                    >
+                        {{ t('report.sellerBreakdownEmpty') }}
+                    </p>
+                    <div v-else class="flex flex-col">
                         <template
                             v-for="(row, index) in props.report.breakdown"
                             :key="row.status"

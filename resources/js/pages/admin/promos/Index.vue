@@ -135,16 +135,28 @@ function goToPage(page: number) {
                             </p>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
-                            <Badge :variant="discountStatusBadgeVariant(promo.status)">
+                            <Badge
+                                :variant="
+                                    discountStatusBadgeVariant(promo.status)
+                                "
+                            >
                                 {{ t(statusLabelKey[promo.status]) }}
                             </Badge>
                             <Button as-child size="sm" variant="outline">
-                                <Link :href="AdminPromoController.show.url(promo.id)">
+                                <Link
+                                    :href="
+                                        AdminPromoController.show.url(promo.id)
+                                    "
+                                >
                                     {{ t('admin.viewDetail') }}
                                 </Link>
                             </Button>
                             <Form
-                                v-bind="AdminPromoController.toggleActive.form(promo.id)"
+                                v-bind="
+                                    AdminPromoController.toggleActive.form(
+                                        promo.id,
+                                    )
+                                "
                                 :options="{ preserveScroll: true }"
                                 v-slot="{ processing }"
                             >
@@ -181,7 +193,9 @@ function goToPage(page: number) {
                         <PaginationItem
                             v-if="item.type === 'page'"
                             :value="item.value"
-                            :is-active="item.value === props.promos.current_page"
+                            :is-active="
+                                item.value === props.promos.current_page
+                            "
                         >
                             {{ item.value }}
                         </PaginationItem>
@@ -207,13 +221,22 @@ function goToPage(page: number) {
                     </DialogHeader>
 
                     <div class="grid gap-2">
-                        <Label for="promo_code">{{ t('admin.codeLabel') }}</Label>
-                        <Input id="promo_code" name="code" required maxlength="32" />
+                        <Label for="promo_code">{{
+                            t('admin.codeLabel')
+                        }}</Label>
+                        <Input
+                            id="promo_code"
+                            name="code"
+                            required
+                            maxlength="32"
+                        />
                         <InputError :message="errors.code" />
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="promo_type">{{ t('admin.typeLabel') }}</Label>
+                        <Label for="promo_type">{{
+                            t('admin.typeLabel')
+                        }}</Label>
                         <Select name="type" default-value="percentage" required>
                             <SelectTrigger id="promo_type" class="w-full">
                                 <SelectValue />
@@ -231,8 +254,16 @@ function goToPage(page: number) {
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="promo_value">{{ t('admin.valueLabel') }}</Label>
-                        <Input id="promo_value" name="value" type="number" min="1" required />
+                        <Label for="promo_value">{{
+                            t('admin.valueLabel')
+                        }}</Label>
+                        <Input
+                            id="promo_value"
+                            name="value"
+                            type="number"
+                            min="1"
+                            required
+                        />
                         <InputError :message="errors.value" />
                     </div>
 
@@ -241,14 +272,24 @@ function goToPage(page: number) {
                             <Label for="promo_max_discount">
                                 {{ t('admin.maxDiscountLabel') }}
                             </Label>
-                            <Input id="promo_max_discount" name="max_discount" type="number" min="0" />
+                            <Input
+                                id="promo_max_discount"
+                                name="max_discount"
+                                type="number"
+                                min="0"
+                            />
                             <InputError :message="errors.max_discount" />
                         </div>
                         <div class="grid gap-2">
                             <Label for="promo_min_spend">
                                 {{ t('admin.minSpendLabel') }}
                             </Label>
-                            <Input id="promo_min_spend" name="min_spend" type="number" min="0" />
+                            <Input
+                                id="promo_min_spend"
+                                name="min_spend"
+                                type="number"
+                                min="0"
+                            />
                             <InputError :message="errors.min_spend" />
                         </div>
                     </div>
@@ -257,7 +298,12 @@ function goToPage(page: number) {
                         <Label for="promo_expiry_date">
                             {{ t('admin.expiryDateLabel') }}
                         </Label>
-                        <Input id="promo_expiry_date" name="expiry_date" type="date" required />
+                        <Input
+                            id="promo_expiry_date"
+                            name="expiry_date"
+                            type="date"
+                            required
+                        />
                         <InputError :message="errors.expiry_date" />
                     </div>
 

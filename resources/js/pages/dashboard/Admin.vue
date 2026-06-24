@@ -54,7 +54,12 @@ interface Snapshot {
     deliveries_by_status: Partial<Record<DeliveryStatusKey, number>>;
     overdue_eligible_count: number;
     promos: { total: number; active: number; expired: number };
-    vouchers: { total: number; active: number; expired: number; used_up: number };
+    vouchers: {
+        total: number;
+        active: number;
+        expired: number;
+        used_up: number;
+    };
 }
 
 const props = defineProps<{ snapshot: Snapshot }>();
@@ -94,7 +99,9 @@ function confirmAdvance() {
 
     <div class="flex flex-col gap-6">
         <Card>
-            <CardContent class="flex flex-wrap items-center justify-between gap-4 pt-6">
+            <CardContent
+                class="flex flex-wrap items-center justify-between gap-4 pt-6"
+            >
                 <div class="flex items-center gap-3">
                     <CalendarClock class="size-5 text-muted-foreground" />
                     <div>
@@ -102,7 +109,12 @@ function confirmAdvance() {
                             {{ t('admin.simulatedDateLabel') }}
                         </p>
                         <p class="font-medium tabular-nums">
-                            {{ formatDateTime(props.snapshot.simulated_now, locale) }}
+                            {{
+                                formatDateTime(
+                                    props.snapshot.simulated_now,
+                                    locale,
+                                )
+                            }}
                         </p>
                     </div>
                 </div>
@@ -172,19 +184,26 @@ function confirmAdvance() {
         <div class="grid gap-4 lg:grid-cols-2">
             <Card>
                 <CardHeader>
-                    <CardTitle class="text-sm font-medium text-muted-foreground">
+                    <CardTitle
+                        class="text-sm font-medium text-muted-foreground"
+                    >
                         {{ t('admin.ordersByStatusTitle') }}
                     </CardTitle>
                 </CardHeader>
                 <CardContent class="flex flex-col">
-                    <template v-for="(status, index) in ALL_ORDER_STATUSES" :key="status">
+                    <template
+                        v-for="(status, index) in ALL_ORDER_STATUSES"
+                        :key="status"
+                    >
                         <Separator v-if="index > 0" />
                         <div class="flex items-center justify-between py-2">
                             <Badge :variant="orderStatusBadgeVariant(status)">
                                 {{ orderStatusLabel(status) }}
                             </Badge>
                             <span class="text-sm font-semibold tabular-nums">
-                                {{ props.snapshot.orders_by_status[status] ?? 0 }}
+                                {{
+                                    props.snapshot.orders_by_status[status] ?? 0
+                                }}
                             </span>
                         </div>
                     </template>
@@ -193,19 +212,30 @@ function confirmAdvance() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle class="text-sm font-medium text-muted-foreground">
+                    <CardTitle
+                        class="text-sm font-medium text-muted-foreground"
+                    >
                         {{ t('admin.deliveriesByStatusTitle') }}
                     </CardTitle>
                 </CardHeader>
                 <CardContent class="flex flex-col">
-                    <template v-for="(status, index) in ALL_DELIVERY_STATUSES" :key="status">
+                    <template
+                        v-for="(status, index) in ALL_DELIVERY_STATUSES"
+                        :key="status"
+                    >
                         <Separator v-if="index > 0" />
                         <div class="flex items-center justify-between py-2">
-                            <Badge :variant="deliveryStatusBadgeVariant(status)">
+                            <Badge
+                                :variant="deliveryStatusBadgeVariant(status)"
+                            >
                                 {{ deliveryStatusLabel(status) }}
                             </Badge>
                             <span class="text-sm font-semibold tabular-nums">
-                                {{ props.snapshot.deliveries_by_status[status] ?? 0 }}
+                                {{
+                                    props.snapshot.deliveries_by_status[
+                                        status
+                                    ] ?? 0
+                                }}
                             </span>
                         </div>
                     </template>
@@ -227,10 +257,21 @@ function confirmAdvance() {
                     <Ticket class="mt-1 size-5 text-muted-foreground" />
                     <div class="flex-1">
                         <p class="font-medium">{{ t('admin.promosLabel') }}</p>
-                        <div class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                            <span>{{ t('admin.totalCount') }}: {{ props.snapshot.promos.total }}</span>
-                            <span>{{ t('admin.activeCount') }}: {{ props.snapshot.promos.active }}</span>
-                            <span>{{ t('admin.expiredCount') }}: {{ props.snapshot.promos.expired }}</span>
+                        <div
+                            class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground"
+                        >
+                            <span
+                                >{{ t('admin.totalCount') }}:
+                                {{ props.snapshot.promos.total }}</span
+                            >
+                            <span
+                                >{{ t('admin.activeCount') }}:
+                                {{ props.snapshot.promos.active }}</span
+                            >
+                            <span
+                                >{{ t('admin.expiredCount') }}:
+                                {{ props.snapshot.promos.expired }}</span
+                            >
                         </div>
                     </div>
                 </Link>
@@ -240,12 +281,28 @@ function confirmAdvance() {
                 >
                     <BadgePercent class="mt-1 size-5 text-muted-foreground" />
                     <div class="flex-1">
-                        <p class="font-medium">{{ t('admin.vouchersLabel') }}</p>
-                        <div class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                            <span>{{ t('admin.totalCount') }}: {{ props.snapshot.vouchers.total }}</span>
-                            <span>{{ t('admin.activeCount') }}: {{ props.snapshot.vouchers.active }}</span>
-                            <span>{{ t('admin.expiredCount') }}: {{ props.snapshot.vouchers.expired }}</span>
-                            <span>{{ t('admin.usedUpCount') }}: {{ props.snapshot.vouchers.used_up }}</span>
+                        <p class="font-medium">
+                            {{ t('admin.vouchersLabel') }}
+                        </p>
+                        <div
+                            class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground"
+                        >
+                            <span
+                                >{{ t('admin.totalCount') }}:
+                                {{ props.snapshot.vouchers.total }}</span
+                            >
+                            <span
+                                >{{ t('admin.activeCount') }}:
+                                {{ props.snapshot.vouchers.active }}</span
+                            >
+                            <span
+                                >{{ t('admin.expiredCount') }}:
+                                {{ props.snapshot.vouchers.expired }}</span
+                            >
+                            <span
+                                >{{ t('admin.usedUpCount') }}:
+                                {{ props.snapshot.vouchers.used_up }}</span
+                            >
                         </div>
                     </div>
                 </Link>
@@ -256,7 +313,9 @@ function confirmAdvance() {
     <Dialog v-model:open="confirmOpen">
         <DialogContent>
             <DialogHeader class="space-y-3">
-                <DialogTitle>{{ t('admin.advanceDayConfirmTitle') }}</DialogTitle>
+                <DialogTitle>{{
+                    t('admin.advanceDayConfirmTitle')
+                }}</DialogTitle>
                 <DialogDescription>
                     {{ t('admin.advanceDayConfirmDescription') }}
                 </DialogDescription>

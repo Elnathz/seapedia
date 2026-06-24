@@ -70,41 +70,69 @@ function valueLabel(): string {
         <Card>
             <CardContent class="flex flex-col pt-6">
                 <div class="flex items-center justify-between py-2">
-                    <span class="font-mono text-lg font-semibold">{{ promo.code }}</span>
+                    <span class="font-mono text-lg font-semibold">{{
+                        promo.code
+                    }}</span>
                     <Badge :variant="discountStatusBadgeVariant(promo.status)">
                         {{ t(statusLabelKey[promo.status]) }}
                     </Badge>
                 </div>
                 <Separator />
                 <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-muted-foreground">{{ t('admin.typeLabel') }}</span>
+                    <span class="text-sm text-muted-foreground">{{
+                        t('admin.typeLabel')
+                    }}</span>
                     <span class="text-sm font-medium">
-                        {{ promo.type === 'percentage' ? t('admin.typePercentage') : t('admin.typeFixed') }}
+                        {{
+                            promo.type === 'percentage'
+                                ? t('admin.typePercentage')
+                                : t('admin.typeFixed')
+                        }}
                     </span>
                 </div>
                 <Separator />
                 <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-muted-foreground">{{ t('admin.valueLabel') }}</span>
-                    <span class="text-sm font-medium tabular-nums">{{ valueLabel() }}</span>
+                    <span class="text-sm text-muted-foreground">{{
+                        t('admin.valueLabel')
+                    }}</span>
+                    <span class="text-sm font-medium tabular-nums">{{
+                        valueLabel()
+                    }}</span>
                 </div>
                 <Separator />
                 <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-muted-foreground">{{ t('admin.maxDiscountLabel') }}</span>
+                    <span class="text-sm text-muted-foreground">{{
+                        t('admin.maxDiscountLabel')
+                    }}</span>
                     <span class="text-sm font-medium tabular-nums">
-                        {{ promo.max_discount !== null ? formatIDR(promo.max_discount) : '—' }}
+                        {{
+                            promo.max_discount !== null
+                                ? formatIDR(promo.max_discount)
+                                : '—'
+                        }}
                     </span>
                 </div>
                 <Separator />
                 <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-muted-foreground">{{ t('admin.minSpendLabel') }}</span>
+                    <span class="text-sm text-muted-foreground">{{
+                        t('admin.minSpendLabel')
+                    }}</span>
                     <span class="text-sm font-medium tabular-nums">
-                        {{ promo.min_spend !== null ? formatIDR(promo.min_spend) : '—' }}
+                        {{
+                            promo.min_spend !== null
+                                ? formatIDR(promo.min_spend)
+                                : '—'
+                        }}
                     </span>
                 </div>
                 <Separator />
                 <div class="flex items-center justify-between py-2">
-                    <span class="text-sm text-muted-foreground">{{ t('admin.expiryDateLabel') }}</span>
-                    <span class="text-sm font-medium tabular-nums">{{ promo.expiry_date.slice(0, 10) }}</span>
+                    <span class="text-sm text-muted-foreground">{{
+                        t('admin.expiryDateLabel')
+                    }}</span>
+                    <span class="text-sm font-medium tabular-nums">{{
+                        promo.expiry_date.slice(0, 10)
+                    }}</span>
                 </div>
             </CardContent>
         </Card>
@@ -115,7 +143,11 @@ function valueLabel(): string {
             v-slot="{ processing }"
         >
             <Button type="submit" variant="outline" :disabled="processing">
-                {{ promo.is_active ? t('admin.deactivateAction') : t('admin.activateAction') }}
+                {{
+                    promo.is_active
+                        ? t('admin.deactivateAction')
+                        : t('admin.activateAction')
+                }}
             </Button>
         </Form>
     </div>
