@@ -9,6 +9,7 @@ use App\Http\Controllers\Web\BuyerWalletController;
 use App\Http\Controllers\Web\CatalogController;
 use App\Http\Controllers\Web\CheckoutController;
 use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\DriverJobController;
 use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\RoleController;
 use App\Http\Controllers\Web\SellerOrderController;
@@ -78,6 +79,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
 
         Route::get('reports', [BuyerReportController::class, 'index'])->name('reports.index');
+    });
+
+    Route::middleware('active_role:driver')->prefix('driver')->name('driver.')->group(function () {
+        Route::get('jobs', [DriverJobController::class, 'index'])->name('jobs.index');
+        Route::get('jobs/{delivery}', [DriverJobController::class, 'show'])->name('jobs.show');
+        Route::post('jobs/{delivery}/take', [DriverJobController::class, 'take'])->name('jobs.take');
+        Route::post('jobs/{delivery}/complete', [DriverJobController::class, 'complete'])->name('jobs.complete');
     });
 });
 

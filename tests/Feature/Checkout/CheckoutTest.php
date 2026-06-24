@@ -65,7 +65,10 @@ class CheckoutTest extends TestCase
 
         $this->assertSame(8, $product->refresh()->stock);
         $this->assertSame(1_000_000 - 117_000, $buyer->wallet->refresh()->balance);
-        $this->assertSame(100_000, $store->user->wallet->refresh()->balance);
+
+        // Escrow (Sprint 5 Decision 3): the seller is paid only on Pesanan
+        // Selesai (DeliveryService::complete), never at checkout.
+        $this->assertSame(0, $store->user->wallet->refresh()->balance);
 
         $this->assertSame(0, CartItem::query()->count());
         $this->assertSame(1, $order->statusHistories()->count());

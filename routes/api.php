@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\BuyerReportController;
 use App\Http\Controllers\Api\BuyerWalletController;
 use App\Http\Controllers\Api\CatalogController;
 use App\Http\Controllers\Api\CheckoutController;
+use App\Http\Controllers\Api\Driver\JobController as DriverJobController;
 use App\Http\Controllers\Api\MeController;
 use App\Http\Controllers\Api\Seller\OrderController as SellerOrderController;
 use App\Http\Controllers\Api\SellerReportController;
@@ -49,6 +50,13 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::post('orders/{order}/process', [SellerOrderController::class, 'process'])->name('orders.process');
 
         Route::get('reports', [SellerReportController::class, 'index'])->name('reports.index');
+    });
+
+    Route::middleware(['auth:sanctum', 'active_role:driver'])->prefix('driver')->name('driver.')->group(function () {
+        Route::get('jobs', [DriverJobController::class, 'index'])->name('jobs.index');
+        Route::get('jobs/{delivery}', [DriverJobController::class, 'show'])->name('jobs.show');
+        Route::post('jobs/{delivery}/take', [DriverJobController::class, 'take'])->name('jobs.take');
+        Route::post('jobs/{delivery}/complete', [DriverJobController::class, 'complete'])->name('jobs.complete');
     });
 
     Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {

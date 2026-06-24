@@ -7,7 +7,6 @@ use App\Enums\WalletTransactionType;
 use App\Models\Address;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\Store;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -180,21 +179,12 @@ class CheckoutService
                 $order->id,
             );
 
-            // Seller income is settled instantly (§5.1b "spendable... instant
-            // settlement"), excluding tax and delivery fee — it isn't seller
-            // revenue. §5.9's overdue reversal assumes this already happened.
-            // (Cart's `store` relation is column-scoped for display, so the
-            // seller's wallet is resolved fresh here instead.)
-            $sellerWallet = Store::query()->find($cart->store_id)->user->wallet;
-
-            $this->wallets->credit(
-                $sellerWallet,
-                $taxableBase,
-                WalletTransactionType::Income,
-                'order',
-                $order->id,
-            );
-
+            // Escrow (Sprint 5 Decision 3): the seller is NOT paid here. The
+            // buyer's payment is held by the platform; `seller_income_amount`
+            // (= taxableBase) is only released to the seller's wallet inside
+            // DeliveryService::complete(), when the order reaches Pesanan
+            // Selesai. An order that never completes never pays the seller —
+            // this is what lets OverdueService::sweep() skip a seller reversal.
             $this->carts->clear($user);
 
             return $order->load('items');
