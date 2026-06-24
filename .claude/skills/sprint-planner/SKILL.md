@@ -31,6 +31,9 @@ One paragraph: what works end-to-end when this sprint is done.
 ## shadcn-vue components needed
 - List every shadcn-vue component this sprint will use. These get `npx shadcn-vue@latest add ...`'d as the first UI step, before any import.
 
+## Design direction (via `ui-ux-pro-max` / `frontend-design`)
+- Run the `ui-ux-pro-max` skill (+ `frontend-design`) and record the chosen direction for this sprint's pages: palette (named hex), type pairing + scale, spacing rhythm, and the signature element each new page is built around. shadcn-vue is the substrate; this section is what keeps the pages from reading as templated defaults (golden rule 11a). Every UI task references this direction.
+
 ## Task breakdown (ordered vertical slices)
 For each task:
 - T{n}: <name>

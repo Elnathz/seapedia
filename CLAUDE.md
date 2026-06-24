@@ -35,6 +35,10 @@ Laravel 13 (PHP 8.3) · Inertia · Vue 3 + TypeScript · shadcn-vue · Tailwind 
 - **Planning is done on Opus; implementation is done on Claude Sonnet.** After a plan is approved, the
   feature slices are implemented with the model set to Sonnet. Every sprint plan must carry an
   "Instructions for the Sonnet implementer" section. (Owner switches `/model` → Sonnet to implement.)
+- **Every UI slice is designed with the design skills before it is built.** Invoke `ui-ux-pro-max`
+  (+ `frontend-design` for aesthetic direction) at the UI step of every slice — see golden rule 11a.
+  The sprint plan names the design direction (palette/type/signature) the slice will follow, not just
+  the shadcn components it adds.
 - **Every UI slice is visually verified with the Playwright MCP server** (`mcp__playwright__*`): after
   `sail npm run dev`, navigate each new/changed page, screenshot at **360 / 768 / 1280px**, and confirm
   empty/loading/error states, responsive nav (mobile bottom-nav vs desktop sidebar), and dark mode
@@ -53,6 +57,7 @@ Laravel 13 (PHP 8.3) · Inertia · Vue 3 + TypeScript · shadcn-vue · Tailwind 
 9. **Every write endpoint has a FormRequest** validating per §10.
 10. **iPaymu sits behind the `PaymentGateway` interface** with a `FakeGateway` fallback. Checkout never calls a gateway — it pays from the wallet only.
 11. **Use shadcn-vue components**; don't hand-roll buttons/inputs/dialogs/tables it provides. Type Inertia props with interfaces; loose TS is fine.
+11a. **Design every UI slice with the design skills — not raw shadcn defaults.** Before building or reworking ANY page/component, invoke the `ui-ux-pro-max` skill (and `frontend-design` for visual direction). shadcn-vue is the component *substrate*; the design skills decide palette, typography scale, spacing, hierarchy, and the page's signature element so the UI doesn't read as a templated default. A grid of identical StatCards + badge-and-count rows is the failure mode this rule exists to prevent. This applies to new pages AND reworks, on every sprint.
 12. **shadcn-vue: install before use.** A shadcn-vue component only exists after `npx shadcn-vue@latest add <name>` copies its files into `resources/js/components/ui/`. NEVER import a shadcn-vue component you have not added first. At the start of a sprint: (a) list the components the sprint needs in `plan.md`, (b) run the `add` command(s) as the first UI step, (c) confirm the files exist (`resources/js/components/ui/<name>/`), (d) only then import and use them. If a needed component isn't installed, run `add` — do not write a substitute or assume it's there.
 13. **Follow the project structure (§2.5).** Each layer in its folder: logic in `app/Services`, ownership in `app/Policies`, validation in `app/Http/Requests`, fixed sets as `app/Enums` (no magic strings), web vs API controllers separated. Models singular, FormRequests `Store/Update...Request`, services `XxxService`.
 14. **Format before every commit.** Run `./vendor/bin/sail pint` (PHP) and the kit's ESLint/Prettier (`npm run lint`/`format`) before committing. A slice is not done until both pass. Functions stay focused (~≤30 lines); no business logic in controllers or Vue components.
@@ -68,7 +73,7 @@ Laravel 13 (PHP 8.3) · Inertia · Vue 3 + TypeScript · shadcn-vue · Tailwind 
 - Migration + model (`$fillable`) + factory + seeder entry. Fixed sets use Enums (§2.5).
 - FormRequest + Policy (if ownership) + Service method (transactional where needed). Files placed per §2.5 structure.
 - Controller (web) + route behind correct middleware. Add `/api/v1` + Swagger annotation for core flows.
-- Inertia page + reuses the UI kit; responsive; has empty/error/loading states.
+- Inertia page **designed via the `ui-ux-pro-max`/`frontend-design` skills** (golden rule 11a) — built on the UI kit, but with a deliberate palette/type/hierarchy/signature, not raw shadcn defaults; responsive; has empty/error/loading states.
 - UI slices are **visually verified via Playwright MCP** (screenshots at 360/768/1280, states, dark mode).
 - A Pest feature test for any concurrency/idempotency-critical path.
 - **`pint` + ESLint/Prettier pass.**

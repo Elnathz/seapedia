@@ -15,7 +15,7 @@ Follow this order. Do not skip steps.
 7. **Controller (web)** — thin; validate → service → Inertia render/redirect.
 8. **Route** — behind `auth` + `EnsureActiveRole:<role>` (or `is_admin`) as required.
 9. **API mirror** — for core flows, add `/api/v1` controller + Sanctum + Swagger annotation.
-10. **Inertia page + Vue** — reuse UI kit; responsive; empty/error/loading states; never `v-html` user content.
+10. **Inertia page + Vue** — FIRST invoke the `ui-ux-pro-max` skill (+ `frontend-design` for visual direction) to decide palette/type/hierarchy/signature, THEN build on the shadcn-vue UI kit. Don't ship raw shadcn defaults (uniform StatCard grids, badge+count rows). Responsive; empty/error/loading states; never `v-html` user content.
 11. **Pest test** — required for concurrency/idempotency-critical paths.
 12. **Commit** — one focused conventional commit (see commit-message skill).
 
@@ -27,4 +27,5 @@ Follow this order. Do not skip steps.
 - [ ] Money/stock/status mutation is inside a locked transaction.
 - [ ] Time comes from ClockService, not now().
 - [ ] Route is behind the correct role middleware.
+- [ ] UI step ran through `ui-ux-pro-max`/`frontend-design` — deliberate palette/type/hierarchy/signature, not raw shadcn defaults.
 - [ ] One conventional commit; files created/changed listed.
