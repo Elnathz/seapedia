@@ -8,7 +8,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T2 · Fake top-up (gateway interface + FakeGateway) + wallet page — `feat(wallet): add fake top-up via payment gateway interface`
 - [x] T3 · Delivery address management — `feat(buyer): add delivery address management`
 - [x] T4 · Cart with single-store guard — `feat(cart): add buyer cart with single-store guard`
-- [ ] T5 · Checkout preview + commit + OrderService + ClockService — `feat(checkout): charge wallet and reduce stock in a locked transaction`
+- [x] T5 · Checkout preview + commit + OrderService + ClockService — `feat(checkout): charge wallet and reduce stock in a locked transaction`
 - [ ] T6 · Buyer order history + detail + seller incoming list — `feat(order): add buyer order history and seller incoming list`
 - [ ] T7 · API mirror + Swagger for buyer flows — `feat(api): expose buyer wallet, cart and checkout endpoints`
 - [ ] T8 · Demo seed (wallets, addresses, sample order) + README — `feat(db): seed buyer wallets, addresses and demo order`
@@ -24,8 +24,8 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] Fake top-up credits wallet + writes ledger; replay is idempotent (T2)
 - [x] Cross-user address update → 403; new default unsets previous (T3)
 - [x] Add from different store → 422; clear-then-add succeeds; qty update changes line subtotal (T4)
-- [ ] Oversell: two concurrent checkouts on last unit → one succeeds, one rejected, no negative stock (T5)
-- [ ] Insufficient balance → rejected, no order/stock/charge side effects (T5)
+- [x] Oversell: two concurrent checkouts on last unit → one succeeds, one rejected, no negative stock (T5)
+- [x] Insufficient balance → rejected, no order/stock/charge side effects (T5)
 - [ ] Buyer scoped to own orders; seller scoped to own store's orders (T6)
 - [ ] API checkout happy path returns order; insufficient balance → 422 (T7)
 
@@ -76,3 +76,27 @@ code/tests and batch the whole visual-QA pass once Playwright reconnects, rather
   (`update`/`delete`), matching the `AddressPolicy`/`ProductPolicy` convention, not inline checks in
   the service. `BuyerCartController::store` redirects `back()` (not to a fixed route) since it's
   called from the catalog/product page as well as the cart page itself.
+- **T5 design call (flagged, not literally in TDD):** seller income is credited to the seller's
+  wallet INSTANTLY at checkout (amount = `taxable_base`, excluding tax and delivery fee — neither
+  is seller revenue), not deferred to "Pesanan Selesai". The TDD's own wording is ambiguous
+  ("credit when an order is completed/paid") and the money-and-checkout skill's 5-step list doesn't
+  explicitly list a seller-credit step. Went with instant settlement because: (a) §5.1b explicitly
+  calls seller income "spendable... instant settlement", and (b) §5.9's overdue-refund step
+  ("reverse seller income") only makes sense if the seller was ALREADY credited before the order
+  could become overdue — an order that's overdue, by definition, never reached Pesanan Selesai. If
+  this is wrong, the fix is confined to `CheckoutService::commit()` removing the seller credit call
+  and adding it to the (Sprint 4+) "Pesanan Selesai" transition instead.
+- **T5 schema deviation:** `orders` has no `promo_id`/`voucher_id` columns yet — `promos`/`vouchers`
+  tables don't exist until Sprint 4, so a real FK constraint isn't possible yet. `discount_total`
+  exists now (placeholder 0); Sprint 4 adds the two FK columns when it builds those tables.
+- **T5 test-isolation bug found and fixed:** the new `CheckoutConcurrencyTest` uses
+  `DatabaseTruncation` (not `RefreshDatabase`) so a second real DB connection can contend for the
+  same row — but unlike `RefreshDatabase`, `DatabaseTruncation` commits real rows instead of rolling
+  back, so without an explicit `tearDown()` truncate, it leaked a `roles` row into whichever test
+  ran next (intermittent `Duplicate entry 'buyer'` failures elsewhere in the suite). Fixed by calling
+  `truncateTablesForAllConnections()` in `tearDown()`. Worth remembering for any future test that
+  reaches for `DatabaseTruncation`.
+- **T5 ordering note:** the order is created *before* the wallet debit (the money-and-checkout
+  skill's literal step list debits first) so `wallet_transactions.reference_id` can point at the
+  order. Transaction atomicity makes this equivalent — a failed debit still rolls back the
+  just-created order, order_items, and stock decrement together.
