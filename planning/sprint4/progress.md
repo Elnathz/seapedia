@@ -4,7 +4,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 
 ## Tasks
 
-- [ ] T1 · Promo + Voucher resources + admin API + orders discount FKs — `feat(discount): add promo and voucher resources with admin endpoints`
+- [x] T1 · Promo + Voucher resources + admin API + orders discount FKs — `feat(discount): add promo and voucher resources with admin endpoints`
 - [ ] T2 · DiscountService + checkout preview/commit integration (locked) — `feat(discount): apply promo and voucher in a locked checkout`
 - [ ] T3 · Checkout UI: discount code entry + summary distinction — `feat(checkout): add discount code entry to the checkout UI`
 - [ ] T4 · Seller process order (Sedang Dikemas → Menunggu Pengirim) — `feat(order): add seller process action to advance order status`
@@ -18,7 +18,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 
 ## Tests
 
-- [ ] Admin creates voucher/promo → persisted; non-admin → 403; invalid type/value/usage rejected (T1)
+- [x] Admin creates voucher/promo → persisted; non-admin → 403; invalid type/value/usage rejected (T1)
 - [ ] Expired promo/voucher rejected; voucher remaining=0 rejected; min_spend not met rejected (T2)
 - [ ] Promo+voucher combine = min(promo+voucher, subtotal) off original subtotal; capped at subtotal (T2)
 - [ ] Concurrent checkouts on a 1-remaining voucher → one succeeds, one rejected, used_count never exceeds limit (T2)
