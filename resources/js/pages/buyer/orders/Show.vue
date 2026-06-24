@@ -53,7 +53,7 @@ interface OrderData {
     status_histories: HistoryEntry[];
 }
 
-const props = defineProps<{ order: OrderData }>();
+defineProps<{ order: OrderData }>();
 
 defineOptions({
     layout: {
