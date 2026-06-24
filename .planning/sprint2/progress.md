@@ -11,7 +11,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T5 · Catalog API + Swagger — `feat(api): expose public catalog endpoints with swagger`
 - [x] T6 · i18n infrastructure — `feat(i18n): add hybrid id/en locale infrastructure`
 - [x] T7 · Locale switcher + translate — `feat(i18n): add navbar and settings language switcher`
-- [ ] T8 · Demo seed (stores + products) — `feat(db): seed demo stores and products`
+- [x] T8 · Demo seed (stores + products) — `feat(db): seed demo stores and products`
 
 ## Tests
 
@@ -183,3 +183,23 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
   `assertCookie('locale', 'en', false)` — third arg `false` skips the decrypt attempt. Different fix
   from T6's `withUnencryptedCookie()` (that's for *outgoing* test-request cookies; this is for
   *incoming* response-cookie assertions).
+- T8: no real photo assets were available, and the plan calls for "image-bearing products" without
+  mandating a source — generated small solid-color JPEGs on the fly with PHP's built-in GD extension
+  (`imagecreatetruecolor`/`imagefilledrectangle`/`imagejpeg` to an in-memory buffer, then
+  `Storage::disk('public')->put(...)`) rather than committing binary asset files to the repo. Confirmed
+  GD is present in the Sail PHP image first. Fully reproducible by `migrate:fresh --seed` with zero
+  external dependencies; visually distinct colors per product confirmed via Playwright screenshot of
+  the catalog grid.
+- T8: `StoreProductSeeder` calls `StoreService::createForUser()` / `ProductService::createForStore()`
+  (not raw `Store::create()`/`Product::create()`) specifically to reuse the slug-uniqueness logic
+  already centralized there — seed data follows the exact same rules a real seller's request would,
+  no duplicated `Str::slug()`-suffix logic in the seeder. Image is attached as a separate
+  `$product->update(['image_path' => ...])` right after creation (the Service's `createForStore()`
+  signature takes an `?UploadedFile`, which seeding doesn't have one of).
+- T8: a stray product image file from earlier manual T2 Playwright QA (`Q0vAmIFey....jpg`, no longer
+  referenced by any DB row after `migrate:fresh`) was left on `storage/app/public/products/` —
+  deleted it; harmless either way since it's gitignored dev-disk state, never committed.
+- T8: README gained a "Demo path (Sprint 2)" section (mirroring Sprint 1's pattern) plus the
+  `storage:link` step in Setup and updated demo-credentials notes (seller1 → "Toko Berkah", multi1 →
+  "Warung Mama Lia"). "Current status" now points at Sprint 2 as the latest complete sprint, keeping
+  Sprint 1's progress log linked rather than overwritten.
