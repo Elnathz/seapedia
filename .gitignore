@@ -33,4 +33,4 @@ yarn-error.log
 !.claude/settings.json
 !.claude/skills/
 .playwright-mcp
-KetentuanPanitia.pdf
+/docs/KetentuanPanitia.pdf
