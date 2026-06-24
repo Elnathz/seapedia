@@ -26,3 +26,14 @@ const BADGE_VARIANTS: Record<
 export function deliveryStatusBadgeVariant(status: DeliveryStatusKey) {
     return BADGE_VARIANTS[status] ?? 'outline';
 }
+
+const FILL_CLASSES: Record<DeliveryStatusKey, string> = {
+    available: 'bg-amber-500',
+    taken: 'bg-sky-500',
+    completed: 'bg-emerald-500',
+};
+
+/** Tailwind bg-* class for proportion tracks (StatBar). */
+export function deliveryStatusFill(status: DeliveryStatusKey): string {
+    return FILL_CLASSES[status] ?? 'bg-primary';
+}

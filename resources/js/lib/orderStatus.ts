@@ -37,3 +37,16 @@ const BADGE_VARIANTS: Record<
 export function orderStatusBadgeVariant(status: OrderStatusKey) {
     return BADGE_VARIANTS[status] ?? 'outline';
 }
+
+const FILL_CLASSES: Record<OrderStatusKey, string> = {
+    sedang_dikemas: 'bg-amber-500',
+    menunggu_pengirim: 'bg-sky-500',
+    sedang_dikirim: 'bg-primary',
+    pesanan_selesai: 'bg-emerald-500',
+    dikembalikan: 'bg-destructive',
+};
+
+/** Tailwind bg-* class for proportion tracks (StatBar). */
+export function orderStatusFill(status: OrderStatusKey): string {
+    return FILL_CLASSES[status] ?? 'bg-primary';
+}
