@@ -25,9 +25,11 @@ class BuyerDemoSeeder extends Seeder
      * Gives buyer1 and multi1 a topped-up wallet (via TopupService, so the
      * ledger has a real entry, not a raw balance write) and a saved
      * address, then walks buyer1 through one real checkout against
-     * seller1's store so order history (buyer side) and the incoming
-     * orders list (seller side) are populated for the demo — all through
-     * the same Services a real user would hit, per §12 and golden rule 2.
+     * seller1's store — stacking both demo discount codes (§5.3) so the
+     * combination rule, the buyer's spending report, and the seller's
+     * income report all have a discounted order to reconcile against —
+     * all through the same Services a real user would hit, per §12 and
+     * golden rule 2.
      */
     public function run(): void
     {
@@ -66,7 +68,10 @@ class BuyerDemoSeeder extends Seeder
             return;
         }
 
-        $this->carts->addItem($buyer, $product, 1);
-        $this->checkout->commit($buyer, $address, DeliveryMethod::Regular);
+        // 6 units clears PROMO20K's 100,000 min_spend so both demo codes
+        // (PROMO20K + HEMAT10) apply together, exercising the §5.3
+        // combination rule with real seeded data.
+        $this->carts->addItem($buyer, $product, 6);
+        $this->checkout->commit($buyer, $address, DeliveryMethod::Regular, 'PROMO20K', 'HEMAT10');
     }
 }

@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AppReviewSeeder::class);
         $this->call(DemoUserSeeder::class);
         $this->call(StoreProductSeeder::class);
+        $this->call(DiscountSeeder::class);
         $this->call(BuyerDemoSeeder::class);
 
         User::factory()->create([
