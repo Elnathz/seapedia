@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\ClockController as AdminClockController;
 use App\Http\Controllers\Api\Admin\PromoController;
 use App\Http\Controllers\Api\Admin\VoucherController;
 use App\Http\Controllers\Api\BuyerAddressController;
@@ -60,6 +61,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     });
 
     Route::middleware(['auth:sanctum', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::post('clock/advance', [AdminClockController::class, 'advance'])->name('clock.advance');
+
         Route::get('promos', [PromoController::class, 'index'])->name('promos.index');
         Route::post('promos', [PromoController::class, 'store'])->name('promos.store');
         Route::get('promos/{promo}', [PromoController::class, 'show'])->name('promos.show');

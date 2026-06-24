@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\Admin\ClockController as AdminClockController;
 use App\Http\Controllers\Web\AppReviewController;
 use App\Http\Controllers\Web\BuyerAddressController;
 use App\Http\Controllers\Web\BuyerCartController;
@@ -86,6 +87,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('jobs/{delivery}', [DriverJobController::class, 'show'])->name('jobs.show');
         Route::post('jobs/{delivery}/take', [DriverJobController::class, 'take'])->name('jobs.take');
         Route::post('jobs/{delivery}/complete', [DriverJobController::class, 'complete'])->name('jobs.complete');
+    });
+
+    Route::middleware('is_admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::post('clock/advance', [AdminClockController::class, 'advance'])->name('clock.advance');
     });
 });
 

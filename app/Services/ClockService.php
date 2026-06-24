@@ -19,4 +19,21 @@ class ClockService
 
         return $simulatedNow ? CarbonImmutable::parse($simulatedNow) : CarbonImmutable::now();
     }
+
+    /**
+     * Advance the simulated clock by N ticks (§5.7: 1 tick = 1 day),
+     * initializing from real time if no admin has touched it yet. Safe to
+     * call repeatedly (golden rule 15) — it only ever moves time forward.
+     */
+    public function advance(int $ticks = 1): CarbonImmutable
+    {
+        $next = $this->now()->addDays($ticks);
+
+        Setting::query()->updateOrCreate(
+            ['key' => 'simulated_now'],
+            ['value' => $next->toDateTimeString()],
+        );
+
+        return $next;
+    }
 }
