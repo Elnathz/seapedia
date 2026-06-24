@@ -280,17 +280,24 @@ confirms, consistent with Sprint 2's delete pattern), `separator` (summary divid
   - Tests: none (covered by T1–T7 feature tests).
   - Commit: `feat(db): seed buyer wallets, addresses and demo order`
 
-## Candidate add-ons (owner decides at approval — NOT counted in the 20 pts)
+## Visual polish bundle → DEFERRED to the final sprint (owner's decision)
 
-These came up in discussion; listed separately so the heaviest day stays focused on the core.
+Discussed and **deferred to the final sprint** (Sprint 6 polish), so the heaviest day stays on the
+20-pt core. Not built in Sprint 3:
 
-- **A1 · Enrich the landing page** to show **featured products + recent app reviews** — the brief's
-  Level 1 calls `/` "landing (reviews, featured)", and ours is still generic marketing chrome. Small
-  slice: `Welcome.vue` pulls a few active products (via `CatalogService`) + latest reviews.
-  `feat(catalog): show featured products and reviews on landing`.
-- **A2 · Real demo product images** — replace the seeder's solid-colour GD placeholders with real
-  centred photos (~1200×1200, < 2 MB, WebP/JPEG) so the 1920px competition demo looks credible.
-  `chore(db): use real product photos in demo seed`.
+- **Marketplace homepage** — replace the generic `Welcome.vue` splash with a real storefront home
+  (search + hero banner + featured products + categories + store highlights + reviews), keeping
+  `/catalog` as the full listing. The brief Level 1 allows a "landing page OR home page" and requires
+  it to read as "a marketplace, not only a single-store catalog"; a product-rich home (Shopee/
+  Tokopedia/MegaMart style) scores best on the UI bonus. **Assets already prepared by the owner** in
+  `public/images/` (`banner/`, `banner/hero/`, `banner/side/`, `category/`).
+- **Real demo product photos + product re-theme** — `public/images/product/` holds real photos
+  (iPhone 17 / 17 Pro Max colourways, Tenda, rel pancing, kantong plastik vakum, pelapis kabel
+  insulasi). When the homepage is built, re-theme the demo stores/products to these (electronics +
+  outdoor/tools) and swap the seeder's solid-colour GD placeholders for them (1 image/product per §7).
+
+Sprint 3 keeps the existing campus demo seed + placeholder images; visuals are upgraded as one
+coherent pass in the final sprint.
 
 ## Demo checklist (end of sprint)
 
@@ -345,4 +352,6 @@ To be picked up by Sprint 4+; Sprint 4's Sonnet instructions must reference this
 - Driver/delivery jobs, `seapedia:advance-day` + clock advance UI, `OverdueService::sweep()`, admin
   dashboard, voucher/promo management UI → **Sprint 5**.
 - Real iPaymu integration, security pass, Swagger polish, README finalize, deployment → **Sprint 6**.
+- **Marketplace homepage + real product photos + product re-theme** (assets in `public/images/`) →
+  **final sprint** (owner's decision; see "Visual polish bundle" above).
 - Moving `planning/` into `docs/` → **final sprint** (owner's instruction).

@@ -13,10 +13,10 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [ ] T7 · API mirror + Swagger for buyer flows — `feat(api): expose buyer wallet, cart and checkout endpoints`
 - [ ] T8 · Demo seed (wallets, addresses, sample order) + README — `feat(db): seed buyer wallets, addresses and demo order`
 
-## Candidate add-ons (owner decides at approval — not in the 20 pts)
+## Deferred to final sprint (owner's decision)
 
-- [ ] A1 · Featured products + reviews on the landing page — `feat(catalog): show featured products and reviews on landing`
-- [ ] A2 · Real demo product photos — `chore(db): use real product photos in demo seed`
+- Marketplace homepage (replace Welcome splash) + real product photos + product re-theme.
+  Assets already in `public/images/`. Sprint 3 keeps the existing campus seed + placeholders.
 
 ## Tests
 
