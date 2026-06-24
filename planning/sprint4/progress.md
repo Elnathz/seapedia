@@ -9,7 +9,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T3 · Checkout UI: discount code entry + summary distinction — `feat(checkout): add discount code entry to the checkout UI`
 - [x] T4 · Seller process order (Sedang Dikemas → Menunggu Pengirim) — `feat(order): add seller process action to advance order status`
 - [x] T5 · Buyer spending report + Seller income report — `feat(report): add buyer spending and seller income reports`
-- [ ] T6 · Seed demo discount codes + README — `feat(db): seed demo discount codes and document level 4 rules`
+- [x] T6 · Seed demo discount codes + README — `feat(db): seed demo discount codes and document level 4 rules`
 
 ## Deferred to final sprint (owner's decision)
 
