@@ -6,7 +6,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 
 - [x] T1 · Wallet ledger + locked WalletService — `feat(wallet): add wallet ledger and locked WalletService`
 - [x] T2 · Fake top-up (gateway interface + FakeGateway) + wallet page — `feat(wallet): add fake top-up via payment gateway interface`
-- [ ] T3 · Delivery address management — `feat(buyer): add delivery address management`
+- [x] T3 · Delivery address management — `feat(buyer): add delivery address management`
 - [ ] T4 · Cart with single-store guard — `feat(cart): add buyer cart with single-store guard`
 - [ ] T5 · Checkout preview + commit + OrderService + ClockService — `feat(checkout): charge wallet and reduce stock in a locked transaction`
 - [ ] T6 · Buyer order history + detail + seller incoming list — `feat(order): add buyer order history and seller incoming list`
@@ -22,7 +22,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 
 - [x] Concurrent credit+debit stay consistent (locked); over-debit rejected (T1)
 - [x] Fake top-up credits wallet + writes ledger; replay is idempotent (T2)
-- [ ] Cross-user address update → 403; new default unsets previous (T3)
+- [x] Cross-user address update → 403; new default unsets previous (T3)
 - [ ] Add from different store → 422; clear-then-add succeeds; qty update changes line subtotal (T4)
 - [ ] Oversell: two concurrent checkouts on last unit → one succeeds, one rejected, no negative stock (T5)
 - [ ] Insufficient balance → rejected, no order/stock/charge side effects (T5)
@@ -62,3 +62,7 @@ code/tests and batch the whole visual-QA pass once Playwright reconnects, rather
 - **T2 assumption:** no minimum top-up amount is locked by the TDD; picked 10,000 IDR
   (`config('payment.topup.min_amount')`) as the simplest reasonable floor — to confirm/restate in
   the README (T8).
+- **T3:** "Set as default" is its own button per non-default address card, not a checkbox inside
+  the create/edit dialog (matches the plan's wording exactly: "create/edit in a dialog; ... ;
+  set-default action" are listed as separate things). `AddressService` still accepts an optional
+  `is_default` key so the T8 seeder can mark one explicitly when seeding.
