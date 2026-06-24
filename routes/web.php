@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Web\Admin\ClockController as AdminClockController;
+use App\Http\Controllers\Web\Admin\PromoController as AdminPromoController;
+use App\Http\Controllers\Web\Admin\VoucherController as AdminVoucherController;
 use App\Http\Controllers\Web\AppReviewController;
 use App\Http\Controllers\Web\BuyerAddressController;
 use App\Http\Controllers\Web\BuyerCartController;
@@ -91,6 +93,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware('is_admin')->prefix('admin')->name('admin.')->group(function () {
         Route::post('clock/advance', [AdminClockController::class, 'advance'])->name('clock.advance');
+
+        Route::get('promos', [AdminPromoController::class, 'index'])->name('promos.index');
+        Route::post('promos', [AdminPromoController::class, 'store'])->name('promos.store');
+        Route::get('promos/{promo}', [AdminPromoController::class, 'show'])->name('promos.show');
+        Route::patch('promos/{promo}/toggle-active', [AdminPromoController::class, 'toggleActive'])->name('promos.toggleActive');
+
+        Route::get('vouchers', [AdminVoucherController::class, 'index'])->name('vouchers.index');
+        Route::post('vouchers', [AdminVoucherController::class, 'store'])->name('vouchers.store');
+        Route::get('vouchers/{voucher}', [AdminVoucherController::class, 'show'])->name('vouchers.show');
+        Route::patch('vouchers/{voucher}/toggle-active', [AdminVoucherController::class, 'toggleActive'])->name('vouchers.toggleActive');
     });
 });
 

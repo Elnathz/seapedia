@@ -25,6 +25,43 @@ class DiscountService
         return Voucher::create([...$data, 'used_count' => 0]);
     }
 
+    public function togglePromoActive(Promo $promo): Promo
+    {
+        $promo->update(['is_active' => ! $promo->is_active]);
+
+        return $promo;
+    }
+
+    public function toggleVoucherActive(Voucher $voucher): Voucher
+    {
+        $voucher->update(['is_active' => ! $voucher->is_active]);
+
+        return $voucher;
+    }
+
+    /**
+     * The admin-facing lifecycle label for a code — distinct from the
+     * checkout-time eligibility errors in evaluatePromo/evaluateVoucher,
+     * but checked against the same `is_active` / `expiry_date` / usage
+     * rules so the dashboard never disagrees with what checkout would do.
+     */
+    public function statusFor(Promo|Voucher $discount): string
+    {
+        if (! $discount->is_active) {
+            return 'inactive';
+        }
+
+        if ($discount->expiry_date->isBefore($this->clock->now())) {
+            return 'expired';
+        }
+
+        if ($discount instanceof Voucher && $discount->remainingUsage() <= 0) {
+            return 'used_up';
+        }
+
+        return 'active';
+    }
+
     /**
      * Read-only promo lookup against a subtotal — used by both the preview
      * (display only) and commit (promo has no used_count, so no lock needed).

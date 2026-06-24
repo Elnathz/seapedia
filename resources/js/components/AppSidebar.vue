@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import {
+    BadgePercent,
     BarChart3,
     Inbox,
     LayoutGrid,
@@ -9,6 +10,7 @@ import {
     Receipt,
     ShoppingCart,
     Store,
+    Ticket,
     Truck,
     Wallet,
 } from '@lucide/vue';
@@ -28,6 +30,8 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as indexAdminPromos } from '@/routes/admin/promos';
+import { index as indexAdminVouchers } from '@/routes/admin/vouchers';
 import { index as indexBuyerAddresses } from '@/routes/buyer/addresses';
 import { index as indexBuyerCart } from '@/routes/buyer/cart';
 import { index as indexBuyerOrders } from '@/routes/buyer/orders';
@@ -114,6 +118,21 @@ const mainNavItems = computed<NavItem[]>(() => {
             href: indexDriverJobs(),
             icon: Truck,
         });
+    }
+
+    if (auth.user?.is_admin) {
+        items.push(
+            {
+                title: t('admin.managePromosTitle'),
+                href: indexAdminPromos(),
+                icon: Ticket,
+            },
+            {
+                title: t('admin.manageVouchersTitle'),
+                href: indexAdminVouchers(),
+                icon: BadgePercent,
+            },
+        );
     }
 
     return items;

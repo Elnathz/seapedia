@@ -35,5 +35,7 @@
     "You already have an active delivery job.": "You already have an active delivery job.",
     "This job has already been taken.": "This job has already been taken.",
     "This delivery is not awaiting completion.": "This delivery is not awaiting completion.",
-    "Simulated day advanced to :date. :count overdue order(s) refunded.": "Simulated day advanced to :date. :count overdue order(s) refunded."
+    "Simulated day advanced to :date. :count overdue order(s) refunded.": "Simulated day advanced to :date. :count overdue order(s) refunded.",
+    "Promo :code created.": "Promo :code created.",
+    "Voucher :code created.": "Voucher :code created."
 }

@@ -35,5 +35,7 @@
     "You already have an active delivery job.": "Anda masih memiliki pengiriman aktif.",
     "This job has already been taken.": "Pesanan ini sudah diambil.",
     "This delivery is not awaiting completion.": "Pengiriman ini tidak sedang menunggu penyelesaian.",
-    "Simulated day advanced to :date. :count overdue order(s) refunded.": "Hari simulasi dimajukan ke :date. :count pesanan kedaluwarsa direfund."
+    "Simulated day advanced to :date. :count overdue order(s) refunded.": "Hari simulasi dimajukan ke :date. :count pesanan kedaluwarsa direfund.",
+    "Promo :code created.": "Promo :code berhasil dibuat.",
+    "Voucher :code created.": "Voucher :code berhasil dibuat."
 }

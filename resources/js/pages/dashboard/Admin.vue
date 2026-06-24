@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import {
     AlertTriangle,
     BadgePercent,
@@ -36,6 +36,8 @@ import type { DeliveryStatusKey } from '@/lib/deliveryStatus';
 import { orderStatusBadgeVariant, orderStatusLabel } from '@/lib/orderStatus';
 import type { OrderStatusKey } from '@/lib/orderStatus';
 import { formatDateTime } from '@/lib/utils';
+import { index as indexAdminPromos } from '@/routes/admin/promos';
+import { index as indexAdminVouchers } from '@/routes/admin/vouchers';
 
 interface Snapshot {
     simulated_now: string;
@@ -218,7 +220,10 @@ function confirmAdvance() {
                 </CardTitle>
             </CardHeader>
             <CardContent class="grid gap-4 sm:grid-cols-2">
-                <div class="flex items-start gap-3">
+                <Link
+                    :href="indexAdminPromos.url()"
+                    class="flex items-start gap-3 rounded-lg p-2 transition-colors hover:bg-accent"
+                >
                     <Ticket class="mt-1 size-5 text-muted-foreground" />
                     <div class="flex-1">
                         <p class="font-medium">{{ t('admin.promosLabel') }}</p>
@@ -228,8 +233,11 @@ function confirmAdvance() {
                             <span>{{ t('admin.expiredCount') }}: {{ props.snapshot.promos.expired }}</span>
                         </div>
                     </div>
-                </div>
-                <div class="flex items-start gap-3">
+                </Link>
+                <Link
+                    :href="indexAdminVouchers.url()"
+                    class="flex items-start gap-3 rounded-lg p-2 transition-colors hover:bg-accent"
+                >
                     <BadgePercent class="mt-1 size-5 text-muted-foreground" />
                     <div class="flex-1">
                         <p class="font-medium">{{ t('admin.vouchersLabel') }}</p>
@@ -240,7 +248,7 @@ function confirmAdvance() {
                             <span>{{ t('admin.usedUpCount') }}: {{ props.snapshot.vouchers.used_up }}</span>
                         </div>
                     </div>
-                </div>
+                </Link>
             </CardContent>
         </Card>
     </div>
