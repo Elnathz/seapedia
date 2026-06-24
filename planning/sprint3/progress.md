@@ -9,7 +9,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T3 · Delivery address management — `feat(buyer): add delivery address management`
 - [x] T4 · Cart with single-store guard — `feat(cart): add buyer cart with single-store guard`
 - [x] T5 · Checkout preview + commit + OrderService + ClockService — `feat(checkout): charge wallet and reduce stock in a locked transaction`
-- [ ] T6 · Buyer order history + detail + seller incoming list — `feat(order): add buyer order history and seller incoming list`
+- [x] T6 · Buyer order history + detail + seller incoming list — `feat(order): add buyer order history and seller incoming list`
 - [ ] T7 · API mirror + Swagger for buyer flows — `feat(api): expose buyer wallet, cart and checkout endpoints`
 - [ ] T8 · Demo seed (wallets, addresses, sample order) + README — `feat(db): seed buyer wallets, addresses and demo order`
 
@@ -26,7 +26,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] Add from different store → 422; clear-then-add succeeds; qty update changes line subtotal (T4)
 - [x] Oversell: two concurrent checkouts on last unit → one succeeds, one rejected, no negative stock (T5)
 - [x] Insufficient balance → rejected, no order/stock/charge side effects (T5)
-- [ ] Buyer scoped to own orders; seller scoped to own store's orders (T6)
+- [x] Buyer scoped to own orders; seller scoped to own store's orders (T6)
 - [ ] API checkout happy path returns order; insufficient balance → 422 (T7)
 
 ## Visual QA (Playwright MCP) — 360/768/1280/1920, both locales, light + dark
@@ -100,3 +100,10 @@ code/tests and batch the whole visual-QA pass once Playwright reconnects, rather
   skill's literal step list debits first) so `wallet_transactions.reference_id` can point at the
   order. Transaction atomicity makes this equivalent — a failed debit still rolls back the
   just-created order, order_items, and stock decrement together.
+- **T6:** order status labels (Sedang Dikemas, etc.) are hardcoded Indonesian in
+  `resources/js/lib/orderStatus.ts`, deliberately bypassing vue-i18n — they're the system's fixed
+  vocabulary (printed on both buyer and seller views), not translatable UI chrome. Seller only gets
+  the incoming list this sprint, no per-order detail page (matches the plan's task list exactly;
+  the "process" action and any seller order detail view are Sprint 4). Found and fixed a real Vue
+  compiler error along the way: `defineOptions()` cannot reference `props.*` (it's hoisted out of
+  setup()) — the order-detail breadcrumb dropped the dynamic order code and uses a static label.
