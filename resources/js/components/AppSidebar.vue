@@ -9,6 +9,7 @@ import {
     Receipt,
     ShoppingCart,
     Store,
+    Truck,
     Wallet,
 } from '@lucide/vue';
 import { computed } from 'vue';
@@ -32,6 +33,7 @@ import { index as indexBuyerCart } from '@/routes/buyer/cart';
 import { index as indexBuyerOrders } from '@/routes/buyer/orders';
 import { index as indexBuyerReports } from '@/routes/buyer/reports';
 import { show as showBuyerWallet } from '@/routes/buyer/wallet';
+import { index as indexDriverJobs } from '@/routes/driver/jobs';
 import { index as indexSellerOrders } from '@/routes/seller/orders';
 import { index as indexSellerProducts } from '@/routes/seller/products';
 import { index as indexSellerReports } from '@/routes/seller/reports';
@@ -104,6 +106,14 @@ const mainNavItems = computed<NavItem[]>(() => {
                 icon: BarChart3,
             },
         );
+    }
+
+    if (auth.activeRole === 'driver') {
+        items.push({
+            title: t('nav.driverJobs'),
+            href: indexDriverJobs(),
+            icon: Truck,
+        });
     }
 
     return items;

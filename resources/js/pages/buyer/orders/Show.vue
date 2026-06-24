@@ -15,6 +15,11 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import {
+    deliveryStatusBadgeVariant,
+    deliveryStatusLabel,
+} from '@/lib/deliveryStatus';
+import type { DeliveryStatusKey } from '@/lib/deliveryStatus';
 import { orderStatusBadgeVariant, orderStatusLabel } from '@/lib/orderStatus';
 import type { OrderStatusKey } from '@/lib/orderStatus';
 import { formatDateTime, formatIDR } from '@/lib/utils';
@@ -34,6 +39,12 @@ interface HistoryEntry {
     created_at: string;
 }
 
+interface DeliveryData {
+    id: number;
+    status: DeliveryStatusKey;
+    driver: { id: number; name: string } | null;
+}
+
 interface OrderData {
     id: number;
     code: string;
@@ -51,6 +62,7 @@ interface OrderData {
     store: { id: number; name: string; slug: string };
     items: OrderItemData[];
     status_histories: HistoryEntry[];
+    delivery: DeliveryData | null;
 }
 
 defineProps<{ order: OrderData }>();
@@ -107,6 +119,39 @@ const { t, locale } = useI18n();
                             >
                             {{ order.ship_address }}
                         </p>
+                        <template v-if="order.delivery">
+                            <p class="text-sm">
+                                <span class="text-muted-foreground"
+                                    >{{
+                                        t('driver.assignedDriverLabel')
+                                    }}:</span
+                                >
+                                {{
+                                    order.delivery.driver?.name ??
+                                    t('driver.noDriverYet')
+                                }}
+                            </p>
+                            <p class="text-sm">
+                                <span class="text-muted-foreground"
+                                    >{{
+                                        t('driver.deliveryStatusLabel')
+                                    }}:</span
+                                >
+                                <Badge
+                                    :variant="
+                                        deliveryStatusBadgeVariant(
+                                            order.delivery.status,
+                                        )
+                                    "
+                                >
+                                    {{
+                                        deliveryStatusLabel(
+                                            order.delivery.status,
+                                        )
+                                    }}
+                                </Badge>
+                            </p>
+                        </template>
                     </CardContent>
                 </Card>
 

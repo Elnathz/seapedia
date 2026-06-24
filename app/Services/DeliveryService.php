@@ -55,7 +55,7 @@ class DeliveryService
         return Delivery::query()
             ->where('driver_id', $driver->id)
             ->where('status', DeliveryStatus::Completed)
-            ->with('order:id,code,store_id')
+            ->with(['order:id,code,store_id', 'order.store:id,name'])
             ->latest('completed_at')
             ->paginate($perPage);
     }

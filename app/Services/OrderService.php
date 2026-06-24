@@ -115,7 +115,12 @@ class OrderService
     public function findForBuyer(int $orderId): ?Order
     {
         return Order::query()
-            ->with(['items', 'statusHistories' => fn ($query) => $query->oldest(), 'store:id,name,slug'])
+            ->with([
+                'items',
+                'statusHistories' => fn ($query) => $query->oldest(),
+                'store:id,name,slug',
+                'delivery.driver:id,name',
+            ])
             ->find($orderId);
     }
 
@@ -144,6 +149,7 @@ class OrderService
                 'statusHistories' => fn ($query) => $query->oldest(),
                 'store:id,name,slug,user_id',
                 'buyer:id,name',
+                'delivery.driver:id,name',
             ])
             ->find($orderId);
     }

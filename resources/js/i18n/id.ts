@@ -18,6 +18,7 @@ export default {
         cart: 'Keranjang',
         myOrders: 'Pesanan Saya',
         reports: 'Laporan',
+        driverJobs: 'Pesanan Tersedia',
         platform: 'Platform',
         switchRole: 'Ganti peran',
         settings: 'Pengaturan',
@@ -237,5 +238,39 @@ export default {
             'Pengeluaran Anda akan muncul di sini setelah checkout.',
         sellerEmptyDescription:
             'Pendapatan Anda akan muncul di sini setelah pembeli checkout dari toko Anda.',
+    },
+    driver: {
+        jobsTitle: 'Pesanan Tersedia',
+        jobsEmptyTitle: 'Belum ada pesanan tersedia',
+        jobsEmptyDescription:
+            'Pesanan yang sudah diproses penjual akan muncul di sini.',
+        earningPreview: 'Estimasi Pendapatan',
+        columnStore: 'Toko',
+        columnAddress: 'Alamat Tujuan',
+        detailTitle: 'Detail Pengiriman',
+        takeAction: 'Ambil Pesanan',
+        completeAction: 'Selesaikan Pengiriman',
+        takeConfirmTitle: 'Ambil pesanan ini?',
+        takeConfirmDescription:
+            'Anda akan bertanggung jawab mengantarkan pesanan {code}. Lanjutkan?',
+        takeConfirm: 'Ya, Ambil',
+        completeConfirmTitle: 'Selesaikan pengiriman ini?',
+        completeConfirmDescription:
+            'Pesanan {code} akan ditandai selesai dan pendapatan Anda akan bertambah. Lanjutkan?',
+        completeConfirm: 'Ya, Selesaikan',
+        activeJobTitle: 'Pengiriman Aktif',
+        noActiveJobTitle: 'Tidak ada pengiriman aktif',
+        noActiveJobDescription:
+            'Ambil pesanan dari daftar Pesanan Tersedia untuk mulai mengantar.',
+        findJobs: 'Cari Pesanan',
+        completedCount: 'Pesanan Selesai',
+        totalEarnings: 'Total Pendapatan',
+        historyTitle: 'Riwayat Pengiriman',
+        historyEmptyTitle: 'Belum ada riwayat',
+        historyEmptyDescription:
+            'Pengiriman yang sudah selesai akan muncul di sini.',
+        assignedDriverLabel: 'Kurir',
+        deliveryStatusLabel: 'Status Pengiriman',
+        noDriverYet: 'Belum ada kurir',
     },
 };

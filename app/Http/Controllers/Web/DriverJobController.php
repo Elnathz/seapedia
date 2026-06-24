@@ -28,7 +28,12 @@ class DriverJobController extends Controller
 
     public function show(Delivery $delivery): Response
     {
-        $delivery->load(['order.store:id,name', 'order.items', 'driver:id,name']);
+        $delivery->load([
+            'order.store:id,name',
+            'order.items',
+            'order.statusHistories' => fn ($query) => $query->oldest(),
+            'driver:id,name',
+        ]);
 
         return Inertia::render('driver/jobs/Show', ['job' => $delivery]);
     }
@@ -45,7 +50,7 @@ class DriverJobController extends Controller
         try {
             $this->deliveries->take($delivery, $request->user());
         } catch (ConflictHttpException) {
-            Inertia::flash('toast', ['type' => 'error', 'message' => __('Sudah diambil oleh kurir lain.')]);
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('This job has already been taken by another driver.')]);
 
             return to_route('driver.jobs.index');
         }

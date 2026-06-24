@@ -35,7 +35,12 @@ class JobController extends Controller
     )]
     public function show(Delivery $delivery): JsonResponse
     {
-        return response()->json($delivery->load(['order.store:id,name', 'order.items', 'driver:id,name']));
+        return response()->json($delivery->load([
+            'order.store:id,name',
+            'order.items',
+            'order.statusHistories' => fn ($query) => $query->oldest(),
+            'driver:id,name',
+        ]));
     }
 
     #[OA\Post(

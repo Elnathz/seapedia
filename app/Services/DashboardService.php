@@ -17,7 +17,10 @@ class DashboardService
         OrderStatus::Dikembalikan->value,
     ];
 
-    public function __construct(private readonly RoleService $roleService) {}
+    public function __construct(
+        private readonly RoleService $roleService,
+        private readonly DeliveryService $deliveries,
+    ) {}
 
     /**
      * Decide which dashboard shell a request's user sees and the props it
@@ -46,10 +49,13 @@ class DashboardService
                 'component' => 'dashboard/Seller',
                 'props' => ['balance' => $balance, 'activeProducts' => $this->activeProductCount($user)],
             ],
-            // Delivery jobs don't exist until Sprint 5 — 0 is accurate, not a placeholder.
             RoleName::Driver => [
                 'component' => 'dashboard/Driver',
-                'props' => ['activeDeliveries' => 0],
+                'props' => [
+                    'activeJob' => $this->deliveries->activeJobFor($user),
+                    'history' => $this->deliveries->historyFor($user, perPage: 5),
+                    'totalEarnings' => $this->deliveries->totalEarningsFor($user),
+                ],
             ],
             RoleName::Buyer, null => [
                 'component' => 'dashboard/Buyer',

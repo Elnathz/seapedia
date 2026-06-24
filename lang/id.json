@@ -28,5 +28,11 @@
     "This voucher code has been fully redeemed.": "Kode voucher ini sudah mencapai batas penggunaan.",
     "Minimum spend of :amount required for this code.": "Minimal belanja Rp:amount untuk kode ini.",
     "Percentage value cannot exceed 100.": "Nilai persentase tidak boleh lebih dari 100.",
-    "Order processed.": "Pesanan berhasil diproses."
+    "Order processed.": "Pesanan berhasil diproses.",
+    "Job taken.": "Pesanan berhasil diambil.",
+    "Delivery completed.": "Pengiriman berhasil diselesaikan.",
+    "This job has already been taken by another driver.": "Pesanan ini sudah diambil kurir lain.",
+    "You already have an active delivery job.": "Anda masih memiliki pengiriman aktif.",
+    "This job has already been taken.": "Pesanan ini sudah diambil.",
+    "This delivery is not awaiting completion.": "Pengiriman ini tidak sedang menunggu penyelesaian."
 }
