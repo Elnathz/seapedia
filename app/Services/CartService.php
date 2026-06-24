@@ -107,9 +107,4 @@ class CartService
             ])
             ->firstOrCreate(['user_id' => $user->id]);
     }
-
-    private function assertOwnership(User $user, CartItem $item): void
-    {
-        abort_unless($item->cart->user_id === $user->id, 403);
-    }
 }
