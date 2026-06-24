@@ -11,7 +11,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [x] T5 · Checkout preview + commit + OrderService + ClockService — `feat(checkout): charge wallet and reduce stock in a locked transaction`
 - [x] T6 · Buyer order history + detail + seller incoming list — `feat(order): add buyer order history and seller incoming list`
 - [x] T7 · API mirror + Swagger for buyer flows — `feat(api): expose buyer wallet, cart and checkout endpoints`
-- [ ] T8 · Demo seed (wallets, addresses, sample order) + README — `feat(db): seed buyer wallets, addresses and demo order`
+- [x] T8 · Demo seed (wallets, addresses, sample order) + README — `feat(db): seed buyer wallets, addresses and demo order`
 
 ## Deferred to final sprint (owner's decision)
 
@@ -112,3 +112,11 @@ code/tests and batch the whole visual-QA pass once Playwright reconnects, rather
   no separate preview route — the web checkout page precomputes all three delivery methods up
   front instead). Both surfaces call the identical Services underneath; only the route shape
   differs per surface, per golden rule 2.
+- **T8:** Removed the old raw `$buyer->wallet->update(['balance' => 500_000])` from
+  `DemoUserSeeder` (Sprint 1) and replaced it with a real `TopupService::create()` call in the new
+  `BuyerDemoSeeder` — the plan explicitly asked for service-based seeding so the wallet ledger has
+  a real entry, not just a balance number with no history behind it. `BuyerDemoSeeder` runs after
+  `StoreProductSeeder` in `DatabaseSeeder` (needs seller1's product to exist before it can build a
+  cart and check out). Verified end-to-end via tinker after `migrate:fresh --seed`: buyer1 balance
+  474,840 (500,000 − 25,160 grand_total), 2 ledger rows, 1 address, 1 order (Sedang Dikemas, 1 item,
+  1 status history); seller1's store shows the same order in its incoming list with 18,000 credited.
