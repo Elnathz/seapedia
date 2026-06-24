@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\AppReviewController;
 use App\Http\Controllers\Web\BuyerAddressController;
+use App\Http\Controllers\Web\BuyerCartController;
 use App\Http\Controllers\Web\BuyerWalletController;
 use App\Http\Controllers\Web\CatalogController;
 use App\Http\Controllers\Web\DashboardController;
@@ -52,6 +53,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('addresses/{address}', [BuyerAddressController::class, 'update'])->name('addresses.update');
         Route::patch('addresses/{address}/default', [BuyerAddressController::class, 'setDefault'])->name('addresses.setDefault');
         Route::delete('addresses/{address}', [BuyerAddressController::class, 'destroy'])->name('addresses.destroy');
+
+        Route::get('cart', [BuyerCartController::class, 'index'])->name('cart.index');
+        Route::post('cart', [BuyerCartController::class, 'store'])->name('cart.store');
+        Route::put('cart/{item}', [BuyerCartController::class, 'update'])->name('cart.update');
+        Route::delete('cart/{item}', [BuyerCartController::class, 'destroy'])->name('cart.destroy');
+        Route::delete('cart', [BuyerCartController::class, 'clear'])->name('cart.clear');
     });
 });
 

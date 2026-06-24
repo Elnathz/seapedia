@@ -11,5 +11,10 @@
     "Address created.": "Address created.",
     "Address updated.": "Address updated.",
     "Default address updated.": "Default address updated.",
-    "Address deleted.": "Address deleted."
+    "Address deleted.": "Address deleted.",
+    "Cart contains items from :store. Clear the cart to add from another store?": "Cart contains items from :store. Clear the cart to add from another store?",
+    "Item added to cart.": "Item added to cart.",
+    "Cart updated.": "Cart updated.",
+    "Item removed from cart.": "Item removed from cart.",
+    "Cart cleared.": "Cart cleared."
 }

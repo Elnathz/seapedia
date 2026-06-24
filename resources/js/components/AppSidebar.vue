@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid, MapPin, Package, Store, Wallet } from '@lucide/vue';
+import {
+    LayoutGrid,
+    MapPin,
+    Package,
+    ShoppingCart,
+    Store,
+    Wallet,
+} from '@lucide/vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppLogo from '@/components/AppLogo.vue';
@@ -18,6 +25,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as indexBuyerAddresses } from '@/routes/buyer/addresses';
+import { index as indexBuyerCart } from '@/routes/buyer/cart';
 import { show as showBuyerWallet } from '@/routes/buyer/wallet';
 import { index as indexSellerProducts } from '@/routes/seller/products';
 import { show as showSellerStore } from '@/routes/seller/store';
@@ -62,6 +70,11 @@ const mainNavItems = computed<NavItem[]>(() => {
                 title: t('nav.addresses'),
                 href: indexBuyerAddresses(),
                 icon: MapPin,
+            },
+            {
+                title: t('nav.cart'),
+                href: indexBuyerCart(),
+                icon: ShoppingCart,
             },
         );
     }

@@ -1,15 +1,29 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { ArrowLeft } from '@lucide/vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { ArrowLeft, ShoppingCart } from '@lucide/vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { store as storeCartItem } from '@/actions/App/Http/Controllers/Web/BuyerCartController';
+import InputError from '@/components/InputError.vue';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { useInitials } from '@/composables/useInitials';
 import { formatIDR } from '@/lib/utils';
 import { index as catalogIndex } from '@/routes/catalog';
 import { show as storeShow } from '@/routes/stores';
+import { useAuthStore } from '@/stores/auth';
 
 interface Store {
     id: number;
@@ -29,10 +43,53 @@ interface Product {
     store: Store;
 }
 
-defineProps<{ product: Product }>();
+const props = defineProps<{ product: Product }>();
 
 const { getInitials } = useInitials();
 const { t } = useI18n();
+const auth = useAuthStore();
+
+const quantity = ref(1);
+const adding = ref(false);
+const quantityError = ref<string | null>(null);
+const conflictOpen = ref(false);
+const conflictMessage = ref('');
+
+function addToCart(replace = false) {
+    adding.value = true;
+    quantityError.value = null;
+
+    router.post(
+        storeCartItem.url(),
+        {
+            product_id: props.product.id,
+            quantity: quantity.value,
+            replace,
+        },
+        {
+            preserveScroll: true,
+            onError: (errors) => {
+                if (errors.store) {
+                    conflictMessage.value = errors.store;
+                    conflictOpen.value = true;
+                } else if (errors.quantity) {
+                    quantityError.value = errors.quantity;
+                }
+            },
+            onSuccess: () => {
+                conflictOpen.value = false;
+            },
+            onFinish: () => {
+                adding.value = false;
+            },
+        },
+    );
+}
+
+function confirmClearAndAdd() {
+    conflictOpen.value = false;
+    addToCart(true);
+}
 </script>
 
 <template>
@@ -78,6 +135,59 @@ const { t } = useI18n();
                             product.stock
                         }}</span>
                     </p>
+
+                    <div v-if="auth.activeRole === 'buyer'">
+                        <div class="flex items-end gap-3">
+                            <div class="grid gap-1.5">
+                                <label
+                                    for="quantity"
+                                    class="text-xs text-muted-foreground"
+                                    >{{ t('cart.quantityLabel') }}</label
+                                >
+                                <Input
+                                    id="quantity"
+                                    v-model="quantity"
+                                    type="number"
+                                    inputmode="numeric"
+                                    min="1"
+                                    :max="product.stock"
+                                    class="w-20"
+                                    :disabled="product.stock <= 0"
+                                />
+                            </div>
+                            <Button
+                                :disabled="adding || product.stock <= 0"
+                                @click="addToCart(false)"
+                            >
+                                <ShoppingCart class="size-4" />
+                                {{ t('cart.addToCart') }}
+                            </Button>
+                        </div>
+                        <InputError :message="quantityError ?? undefined" />
+                    </div>
+
+                    <Dialog v-model:open="conflictOpen">
+                        <DialogContent>
+                            <DialogHeader class="space-y-3">
+                                <DialogTitle>{{
+                                    t('cart.conflictTitle')
+                                }}</DialogTitle>
+                                <DialogDescription>
+                                    {{ conflictMessage }}
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter class="mt-4 gap-2">
+                                <Button
+                                    variant="secondary"
+                                    @click="conflictOpen = false"
+                                    >{{ t('common.cancel') }}</Button
+                                >
+                                <Button @click="confirmClearAndAdd">{{
+                                    t('cart.clearAndAdd')
+                                }}</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
 
                     <Link
                         :href="storeShow.url(product.store.slug)"

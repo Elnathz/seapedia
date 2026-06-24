@@ -11,5 +11,10 @@
     "Address created.": "Alamat berhasil ditambahkan.",
     "Address updated.": "Alamat berhasil diperbarui.",
     "Default address updated.": "Alamat utama berhasil diperbarui.",
-    "Address deleted.": "Alamat berhasil dihapus."
+    "Address deleted.": "Alamat berhasil dihapus.",
+    "Cart contains items from :store. Clear the cart to add from another store?": "Keranjang berisi produk dari :store. Kosongkan keranjang untuk menambah dari toko lain?",
+    "Item added to cart.": "Produk ditambahkan ke keranjang.",
+    "Cart updated.": "Keranjang berhasil diperbarui.",
+    "Item removed from cart.": "Produk dihapus dari keranjang.",
+    "Cart cleared.": "Keranjang berhasil dikosongkan."
 }
