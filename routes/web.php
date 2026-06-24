@@ -3,12 +3,14 @@
 use App\Http\Controllers\Web\AppReviewController;
 use App\Http\Controllers\Web\BuyerAddressController;
 use App\Http\Controllers\Web\BuyerCartController;
+use App\Http\Controllers\Web\BuyerOrderController;
 use App\Http\Controllers\Web\BuyerWalletController;
 use App\Http\Controllers\Web\CatalogController;
 use App\Http\Controllers\Web\CheckoutController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\RoleController;
+use App\Http\Controllers\Web\SellerOrderController;
 use App\Http\Controllers\Web\SellerProductController;
 use App\Http\Controllers\Web\SellerStoreController;
 use App\Http\Controllers\Web\StoreController;
@@ -43,6 +45,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('products/{product}/edit', [SellerProductController::class, 'edit'])->name('products.edit');
         Route::put('products/{product}', [SellerProductController::class, 'update'])->name('products.update');
         Route::delete('products/{product}', [SellerProductController::class, 'destroy'])->name('products.destroy');
+
+        Route::get('orders', [SellerOrderController::class, 'index'])->name('orders.index');
     });
 
     Route::middleware('active_role:buyer')->prefix('buyer')->name('buyer.')->group(function () {
@@ -63,6 +67,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('checkout', [CheckoutController::class, 'show'])->name('checkout.show');
         Route::post('checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+        Route::get('orders', [BuyerOrderController::class, 'index'])->name('orders.index');
+        Route::get('orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
     });
 });
 

@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
+use App\Models\Store;
 use App\Models\User;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -68,6 +70,43 @@ class OrderService
         $this->writeHistory($order, $to, $note, $changedBy);
 
         return $order->refresh();
+    }
+
+    /**
+     * The buyer's own orders, newest first, eager-loaded for the history
+     * list (no N+1).
+     */
+    public function forBuyer(User $buyer, int $perPage = 10): LengthAwarePaginator
+    {
+        return Order::query()
+            ->where('buyer_id', $buyer->id)
+            ->with('store:id,name,slug')
+            ->latest()
+            ->paginate($perPage);
+    }
+
+    /**
+     * Full detail for one order — items, status history, and the buyer's
+     * own store/buyer relations, eager-loaded (no N+1).
+     */
+    public function findForBuyer(int $orderId): ?Order
+    {
+        return Order::query()
+            ->with(['items', 'statusHistories' => fn ($query) => $query->oldest(), 'store:id,name,slug'])
+            ->find($orderId);
+    }
+
+    /**
+     * A seller's incoming orders for their store, newest first — read-only
+     * this sprint (the "process" action arrives in Sprint 4).
+     */
+    public function forSeller(Store $store, int $perPage = 10): LengthAwarePaginator
+    {
+        return Order::query()
+            ->where('store_id', $store->id)
+            ->with('buyer:id,name')
+            ->latest()
+            ->paginate($perPage);
     }
 
     private function writeHistory(Order $order, OrderStatus $status, ?string $note, ?int $changedBy): void
