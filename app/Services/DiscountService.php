@@ -181,13 +181,22 @@ class DiscountService
      */
     private function combine(array $promoResult, array $voucherResult, int $subtotal): array
     {
+        // §5.3: promo is applied first, then the voucher, and the combined
+        // discount is capped at the subtotal. Clamp the per-line amounts so
+        // the displayed promo/voucher lines always sum to exactly
+        // discount_total — the voucher absorbs the cap when promo + voucher
+        // would exceed the subtotal, instead of two lines that overstate the
+        // real deduction.
+        $promoAmount = min($promoResult['amount'], $subtotal);
+        $voucherAmount = min($voucherResult['amount'], $subtotal - $promoAmount);
+
         return [
-            'discount_total' => min($promoResult['amount'] + $voucherResult['amount'], $subtotal),
+            'discount_total' => $promoAmount + $voucherAmount,
             'promo' => $promoResult['promo'],
-            'promo_amount' => $promoResult['amount'],
+            'promo_amount' => $promoAmount,
             'promo_error' => $promoResult['error'],
             'voucher' => $voucherResult['voucher'],
-            'voucher_amount' => $voucherResult['amount'],
+            'voucher_amount' => $voucherAmount,
             'voucher_error' => $voucherResult['error'],
         ];
     }

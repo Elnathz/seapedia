@@ -13,6 +13,7 @@ use App\Models\Store;
 use App\Models\User;
 use App\Models\Voucher;
 use App\Services\CartService;
+use App\Services\DiscountService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
@@ -157,5 +158,25 @@ class DiscountCheckoutTest extends TestCase
         $this->assertSame(10_000, $order->discount_total);
         $this->assertSame(0, $order->tax_amount);
         $this->assertSame(5_000, $order->grand_total);
+    }
+
+    public function test_capped_discount_splits_so_the_displayed_lines_sum_to_the_total(): void
+    {
+        $promo = Promo::factory()->create(['type' => DiscountType::Fixed, 'value' => 8_000, 'max_discount' => null, 'min_spend' => null]);
+        $voucher = Voucher::factory()->create(['type' => DiscountType::Fixed, 'value' => 8_000, 'max_discount' => null, 'min_spend' => null]);
+
+        $result = app(DiscountService::class)->resolve($promo->code, $voucher->code, 10_000);
+
+        // promo + voucher (16_000) exceeds the 10_000 subtotal. Promo applies
+        // first (8_000), the voucher absorbs the remaining 2_000, so the two
+        // lines the buyer sees reconcile exactly with discount_total — no
+        // line overstating the real deduction.
+        $this->assertSame(10_000, $result['discount_total']);
+        $this->assertSame(8_000, $result['promo_amount']);
+        $this->assertSame(2_000, $result['voucher_amount']);
+        $this->assertSame(
+            $result['discount_total'],
+            $result['promo_amount'] + $result['voucher_amount'],
+        );
     }
 }
