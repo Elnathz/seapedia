@@ -1,14 +1,14 @@
 ---
 name: sprint-planner
-description: Use at the START of any sprint, before writing feature code, to produce the written plan at .planning/sprint{N}/plan.md. Always run this and pause for approval before implementing a sprint.
+description: Use at the START of any sprint, before writing feature code, to produce the written plan at planning/sprint{N}/plan.md. Always run this and pause for approval before implementing a sprint.
 ---
 # Sprint planning (write the plan, then STOP)
 
 When asked to start sprint N (or "plan sprint N"):
 
 1. Read the matching Day N section in TDD §13, plus the SEAPEDIA challenge criteria for the level(s) that sprint covers, and §5 locked decisions.
-2. Create `.planning/sprint{N}/plan.md` with the structure below.
-3. Create `.planning/sprint{N}/progress.md` as an empty checklist mirroring the task list.
+2. Create `planning/sprint{N}/plan.md` with the structure below.
+3. Create `planning/sprint{N}/progress.md` as an empty checklist mirroring the task list.
 4. Commit: `docs(planning): add sprint{N} plan`.
 5. **STOP. Do not write any feature code.** Print a short summary and ask for approval.
 6. Only after approval, implement task-by-task using the `vertical-feature` skill, updating progress.md and committing per slice.

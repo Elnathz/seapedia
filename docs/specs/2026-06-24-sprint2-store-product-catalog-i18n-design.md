@@ -1,7 +1,7 @@
 # Sprint 2 Design — Level 2 (Store + Product + Real Catalog) + i18n (ID/EN)
 
-> Status: approved (brainstorming). Feeds `.planning/sprint2/plan.md` (sprint-planner skill).
-> Authoritative sources: `SEAPEDIA_TDD.md` §13 Day 2, §7 schema, §5 locked decisions; `CLAUDE.md` golden rules.
+> Status: approved (brainstorming). Feeds `planning/sprint2/plan.md` (sprint-planner skill).
+> Authoritative sources: `docs/SEAPEDIA_TDD.md` §13 Day 2, §7 schema, §5 locked decisions; `CLAUDE.md` golden rules.
 
 ## Scope
 

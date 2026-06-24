@@ -1,6 +1,6 @@
 # Sprint 1 Plan — Infra-light Foundation + Level 1 (auth · multi-role · reviews · UI kit)
 
-> Maps to TDD §13 "Day 1". All implementation references trace to `SEAPEDIA_TDD.md`.
+> Maps to TDD §13 "Day 1". All implementation references trace to `docs/SEAPEDIA_TDD.md`.
 > Deviations from the TDD are flagged explicitly in **"Decisions beyond / different from the TDD"** below.
 
 ## Goal
@@ -74,7 +74,7 @@ Sail/local — no deployment this sprint.
 
 You are implementing Sprint 1. Opus already wrote and the owner approved this plan — do not re-plan.
 
-- **Authoritative sources, in order:** this `plan.md` → `SEAPEDIA_TDD.md` (§ cited per task) →
+- **Authoritative sources, in order:** this `plan.md` → `docs/SEAPEDIA_TDD.md` (§ cited per task) →
   `CLAUDE.md` golden rules. If they ever conflict, the TDD wins; flag the conflict in `progress.md`.
 - **One slice = one commit.** Implement T1→T10 in order. Do not batch multiple tasks into one commit.
 - **Follow the `vertical-feature` skill order** for every slice (migration → model → factory/seeder →

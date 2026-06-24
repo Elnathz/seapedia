@@ -1,14 +1,21 @@
 # SEAPEDIA — Claude Code Operating Rules
 
-You are building SEAPEDIA, a multi-role marketplace, per `SEAPEDIA_TDD.md`.
-Read the TDD's Locked Decisions (§5) and Schema (§7) before any task. They are authoritative.
+You are building SEAPEDIA, a multi-role marketplace. The original challenge brief from the
+committee is `docs/KetentuanPanitia.pdf` — the graded source of truth. `docs/SEAPEDIA_TDD.md`
+is our detailed distillation of it. Read the TDD's Locked Decisions (§5) and Schema (§7) before
+any task. They are authoritative.
 
 ## Source of truth (order of authority)
 
+`docs/KetentuanPanitia.pdf` (the committee brief) is the ultimate authority — it is what gets
+graded. `docs/SEAPEDIA_TDD.md` is our faithful distillation that fills in the HOW (locked values,
+schema, decisions the brief leaves open).
+
 When implementing any sprint, read sources in this order:
-`.planning/sprint{N}/plan.md` → the sprint's design doc (`docs/superpowers/specs/...`, if one exists)
-→ `SEAPEDIA_TDD.md` (the § cited per task) → this `CLAUDE.md` (golden rules).
-**If they ever conflict, the TDD wins** — flag the conflict in `progress.md`.
+`planning/sprint{N}/plan.md` → the sprint's design doc (`docs/specs/...`, if one exists)
+→ `docs/SEAPEDIA_TDD.md` (the § cited per task) → this `CLAUDE.md` (golden rules).
+**If the TDD or a plan ever conflicts with the brief, the brief wins. Otherwise the TDD wins over
+the plan/CLAUDE** — flag the conflict in `progress.md`.
 
 ## Stack
 
@@ -18,10 +25,10 @@ Laravel 13 (PHP 8.3) · Inertia · Vue 3 + TypeScript · shadcn-vue · Tailwind 
 
 0. **Do not write feature code for a sprint until you have written its plan and I have approved it.** At the start of each sprint:
    - Read the relevant TDD sections + the `sprint-planner` skill.
-   - Write the plan to **`.planning/sprint{N}/plan.md`** (structure defined in the `sprint-planner` skill).
+   - Write the plan to **`planning/sprint{N}/plan.md`** (structure defined in the `sprint-planner` skill).
    - **STOP and wait for my approval.** Do not begin implementation in the same turn.
-   - During the sprint, keep `.planning/sprint{N}/progress.md` updated (check off tasks as committed).
-   - The `.planning/` folder is committed (`docs(planning): add sprint{N} plan`).
+   - During the sprint, keep `planning/sprint{N}/progress.md` updated (check off tasks as committed).
+   - The `planning/` folder is committed (`docs(planning): add sprint{N} plan`).
 
 ## Execution model (EVERY sprint)
 

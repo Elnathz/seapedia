@@ -14,9 +14,9 @@ This TDD is paired with two operational files:
 
 - **`CLAUDE.md`** (Section 14) — placed at repo root. Project rules Claude Code loads automatically every session.
 - **`.claude/skills/*/SKILL.md`** (Section 15) — eight reusable procedure modules: `sprint-planner`, `vertical-feature`, `money-and-checkout`, `order-lifecycle`, `ipaymu-topup`, `security-pass`, `commit-message`, `code-review`. Folder per skill; model-invoked by `description`.
-- **`.planning/sprint{N}/`** — per-sprint `plan.md` + `progress.md`, written and approved before each sprint's implementation (see §13 and the `sprint-planner` skill).
+- **`planning/sprint{N}/`** — per-sprint `plan.md` + `progress.md`, written and approved before each sprint's implementation (see §13 and the `sprint-planner` skill).
 
-**Reading order for the agent:** TDD → CLAUDE.md → relevant SKILL.md for the current task → **write the sprint plan to `.planning/sprint{N}/plan.md` and pause for approval (§13)** → implement → commit.
+**Reading order for the agent:** TDD → CLAUDE.md → relevant SKILL.md for the current task → **write the sprint plan to `planning/sprint{N}/plan.md` and pause for approval (§13)** → implement → commit.
 
 The **Locked Decisions** (Section 5) and **Database Schema** (Section 7) are authoritative. If anything elsewhere conflicts with them, they win.
 
@@ -689,10 +689,10 @@ The deployed URL must serve the app **before you write feature #2**. (iPaymu web
 
 > Principle: **vertical slices**, deploy from Day 1, commit per slice, demo passes at end of each day. iPaymu real-integration is slotted late and optional.
 >
-> **Planning gate (every sprint):** before writing any feature code for sprint N, Claude Code first writes `.planning/sprint{N}/plan.md` (per the `sprint-planner` skill) and **pauses for approval**. Implementation begins only after the plan is approved. `.planning/sprint{N}/progress.md` is updated as tasks are committed. This makes the build reviewable and keeps each day scoped. (Sprint N ↔ Day N below; Day 5 carries two levels, so it gets one plan covering both.)
+> **Planning gate (every sprint):** before writing any feature code for sprint N, Claude Code first writes `planning/sprint{N}/plan.md` (per the `sprint-planner` skill) and **pauses for approval**. Implementation begins only after the plan is approved. `planning/sprint{N}/progress.md` is updated as tasks are committed. This makes the build reviewable and keeps each day scoped. (Sprint N ↔ Day N below; Day 5 carries two levels, so it gets one plan covering both.)
 
 ### Day 1 — Infra + Foundation + Level 1 (auth, multi-role, reviews, UI kit)
-- [ ] **Write `.planning/sprint1/plan.md` first; pause for approval** (sprint-planner skill). Then implement.
+- [ ] **Write `planning/sprint1/plan.md` first; pause for approval** (sprint-planner skill). Then implement.
 - [ ] Scaffold per §12.5: `laravel new seapedia` (Vue starter kit, built-in auth, Pest) → Sail with MySQL → Sanctum + l5-swagger + Pinia. App boots; login/register work out of the box.
 - [ ] **Deploy skeleton live** to GCP e2-micro (production Docker compose + nginx + HTTPS). "Hello SEAPEDIA" reachable on a public URL. *This is the single highest-leverage thing you can do today.*
 - [ ] Migrations: users, roles, role_user, app_reviews, settings, wallets (entry point).
@@ -705,7 +705,7 @@ The deployed URL must serve the app **before you write feature #2**. (iPaymu web
 - **Commits:** per feature (`feat(auth): register`, `feat(role): active-role middleware`, ...).
 
 ### Day 2 — Level 2 (Seller store + products + real catalog)
-- [ ] **Write `.planning/sprint2/plan.md` first; pause for approval**, then implement.
+- [ ] **Write `planning/sprint2/plan.md` first; pause for approval**, then implement.
 - [ ] Migrations: stores, products.
 - [ ] Store create/update with **unique name** validation (DB unique + FormRequest).
 - [ ] Product CRUD (Seller), `ProductPolicy` (own-only).
@@ -714,7 +714,7 @@ The deployed URL must serve the app **before you write feature #2**. (iPaymu web
 - **Demo:** seller creates store + products → appear in public catalog; cross-seller edit → 403.
 
 ### Day 3 — Level 3 (Wallet + Cart + Checkout) — HEAVIEST DAY (20 pts)
-- [ ] **Write `.planning/sprint3/plan.md` first; pause for approval**, then implement.
+- [ ] **Write `planning/sprint3/plan.md` first; pause for approval**, then implement.
 - [ ] Migrations: wallet_transactions, addresses, carts, cart_items, orders, order_items, order_status_histories, topups.
 - [ ] `WalletService` (locked mutations) + **fake top-up** + transaction history + addresses.
 - [ ] `CartService` with **single-store guard** (422 + clear message) + cart UI.
@@ -723,7 +723,7 @@ The deployed URL must serve the app **before you write feature #2**. (iPaymu web
 - **This is where race-condition correctness is won. Write a Pest test for oversell + insufficient-balance.**
 
 ### Day 4 — Level 4 (Discounts + Seller processing + Reports)
-- [ ] **Write `.planning/sprint4/plan.md` first; pause for approval**, then implement.
+- [ ] **Write `planning/sprint4/plan.md` first; pause for approval**, then implement.
 - [ ] Migrations: promos, vouchers. Admin endpoints to generate (UI deferred to L6).
 - [ ] `DiscountService`: validate promo/voucher (expiry, remaining usage, min_spend), apply per locked rule (5.3), distinguish in summary; integrate into checkout preview + commit (lock voucher row, increment used_count).
 - [ ] Seller `process` action: `Sedang Dikemas → Menunggu Pengirim` + history + timeline UI on buyer & seller.
@@ -731,7 +731,7 @@ The deployed URL must serve the app **before you write feature #2**. (iPaymu web
 - **Demo:** checkout with HEMAT10 + PROMO20K stacked; expired code rejected; seller processes order; reports reconcile.
 
 ### Day 5 — Level 5 (Driver) + Level 6 (Admin + Overdue) — the heavy stretch
-- [ ] **Write `.planning/sprint5/plan.md` first; pause for approval**, then implement.
+- [ ] **Write `planning/sprint5/plan.md` first; pause for approval**, then implement.
 - [ ] Migrations: deliveries. Auto-create delivery row when seller processes order (status `available`).
 - [ ] Driver find/take(locked, → Sedang Dikirim)/complete(→ Pesanan Selesai, earning 80% fee) + driver dashboard + buyer/seller tracking.
 - [ ] `ClockService` + `settings.simulated_now` + `seapedia:advance-day` + admin `/clock/advance`.
@@ -741,7 +741,7 @@ The deployed URL must serve the app **before you write feature #2**. (iPaymu web
 - **Write a Pest test for double-take prevention + double-refund prevention.**
 
 ### Day 6 — Level 7 (Security) + Docs + Deploy polish + Demo recording + BUFFER
-- [ ] **Write `.planning/sprint6/plan.md` first; pause for approval**, then implement.
+- [ ] **Write `planning/sprint6/plan.md` first; pause for approval**, then implement.
 - [ ] Security audit pass against Section 10 (grep `v-html`, `whereRaw`, `$guarded=[]`; confirm policies + middleware on every private route; token expiry).
 - [ ] XSS + SQLi test cases demonstrated.
 - [ ] Swagger/OpenAPI (or Postman collection committed).
@@ -772,10 +772,10 @@ Laravel 13 (PHP 8.3) · Inertia · Vue 3 + TypeScript · shadcn-vue · Tailwind 
 ## Plan before you build (MANDATORY)
 0. **Do not write feature code for a sprint until you have written its plan and I have approved it.** At the start of each sprint:
    - Read the relevant TDD sections + the `sprint-planner` skill.
-   - Write the plan to **`.planning/sprint{N}/plan.md`** (structure defined in the `sprint-planner` skill).
+   - Write the plan to **`planning/sprint{N}/plan.md`** (structure defined in the `sprint-planner` skill).
    - **STOP and wait for my approval.** Do not begin implementation in the same turn.
-   - During the sprint, keep `.planning/sprint{N}/progress.md` updated (check off tasks as committed).
-   - The `.planning/` folder is committed (`docs(planning): add sprint{N} plan`).
+   - During the sprint, keep `planning/sprint{N}/progress.md` updated (check off tasks as committed).
+   - The `planning/` folder is committed (`docs(planning): add sprint{N} plan`).
 
 ## Golden rules
 1. **Controllers are thin.** Validate via FormRequest → call ONE Service method → return Inertia/JSON. No business logic in controllers.
@@ -1075,14 +1075,14 @@ allowed-tools: Read, Grep, Glob
 ````markdown
 ---
 name: sprint-planner
-description: Use at the START of any sprint, before writing feature code, to produce the written plan at .planning/sprint{N}/plan.md. Always run this and pause for approval before implementing a sprint.
+description: Use at the START of any sprint, before writing feature code, to produce the written plan at planning/sprint{N}/plan.md. Always run this and pause for approval before implementing a sprint.
 ---
 # Sprint planning (write the plan, then STOP)
 
 When asked to start sprint N (or "plan sprint N"):
 1. Read the matching Day N section in TDD §13, plus the SEAPEDIA challenge criteria for the level(s) that sprint covers, and §5 locked decisions.
-2. Create `.planning/sprint{N}/plan.md` with the structure below.
-3. Create `.planning/sprint{N}/progress.md` as an empty checklist mirroring the task list.
+2. Create `planning/sprint{N}/plan.md` with the structure below.
+3. Create `planning/sprint{N}/progress.md` as an empty checklist mirroring the task list.
 4. Commit: `docs(planning): add sprint{N} plan`.
 5. **STOP. Do not write any feature code.** Print a short summary and ask for approval.
 6. Only after approval, implement task-by-task using the `vertical-feature` skill, updating progress.md and committing per slice.

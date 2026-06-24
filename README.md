@@ -5,8 +5,8 @@ platform and one wallet, with roles switchable per session. Built with
 Laravel 13, Inertia + Vue 3 (TypeScript), shadcn-vue, Tailwind 4, and MySQL,
 running on Docker via Laravel Sail.
 
-Full product/technical decisions live in `SEAPEDIA_TDD.md`. Sprint plans and
-progress are tracked under `.planning/sprint{N}/`.
+Full product/technical decisions live in `docs/SEAPEDIA_TDD.md`. Sprint plans and
+progress are tracked under `planning/sprint{N}/`.
 
 ## Setup
 
@@ -71,9 +71,9 @@ Every account's password is `password`.
 
 Sprint 2 (Level 2 — seller store + product CRUD with image upload, real
 DB-backed public catalog + store pages, `/api/v1/catalog` + Swagger, hybrid
-ID/EN i18n) is complete. See `.planning/sprint2/progress.md` for the
+ID/EN i18n) is complete. See `planning/sprint2/progress.md` for the
 task-by-task log and documented deviations from the TDD. Sprint 1 (Level 1)
-log is at `.planning/sprint1/progress.md`.
+log is at `planning/sprint1/progress.md`.
 
 ## Tests
 

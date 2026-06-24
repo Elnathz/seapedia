@@ -1,7 +1,7 @@
 # Sprint 2 Plan — Level 2 (Seller Store + Products + Real Catalog) + i18n (ID/EN)
 
 > Maps to TDD §13 "Day 2". Schema §7 (`stores`, `products`). Design doc:
-> `docs/superpowers/specs/2026-06-24-sprint2-store-product-catalog-i18n-design.md` (owner-approved).
+> `docs/specs/2026-06-24-sprint2-store-product-catalog-i18n-design.md` (owner-approved).
 > Deviations from the TDD are flagged in **"Decisions beyond / different from the TDD"**.
 
 ## Goal
@@ -70,8 +70,8 @@ Sail/local.
 You are implementing Sprint 2. Opus wrote and the owner approved this plan — do not re-plan.
 
 - **Authoritative sources, in order:** this `plan.md` → the design doc
-  (`docs/superpowers/specs/2026-06-24-sprint2-store-product-catalog-i18n-design.md`) →
-  `SEAPEDIA_TDD.md` (§ cited per task) → `CLAUDE.md` golden rules. **If they ever conflict, the TDD
+  (`docs/specs/2026-06-24-sprint2-store-product-catalog-i18n-design.md`) →
+  `docs/SEAPEDIA_TDD.md` (§ cited per task) → `CLAUDE.md` golden rules. **If they ever conflict, the TDD
   wins**; flag the conflict in `progress.md`.
 - **One slice = one commit.** Implement T1→T8 in order. Do not batch tasks into one commit. Commit
   messages follow the `commit-message` skill.
