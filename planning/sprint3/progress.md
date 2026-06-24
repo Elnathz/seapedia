@@ -59,11 +59,13 @@ sprint's new ones) sat flush against the viewport edge on mobile. Fixed once in
 `DashboardLayout.vue` (wraps `<slot />` in a padded div) instead of patching each page individually,
 and removed `SettingsLayout`'s own padding to avoid doubling up. See `fix(ui)` commit.
 
-**Noted, not fixed (out of this sprint's scope):** the buyer and seller dashboard widgets
-(`dashboard/Buyer.vue`, `dashboard/Seller.vue`) show "Pesanan Aktif: 0" / "Produk Aktif: 0" even
-when orders/products exist — looks like a Sprint 1 dashboard summary query that was never wired up
-to the real data added in Sprints 2-3. Flagging for whoever picks up dashboard polish; not a T1-T8
-deliverable.
+**Bug found and fixed (owner asked to fix immediately, not defer):** the buyer and seller dashboard
+widgets showed hardcoded "Pesanan Aktif: 0" / "Produk Aktif: 0" since Sprint 1, predating
+products/orders existing at all. `DashboardService::buildView()` now counts the seller's own active
+products and the buyer's own orders excluding final statuses (`pesanan_selesai`, `dikembalikan`).
+Verified in-browser: seller1 → 3, buyer1 → 2. Driver's `activeDeliveries` stays 0 — delivery jobs
+don't exist until Sprint 5, so that one was already accurate. See `fix(dashboard)` commit; new
+coverage in `tests/Feature/DashboardTest.php`.
 
 ## Notes / deviations recorded
 
