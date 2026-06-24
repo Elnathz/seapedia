@@ -13,8 +13,9 @@ class CatalogController extends Controller
     public function __construct(private readonly CatalogService $catalog) {}
 
     /**
-     * Public catalog browse (TDD §13 Day 1; dummy data — real catalog from
-     * the database arrives in Sprint 2).
+     * Public catalog browse: active products of active stores, read from the
+     * database via CatalogService, with an optional `?q` name search and
+     * pagination.
      */
     public function index(Request $request): Response
     {
