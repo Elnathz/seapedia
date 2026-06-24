@@ -27,15 +27,15 @@ and seller-uploaded product images to load — without it, product images
 ## Demo credentials
 
 Seeded by `migrate:fresh --seed` (`DemoUserSeeder` + `StoreProductSeeder` +
-`DiscountSeeder` + `BuyerDemoSeeder`). Every account's password is
-`password`.
+`DiscountSeeder` + `BuyerDemoSeeder` + `DeliverySeeder`). Every account's
+password is `password`.
 
 | Username  | Role(s)                | Notes                                   |
 | --------- | ----------------------- | ---------------------------------------- |
-| `admin`   | Admin (`is_admin`)      | Lands on the admin dashboard shell       |
-| `seller1` | Seller                  | Single role — skips the role-select step. Owns store "Toko Berkah" (3 products, seeded images). Has one incoming order from `buyer1`, **discounted with PROMO20K + HEMAT10** |
-| `buyer1`  | Buyer                   | Wallet topped up via `TopupService` (Rp 500.000, with a real ledger entry); one saved address; one placed order against "Toko Berkah" with both demo codes applied |
-| `driver1` | Driver                  | Single role — skips the role-select step |
+| `admin`   | Admin (`is_admin`)      | Lands on the admin monitoring dashboard — live resource counts, the "advance simulated day" control, and links to promo/voucher management |
+| `seller1` | Seller                  | Single role — skips the role-select step. Owns store "Toko Berkah" (3 products, seeded images). Has one incoming order from `buyer1` (**Sedang Dikemas**, discounted with PROMO20K + HEMAT10), one already processed into an **available delivery** a driver can take, and one **overdue-eligible** order (`sla_due_at` already in the past) |
+| `buyer1`  | Buyer                   | Wallet topped up via `TopupService` (Rp 500.000, with a real ledger entry); one saved address; three placed orders against "Toko Berkah" (see `seller1`'s row) |
+| `driver1` | Driver                  | Single role — skips the role-select step. Sees the takeable job seeded above under "Pesanan Tersedia" |
 | `multi1`  | Buyer, Seller, Driver   | Multi-role — shows the role-select modal on login. Owns store "Warung Mama Lia" (3 products, seeded images). Wallet topped up (Rp 300.000) and one saved address as the buyer role |
 
 ### Demo discount codes (`DiscountSeeder`)
@@ -116,11 +116,10 @@ Seeded by `migrate:fresh --seed` (`DemoUserSeeder` + `StoreProductSeeder` +
 - **Unified wallet model (§5.1b):** every buyer/seller/driver has exactly
   one wallet; every movement is an immutable `wallet_transactions` row
   (`type` + `direction` + `balance_after`) written inside a locked
-  transaction — never a raw balance write. Seller income settles
-  **instantly** at checkout (the product revenue only, excluding tax and
-  delivery fee) rather than waiting for delivery completion — a deliberate
-  simplification consistent with §5.1b's "spendable... instant settlement"
-  and what §5.9's overdue-refund reversal assumes already happened.
+  transaction — never a raw balance write. *(Superseded by Sprint 5: seller
+  income no longer settles at checkout — see the escrow model under
+  "Demo path (Sprint 5)" below. This sprint's checkout still debits the
+  buyer the same way; only the seller-credit timing changed.)*
 - **Fake top-up gateway (§9):** `PAYMENT_GATEWAY=fake` (the default) credits
   the wallet instantly via `FakeGateway`, so the demo never depends on
   iPaymu uptime. `IpaymuGateway` is scaffolded behind the same
@@ -182,20 +181,117 @@ Seeded by `migrate:fresh --seed` (`DemoUserSeeder` + `StoreProductSeeder` +
   change, so a history row is always written and an invalid move (e.g.
   processing an already-processed order) is rejected, never silently
   ignored.
-- **Reports are unfiltered totals, not yet refund-aware:** buyer spending
-  sums `grand_total` and seller income sums `seller_income_amount` across
-  all of that user's orders. No `Dikembalikan` (overdue-refund) orders
-  exist until Sprint 5; once they do, both reports will net them out.
+- **Reports were unfiltered totals as of Sprint 4** — no `Dikembalikan`
+  (overdue-refund) orders existed yet, so buyer spending summed
+  `grand_total` and seller income summed `seller_income_amount` across
+  every order unconditionally. *(Superseded by Sprint 5 — see "Demo path
+  (Sprint 5)" below: both reports now exclude `Dikembalikan` orders, and
+  seller income is based on `Pesanan Selesai` orders only.)*
+
+## Demo path (Sprint 5)
+
+1. Log in as `driver1` → "Pesanan Tersedia" lists the seeded `seller1`
+   order (already processed by the seller) with an **earning preview**
+   (80% of the delivery fee, shown before taking) → open it → **"Ambil
+   Pesanan"** (confirm dialog) → order moves to **Sedang Dikirim**; the
+   driver dashboard now shows it as the active job. Open it again →
+   **"Selesaikan Pengiriman"** (confirm) → order moves to **Pesanan
+   Selesai**; the driver's total earnings rise by the 80% share, and
+   (switch to `seller1`) the seller's wallet is credited
+   `seller_income_amount` **only now** — not at checkout. Switch back to
+   `buyer1`'s order detail page to see the same driver name + delivery
+   status on the timeline.
+2. Seed a second driver (or reuse `multi1` in the driver role) and race
+   both for the same available job → exactly one "Ambil Pesanan" succeeds;
+   the loser is redirected with a "sudah diambil kurir lain" toast (web) or
+   a literal `409` (`/api/v1/driver/jobs/{id}/take`). A driver who already
+   holds an active job gets a `422` on a second take, both web and API.
+3. Log in as `admin` → the dashboard's "Tanggal Simulasi" card shows the
+   current simulated day → **"Majukan Hari"** (confirm dialog) → the
+   seeded **overdue** order (its `sla_due_at` is already in the past)
+   auto-refunds: `buyer1`'s wallet shows a `refund` of the order's
+   `grand_total`, the product's stock is restored, the order's status
+   becomes **Dikembalikan** with a history row — and `seller1`'s balance
+   does **not** move (it was never paid for an order that never
+   completed). Click "Majukan Hari" again → nothing changes (idempotent —
+   `refunded_at` is already set). `php artisan seapedia:advance-day` does
+   the same headlessly.
+4. Still as `admin` → the dashboard's resource-count cards (users by role,
+   stores, products, orders by status, deliveries by status, overdue-
+   eligible count) reflect the seeded + just-refunded data live; the
+   Promo/Voucher summary cards link to **"Kelola Promo"** / **"Kelola
+   Voucher"** → list with active/expired/used-up badges → create a new
+   code via the dialog (inline validation errors on a bad input) →
+   toggle one's active state → the badge updates immediately.
+5. `buyer1`'s and `seller1`'s reports (`/buyer/reports`, `/seller/reports`)
+   no longer count the just-refunded order in their totals.
+6. `/api/v1/driver/*`, `/api/v1/admin/clock/advance`, and
+   `/api/v1/admin/dashboard` mirror the web flows above — all listed in
+   Swagger UI at `/api/documentation`.
+
+### Locked rules this sprint depends on
+
+- **Escrow payment model (Decision 3, this sprint's headline change):** the
+  buyer is still debited the full `grand_total` at checkout, but the seller
+  is **not** credited there anymore. `order.seller_income_amount` is
+  computed at checkout and held — released to the seller's wallet only
+  inside `DeliveryService::complete()`, at the same moment the order
+  reaches **Pesanan Selesai**. An order that's refunded instead of
+  completed never paid the seller, so `OverdueService::sweep()` needs **no
+  seller reversal** — there is nothing to claw back. There is no separate
+  "platform wallet" entity; between checkout and completion the buyer's
+  payment is simply debited and not credited anywhere. Money still
+  balances: completion always pays out seller + driver from the same
+  `grand_total` the buyer was debited, and a refund always returns the
+  full `grand_total` to the buyer — the platform's retained cut (tax + the
+  driver's 20%) is implicit, never materialized as a ledger row.
+- **Driver earning is 80% of the delivery fee, floored (§5.5):**
+  `earning_amount = intdiv(delivery_fee * 80, 100)`, computed once at
+  `DeliveryService::complete()` and credited to the driver's wallet
+  (`type: earning`) in the same locked transaction as the seller's income
+  release. The three locked delivery fees (Rp 5.000 / 10.000 / 20.000)
+  divide evenly by 5, so the floor never actually trims anything — it's
+  there for integer-IDR safety, not because rounding is observed in
+  practice.
+- **One active delivery per driver:** `DeliveryService::take()` rejects
+  (`422`) a driver who already holds a `taken` delivery, checked inside the
+  same locked transaction that claims the job — a driver must complete (or
+  never take) their current job before taking another.
+- **Delivery SLA + time simulation (§5.7):** every order's `sla_due_at` is
+  stamped at checkout (`created_sim_at + slaTicks(delivery_method)` days).
+  Nothing in business logic ever calls `now()`/`Carbon::now()` directly —
+  `ClockService::now()` is the only clock, reading `settings.simulated_now`
+  (falling back to real time until an admin first advances it).
+  `ClockService::advance(1)` moves that setting forward one day; both
+  `POST /admin/clock/advance` and `php artisan seapedia:advance-day` call
+  it and then immediately run `OverdueService::sweep()` — there is no
+  background scheduler, by design (the brief accepts a manual/command
+  trigger).
+- **Overdue auto-refund is idempotent (§5.9, §6):** `sweep()` selects
+  non-final orders (`Sedang Dikemas` / `Menunggu Pengirim` / `Sedang
+  Dikirim`) past their `sla_due_at` with `refunded_at IS NULL`; each is
+  refunded inside its own locked transaction that re-checks `refunded_at`
+  after acquiring the lock, so a re-run (or a race with a driver completing
+  the same order) can never double-refund or double-restore stock. Voucher
+  `used_count` is **not** restored on refund — an explicit Sprint 4
+  carry-over decision, not an oversight (a voucher use is consumed the
+  moment it's applied, regardless of what happens to the order later).
+- **Reports now exclude refunded orders:** `ReportService::buyerSpending()`
+  drops `Dikembalikan` orders from both the total and the per-status
+  breakdown; `ReportService::sellerIncome()` additionally bases
+  `total_income` (and its breakdown) on `Pesanan Selesai` orders only,
+  consistent with the escrow model above — an order that hasn't paid the
+  seller yet shouldn't count as income yet.
 
 ## Current status
 
-Sprint 4 (Level 4 — Promo/Voucher discounts combined at checkout under a
-locked voucher row, seller order processing via the existing transition
-table, buyer spending + seller income reports, `/api/v1/admin/*` +
-`/api/v1/seller/*` + Swagger) is complete. See
-`planning/sprint4/progress.md` for the task-by-task log and documented
-deviations from the TDD. Sprint 3 (Level 3) log is at
-`planning/sprint3/progress.md`; Sprint 2 (Level 2) log is at
+Sprint 5 (Level 5 — driver delivery with escrow payout, one-active-job, and
+real-time order tracking on the buyer/seller timeline; Level 6 — time
+simulation + idempotent overdue auto-refund + admin monitoring dashboard +
+promo/voucher management UI) is complete. See `planning/sprint5/progress.md`
+for the task-by-task log and documented deviations from the TDD. Sprint 4
+(Level 4) log is at `planning/sprint4/progress.md`; Sprint 3 (Level 3) log
+is at `planning/sprint3/progress.md`; Sprint 2 (Level 2) log is at
 `planning/sprint2/progress.md`; Sprint 1 (Level 1) log is at
 `planning/sprint1/progress.md`.
 
