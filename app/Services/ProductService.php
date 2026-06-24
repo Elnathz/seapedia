@@ -34,12 +34,8 @@ class ProductService
      */
     public function update(Product $product, array $data, ?UploadedFile $image): Product
     {
-        $imagePath = $product->image_path;
-
-        if ($image) {
-            $this->deleteImage($imagePath);
-            $imagePath = $this->storeImage($image);
-        }
+        $oldImage = $product->image_path;
+        $newImage = $image ? $this->storeImage($image) : null;
 
         $product->update([
             'name' => $data['name'],
@@ -49,8 +45,14 @@ class ProductService
             'description' => $data['description'] ?? null,
             'price' => $data['price'],
             'stock' => $data['stock'],
-            'image_path' => $imagePath,
+            'image_path' => $newImage ?? $oldImage,
         ]);
+
+        // Only drop the previous file once the new one is safely stored and the
+        // row points at it — a failed upload leaves the old image intact.
+        if ($newImage && $oldImage) {
+            $this->deleteImage($oldImage);
+        }
 
         return $product->refresh();
     }
