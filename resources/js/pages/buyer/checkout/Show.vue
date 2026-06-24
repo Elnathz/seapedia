@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ShoppingBag } from '@lucide/vue';
+import { ShoppingBag, X } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import CheckoutController from '@/actions/App/Http/Controllers/Web/CheckoutController';
 import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -16,6 +17,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
@@ -41,9 +43,18 @@ interface AddressData {
     is_default: boolean;
 }
 
+interface AppliedDiscount {
+    code: string;
+    amount: number;
+}
+
 interface Preview {
     subtotal: number;
     discount_total: number;
+    promo: AppliedDiscount | null;
+    promo_error: string | null;
+    voucher: AppliedDiscount | null;
+    voucher_error: string | null;
     taxable_base: number;
     tax_amount: number;
     delivery_fee: number;
@@ -90,6 +101,74 @@ const confirmOpen = ref(false);
 
 const preview = computed(() => props.previews[deliveryMethod.value]);
 
+const promoInput = ref('');
+const voucherInput = ref('');
+const applyingPromo = ref(false);
+const applyingVoucher = ref(false);
+
+function reloadPreviews(promoCode: string, voucherCode: string) {
+    return {
+        promo_code: promoCode,
+        voucher_code: voucherCode,
+    };
+}
+
+function applyPromo() {
+    if (!promoInput.value) {
+        return;
+    }
+
+    applyingPromo.value = true;
+    router.get(
+        CheckoutController.show.url(),
+        reloadPreviews(promoInput.value, preview.value.voucher?.code ?? ''),
+        {
+            preserveState: true,
+            preserveScroll: true,
+            only: ['previews'],
+            onFinish: () => {
+                applyingPromo.value = false;
+            },
+        },
+    );
+}
+
+function removePromo() {
+    router.get(
+        CheckoutController.show.url(),
+        reloadPreviews('', preview.value.voucher?.code ?? ''),
+        { preserveState: true, preserveScroll: true, only: ['previews'] },
+    );
+}
+
+function applyVoucher() {
+    if (!voucherInput.value) {
+        return;
+    }
+
+    applyingVoucher.value = true;
+    router.get(
+        CheckoutController.show.url(),
+        reloadPreviews(preview.value.promo?.code ?? '', voucherInput.value),
+        {
+            preserveState: true,
+            preserveScroll: true,
+            only: ['previews'],
+            onFinish: () => {
+                applyingVoucher.value = false;
+            },
+        },
+    );
+}
+
+function removeVoucher() {
+    router.get(
+        CheckoutController.show.url(),
+        reloadPreviews(preview.value.promo?.code ?? '', ''),
+        { preserveState: true, preserveScroll: true, only: ['previews'] },
+    );
+}
+
 const deliveryOptions = computed(() => [
     {
         value: 'instant' as const,
@@ -120,6 +199,8 @@ function confirmCheckout() {
         {
             address_id: addressId.value,
             delivery_method: deliveryMethod.value,
+            promo_code: preview.value.promo?.code ?? '',
+            voucher_code: preview.value.voucher?.code ?? '',
         },
         {
             onFinish: () => {
@@ -222,6 +303,118 @@ function confirmCheckout() {
                         </RadioGroup>
                     </CardContent>
                 </Card>
+
+                <Card>
+                    <CardContent class="space-y-4 pt-6">
+                        <h3 class="font-medium">
+                            {{ t('checkout.discountTitle') }}
+                        </h3>
+
+                        <div class="space-y-2">
+                            <Label for="promo-code">{{
+                                t('checkout.promoLabel')
+                            }}</Label>
+                            <div
+                                v-if="preview.promo"
+                                class="flex items-center gap-2"
+                            >
+                                <Badge variant="secondary" class="gap-1.5">
+                                    {{ preview.promo.code }} (-{{
+                                        formatIDR(preview.promo.amount)
+                                    }})
+                                    <button
+                                        type="button"
+                                        :aria-label="
+                                            t('checkout.removeCode', {
+                                                code: preview.promo.code,
+                                            })
+                                        "
+                                        class="cursor-pointer"
+                                        @click="removePromo"
+                                    >
+                                        <X class="size-3" />
+                                    </button>
+                                </Badge>
+                            </div>
+                            <div v-else class="flex gap-2">
+                                <Input
+                                    id="promo-code"
+                                    v-model="promoInput"
+                                    :placeholder="
+                                        t('checkout.promoPlaceholder')
+                                    "
+                                    @keyup.enter="applyPromo"
+                                />
+                                <Button
+                                    type="button"
+                                    variant="secondary"
+                                    :disabled="!promoInput || applyingPromo"
+                                    @click="applyPromo"
+                                >
+                                    {{ t('checkout.applyCode') }}
+                                </Button>
+                            </div>
+                            <p
+                                v-if="preview.promo_error"
+                                class="text-sm text-destructive"
+                            >
+                                {{ preview.promo_error }}
+                            </p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <Label for="voucher-code">{{
+                                t('checkout.voucherLabel')
+                            }}</Label>
+                            <div
+                                v-if="preview.voucher"
+                                class="flex items-center gap-2"
+                            >
+                                <Badge variant="secondary" class="gap-1.5">
+                                    {{ preview.voucher.code }} (-{{
+                                        formatIDR(preview.voucher.amount)
+                                    }})
+                                    <button
+                                        type="button"
+                                        :aria-label="
+                                            t('checkout.removeCode', {
+                                                code: preview.voucher.code,
+                                            })
+                                        "
+                                        class="cursor-pointer"
+                                        @click="removeVoucher"
+                                    >
+                                        <X class="size-3" />
+                                    </button>
+                                </Badge>
+                            </div>
+                            <div v-else class="flex gap-2">
+                                <Input
+                                    id="voucher-code"
+                                    v-model="voucherInput"
+                                    :placeholder="
+                                        t('checkout.voucherPlaceholder')
+                                    "
+                                    @keyup.enter="applyVoucher"
+                                />
+                                <Button
+                                    type="button"
+                                    variant="secondary"
+                                    :disabled="!voucherInput || applyingVoucher"
+                                    @click="applyVoucher"
+                                >
+                                    {{ t('checkout.applyCode') }}
+                                </Button>
+                            </div>
+                            <p
+                                v-if="preview.voucher_error"
+                                class="text-sm text-destructive"
+                            >
+                                {{ preview.voucher_error }}
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
 
             <Card class="lg:sticky lg:top-6 lg:self-start">
@@ -239,12 +432,31 @@ function confirmCheckout() {
                                 {{ formatIDR(preview.subtotal) }}
                             </dd>
                         </div>
-                        <div class="flex justify-between">
+                        <div v-if="preview.promo" class="flex justify-between">
                             <dt class="text-muted-foreground">
-                                {{ t('checkout.discount') }}
+                                {{
+                                    t('checkout.discountPromo', {
+                                        code: preview.promo.code,
+                                    })
+                                }}
                             </dt>
                             <dd class="tabular-nums">
-                                -{{ formatIDR(preview.discount_total) }}
+                                -{{ formatIDR(preview.promo.amount) }}
+                            </dd>
+                        </div>
+                        <div
+                            v-if="preview.voucher"
+                            class="flex justify-between"
+                        >
+                            <dt class="text-muted-foreground">
+                                {{
+                                    t('checkout.discountVoucher', {
+                                        code: preview.voucher.code,
+                                    })
+                                }}
+                            </dt>
+                            <dd class="tabular-nums">
+                                -{{ formatIDR(preview.voucher.amount) }}
                             </dd>
                         </div>
                         <div class="flex justify-between">

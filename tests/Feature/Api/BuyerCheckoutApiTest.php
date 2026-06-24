@@ -2,12 +2,15 @@
 
 namespace Tests\Feature\Api;
 
+use App\Enums\DiscountType;
 use App\Enums\RoleName;
 use App\Models\Address;
 use App\Models\Product;
+use App\Models\Promo;
 use App\Models\Role;
 use App\Models\Store;
 use App\Models\User;
+use App\Models\Voucher;
 use App\Services\CartService;
 use App\Services\RoleService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -89,5 +92,50 @@ class BuyerCheckoutApiTest extends TestCase
         $response->assertJsonPath('delivery_fee', 20_000);
         $response->assertJsonPath('grand_total', 132_000);
         $response->assertJsonPath('sufficient_balance', true);
+    }
+
+    public function test_api_checkout_preview_returns_distinct_promo_and_voucher_lines(): void
+    {
+        [$buyer, $token] = $this->buyerWithToken();
+        $store = Store::factory()->create();
+        $product = Product::factory()->create(['store_id' => $store->id, 'price' => 100_000, 'stock' => 10]);
+        $promo = Promo::factory()->create(['type' => DiscountType::Percentage, 'value' => 10, 'max_discount' => null]);
+        $voucher = Voucher::factory()->create(['type' => DiscountType::Fixed, 'value' => 5_000, 'max_discount' => null]);
+
+        app(CartService::class)->addItem($buyer, $product, 1);
+
+        $response = $this->withHeader('Authorization', "Bearer {$token}")
+            ->postJson(route('api.v1.buyer.checkout.preview'), [
+                'delivery_method' => 'regular',
+                'promo_code' => $promo->code,
+                'voucher_code' => $voucher->code,
+            ]);
+
+        $response->assertOk();
+        $response->assertJsonPath('promo.code', $promo->code);
+        $response->assertJsonPath('promo.amount', 10_000);
+        $response->assertJsonPath('voucher.code', $voucher->code);
+        $response->assertJsonPath('voucher.amount', 5_000);
+        $response->assertJsonPath('discount_total', 15_000);
+    }
+
+    public function test_api_checkout_preview_returns_a_structured_error_for_an_invalid_code(): void
+    {
+        [$buyer, $token] = $this->buyerWithToken();
+        $store = Store::factory()->create();
+        $product = Product::factory()->create(['store_id' => $store->id, 'price' => 100_000, 'stock' => 10]);
+
+        app(CartService::class)->addItem($buyer, $product, 1);
+
+        $response = $this->withHeader('Authorization', "Bearer {$token}")
+            ->postJson(route('api.v1.buyer.checkout.preview'), [
+                'delivery_method' => 'regular',
+                'promo_code' => 'DOES-NOT-EXIST',
+            ]);
+
+        $response->assertOk();
+        $response->assertJsonPath('promo', null);
+        $response->assertJsonPath('promo_error', __('Invalid promo code.'));
+        $response->assertJsonPath('discount_total', 0);
     }
 }

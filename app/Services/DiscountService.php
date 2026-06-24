@@ -144,7 +144,7 @@ class DiscountService
         }
 
         if ($promo->min_spend !== null && $subtotal < $promo->min_spend) {
-            return [0, __('Minimum spend of :amount required for this code.', ['amount' => $promo->min_spend])];
+            return [0, __('Minimum spend of :amount required for this code.', ['amount' => number_format($promo->min_spend, 0, ',', '.')])];
         }
 
         return [$promo->type->amountFor($promo->value, $subtotal, $promo->max_discount), null];
@@ -168,7 +168,7 @@ class DiscountService
         }
 
         if ($voucher->min_spend !== null && $subtotal < $voucher->min_spend) {
-            return [0, __('Minimum spend of :amount required for this code.', ['amount' => $voucher->min_spend])];
+            return [0, __('Minimum spend of :amount required for this code.', ['amount' => number_format($voucher->min_spend, 0, ',', '.')])];
         }
 
         return [$voucher->type->amountFor($voucher->value, $subtotal, $voucher->max_discount), null];

@@ -20,5 +20,12 @@
     "Your cart is empty.": "Your cart is empty.",
     "Insufficient stock for :product (:stock left).": "Insufficient stock for :product (:stock left).",
     "Order :code placed.": "Order :code placed.",
-    "Invalid order status transition.": "Invalid order status transition."
+    "Invalid order status transition.": "Invalid order status transition.",
+    "Invalid promo code.": "Invalid promo code.",
+    "Invalid voucher code.": "Invalid voucher code.",
+    "This promo code has expired.": "This promo code has expired.",
+    "This voucher code has expired.": "This voucher code has expired.",
+    "This voucher code has been fully redeemed.": "This voucher code has been fully redeemed.",
+    "Minimum spend of :amount required for this code.": "Minimum spend of Rp:amount required for this code.",
+    "Percentage value cannot exceed 100.": "Percentage value cannot exceed 100."
 }

@@ -20,5 +20,12 @@
     "Your cart is empty.": "Keranjang Anda masih kosong.",
     "Insufficient stock for :product (:stock left).": "Stok :product tinggal :stock.",
     "Order :code placed.": "Pesanan :code berhasil dibuat.",
-    "Invalid order status transition.": "Perubahan status pesanan tidak valid."
+    "Invalid order status transition.": "Perubahan status pesanan tidak valid.",
+    "Invalid promo code.": "Kode promo tidak valid.",
+    "Invalid voucher code.": "Kode voucher tidak valid.",
+    "This promo code has expired.": "Kode promo ini sudah kedaluwarsa.",
+    "This voucher code has expired.": "Kode voucher ini sudah kedaluwarsa.",
+    "This voucher code has been fully redeemed.": "Kode voucher ini sudah mencapai batas penggunaan.",
+    "Minimum spend of :amount required for this code.": "Minimal belanja Rp:amount untuk kode ini.",
+    "Percentage value cannot exceed 100.": "Nilai persentase tidak boleh lebih dari 100."
 }
