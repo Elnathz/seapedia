@@ -203,3 +203,31 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
   `storage:link` step in Setup and updated demo-credentials notes (seller1 → "Toko Berkah", multi1 →
   "Warung Mama Lia"). "Current status" now points at Sprint 2 as the latest complete sprint, keeping
   Sprint 1's progress log linked rather than overwritten.
+
+## Post-review follow-ups (Opus, 2026-06-24)
+
+A code-review pass over the Sonnet T1–T8 work produced four small fixes (see `plan.md`
+"Post-review decisions" for full reasoning). All verified: pint, Pest 57/57, ESLint, build.
+
+- [x] Fix stale `Web/CatalogController@index` docblock (was "dummy data — Sprint 2"; now describes
+      the DB-backed read) — `refactor(catalog): ...`
+- [x] Scope catalog eager-loaded `store` to public columns so the web/API payload no longer leaks
+      `user_id`/timestamps — `index()` `store:id,name,slug`, `find()` `store:id,name,slug,is_active`.
+- [x] Reorder `ProductService::update` to store the new image before deleting the old one (failed
+      upload no longer loses the existing file) — `refactor(product): ...`
+- [⏭️] Slug-uniqueness race left as-is (not a money/stock/status path; sub-ms window; near-zero
+      likelihood). Optional catch-retry recorded as a carry-over.
+
+## Perlu dikerjakan next sprint (carry-over)
+
+Picked up by a later sprint; the next sprint's Sonnet instructions reference this section.
+
+- **Public store page payload** (`StoreService::publicShow` / `stores/Show.vue`) still leaks
+  `store.user_id`/timestamps — apply the same column-scoping as the catalog fix. Low severity; left
+  out of the post-review scope (which was the catalog only).
+- **API Resource shaping** for `Api/CatalogController` (raw paginator/model JSON today) — introduce
+  `ProductResource`/`StoreResource` once the API surface grows (Sprint 3+).
+- **Slug-uniqueness hardening (optional)** — `QueryException` catch + regenerate-suffix retry on
+  product/store create, if concurrency ever matters.
+- **Breadcrumb i18n** — `defineOptions` breadcrumb titles don't flip with the locale toggle (hoisted
+  out of `<script setup>`, can't call `t()`); needs a shared `BreadcrumbItem` contract change.

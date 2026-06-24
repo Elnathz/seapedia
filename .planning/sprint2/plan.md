@@ -259,3 +259,50 @@ ESLint/Prettier + relevant Pest before each commit; `code-review` skill as self-
 - Deployment (prod Docker, nginx, caddy, GCP), security pass, Swagger polish, README finalize →
   **Sprint 6** (deployment relocated per Sprint 1 deviation #1).
 - Product categories/tags, multi-image galleries, store logos/banners — not in TDD §7; not built.
+
+## Post-review decisions (Opus, 2026-06-24, after T1–T8 shipped)
+
+A code-review pass over the Sonnet implementation produced four small follow-ups, executed as
+focused `refactor`/`docs` commits (not new features):
+
+1. **✅ Stale comment fixed** — `Web/CatalogController@index` still carried a Sprint-1
+   "dummy data — real catalog arrives in Sprint 2" docblock; replaced with an accurate
+   description (DB-backed via `CatalogService`, `?q` search + pagination).
+2. **✅ Catalog payload tightened** — `CatalogService` eager-loaded the full `store` relation,
+   exposing internal fields (`user_id`, timestamps, `is_active`, `description`) to the client in
+   both the web (Inertia) and `/api/v1/catalog` (JSON) responses. Now scoped to public columns:
+   `index()` → `with('store:id,name,slug')`, `find()` → `with('store:id,name,slug,is_active')`
+   (the exact fields the catalog grid + product-detail store block render). No API Resource added
+   — column-scoping is the minimal fix; Resource shaping stays a carry-over (see below).
+3. **⏭️ Slug-uniqueness race left as-is** — two concurrent creates of an identically-named
+   product could both compute the same slug before either inserts, so the second hits the
+   `products.slug` UNIQUE constraint → 500. Deliberately NOT hardened: slug is not a
+   money/stock/status path (golden rule 3 doesn't apply), the failure window is sub-millisecond,
+   and the scenario is near-zero for this app. Adding a transaction/lock would be machinery for
+   ~no risk. Optional catch-retry recorded as a carry-over.
+4. **✅ Image replace reordered** — `ProductService::update` deleted the old image *before*
+   storing the new one (a failed upload would lose the old file). Reordered to store-new →
+   point the row at it → delete-old-only-after-success.
+
+## Perlu dikerjakan next sprint (carry-over)
+
+Deferred items surfaced this sprint that a later sprint should pick up. The next sprint's
+"Instructions for the Sonnet implementer" must reference this section.
+
+- **Public store page payload** — `StoreService::publicShow` (feeding `stores/Show.vue`) still
+  eager-loads the full `Store` + `products` rows, leaking `store.user_id`/timestamps the same way
+  the catalog did before fix #2. Apply the same column-scoping (`stores/Show.vue` uses
+  `store:{id,name,slug,description,is_active}` and products `{id,store_id,slug,name,price,image_path}`).
+  Low severity (internal integer FK, no PII); not done now to keep the post-review scope to the
+  catalog we discussed.
+- **API Resource shaping** — `Api/CatalogController` returns raw paginator/model JSON. Once the
+  API surface grows (Sprint 3+ wallet/cart/checkout endpoints), introduce `ProductResource`/
+  `StoreResource` for a consistent envelope instead of column-scoping per query. (Originally a
+  Sprint-6 Swagger-polish item.)
+- **Slug-uniqueness hardening (optional)** — if concurrency ever matters, wrap product/store
+  create in a `QueryException` catch that regenerates the slug suffix and retries once. See
+  post-review decision #3.
+- **Breadcrumb i18n** — breadcrumb titles passed via `defineOptions({layout:{breadcrumbs}})`
+  (e.g. "Toko Saya", "Produk") don't flip with the locale toggle because `defineOptions` is
+  hoisted out of `<script setup>` and can't call `t(...)`. Fixing needs a change to the shared
+  `BreadcrumbItem` contract used by Sprint-1 pages. Cosmetic; see T7 deviation note.
