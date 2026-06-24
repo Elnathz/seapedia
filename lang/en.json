@@ -7,5 +7,9 @@
     "Profile updated.": "Profile updated.",
     "Password updated.": "Password updated.",
     "Insufficient wallet balance.": "Insufficient wallet balance.",
-    "Top-up successful.": "Top-up successful."
+    "Top-up successful.": "Top-up successful.",
+    "Address created.": "Address created.",
+    "Address updated.": "Address updated.",
+    "Default address updated.": "Default address updated.",
+    "Address deleted.": "Address deleted."
 }

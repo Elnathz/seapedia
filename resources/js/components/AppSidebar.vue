@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid, Package, Store, Wallet } from '@lucide/vue';
+import { LayoutGrid, MapPin, Package, Store, Wallet } from '@lucide/vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppLogo from '@/components/AppLogo.vue';
@@ -17,6 +17,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as indexBuyerAddresses } from '@/routes/buyer/addresses';
 import { show as showBuyerWallet } from '@/routes/buyer/wallet';
 import { index as indexSellerProducts } from '@/routes/seller/products';
 import { show as showSellerStore } from '@/routes/seller/store';
@@ -51,11 +52,18 @@ const mainNavItems = computed<NavItem[]>(() => {
     }
 
     if (auth.activeRole === 'buyer') {
-        items.push({
-            title: t('nav.wallet'),
-            href: showBuyerWallet(),
-            icon: Wallet,
-        });
+        items.push(
+            {
+                title: t('nav.wallet'),
+                href: showBuyerWallet(),
+                icon: Wallet,
+            },
+            {
+                title: t('nav.addresses'),
+                href: indexBuyerAddresses(),
+                icon: MapPin,
+            },
+        );
     }
 
     return items;

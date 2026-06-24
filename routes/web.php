@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\AppReviewController;
+use App\Http\Controllers\Web\BuyerAddressController;
 use App\Http\Controllers\Web\BuyerWalletController;
 use App\Http\Controllers\Web\CatalogController;
 use App\Http\Controllers\Web\DashboardController;
@@ -45,6 +46,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('active_role:buyer')->prefix('buyer')->name('buyer.')->group(function () {
         Route::get('wallet', [BuyerWalletController::class, 'show'])->name('wallet.show');
         Route::post('wallet/topup', [BuyerWalletController::class, 'store'])->name('wallet.topup');
+
+        Route::get('addresses', [BuyerAddressController::class, 'index'])->name('addresses.index');
+        Route::post('addresses', [BuyerAddressController::class, 'store'])->name('addresses.store');
+        Route::put('addresses/{address}', [BuyerAddressController::class, 'update'])->name('addresses.update');
+        Route::patch('addresses/{address}/default', [BuyerAddressController::class, 'setDefault'])->name('addresses.setDefault');
+        Route::delete('addresses/{address}', [BuyerAddressController::class, 'destroy'])->name('addresses.destroy');
     });
 });
 

@@ -7,5 +7,9 @@
     "Profile updated.": "Profil berhasil diperbarui.",
     "Password updated.": "Kata sandi berhasil diperbarui.",
     "Insufficient wallet balance.": "Saldo dompet tidak cukup.",
-    "Top-up successful.": "Top up berhasil."
+    "Top-up successful.": "Top up berhasil.",
+    "Address created.": "Alamat berhasil ditambahkan.",
+    "Address updated.": "Alamat berhasil diperbarui.",
+    "Default address updated.": "Alamat utama berhasil diperbarui.",
+    "Address deleted.": "Alamat berhasil dihapus."
 }
