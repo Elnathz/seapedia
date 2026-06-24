@@ -18,6 +18,7 @@ class CheckoutService
         private readonly CartService $carts,
         private readonly WalletService $wallets,
         private readonly OrderService $orders,
+        private readonly DiscountService $discounts,
         private readonly ClockService $clock,
     ) {}
 
@@ -27,8 +28,12 @@ class CheckoutService
      *
      * @return array<string, mixed>
      */
-    public function preview(User $user, DeliveryMethod $deliveryMethod): array
-    {
+    public function preview(
+        User $user,
+        DeliveryMethod $deliveryMethod,
+        ?string $promoCode = null,
+        ?string $voucherCode = null,
+    ): array {
         $cart = $this->carts->summary($user);
 
         // Price from the live product (fallback to the cart snapshot if the
@@ -39,18 +44,20 @@ class CheckoutService
             fn ($item) => ($item->product?->price ?? $item->price_snapshot) * $item->quantity,
         );
 
-        // Discount is a zero placeholder this sprint — the math/summary
-        // slots exist now so Sprint 4 can fill in a real value with no
-        // checkout rework.
-        $discountTotal = 0;
-        $taxableBase = $subtotal - $discountTotal;
+        $discount = $this->discounts->resolve($promoCode, $voucherCode, $subtotal);
+
+        $taxableBase = $subtotal - $discount['discount_total'];
         $taxAmount = (int) round($taxableBase * 0.12);
         $deliveryFee = $deliveryMethod->fee();
         $grandTotal = $taxableBase + $taxAmount + $deliveryFee;
 
         return [
             'subtotal' => $subtotal,
-            'discount_total' => $discountTotal,
+            'discount_total' => $discount['discount_total'],
+            'promo' => $discount['promo'] ? ['code' => $discount['promo']->code, 'amount' => $discount['promo_amount']] : null,
+            'promo_error' => $discount['promo_error'],
+            'voucher' => $discount['voucher'] ? ['code' => $discount['voucher']->code, 'amount' => $discount['voucher_amount']] : null,
+            'voucher_error' => $discount['voucher_error'],
             'taxable_base' => $taxableBase,
             'tax_amount' => $taxAmount,
             'delivery_fee' => $deliveryFee,
@@ -66,9 +73,14 @@ class CheckoutService
      * Dikemas, debit the buyer, credit the seller, clear the cart. Any
      * failure rolls back the whole thing — no partial side effects.
      */
-    public function commit(User $user, Address $address, DeliveryMethod $deliveryMethod): Order
-    {
-        return DB::transaction(function () use ($user, $address, $deliveryMethod) {
+    public function commit(
+        User $user,
+        Address $address,
+        DeliveryMethod $deliveryMethod,
+        ?string $promoCode = null,
+        ?string $voucherCode = null,
+    ): Order {
+        return DB::transaction(function () use ($user, $address, $deliveryMethod, $promoCode, $voucherCode) {
             $cart = $this->carts->summary($user);
 
             if ($cart->items->isEmpty() || $cart->store_id === null) {
@@ -77,8 +89,11 @@ class CheckoutService
                 ]);
             }
 
+            // Locked in ascending product_id order (not cart-item order) so
+            // two concurrent multi-product checkouts can never deadlock by
+            // acquiring the same two row locks in opposite order.
             $lockedProducts = [];
-            foreach ($cart->items as $item) {
+            foreach ($cart->items->sortBy('product_id') as $item) {
                 $product = Product::query()->lockForUpdate()->find($item->product_id);
 
                 if (! $product || $product->stock < $item->quantity) {
@@ -110,7 +125,20 @@ class CheckoutService
                 ];
             }
 
-            $discountTotal = 0;
+            // Voucher row is locked + used_count incremented here (§6), only
+            // on a successful eligibility check — any failure below rolls
+            // the increment back with the rest of the transaction.
+            $discount = $this->discounts->applyAtCommit($promoCode, $voucherCode, $subtotal);
+
+            if ($promoCode && $discount['promo_error']) {
+                throw ValidationException::withMessages(['promo_code' => [$discount['promo_error']]]);
+            }
+
+            if ($voucherCode && $discount['voucher_error']) {
+                throw ValidationException::withMessages(['voucher_code' => [$discount['voucher_error']]]);
+            }
+
+            $discountTotal = $discount['discount_total'];
             $taxableBase = $subtotal - $discountTotal;
             $taxAmount = (int) round($taxableBase * 0.12);
             $deliveryFee = $deliveryMethod->fee();
@@ -131,6 +159,8 @@ class CheckoutService
                 'delivery_method' => $deliveryMethod,
                 'subtotal' => $subtotal,
                 'discount_total' => $discountTotal,
+                'promo_id' => $discount['promo']?->id,
+                'voucher_id' => $discount['voucher']?->id,
                 'delivery_fee' => $deliveryFee,
                 'tax_amount' => $taxAmount,
                 'grand_total' => $grandTotal,

@@ -26,9 +26,15 @@ class CheckoutController extends Controller
     )]
     public function preview(PreviewCheckoutRequest $request): JsonResponse
     {
-        $deliveryMethod = DeliveryMethod::from($request->validated()['delivery_method']);
+        $data = $request->validated();
+        $deliveryMethod = DeliveryMethod::from($data['delivery_method']);
 
-        return response()->json($this->checkout->preview($request->user(), $deliveryMethod));
+        return response()->json($this->checkout->preview(
+            $request->user(),
+            $deliveryMethod,
+            $data['promo_code'] ?? null,
+            $data['voucher_code'] ?? null,
+        ));
     }
 
     #[OA\Post(
@@ -51,6 +57,8 @@ class CheckoutController extends Controller
             $request->user(),
             $address,
             DeliveryMethod::from($data['delivery_method']),
+            $data['promo_code'] ?? null,
+            $data['voucher_code'] ?? null,
         );
 
         return response()->json($order->load('items'), 201);

@@ -23,14 +23,18 @@ class CheckoutController extends Controller
     public function show(Request $request): Response
     {
         $user = $request->user();
+        $promoCode = $request->query('promo_code');
+        $voucherCode = $request->query('voucher_code');
 
         // All three delivery methods are previewed up front (the formula is
         // cheap and only delivery_fee differs between them) so switching in
         // the UI never needs another round trip; every figure is still
-        // server-computed.
+        // server-computed. The "Apply code" action re-requests this page
+        // with the codes as query params (Inertia partial reload) so the
+        // discount lines stay server-computed too.
         $previews = collect(DeliveryMethod::cases())
             ->mapWithKeys(fn (DeliveryMethod $method) => [
-                $method->value => $this->checkout->preview($user, $method),
+                $method->value => $this->checkout->preview($user, $method, $promoCode, $voucherCode),
             ]);
 
         return Inertia::render('buyer/checkout/Show', [
@@ -50,6 +54,8 @@ class CheckoutController extends Controller
             $request->user(),
             $address,
             DeliveryMethod::from($data['delivery_method']),
+            $data['promo_code'] ?? null,
+            $data['voucher_code'] ?? null,
         );
 
         Inertia::flash('toast', [

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Checkout;
 
 use App\Enums\DeliveryMethod;
+use App\Enums\DiscountType;
 use App\Enums\RoleName;
 use App\Models\Address;
 use App\Models\Order;
@@ -10,6 +11,7 @@ use App\Models\Product;
 use App\Models\Role;
 use App\Models\Store;
 use App\Models\User;
+use App\Models\Voucher;
 use App\Services\CartService;
 use App\Services\CheckoutService;
 use Illuminate\Foundation\Testing\DatabaseTruncation;
@@ -110,6 +112,75 @@ class CheckoutConcurrencyTest extends TestCase
         } finally {
             $this->assertSame(1, Order::query()->count());
             $this->assertSame(0, $product->refresh()->stock);
+        }
+    }
+
+    public function test_a_second_checkout_cannot_read_the_voucher_row_while_the_first_holds_its_lock(): void
+    {
+        $store = Store::factory()->create();
+        $product = Product::factory()->create(['store_id' => $store->id, 'price' => 50_000, 'stock' => 10]);
+        $voucher = Voucher::factory()->create([
+            'type' => DiscountType::Fixed, 'value' => 5_000, 'max_discount' => null,
+            'min_spend' => null, 'usage_limit' => 1, 'used_count' => 0,
+        ]);
+        $buyer = $this->buyer();
+        $address = Address::factory()->create(['user_id' => $buyer->id, 'is_default' => true]);
+        app(CartService::class)->addItem($buyer, $product, 1);
+
+        config(['database.connections.lock_holder' => config('database.connections.mysql')]);
+        $holder = DB::connection('lock_holder');
+        $holder->beginTransaction();
+        $holder->select('select * from vouchers where id = ? for update', [$voucher->id]);
+
+        DB::statement('SET SESSION innodb_lock_wait_timeout = 2');
+
+        $blocked = false;
+
+        try {
+            app(CheckoutService::class)->commit($buyer, $address, DeliveryMethod::Regular, null, $voucher->code);
+        } catch (Throwable) {
+            $blocked = true;
+        } finally {
+            $holder->rollBack();
+            DB::statement('SET SESSION innodb_lock_wait_timeout = DEFAULT');
+        }
+
+        $this->assertTrue($blocked, 'Expected the checkout to block while another transaction held the voucher row lock.');
+        $this->assertSame(0, Order::query()->count());
+        $this->assertSame(0, $voucher->refresh()->used_count);
+    }
+
+    public function test_once_a_voucher_is_redeemed_a_second_checkout_cannot_exceed_its_usage_limit(): void
+    {
+        $store = Store::factory()->create();
+        $product = Product::factory()->create(['store_id' => $store->id, 'price' => 50_000, 'stock' => 10]);
+        $voucher = Voucher::factory()->create([
+            'type' => DiscountType::Fixed, 'value' => 5_000, 'max_discount' => null,
+            'min_spend' => null, 'usage_limit' => 1, 'used_count' => 0,
+        ]);
+
+        $buyerA = $this->buyer();
+        $addressA = Address::factory()->create(['user_id' => $buyerA->id, 'is_default' => true]);
+        app(CartService::class)->addItem($buyerA, $product, 1);
+
+        $buyerB = $this->buyer();
+        $addressB = Address::factory()->create(['user_id' => $buyerB->id, 'is_default' => true]);
+        app(CartService::class)->addItem($buyerB, $product, 1);
+
+        // Buyer A redeems the voucher's last use first.
+        app(CheckoutService::class)->commit($buyerA, $addressA, DeliveryMethod::Regular, null, $voucher->code);
+
+        $this->assertSame(1, $voucher->refresh()->used_count);
+
+        // Buyer B's checkout — for the same exhausted voucher — must be
+        // rejected cleanly, never pushing used_count past usage_limit.
+        $this->expectException(ValidationException::class);
+
+        try {
+            app(CheckoutService::class)->commit($buyerB, $addressB, DeliveryMethod::Regular, null, $voucher->code);
+        } finally {
+            $this->assertSame(1, Order::query()->count());
+            $this->assertSame(1, $voucher->refresh()->used_count);
         }
     }
 }
