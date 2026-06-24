@@ -5,6 +5,7 @@ namespace Tests\Feature\Api;
 use App\Enums\DeliveryMethod;
 use App\Enums\RoleName;
 use App\Models\Address;
+use App\Models\Delivery;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Role;
@@ -23,6 +24,18 @@ class ReportApiTest extends TestCase
     private function tokenFor(User $user, RoleName $role): string
     {
         return app(RoleService::class)->issueApiToken($user, $role)->plainTextToken;
+    }
+
+    /**
+     * Sanctum's RequestGuard caches the resolved user for the lifetime of
+     * the test app — forgetGuards() is required before switching bearer
+     * tokens within a single test method, or the previous actor "sticks".
+     */
+    private function asToken(string $token): static
+    {
+        app('auth')->forgetGuards();
+
+        return $this->withHeader('Authorization', "Bearer {$token}");
     }
 
     private function placeOrder(User $buyer, Store $store, int $price = 50_000): Order
@@ -67,13 +80,26 @@ class ReportApiTest extends TestCase
         $storeB = Store::factory()->create(['user_id' => $sellerB->id]);
         $buyer = User::factory()->create();
         $buyer->roles()->attach(Role::query()->firstOrCreate(['name' => RoleName::Buyer->value])->id);
+        $driver = User::factory()->create();
+        $driver->roles()->attach(Role::query()->firstOrCreate(['name' => RoleName::Driver->value])->id);
 
+        // Income is only realized once the order reaches Pesanan Selesai
+        // under escrow (Sprint 5 Decision 3) — drive order A through the
+        // full delivery flow before asserting the report total.
         $orderA = $this->placeOrder($buyer, $storeA);
         $this->placeOrder($buyer, $storeB, 100_000);
 
-        $token = $this->tokenFor($sellerA, RoleName::Seller);
+        $this->asToken($this->tokenFor($sellerA, RoleName::Seller))
+            ->postJson(route('api.v1.seller.orders.process', $orderA))
+            ->assertOk();
 
-        $response = $this->withHeader('Authorization', "Bearer {$token}")
+        $delivery = Delivery::query()->where('order_id', $orderA->id)->firstOrFail();
+
+        $driverToken = $this->tokenFor($driver, RoleName::Driver);
+        $this->asToken($driverToken)->postJson(route('api.v1.driver.jobs.take', $delivery))->assertOk();
+        $this->asToken($driverToken)->postJson(route('api.v1.driver.jobs.complete', $delivery))->assertOk();
+
+        $response = $this->asToken($this->tokenFor($sellerA, RoleName::Seller))
             ->getJson(route('api.v1.seller.reports.index'));
 
         $response->assertOk();

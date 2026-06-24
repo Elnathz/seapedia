@@ -15,7 +15,13 @@ class ReportService
      */
     public function buyerSpending(User $buyer): array
     {
-        $orders = Order::query()->where('buyer_id', $buyer->id)->get(['status', 'grand_total']);
+        // Dikembalikan orders were refunded (§5.9) — they never count as
+        // realized spend, so they're excluded from both the total and the
+        // breakdown rather than just netted to zero.
+        $orders = Order::query()
+            ->where('buyer_id', $buyer->id)
+            ->where('status', '!=', OrderStatus::Dikembalikan)
+            ->get(['status', 'grand_total']);
 
         return [
             'total_spent' => (int) $orders->sum('grand_total'),
@@ -29,14 +35,22 @@ class ReportService
      */
     public function sellerIncome(Store $store): array
     {
-        $orders = Order::query()->where('store_id', $store->id)->get(['status', 'seller_income_amount']);
+        // Under escrow (Decision 3) the seller is only ever paid out on
+        // Pesanan Selesai — income totals are based on realized payouts,
+        // not every order the store has ever received.
+        $orders = Order::query()
+            ->where('store_id', $store->id)
+            ->where('status', '!=', OrderStatus::Dikembalikan)
+            ->get(['status', 'seller_income_amount']);
+
+        $realized = $orders->where('status', OrderStatus::PesananSelesai);
 
         return [
-            'total_income' => (int) $orders->sum('seller_income_amount'),
+            'total_income' => (int) $realized->sum('seller_income_amount'),
             'order_count' => $orders->count(),
             'incoming_count' => $orders->where('status', OrderStatus::SedangDikemas)->count(),
             'processed_count' => $orders->where('status', '!=', OrderStatus::SedangDikemas)->count(),
-            'breakdown' => $this->breakdownByStatus($orders, 'seller_income_amount'),
+            'breakdown' => $this->breakdownByStatus($realized, 'seller_income_amount'),
         ];
     }
 
