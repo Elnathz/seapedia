@@ -74,6 +74,34 @@ root overflow at 360px (confirmed: 506px content in a 311px container) but is wr
 not a layout-breaking clip like the two bugs above. Left as-is since it's out of Sprint 4's scope; flag if
 it should be redesigned too.
 
+## Post-review findings (Opus, after T1–T6 + visual QA shipped)
+
+5-layer `code-review` pass over the whole sprint diff (`553e595..HEAD`). Security sweep clean (no `v-html`
+on user content, no raw SQL / `DB::raw`, no `$guarded = []`); §5.3 combination + §6 voucher lock verified
+correct (the `used_count` increment rolls back with the rest of the transaction even when a later promo
+error throws, since the whole commit is one `DB::transaction`); lock order is globally consistent
+(products → voucher → buyer wallet → seller wallet) with products sorted by `product_id`, so no deadlock;
+no N+1 in the reports or order-detail read paths. Three findings:
+
+1. **[LOW–MEDIUM — FIXED] Checkout summary discount lines didn't reconcile with the deduction.** When
+   promo + voucher exceeded the subtotal, each line was capped individually and the *sum* was then min'd
+   against the subtotal — so the two shown lines could add up to more than `discount_total` actually
+   deducted (proved via tinker: subtotal 10 000, two fixed-8 000 codes → lines showed −8 000/−8 000 but only
+   10 000 was taken). Display-only on the live checkout preview (the persisted order stores one combined
+   `discount_total`, always consistent) and the demo path never triggers it (PROMO20K+HEMAT10 over a
+   ≥100 000 subtotal never hits the cap), but it's the same "numbers don't add up" class as the Sprint 3
+   preview/commit fix. `DiscountService::combine()` now applies the promo first and lets the voucher absorb
+   the cap, so the lines always sum to exactly `discount_total`. Regression test
+   `test_capped_discount_splits_so_the_displayed_lines_sum_to_the_total`. Commit `fix(discount)`.
+2. **[MINOR — FIXED] `promos.value` / `vouchers.value` were `unsignedInteger`, not BIGINT.** For a `fixed`
+   discount `value` is a money amount, so per §7 / golden rule 5 ("money is BIGINT UNSIGNED") it should match
+   `min_spend` / `max_discount` (already BIGINT). Widened both to `unsignedBigInteger`; `migrate:fresh --seed`
+   re-run, schema confirmed `bigint`. Commit `fix(db)`.
+3. **[NOTE — not a bug, carry-over awareness] `ReportService` aggregates in PHP, not SQL.** Both
+   `buyerSpending`/`sellerIncome` load all of the user's orders (two columns only) into a Collection and
+   group in memory rather than a SQL `GROUP BY`. Fine at this scale and matches the brief's "reports needn't
+   be overly complex", but if order volume grows it should move to a grouped query. Left as-is.
+
 ## Notes / deviations recorded
 
 - The two layout bugs above are a reminder that `document.documentElement.scrollWidth >
