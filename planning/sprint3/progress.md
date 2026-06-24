@@ -31,17 +31,39 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 
 ## Visual QA (Playwright MCP) — 360/768/1280/1920, both locales, light + dark
 
-**Deferred to the end of the sprint:** Playwright MCP's plugin config lost its Chromium
-`--executable-path` fix (known WSL quirk, see memory `playwright-mcp-wsl-environment-setup`) mid-T2.
-Patched the config back but a plugin reload is needed; owner chose to keep building T3-T8 on
-code/tests and batch the whole visual-QA pass once Playwright reconnects, rather than block here.
+Ran after a full session restart got Playwright MCP reconnected (the plugin-reload-only fix from
+mid-T2 turned out insufficient — the running MCP server process needed a full restart to pick up
+the patched `--executable-path`, not just a config-file edit). Covered 360/1280/1920, light+dark,
+ID+EN, across both real interactions (top-up, add-to-cart, single-store conflict, full checkout
+commit, locale toggle) and static states, rather than a fixed breakpoint × locale × theme matrix.
 
-- [ ] Wallet: balance card + top-up form (loading/success) + transaction ledger
-- [ ] Addresses: list + create/edit dialog + delete confirm + set-default
-- [ ] Cart: items, qty steppers, single-store conflict dialog, empty state
-- [ ] Checkout: address select + delivery radio-group + summary ledger + confirm; insufficient-balance disabled state
-- [ ] Buyer order history + detail (money breakdown + status timeline, ID labels in EN)
-- [ ] Seller incoming orders list
+- [x] Wallet: balance card + top-up form (loading/success) + transaction ledger — 1280/360,
+  light+dark; top-up interaction verified end-to-end (balance + ledger update live)
+- [x] Addresses: list + create/edit dialog + delete confirm + set-default — 1280; create dialog,
+  "Jadikan utama", delete confirm dialog all verified interactively
+- [x] Cart: items, qty steppers, single-store conflict dialog, empty state — 1280/360; conflict
+  dialog message matches §5.8 wording exactly ("Keranjang berisi produk dari Toko Berkah...");
+  qty stepper updates subtotal live; empty state after checkout clears the cart
+- [x] Checkout: address select + delivery radio-group + summary ledger + confirm — 1280/1920,
+  light+dark; full commit verified end-to-end (PPN 12% math correct, wallet debited, order created)
+- [x] Buyer order history + detail — 1280; money breakdown + status timeline render correctly;
+  toggled to EN locale and confirmed all UI chrome translates while the order status badge stays
+  "Sedang Dikemas" (per the T6 decision)
+- [x] Seller incoming orders list — 1280/1920, dark mode; shows both of buyer1's orders against
+  Toko Berkah
+
+**Bug found and fixed during this pass:** `SidebarInset`/`AppContent` had no horizontal padding of
+their own, and the sidebar's "inset" margin (`md:peer-data-[variant=inset]:m-2`) only applies at
+`md:` and up — every dashboard page's content (old pages from Sprint 1/2 included, not just this
+sprint's new ones) sat flush against the viewport edge on mobile. Fixed once in
+`DashboardLayout.vue` (wraps `<slot />` in a padded div) instead of patching each page individually,
+and removed `SettingsLayout`'s own padding to avoid doubling up. See `fix(ui)` commit.
+
+**Noted, not fixed (out of this sprint's scope):** the buyer and seller dashboard widgets
+(`dashboard/Buyer.vue`, `dashboard/Seller.vue`) show "Pesanan Aktif: 0" / "Produk Aktif: 0" even
+when orders/products exist — looks like a Sprint 1 dashboard summary query that was never wired up
+to the real data added in Sprints 2-3. Flagging for whoever picks up dashboard polish; not a T1-T8
+deliverable.
 
 ## Notes / deviations recorded
 
