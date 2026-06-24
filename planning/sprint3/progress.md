@@ -5,7 +5,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 ## Tasks
 
 - [x] T1 · Wallet ledger + locked WalletService — `feat(wallet): add wallet ledger and locked WalletService`
-- [ ] T2 · Fake top-up (gateway interface + FakeGateway) + wallet page — `feat(wallet): add fake top-up via payment gateway interface`
+- [x] T2 · Fake top-up (gateway interface + FakeGateway) + wallet page — `feat(wallet): add fake top-up via payment gateway interface`
 - [ ] T3 · Delivery address management — `feat(buyer): add delivery address management`
 - [ ] T4 · Cart with single-store guard — `feat(cart): add buyer cart with single-store guard`
 - [ ] T5 · Checkout preview + commit + OrderService + ClockService — `feat(checkout): charge wallet and reduce stock in a locked transaction`
@@ -21,7 +21,7 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 ## Tests
 
 - [x] Concurrent credit+debit stay consistent (locked); over-debit rejected (T1)
-- [ ] Fake top-up credits wallet + writes ledger; replay is idempotent (T2)
+- [x] Fake top-up credits wallet + writes ledger; replay is idempotent (T2)
 - [ ] Cross-user address update → 403; new default unsets previous (T3)
 - [ ] Add from different store → 422; clear-then-add succeeds; qty update changes line subtotal (T4)
 - [ ] Oversell: two concurrent checkouts on last unit → one succeeds, one rejected, no negative stock (T5)
@@ -30,6 +30,11 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
 - [ ] API checkout happy path returns order; insufficient balance → 422 (T7)
 
 ## Visual QA (Playwright MCP) — 360/768/1280/1920, both locales, light + dark
+
+**Deferred to the end of the sprint:** Playwright MCP's plugin config lost its Chromium
+`--executable-path` fix (known WSL quirk, see memory `playwright-mcp-wsl-environment-setup`) mid-T2.
+Patched the config back but a plugin reload is needed; owner chose to keep building T3-T8 on
+code/tests and batch the whole visual-QA pass once Playwright reconnects, rather than block here.
 
 - [ ] Wallet: balance card + top-up form (loading/success) + transaction ledger
 - [ ] Addresses: list + create/edit dialog + delete confirm + set-default
@@ -50,3 +55,10 @@ Check off each slice as it is committed (one commit per task). Keep in sync with
   dual-connection row-lock proof (one transaction holds the row, a second genuinely blocks/fails)
   is reserved for T5's checkout oversell test, since that's the plan's explicitly "CRITICAL" path
   and reuses the same `lockForUpdate` technique on the `products` row.
+- **T2 deviation from plan:** `ClockService` introduced now, not at T5 as the plan assumed.
+  `topups.processed_at` is a business-logic timestamp under golden rule 6 ("never `now()` directly
+  in business logic"), so it needed the simulated clock from its first use. T5 will just consume the
+  already-existing service.
+- **T2 assumption:** no minimum top-up amount is locked by the TDD; picked 10,000 IDR
+  (`config('payment.topup.min_amount')`) as the simplest reasonable floor — to confirm/restate in
+  the README (T8).
