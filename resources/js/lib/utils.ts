@@ -20,3 +20,10 @@ const idrFormatter = new Intl.NumberFormat('id-ID', {
 export function formatIDR(amount: number) {
     return idrFormatter.format(amount);
 }
+
+export function formatDateTime(value: string, locale: string) {
+    return new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'id-ID', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    }).format(new Date(value));
+}

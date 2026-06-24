@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\AppReviewController;
+use App\Http\Controllers\Web\BuyerWalletController;
 use App\Http\Controllers\Web\CatalogController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\LocaleController;
@@ -39,6 +40,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('products/{product}/edit', [SellerProductController::class, 'edit'])->name('products.edit');
         Route::put('products/{product}', [SellerProductController::class, 'update'])->name('products.update');
         Route::delete('products/{product}', [SellerProductController::class, 'destroy'])->name('products.destroy');
+    });
+
+    Route::middleware('active_role:buyer')->prefix('buyer')->name('buyer.')->group(function () {
+        Route::get('wallet', [BuyerWalletController::class, 'show'])->name('wallet.show');
+        Route::post('wallet/topup', [BuyerWalletController::class, 'store'])->name('wallet.topup');
     });
 });
 

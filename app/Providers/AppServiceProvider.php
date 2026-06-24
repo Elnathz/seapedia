@@ -2,9 +2,14 @@
 
 namespace App\Providers;
 
+use App\Enums\PaymentGatewayType;
 use App\Models\User;
 use App\Observers\UserObserver;
+use App\Services\Payment\FakeGateway;
+use App\Services\Payment\IpaymuGateway;
+use App\Services\Payment\PaymentGateway;
 use Carbon\CarbonImmutable;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -17,7 +22,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(PaymentGateway::class, fn (Application $app) => match (
+            PaymentGatewayType::from(config('payment.gateway'))
+        ) {
+            PaymentGatewayType::Ipaymu => $app->make(IpaymuGateway::class),
+            PaymentGatewayType::Fake => $app->make(FakeGateway::class),
+        });
     }
 
     /**
