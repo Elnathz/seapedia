@@ -1,0 +1,60 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - app_storage:/app/storage/app
+      - app_logs:/app/storage/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - seapedia
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: nginx-web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      # Serve user uploads directly from the storage volume
+      - app_storage:/app/storage/app:ro
+    depends_on:
+      - app
+    networks:
+      - seapedia
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - seapedia
+
+volumes:
+  db_data:
+  app_storage:
+  app_logs:
+
+networks:
+  seapedia:
+    driver: bridge

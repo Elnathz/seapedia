@@ -336,12 +336,67 @@ Sanctum tokens expire after **480 minutes** by default
 (`SANCTUM_TOKEN_EXPIRATION=480` in `.env`, read by `config/sanctum.php`).
 Adjust the env variable if you need longer-lived tokens for demo sessions.
 
+## Production deploy (Oracle Cloud Free Tier)
+
+The `docker-compose.prod.yml` runs three services: `app` (php-fpm), `web` (nginx with baked static files), `db` (MySQL 8 with named volume).
+
+### One-time VM setup
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/<user>/seapedia.git && cd seapedia
+
+# 2. Copy and fill in the prod env
+cp .env.example .env
+# Edit .env: set APP_KEY, APP_URL, DB_PASSWORD, APP_DEBUG=false
+
+# 3. Generate app key (run on the host if PHP available, or inside container)
+docker run --rm -v "$(pwd)":/app -w /app php:8.3-cli php artisan key:generate --show
+# → paste the output as APP_KEY=... in .env
+
+# 4. Build images and start
+docker compose -f docker-compose.prod.yml up -d --build
+
+# 5. Migrate + seed
+docker compose -f docker-compose.prod.yml exec app php artisan migrate:fresh --seed --force
+
+# 6. Open http://<PUBLIC_IP>
+```
+
+### Open firewall ports (Oracle Cloud — two layers)
+
+**VCN Security List (Oracle console):** add Ingress TCP 80 + 443 from `0.0.0.0/0`.
+
+**Ubuntu iptables (SSH into VM):**
+```bash
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
+sudo apt-get install -y iptables-persistent
+sudo netfilter-persistent save
+```
+
+### Install Docker on the VM
+
+```bash
+sudo apt-get update && sudo apt-get install -y ca-certificates curl git
+curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker ubuntu   # then re-login
+```
+
+### Re-deploy after a git pull
+
+```bash
+git pull
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml exec app php artisan migrate --force
+```
+
 ## Current status
 
 Sprint 6 (final sprint) is complete — security hardening, landing page
 redesign, auth/role-select rework, all seller/buyer/driver/admin UI reworks,
-and OpenAPI spec (33 endpoints, OWASP audit clean). See
-`planning/sprint6/progress.md` for the task log. Earlier sprint logs:
+OpenAPI spec (33 endpoints, OWASP audit clean), and production Docker deploy.
+See `planning/sprint6/progress.md` for the task log. Earlier sprint logs:
 `planning/sprint5/` · `planning/sprint4/` · `planning/sprint3/` ·
 `planning/sprint2/` · `planning/sprint1/`.
 
