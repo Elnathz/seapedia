@@ -45,7 +45,11 @@ class StoreService
     public function publicShow(string $slug): ?Store
     {
         return Store::query()
-            ->with(['products' => fn ($query) => $query->where('is_active', true)->latest()])
+            ->select(['id', 'name', 'slug', 'description', 'is_active'])
+            ->with(['products' => fn ($query) => $query
+                ->select(['id', 'store_id', 'name', 'slug', 'price', 'image_path'])
+                ->where('is_active', true)
+                ->latest()])
             ->where('slug', $slug)
             ->where('is_active', true)
             ->first();
