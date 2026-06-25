@@ -75,6 +75,7 @@ const ALL_DELIVERY_STATUSES: DeliveryStatusKey[] = [
     'available',
     'taken',
     'completed',
+    'cancelled',
 ];
 
 const orderCount = (s: OrderStatusKey) =>

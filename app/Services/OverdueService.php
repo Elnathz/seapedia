@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\DeliveryStatus;
 use App\Enums\OrderStatus;
 use App\Enums\WalletTransactionType;
+use App\Models\Delivery;
 use App\Models\Order;
 use App\Models\Product;
 use Carbon\CarbonImmutable;
@@ -93,6 +95,19 @@ class OverdueService
                 'order',
                 $order->id,
             );
+
+            // Cancel any still-open delivery for this order. Without this the
+            // row stays Available/Taken forever: an orphaned Taken job would
+            // keep tripping the one-active-job rule and lock the driver out
+            // of every future job, and an Available one becomes an un-takeable
+            // ghost on the board.
+            $delivery = Delivery::query()
+                ->lockForUpdate()
+                ->where('order_id', $order->id)
+                ->whereIn('status', [DeliveryStatus::Available, DeliveryStatus::Taken])
+                ->first();
+
+            $delivery?->update(['status' => DeliveryStatus::Cancelled]);
 
             $order->update(['refunded_at' => $now]);
 

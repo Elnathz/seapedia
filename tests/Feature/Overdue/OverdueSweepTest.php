@@ -3,6 +3,7 @@
 namespace Tests\Feature\Overdue;
 
 use App\Enums\DeliveryMethod;
+use App\Enums\DeliveryStatus;
 use App\Enums\OrderStatus;
 use App\Enums\RoleName;
 use App\Models\Address;
@@ -16,6 +17,7 @@ use App\Models\Voucher;
 use App\Services\CartService;
 use App\Services\CheckoutService;
 use App\Services\ClockService;
+use App\Services\DeliveryService;
 use App\Services\OverdueService;
 use App\Services\ReportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -152,6 +154,39 @@ class OverdueSweepTest extends TestCase
         $order->refresh();
         $this->assertSame(OrderStatus::PesananSelesai, $order->status);
         $this->assertNull($order->refunded_at);
+        $this->assertSame($sellerBalanceBeforeSweep, $seller->wallet->refresh()->balance);
+    }
+
+    public function test_sweeping_an_in_transit_order_cancels_its_delivery_and_frees_the_driver(): void
+    {
+        $seller = $this->userWithRole(RoleName::Seller);
+        $store = Store::factory()->create(['user_id' => $seller->id]);
+        $buyer = $this->userWithRole(RoleName::Buyer);
+        $driver = $this->userWithRole(RoleName::Driver);
+
+        // Order is taken by the driver (Sedang Dikirim) but goes overdue
+        // before it is completed.
+        $order = $this->overdueOrder($buyer, $store, 50_000);
+        $this->actingAsRole($seller, RoleName::Seller)->post(route('seller.orders.process', $order));
+        $delivery = Delivery::query()->where('order_id', $order->id)->firstOrFail();
+        $this->actingAsRole($driver, RoleName::Driver)->post(route('driver.jobs.take', $delivery));
+
+        $this->assertSame(DeliveryStatus::Taken, $delivery->refresh()->status);
+        $sellerBalanceBeforeSweep = $seller->wallet->refresh()->balance;
+
+        $result = app(OverdueService::class)->sweep();
+
+        $this->assertSame(1, $result['refunded_count']);
+        $this->assertSame(OrderStatus::Dikembalikan, $order->refresh()->status);
+
+        // Delivery is cancelled, not left dangling as Taken.
+        $this->assertSame(DeliveryStatus::Cancelled, $delivery->refresh()->status);
+
+        // Driver is no longer holding an active job, so the one-active-job
+        // rule lets them claim a new one.
+        $this->assertNull(app(DeliveryService::class)->activeJobFor($driver));
+
+        // No payout leaked to the seller for the undelivered order.
         $this->assertSame($sellerBalanceBeforeSweep, $seller->wallet->refresh()->balance);
     }
 

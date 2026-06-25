@@ -1,9 +1,14 @@
-export type DeliveryStatusKey = 'available' | 'taken' | 'completed';
+export type DeliveryStatusKey =
+    | 'available'
+    | 'taken'
+    | 'completed'
+    | 'cancelled';
 
 const LABELS: Record<DeliveryStatusKey, string> = {
     available: 'Menunggu Kurir',
     taken: 'Sedang Diantar',
     completed: 'Selesai Diantar',
+    cancelled: 'Dibatalkan',
 };
 
 /**
@@ -21,6 +26,7 @@ const BADGE_VARIANTS: Record<
     available: 'outline',
     taken: 'secondary',
     completed: 'default',
+    cancelled: 'destructive',
 };
 
 export function deliveryStatusBadgeVariant(status: DeliveryStatusKey) {
@@ -31,6 +37,7 @@ const FILL_CLASSES: Record<DeliveryStatusKey, string> = {
     available: 'bg-amber-500',
     taken: 'bg-sky-500',
     completed: 'bg-emerald-500',
+    cancelled: 'bg-destructive',
 };
 
 /** Tailwind bg-* class for proportion tracks (StatBar). */

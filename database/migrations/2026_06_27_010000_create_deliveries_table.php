@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('order_id')->unique()->constrained()->cascadeOnDelete();
             $table->foreignId('driver_id')->nullable()->constrained('users')->nullOnDelete();
 
-            $table->enum('status', ['available', 'taken', 'completed'])->default('available');
+            $table->enum('status', ['available', 'taken', 'completed', 'cancelled'])->default('available');
 
             $table->timestamp('taken_at')->nullable();
             $table->timestamp('completed_at')->nullable();
