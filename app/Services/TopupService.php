@@ -14,9 +14,8 @@ class TopupService
     public function __construct(private readonly PaymentGateway $gateway) {}
 
     /**
-     * Create a pending top-up and hand it to the configured gateway
-     * (§9.3). `FakeGateway` credits the wallet synchronously; `IpaymuGateway`
-     * would return a redirect URL (Sprint 6).
+     * Create a pending top-up and kick it off at the gateway (§9.3). Stays
+     * `pending` until the buyer's processing page polls `checkStatus()`.
      */
     public function create(User $user, int $amount): Topup
     {
@@ -31,5 +30,15 @@ class TopupService
         $this->gateway->createTopup($topup);
 
         return $topup->refresh();
+    }
+
+    /**
+     * Poll the gateway for the current state, resolving (and crediting)
+     * the top-up if it's due. Called every time the processing page loads
+     * or refreshes — idempotent, so polling never double-credits.
+     */
+    public function checkStatus(Topup $topup): Topup
+    {
+        return $this->gateway->checkStatus($topup);
     }
 }

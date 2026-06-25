@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTopupRequest;
+use App\Models\Topup;
 use App\Services\TopupService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,10 +28,21 @@ class BuyerWalletController extends Controller
 
     public function store(StoreTopupRequest $request): RedirectResponse
     {
-        $this->topups->create($request->user(), $request->validated()['amount']);
+        $topup = $this->topups->create($request->user(), $request->validated()['amount']);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Top-up successful.')]);
+        return to_route('buyer.wallet.topup.show', $topup);
+    }
 
-        return to_route('buyer.wallet.show');
+    /**
+     * The PSP-sim "processing" page (§ Sprint 6 T2) — polled by the
+     * frontend until the gateway resolves the top-up.
+     */
+    public function topup(Topup $topup): Response
+    {
+        $this->authorize('view', $topup);
+
+        $topup = $this->topups->checkStatus($topup);
+
+        return Inertia::render('buyer/wallet/topup/Show', ['topup' => $topup]);
     }
 }

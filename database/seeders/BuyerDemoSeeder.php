@@ -33,11 +33,17 @@ class BuyerDemoSeeder extends Seeder
      */
     public function run(): void
     {
+        // The seeded wallets need to be credited immediately (the orders
+        // below depend on the balance being there) — the buyer-facing
+        // "processing" delay (§ Sprint 6 T2) is a UX affordance, not
+        // something a seeder should wait through.
+        config(['payment.topup.processing_seconds' => 0]);
+
         $buyer = User::query()->where('username', 'buyer1')->first();
         $multi = User::query()->where('username', 'multi1')->first();
 
         if ($buyer) {
-            $this->topups->create($buyer, 500_000);
+            $this->topups->checkStatus($this->topups->create($buyer, 500_000));
 
             $address = $this->addresses->createForUser($buyer, [
                 'recipient_name' => 'Buyer One',
@@ -49,7 +55,7 @@ class BuyerDemoSeeder extends Seeder
         }
 
         if ($multi) {
-            $this->topups->create($multi, 300_000);
+            $this->topups->checkStatus($this->topups->create($multi, 300_000));
 
             $this->addresses->createForUser($multi, [
                 'recipient_name' => 'Multi Role',

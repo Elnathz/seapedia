@@ -118,6 +118,16 @@ export default {
         typeReversal: 'Pembalikan',
         typeAdjustment: 'Penyesuaian',
     },
+    topup: {
+        title: 'Status Top Up',
+        statusPending: 'Memproses pembayaran...',
+        statusPaid: 'Top up berhasil',
+        statusFailed: 'Top up gagal',
+        referenceLabel: 'Referensi',
+        dateLabel: 'Waktu',
+        badgePending: 'Menunggu konfirmasi gateway',
+        backToWallet: 'Kembali ke Dompet',
+    },
     address: {
         title: 'Alamat Pengiriman',
         add: 'Tambah Alamat',

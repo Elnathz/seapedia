@@ -118,6 +118,16 @@ export default {
         typeReversal: 'Reversal',
         typeAdjustment: 'Adjustment',
     },
+    topup: {
+        title: 'Top-up Status',
+        statusPending: 'Processing payment...',
+        statusPaid: 'Top-up successful',
+        statusFailed: 'Top-up failed',
+        referenceLabel: 'Reference',
+        dateLabel: 'Time',
+        badgePending: 'Awaiting gateway confirmation',
+        backToWallet: 'Back to Wallet',
+    },
     address: {
         title: 'Delivery Addresses',
         add: 'Add Address',

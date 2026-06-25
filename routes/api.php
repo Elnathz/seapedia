@@ -36,6 +36,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::middleware(['auth:sanctum', 'active_role:buyer'])->prefix('buyer')->name('buyer.')->group(function () {
         Route::get('wallet', [BuyerWalletController::class, 'show'])->name('wallet.show');
         Route::post('wallet/topup', [BuyerWalletController::class, 'store'])->name('wallet.topup');
+        Route::get('wallet/topup/{topup}', [BuyerWalletController::class, 'topup'])->name('wallet.topup.show');
 
         Route::get('addresses', [BuyerAddressController::class, 'index'])->name('addresses.index');
         Route::post('addresses', [BuyerAddressController::class, 'store'])->name('addresses.store');
