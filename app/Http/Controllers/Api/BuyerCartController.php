@@ -33,6 +33,17 @@ class BuyerCartController extends Controller
         tags: ['Buyer Cart'],
         summary: 'Add a product to the cart (single-store guard, §5.8)',
         security: [['sanctum' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['product_id', 'quantity'],
+                properties: [
+                    new OA\Property(property: 'product_id', type: 'integer'),
+                    new OA\Property(property: 'quantity', type: 'integer', minimum: 1),
+                    new OA\Property(property: 'replace', type: 'boolean', nullable: true),
+                ],
+            ),
+        ),
         responses: [
             new OA\Response(response: 200, description: 'Item added'),
             new OA\Response(response: 422, description: 'Cart holds items from a different store'),

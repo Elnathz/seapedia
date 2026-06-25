@@ -8,7 +8,18 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
-#[OA\Info(version: '1.0.0', title: 'SEAPEDIA API')]
+#[OA\Info(
+    version: '1.0.0',
+    title: 'SEAPEDIA API',
+    description: 'Campus marketplace API — multi-role (buyer/seller/driver) with Sanctum Bearer auth.',
+)]
+#[OA\Server(url: 'http://localhost', description: 'Local dev (Sail)')]
+#[OA\SecurityScheme(
+    securityScheme: 'sanctum',
+    type: 'http',
+    scheme: 'bearer',
+    bearerFormat: 'Sanctum token — obtain from POST /api/v1/login',
+)]
 class CatalogController extends Controller
 {
     public function __construct(private readonly CatalogService $catalog) {}
@@ -26,14 +37,14 @@ class CatalogController extends Controller
                 name: 'q',
                 in: 'query',
                 required: false,
-                description: 'Filter by product name',
-                schema: new OA\Schema(type: 'string'),
+                description: 'Filter by product name (max 200 chars)',
+                schema: new OA\Schema(type: 'string', maxLength: 200),
             ),
             new OA\Parameter(
                 name: 'page',
                 in: 'query',
                 required: false,
-                schema: new OA\Schema(type: 'integer'),
+                schema: new OA\Schema(type: 'integer', minimum: 1),
             ),
         ],
         responses: [
@@ -42,6 +53,7 @@ class CatalogController extends Controller
     )]
     public function index(Request $request): JsonResponse
     {
+        $request->validate(['q' => ['nullable', 'string', 'max:200']]);
         $search = $request->string('q')->value() ?: null;
 
         return response()->json($this->catalog->index($search));

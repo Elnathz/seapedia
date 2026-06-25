@@ -38,6 +38,15 @@ class BuyerWalletController extends Controller
         tags: ['Buyer Wallet'],
         summary: 'Create a top-up (pending — poll the status endpoint to resolve it)',
         security: [['sanctum' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['amount'],
+                properties: [
+                    new OA\Property(property: 'amount', type: 'integer', description: 'Amount in IDR (integer, min 10000)', minimum: 10000),
+                ],
+            ),
+        ),
         responses: [
             new OA\Response(response: 201, description: 'Topup created, pending'),
             new OA\Response(response: 422, description: 'Validation error'),

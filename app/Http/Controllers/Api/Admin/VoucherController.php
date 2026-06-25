@@ -18,7 +18,10 @@ class VoucherController extends Controller
         tags: ['Admin Discounts'],
         summary: 'List all vouchers',
         security: [['sanctum' => []]],
-        responses: [new OA\Response(response: 200, description: 'List of vouchers')],
+        responses: [
+            new OA\Response(response: 200, description: 'List of vouchers'),
+            new OA\Response(response: 403, description: 'Not an admin'),
+        ],
     )]
     public function index(): JsonResponse
     {
@@ -45,7 +48,10 @@ class VoucherController extends Controller
         tags: ['Admin Discounts'],
         summary: 'View a single voucher',
         security: [['sanctum' => []]],
-        responses: [new OA\Response(response: 200, description: 'Voucher detail')],
+        responses: [
+            new OA\Response(response: 200, description: 'Voucher detail'),
+            new OA\Response(response: 403, description: 'Not an admin'),
+        ],
     )]
     public function show(Voucher $voucher): JsonResponse
     {

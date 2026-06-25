@@ -39,6 +39,7 @@ class AuthController extends Controller
         responses: [
             new OA\Response(response: 200, description: 'Token issued (role-scoped or pending role selection)'),
             new OA\Response(response: 422, description: 'Invalid credentials'),
+            new OA\Response(response: 429, description: 'Too many login attempts — throttled'),
         ],
     )]
     public function store(ApiLoginRequest $request): JsonResponse

@@ -18,7 +18,10 @@ class PromoController extends Controller
         tags: ['Admin Discounts'],
         summary: 'List all promos',
         security: [['sanctum' => []]],
-        responses: [new OA\Response(response: 200, description: 'List of promos')],
+        responses: [
+            new OA\Response(response: 200, description: 'List of promos'),
+            new OA\Response(response: 403, description: 'Not an admin'),
+        ],
     )]
     public function index(): JsonResponse
     {
@@ -45,7 +48,10 @@ class PromoController extends Controller
         tags: ['Admin Discounts'],
         summary: 'View a single promo',
         security: [['sanctum' => []]],
-        responses: [new OA\Response(response: 200, description: 'Promo detail')],
+        responses: [
+            new OA\Response(response: 200, description: 'Promo detail'),
+            new OA\Response(response: 403, description: 'Not an admin'),
+        ],
     )]
     public function show(Promo $promo): JsonResponse
     {

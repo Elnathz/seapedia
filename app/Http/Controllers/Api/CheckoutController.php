@@ -20,6 +20,17 @@ class CheckoutController extends Controller
         tags: ['Checkout'],
         summary: 'Preview the §5.2 money breakdown for a delivery method',
         security: [['sanctum' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['delivery_method'],
+                properties: [
+                    new OA\Property(property: 'delivery_method', type: 'string', enum: ['pickup', 'delivery']),
+                    new OA\Property(property: 'promo_code', type: 'string', nullable: true, maxLength: 32),
+                    new OA\Property(property: 'voucher_code', type: 'string', nullable: true, maxLength: 32),
+                ],
+            ),
+        ),
         responses: [
             new OA\Response(response: 200, description: 'subtotal/discount/tax/delivery_fee/grand_total + balance check'),
         ],
@@ -42,6 +53,18 @@ class CheckoutController extends Controller
         tags: ['Checkout'],
         summary: 'Commit checkout: charge wallet, reduce stock, create the order',
         security: [['sanctum' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['address_id', 'delivery_method'],
+                properties: [
+                    new OA\Property(property: 'address_id', type: 'integer'),
+                    new OA\Property(property: 'delivery_method', type: 'string', enum: ['pickup', 'delivery']),
+                    new OA\Property(property: 'promo_code', type: 'string', nullable: true, maxLength: 32),
+                    new OA\Property(property: 'voucher_code', type: 'string', nullable: true, maxLength: 32),
+                ],
+            ),
+        ),
         responses: [
             new OA\Response(response: 201, description: 'Order created in Sedang Dikemas'),
             new OA\Response(response: 422, description: 'Insufficient stock or insufficient wallet balance'),

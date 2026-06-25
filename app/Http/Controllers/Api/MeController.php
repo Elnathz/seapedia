@@ -6,11 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Services\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 class MeController extends Controller
 {
     public function __construct(private readonly RoleService $roleService) {}
 
+    #[OA\Get(
+        path: '/api/v1/me',
+        tags: ['Auth'],
+        summary: 'Get the authenticated user profile and active role',
+        security: [['sanctum' => []]],
+        responses: [
+            new OA\Response(response: 200, description: 'User profile with owned roles, active role, and wallet balance'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ],
+    )]
     public function show(Request $request): JsonResponse
     {
         $user = $request->user();
