@@ -87,6 +87,26 @@ into CLAUDE.md or the project skills (the verbal request was lost across compact
 - Verified: `vue-tsc`, ESLint, Prettier, `npm run build` clean; 42 dashboard/driver/admin Pest
   tests pass. Visual QA still skipped per the no-Playwright instruction (1280px reasoning only).
 
+## Post-rework bug findings & fixes (2026-06-25)
+
+Code review of the Sprint 5 logic after the design rework surfaced two issues:
+
+- **🔴 Overdue sweep orphaned the delivery (`fix(overdue): cancel the order's delivery...`).**
+  `OverdueService::refundOne` refunded the order but never touched its `Delivery` row. Since the
+  transition table allows `sedang_dikirim → dikembalikan`, an order already taken by a driver could
+  be swept, leaving the delivery `Taken` forever — which kept tripping the one-active-job rule and
+  locked the driver out of all future jobs (a `Menunggu Pengirim` order left an un-takeable
+  `Available` ghost). The sweep now cancels any open delivery (new `DeliveryStatus::Cancelled`) in
+  the same locked transaction. Was untested (sweep tests only covered `SedangDikemas`/completed);
+  added `test_sweeping_an_in_transit_order_cancels_its_delivery_and_frees_the_driver`.
+- **🟡 Discount tile counts contradicted the badges (`fix(admin): align discount tile counts...`).**
+  `AdminMonitorService` counted "expired" purely by date, so an inactive+expired discount showed in
+  the Expired tile yet badged "Nonaktif" in the list. Counts now mirror `DiscountService::statusFor`
+  buckets exactly (expired/used_up only apply to otherwise-active discounts).
+
+Full suite after fixes: 163 tests / 642 assertions passing; `pint`, ESLint, Prettier, `vue-tsc`,
+`npm run build` all clean.
+
 ## Notes / deviations recorded
 
 - **ESCROW (owner decision, 2026-06-25) — deviates from §5.9 as written.** Seller income is credited
