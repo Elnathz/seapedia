@@ -19,7 +19,7 @@ class TopupTest extends TestCase
     {
         $user = User::factory()->create();
         $user->roles()->attach(
-            Role::factory()->create(['name' => RoleName::Buyer->value])->id,
+            Role::query()->firstOrCreate(['name' => RoleName::Buyer->value])->id,
         );
 
         return $user;
@@ -31,7 +31,7 @@ class TopupTest extends TestCase
             ->withSession(['active_role' => RoleName::Buyer->value]);
     }
 
-    public function test_fake_topup_credits_wallet_and_writes_a_ledger_entry(): void
+    public function test_creating_a_topup_redirects_to_the_processing_page_while_still_pending(): void
     {
         $buyer = $this->buyer();
 
@@ -39,18 +39,12 @@ class TopupTest extends TestCase
             'amount' => 50_000,
         ]);
 
-        $response->assertRedirect(route('buyer.wallet.show'));
-
-        $wallet = $buyer->wallet->refresh();
-        $this->assertSame(50_000, $wallet->balance);
-
-        $topup = Topup::query()->where('wallet_id', $wallet->id)->first();
+        $topup = Topup::query()->where('wallet_id', $buyer->wallet->id)->first();
         $this->assertNotNull($topup);
-        $this->assertSame(TopupStatus::Paid, $topup->status);
-        $this->assertNotNull($topup->processed_at);
+        $response->assertRedirect(route('buyer.wallet.topup.show', $topup));
 
-        $this->assertSame(1, $wallet->transactions()->count());
-        $this->assertSame(50_000, $wallet->transactions()->first()->balance_after);
+        $this->assertSame(TopupStatus::Pending, $topup->status);
+        $this->assertSame(0, $buyer->wallet->refresh()->balance);
     }
 
     public function test_amount_below_minimum_is_rejected(): void
@@ -65,21 +59,67 @@ class TopupTest extends TestCase
         $this->assertSame(0, $buyer->wallet->refresh()->balance);
     }
 
-    public function test_replaying_an_already_processed_topup_does_not_double_credit(): void
+    public function test_the_processing_page_resolves_to_paid_once_the_delay_elapses_and_credits_exactly_once(): void
     {
+        config(['payment.topup.processing_seconds' => 0]);
+
         $buyer = $this->buyer();
         $wallet = $buyer->wallet;
+        $topup = Topup::factory()->create(['wallet_id' => $wallet->id, 'amount' => 75_000]);
 
-        $topup = Topup::factory()->create([
-            'wallet_id' => $wallet->id,
-            'amount' => 75_000,
-        ]);
+        $response = $this->actingAsBuyer($buyer)->get(route('buyer.wallet.topup.show', $topup));
 
-        $gateway = app(FakeGateway::class);
-        $gateway->createTopup($topup);
-        $gateway->createTopup($topup->refresh());
+        $response->assertOk();
+        $this->assertSame(75_000, $wallet->refresh()->balance);
+        $this->assertSame(TopupStatus::Paid, $topup->refresh()->status);
+        $this->assertNotNull($topup->processed_at);
+        $this->assertSame(1, $wallet->transactions()->count());
+
+        // Refreshing the processing page again (the frontend's poll) must
+        // never double-credit an already-resolved top-up.
+        $this->actingAsBuyer($buyer)->get(route('buyer.wallet.topup.show', $topup));
 
         $this->assertSame(75_000, $wallet->refresh()->balance);
+        $this->assertSame(1, $wallet->transactions()->count());
+    }
+
+    public function test_the_processing_page_stays_pending_before_the_delay_elapses(): void
+    {
+        config(['payment.topup.processing_seconds' => 30]);
+
+        $buyer = $this->buyer();
+        $topup = Topup::factory()->create(['wallet_id' => $buyer->wallet->id, 'amount' => 75_000]);
+
+        $this->actingAsBuyer($buyer)->get(route('buyer.wallet.topup.show', $topup))->assertOk();
+
+        $this->assertSame(TopupStatus::Pending, $topup->refresh()->status);
+        $this->assertSame(0, $buyer->wallet->refresh()->balance);
+    }
+
+    public function test_a_buyer_cannot_view_another_buyers_topup(): void
+    {
+        $owner = $this->buyer();
+        $topup = Topup::factory()->create(['wallet_id' => $owner->wallet->id]);
+        $other = $this->buyer();
+
+        $response = $this->actingAsBuyer($other)->get(route('buyer.wallet.topup.show', $topup));
+
+        $response->assertForbidden();
+    }
+
+    public function test_replaying_check_status_on_an_already_processed_topup_does_not_double_credit(): void
+    {
+        config(['payment.topup.processing_seconds' => 0]);
+
+        $buyer = $this->buyer();
+        $wallet = $buyer->wallet;
+        $topup = Topup::factory()->create(['wallet_id' => $wallet->id, 'amount' => 40_000]);
+
+        $gateway = app(FakeGateway::class);
+        $gateway->checkStatus($topup);
+        $gateway->checkStatus($topup->refresh());
+
+        $this->assertSame(40_000, $wallet->refresh()->balance);
         $this->assertSame(1, $wallet->transactions()->count());
     }
 }
