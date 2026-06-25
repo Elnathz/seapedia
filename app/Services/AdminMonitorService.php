@@ -73,6 +73,12 @@ class AdminMonitorService
     }
 
     /**
+     * Buckets mirror DiscountService::statusFor() exactly so the dashboard
+     * tiles never contradict the badges in the management list: a discount
+     * is only "expired" if it is still active (an inactive one reads as
+     * inactive, not expired), and a voucher is only "active" once its
+     * remaining usage is accounted for.
+     *
      * @return array{total: int, active: int, expired: int}
      */
     private function discountCounts(Builder $query): array
@@ -82,7 +88,7 @@ class AdminMonitorService
         return [
             'total' => $query->count(),
             'active' => (clone $query)->where('is_active', true)->where('expiry_date', '>', $now)->count(),
-            'expired' => (clone $query)->where('expiry_date', '<=', $now)->count(),
+            'expired' => (clone $query)->where('is_active', true)->where('expiry_date', '<=', $now)->count(),
         ];
     }
 
@@ -91,11 +97,21 @@ class AdminMonitorService
      */
     private function voucherCounts(): array
     {
+        $now = $this->clock->now();
         $base = $this->discountCounts(Voucher::query());
+
+        // "Used up" only applies to a voucher that would otherwise be active
+        // (is_active + not expired) — matching statusFor()'s precedence.
+        $usedUp = Voucher::query()
+            ->where('is_active', true)
+            ->where('expiry_date', '>', $now)
+            ->whereColumn('used_count', '>=', 'usage_limit')
+            ->count();
 
         return [
             ...$base,
-            'used_up' => Voucher::query()->whereColumn('used_count', '>=', 'usage_limit')->count(),
+            'active' => $base['active'] - $usedUp,
+            'used_up' => $usedUp,
         ];
     }
 }
