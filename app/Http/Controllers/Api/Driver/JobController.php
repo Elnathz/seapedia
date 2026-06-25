@@ -35,6 +35,8 @@ class JobController extends Controller
     )]
     public function show(Delivery $delivery): JsonResponse
     {
+        $this->authorize('view', $delivery);
+
         return response()->json($delivery->load([
             'order.store:id,name',
             'order.items',

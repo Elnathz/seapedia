@@ -2,11 +2,22 @@
 
 namespace App\Policies;
 
+use App\Enums\DeliveryStatus;
 use App\Models\Delivery;
 use App\Models\User;
 
 class DeliveryPolicy
 {
+    /**
+     * A driver may preview an unclaimed job (to decide whether to take it)
+     * or view the job they're assigned to. Another driver's taken/completed
+     * job is none of this driver's business (§L7B cross-user job access).
+     */
+    public function view(User $user, Delivery $delivery): bool
+    {
+        return $delivery->status === DeliveryStatus::Available || $user->id === $delivery->driver_id;
+    }
+
     /**
      * Any driver may take an unclaimed job — ownership isn't established
      * until `take()` assigns it (enforced there, under a row lock).

@@ -28,6 +28,8 @@ class DriverJobController extends Controller
 
     public function show(Delivery $delivery): Response
     {
+        $this->authorize('view', $delivery);
+
         $delivery->load([
             'order.store:id,name',
             'order.items',
