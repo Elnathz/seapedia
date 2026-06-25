@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\Admin\ClockController as AdminClockController;
 use App\Http\Controllers\Web\Admin\PromoController as AdminPromoController;
 use App\Http\Controllers\Web\Admin\VoucherController as AdminVoucherController;
 use App\Http\Controllers\Web\AppReviewController;
+use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\BuyerAddressController;
 use App\Http\Controllers\Web\BuyerCartController;
 use App\Http\Controllers\Web\BuyerOrderController;
@@ -22,7 +23,7 @@ use App\Http\Controllers\Web\SellerStoreController;
 use App\Http\Controllers\Web\StoreController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'Welcome')->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::post('locale', [LocaleController::class, 'update'])->name('locale.update');
 

@@ -49,7 +49,7 @@ class SecuritySqliTest extends TestCase
             'comment' => "'; DROP TABLE users; --",
         ]);
 
-        $response->assertRedirect(route('reviews.index'));
+        $response->assertRedirect(route('home'));
         $this->assertSame($usersBefore, User::count());
         $this->assertDatabaseHas('app_reviews', [
             'reviewer_name' => 'Mallory',

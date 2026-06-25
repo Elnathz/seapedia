@@ -30,6 +30,6 @@ class AppReviewController extends Controller
     {
         $this->reviews->submit($request->validated(), $request->user()?->id);
 
-        return redirect()->route('reviews.index');
+        return redirect()->back()->with('success', 'Ulasan berhasil dikirim, terima kasih!');
     }
 }

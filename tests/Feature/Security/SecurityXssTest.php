@@ -27,7 +27,7 @@ class SecurityXssTest extends TestCase
             'reviewer_name' => 'Eve',
             'rating' => 5,
             'comment' => self::PAYLOAD,
-        ])->assertRedirect(route('reviews.index'));
+        ])->assertRedirect(route('home'));
 
         $this->assertDatabaseHas('app_reviews', [
             'reviewer_name' => 'Eve',

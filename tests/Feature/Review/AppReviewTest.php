@@ -27,7 +27,7 @@ class AppReviewTest extends TestCase
             'comment' => 'Great marketplace experience.',
         ]);
 
-        $response->assertRedirect(route('reviews.index'));
+        $response->assertRedirect(route('home'));
         $this->assertDatabaseHas('app_reviews', [
             'reviewer_name' => 'Jane Doe',
             'rating' => 5,

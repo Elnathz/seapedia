@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class CatalogService
@@ -23,6 +24,17 @@ class CatalogService
             ->latest()
             ->paginate($perPage)
             ->withQueryString();
+    }
+
+    public function featured(int $limit = 6): Collection
+    {
+        return Product::query()
+            ->with('store:id,name,slug')
+            ->where('is_active', true)
+            ->whereHas('store', fn ($query) => $query->where('is_active', true))
+            ->latest()
+            ->limit($limit)
+            ->get(['id', 'name', 'slug', 'price', 'image_path', 'store_id']);
     }
 
     public function find(string $slug): ?Product

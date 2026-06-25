@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\AppReview;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class AppReviewService
@@ -25,5 +26,13 @@ class AppReviewService
         return AppReview::query()
             ->latest()
             ->paginate($perPage);
+    }
+
+    public function recent(int $limit = 6): Collection
+    {
+        return AppReview::query()
+            ->latest()
+            ->limit($limit)
+            ->get(['id', 'reviewer_name', 'rating', 'comment', 'created_at']);
     }
 }
