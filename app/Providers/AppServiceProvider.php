@@ -6,7 +6,6 @@ use App\Enums\PaymentGatewayType;
 use App\Models\User;
 use App\Observers\UserObserver;
 use App\Services\Payment\FakeGateway;
-use App\Services\Payment\IpaymuGateway;
 use App\Services\Payment\PaymentGateway;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Foundation\Application;
@@ -25,7 +24,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PaymentGateway::class, fn (Application $app) => match (
             PaymentGatewayType::from(config('payment.gateway'))
         ) {
-            PaymentGatewayType::Ipaymu => $app->make(IpaymuGateway::class),
             PaymentGatewayType::Fake => $app->make(FakeGateway::class),
         });
     }
