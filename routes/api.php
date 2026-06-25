@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Admin\ClockController as AdminClockController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\Admin\PromoController;
 use App\Http\Controllers\Api\Admin\VoucherController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BuyerAddressController;
 use App\Http\Controllers\Api\BuyerCartController;
 use App\Http\Controllers\Api\BuyerOrderController;
@@ -13,12 +14,21 @@ use App\Http\Controllers\Api\CatalogController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\Driver\JobController as DriverJobController;
 use App\Http\Controllers\Api\MeController;
+use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\Seller\OrderController as SellerOrderController;
 use App\Http\Controllers\Api\SellerReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
-    Route::middleware('auth:sanctum')->get('/me', [MeController::class, 'show'])->name('me');
+    Route::post('login', [AuthController::class, 'store'])
+        ->middleware('throttle:login')
+        ->name('login');
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('logout', [AuthController::class, 'destroy'])->name('logout');
+        Route::post('role/select', [RoleController::class, 'store'])->name('role.select');
+        Route::get('/me', [MeController::class, 'show'])->name('me');
+    });
 
     Route::get('catalog', [CatalogController::class, 'index'])->name('catalog.index');
     Route::get('catalog/{slug}', [CatalogController::class, 'show'])->name('catalog.show');

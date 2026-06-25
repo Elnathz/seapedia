@@ -48,9 +48,13 @@ return [
     | considered expired. This will override any values set in the token's
     | "expires_at" attribute, but first-party sessions are not affected.
     |
+    | SEAPEDIA (§L7B): 8-hour expiry on every `/api/v1` token — long enough
+    | for one evaluator demo session, short enough to bound a leaked token's
+    | lifetime. Logout still revokes it immediately regardless of this value.
+    |
     */
 
-    'expiration' => null,
+    'expiration' => (int) env('SANCTUM_TOKEN_EXPIRATION', 480),
 
     /*
     |--------------------------------------------------------------------------

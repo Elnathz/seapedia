@@ -29,12 +29,18 @@ class RoleService
     {
         $token = $user->currentAccessToken();
 
-        if (! $token) {
-            return null;
-        }
+        return $token instanceof PersonalAccessToken ? $this->roleFromAbilities($token->abilities) : null;
+    }
 
-        $ability = collect($token->abilities)
-            ->first(fn (string $ability) => str_starts_with($ability, 'role:'));
+    /**
+     * Pick out the "role:*" ability from a token's ability list, if any.
+     * Shared by token resolution (above) and fresh-login token issuance.
+     *
+     * @param  array<int, string>  $abilities
+     */
+    public function roleFromAbilities(array $abilities): ?RoleName
+    {
+        $ability = collect($abilities)->first(fn (string $ability) => str_starts_with($ability, 'role:'));
 
         return $ability ? RoleName::from(substr($ability, 5)) : null;
     }
