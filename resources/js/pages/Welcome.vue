@@ -5,7 +5,6 @@ import HeroSection from '@/components/landing/HeroSection.vue';
 import ReviewsSection from '@/components/landing/ReviewsSection.vue';
 import RoleCards from '@/components/landing/RoleCards.vue';
 import TrustBand from '@/components/landing/TrustBand.vue';
-import GuestLayout from '@/layouts/GuestLayout.vue';
 
 interface Store {
     id: number;
@@ -37,12 +36,10 @@ defineProps<{
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="SEAPEDIA — Marketplace Kampus" />
-        <HeroSection />
-        <TrustBand />
-        <FeaturedStrip :products="featured" />
-        <RoleCards />
-        <ReviewsSection :reviews="reviews" />
-    </GuestLayout>
+    <Head title="SEAPEDIA — Marketplace Kampus" />
+    <HeroSection />
+    <TrustBand />
+    <FeaturedStrip :products="featured" />
+    <RoleCards />
+    <ReviewsSection :reviews="reviews" />
 </template>
