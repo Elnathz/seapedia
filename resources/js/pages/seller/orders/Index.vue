@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Inbox } from '@lucide/vue';
+import { CheckCircle, Inbox } from '@lucide/vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import SellerOrderController from '@/actions/App/Http/Controllers/Web/SellerOrderController';
 import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
     Pagination,
@@ -49,6 +51,16 @@ defineOptions({
 });
 
 const { t, locale } = useI18n();
+const processing = ref<number | null>(null);
+
+function processOrder(orderId: number) {
+    processing.value = orderId;
+    router.post(
+        SellerOrderController.process.url(orderId),
+        {},
+        { onFinish: () => (processing.value = null) },
+    );
+}
 
 function goToPage(page: number) {
     router.get(
@@ -74,44 +86,42 @@ function goToPage(page: number) {
 
         <template v-else>
             <div class="flex flex-col gap-3">
-                <Link
+                <Card
                     v-for="order in props.orders.data"
                     :key="order.id"
-                    :href="SellerOrderController.show.url(order.id)"
+                    class="transition-all duration-200 hover:border-primary hover:shadow-sm"
                 >
-                    <Card class="transition-colors hover:border-primary">
-                        <CardContent
-                            class="flex items-center justify-between gap-4 pt-6"
+                    <CardContent class="flex items-center gap-4 pt-6">
+                        <Link
+                            :href="SellerOrderController.show.url(order.id)"
+                            class="min-w-0 flex-1"
                         >
-                            <div>
-                                <p class="font-medium">{{ order.code }}</p>
-                                <p class="text-sm text-muted-foreground">
-                                    {{ order.buyer.name }}
-                                </p>
-                                <p class="text-xs text-muted-foreground">
-                                    {{
-                                        formatDateTime(
-                                            order.created_sim_at,
-                                            locale,
-                                        )
-                                    }}
-                                </p>
-                            </div>
-                            <div class="text-right">
-                                <Badge
-                                    :variant="
-                                        orderStatusBadgeVariant(order.status)
-                                    "
-                                >
-                                    {{ orderStatusLabel(order.status) }}
-                                </Badge>
-                                <p class="mt-1 font-medium tabular-nums">
-                                    {{ formatIDR(order.grand_total) }}
-                                </p>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </Link>
+                            <p class="font-medium">{{ order.code }}</p>
+                            <p class="text-sm text-muted-foreground">{{ order.buyer.name }}</p>
+                            <p class="mt-0.5 text-xs text-muted-foreground">
+                                {{ formatDateTime(order.created_sim_at, locale) }}
+                            </p>
+                        </Link>
+                        <div class="flex shrink-0 flex-col items-end gap-2">
+                            <Badge :variant="orderStatusBadgeVariant(order.status)">
+                                {{ orderStatusLabel(order.status) }}
+                            </Badge>
+                            <p class="text-sm font-medium tabular-nums">
+                                {{ formatIDR(order.grand_total) }}
+                            </p>
+                            <Button
+                                v-if="order.status === 'sedang_dikemas'"
+                                size="sm"
+                                class="gap-1.5"
+                                :disabled="processing === order.id"
+                                @click.prevent="processOrder(order.id)"
+                            >
+                                <CheckCircle class="size-3.5" />
+                                Proses
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
 
             <Pagination
