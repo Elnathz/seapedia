@@ -283,17 +283,67 @@ password is `password`.
   consistent with the escrow model above — an order that hasn't paid the
   seller yet shouldn't count as income yet.
 
+## Demo path (Sprint 6)
+
+1. Open `/` — landing page: asymmetric split-hero ("Satu akun. Tiga peran."),
+   trust band (PPN / escrow / kurir), featured product strip, role trio cards,
+   and a public review form at the bottom. Submit a review as a guest.
+2. Click **"Masuk"** in the navbar → the auth layout shows a teal brand panel
+   on the left (desktop); log in as `buyer1` → hits the dashboard directly
+   (single-buy role); log in as `multi1` → **role-select screen** shows three
+   branded cards (Pembeli / Penjual / Kurir).
+3. All UI strings are in Indonesian; page titles, breadcrumbs, and role labels
+   are fully localised.
+4. Open `/api/documentation` (Swagger UI, served by `darkaonline/l5-swagger`)
+   → the **SEAPEDIA API** spec documents 33 endpoints across 13 tags.
+   Expand **Auth → POST /api/v1/login** → try it out → enter `buyer1 /
+   password` → copy the returned `token` → click **Authorize** (top-right)
+   → paste the token → now every protected endpoint sends `Bearer <token>`.
+5. Exercise the key flows directly in Swagger UI:
+   - `GET /api/v1/catalog` — public, no auth needed.
+   - `POST /api/v1/buyer/wallet/topup` (buyer token) → body `{"amount": 50000}`
+     → 201 with a pending topup; `GET /api/v1/buyer/wallet/topup/{id}` polls it.
+   - `POST /api/v1/buyer/checkout/preview` → shows the full §5.2 money breakdown.
+   - `POST /api/v1/admin/clock/advance` (admin token) → advances the simulated
+     day and returns `refunded_count`.
+
+### Security notes (OWASP audit — Sprint 6)
+
+| Finding | Status |
+| ------- | ------ |
+| **API1 BOLA** — `DeliveryPolicy::view()` enforces driver ownership (Sprint 5 fix, regression-tested) | ✅ Fixed |
+| **API2 Auth** — Sanctum Bearer tokens; `throttle:login` on `/api/v1/login`; role-scoped tokens via `POST /role/select`; logout revokes the current token | ✅ |
+| **API3 Object property exposure** — `CatalogService`, `StoreService`, `AppReviewService` column-scope their responses; no `user_id`/`stock` leaked on public endpoints | ✅ |
+| **API4 Unrestricted consumption** — `?q` search capped at `max:200` (runtime + spec); `page` min:1; `throttle:login` | ✅ |
+| **API5 Function-level auth** — `is_admin` middleware on all `/admin/*` routes; `active_role:buyer/seller/driver` on role-scoped prefixes | ✅ |
+| **API6 Sensitive flows** — checkout, wallet debit, and delivery take all run inside `DB::transaction` + `lockForUpdate()`; idempotency sentinels prevent double-refund / double-take | ✅ |
+| **API8 Misconfiguration** — `securitySchemes` (Sanctum Bearer) and `servers` block added to the OpenAPI spec | ✅ Fixed in Sprint 6 |
+| **API9 Inventory** — all 33 `/api/v1` routes are documented; no shadow/undocumented endpoints | ✅ |
+| **Top-up gateway** — iPaymu v2 scaffolded behind `PaymentGateway` interface; `PAYMENT_GATEWAY=fake` (default) runs `FakeGateway` — no external callback, no webhook. Real iPaymu path removed; dummy top-up reads as a gateway flow. | Accepted scope |
+
+### Creating the admin account
+
+The `admin` seed user is created automatically by `DatabaseSeeder` via the role
+seeder. If you ever need to promote an existing user manually:
+
+```bash
+./vendor/bin/sail artisan tinker --execute="App\Models\User::where('username','admin')->update(['is_admin'=>true]);"
+```
+
+### API token expiry
+
+Sanctum tokens expire after **480 minutes** by default
+(`SANCTUM_TOKEN_EXPIRATION=480` in `.env`, read by `config/sanctum.php`).
+Adjust the env variable if you need longer-lived tokens for demo sessions.
+
 ## Current status
 
-Sprint 5 (Level 5 — driver delivery with escrow payout, one-active-job, and
-real-time order tracking on the buyer/seller timeline; Level 6 — time
-simulation + idempotent overdue auto-refund + admin monitoring dashboard +
-promo/voucher management UI) is complete. See `planning/sprint5/progress.md`
-for the task-by-task log and documented deviations from the TDD. Sprint 4
-(Level 4) log is at `planning/sprint4/progress.md`; Sprint 3 (Level 3) log
-is at `planning/sprint3/progress.md`; Sprint 2 (Level 2) log is at
-`planning/sprint2/progress.md`; Sprint 1 (Level 1) log is at
-`planning/sprint1/progress.md`.
+Sprint 6 (final sprint) is complete — security hardening, landing page
+redesign, auth/role-select rework, all seller/buyer/driver/admin UI reworks,
+and OpenAPI spec (33 endpoints, OWASP audit clean). See
+`planning/sprint6/progress.md` for the task log. Earlier sprint logs:
+`planning/sprint5/` · `planning/sprint4/` · `planning/sprint3/` ·
+`planning/sprint2/` · `planning/sprint1/`.
 
 ## Tests
 
