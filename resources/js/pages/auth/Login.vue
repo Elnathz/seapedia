@@ -13,8 +13,8 @@ import { store } from '@/routes/login';
 
 defineOptions({
     layout: {
-        title: 'Log in to your account',
-        description: 'Enter your email and password below to log in',
+        title: 'Masuk ke akun kamu',
+        description: 'Masukkan email dan kata sandi untuk lanjut',
     },
 });
 
@@ -24,11 +24,11 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Log in" />
+    <Head title="Masuk — SEAPEDIA" />
 
     <div
         v-if="status"
-        class="mb-4 text-center text-sm font-medium text-green-600"
+        class="mb-4 rounded-lg bg-primary/10 px-4 py-3 text-center text-sm font-medium text-primary"
     >
         {{ status }}
     </div>
@@ -39,9 +39,9 @@ defineProps<{
         v-slot="{ errors, processing }"
         class="flex flex-col gap-6"
     >
-        <div class="grid gap-6">
+        <div class="grid gap-5">
             <div class="grid gap-2">
-                <Label for="email">Email address</Label>
+                <Label for="email">Alamat email</Label>
                 <Input
                     id="email"
                     type="email"
@@ -50,48 +50,46 @@ defineProps<{
                     autofocus
                     :tabindex="1"
                     autocomplete="email"
-                    placeholder="email@example.com"
+                    placeholder="email@kampus.ac.id"
                 />
                 <InputError :message="errors.email" />
             </div>
 
             <div class="grid gap-2">
-                <div class="flex items-center justify-between">
-                    <Label for="password">Password</Label>
-                </div>
+                <Label for="password">Kata sandi</Label>
                 <PasswordInput
                     id="password"
                     name="password"
                     required
                     :tabindex="2"
                     autocomplete="current-password"
-                    placeholder="Password"
+                    placeholder="Kata sandi"
                 />
                 <InputError :message="errors.password" />
             </div>
 
-            <div class="flex items-center justify-between">
-                <Label for="remember" class="flex items-center space-x-3">
+            <div class="flex items-center">
+                <Label for="remember" class="flex cursor-pointer items-center gap-2 font-normal">
                     <Checkbox id="remember" name="remember" :tabindex="3" />
-                    <span>Remember me</span>
+                    <span>Ingat saya</span>
                 </Label>
             </div>
 
             <Button
                 type="submit"
-                class="mt-4 w-full"
+                class="w-full"
                 :tabindex="4"
                 :disabled="processing"
                 data-test="login-button"
             >
-                <Spinner v-if="processing" />
-                Log in
+                <Spinner v-if="processing" class="mr-2" />
+                Masuk
             </Button>
         </div>
 
         <div class="text-center text-sm text-muted-foreground">
-            Don't have an account?
-            <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
+            Belum punya akun?
+            <TextLink :href="register()" :tabindex="5">Daftar sekarang</TextLink>
         </div>
     </Form>
 </template>
