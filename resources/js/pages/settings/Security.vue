@@ -18,7 +18,7 @@ defineOptions({
     layout: {
         breadcrumbs: [
             {
-                title: 'Security settings',
+                title: 'Pengaturan Keamanan',
                 href: edit(),
             },
         ],
@@ -27,9 +27,9 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Security settings" />
+    <Head title="Pengaturan Keamanan" />
 
-    <h1 class="sr-only">Security settings</h1>
+    <h1 class="sr-only">Pengaturan Keamanan</h1>
 
     <div class="space-y-6">
         <Heading
