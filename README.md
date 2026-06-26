@@ -6,7 +6,7 @@ Laravel 13, Inertia + Vue 3 (TypeScript), shadcn-vue, Tailwind 4, and MySQL,
 running on Docker via Laravel Sail.
 
 Full product/technical decisions live in `docs/SEAPEDIA_TDD.md`. Sprint plans and
-progress are tracked under `planning/sprint{N}/`.
+progress are tracked under `docs/planning/sprint{N}/`.
 
 ## Setup
 
@@ -336,51 +336,46 @@ Sanctum tokens expire after **480 minutes** by default
 (`SANCTUM_TOKEN_EXPIRATION=480` in `.env`, read by `config/sanctum.php`).
 Adjust the env variable if you need longer-lived tokens for demo sessions.
 
-## Production deploy (Oracle Cloud Free Tier)
+## Production deploy (Depacloud VPS)
 
-The `docker-compose.prod.yml` runs three services: `app` (php-fpm), `web` (nginx with baked static files), `db` (MySQL 8 with named volume).
+**Live URL: http://103.253.244.92**
 
-### One-time VM setup
+The `docker-compose.prod.yml` runs three services: `app` (php-fpm), `web`
+(nginx with baked static files), `db` (MySQL 8 with named volume). Docker
+is required on the host — no other runtime dependency.
+
+### One-time server setup
 
 ```bash
-# 1. Clone the repo
-git clone https://github.com/<user>/seapedia.git && cd seapedia
+# 1. Install Docker
+curl -fsSL https://get.docker.com | sh
 
-# 2. Copy and fill in the prod env
+# 2. Clone the repo
+git clone https://github.com/Elnathz/seapedia.git && cd seapedia
+
+# 3. Copy and fill in the prod env
 cp .env.example .env
-# Edit .env: set APP_KEY, APP_URL, DB_PASSWORD, APP_DEBUG=false
+# Edit .env: APP_KEY, APP_URL=http://<IP>, DB_PASSWORD, APP_DEBUG=false
 
-# 3. Generate app key (run on the host if PHP available, or inside container)
-docker run --rm -v "$(pwd)":/app -w /app php:8.3-cli php artisan key:generate --show
+# 4. Generate APP_KEY (requires PHP; easiest via Docker)
+docker run --rm php:8.3-cli php -r "echo 'base64:'.base64_encode(random_bytes(32)).PHP_EOL;"
 # → paste the output as APP_KEY=... in .env
 
-# 4. Build images and start
+# 5. Build images and start
 docker compose -f docker-compose.prod.yml up -d --build
 
-# 5. Migrate + seed
-docker compose -f docker-compose.prod.yml exec app php artisan migrate:fresh --seed --force
+# 6. Migrate + seed
+#    DB::prohibitDestructiveCommands blocks migrate:fresh in production, so
+#    we clear the config cache, override APP_ENV, then re-cache after seeding.
+docker compose -f docker-compose.prod.yml exec app php artisan config:clear
+docker compose -f docker-compose.prod.yml exec -e APP_ENV=local app \
+    php artisan migrate:fresh --seed --force
+docker compose -f docker-compose.prod.yml exec app php artisan config:cache
 
-# 6. Open http://<PUBLIC_IP>
-```
+# 7. Create storage symlink (needed for product images)
+docker compose -f docker-compose.prod.yml exec app php artisan storage:link
 
-### Open firewall ports (Oracle Cloud — two layers)
-
-**VCN Security List (Oracle console):** add Ingress TCP 80 + 443 from `0.0.0.0/0`.
-
-**Ubuntu iptables (SSH into VM):**
-```bash
-sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
-sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
-sudo apt-get install -y iptables-persistent
-sudo netfilter-persistent save
-```
-
-### Install Docker on the VM
-
-```bash
-sudo apt-get update && sudo apt-get install -y ca-certificates curl git
-curl -fsSL https://get.docker.com | sudo sh
-sudo usermod -aG docker ubuntu   # then re-login
+# 8. Open http://<PUBLIC_IP>
 ```
 
 ### Re-deploy after a git pull
@@ -396,9 +391,10 @@ docker compose -f docker-compose.prod.yml exec app php artisan migrate --force
 Sprint 6 (final sprint) is complete — security hardening, landing page
 redesign, auth/role-select rework, all seller/buyer/driver/admin UI reworks,
 OpenAPI spec (33 endpoints, OWASP audit clean), and production Docker deploy.
-See `planning/sprint6/progress.md` for the task log. Earlier sprint logs:
-`planning/sprint5/` · `planning/sprint4/` · `planning/sprint3/` ·
-`planning/sprint2/` · `planning/sprint1/`.
+
+**Live at http://103.253.244.92**
+
+Sprint logs live under `docs/planning/` (moved from `planning/` at T12).
 
 ## Tests
 

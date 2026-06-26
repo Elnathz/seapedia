@@ -18,9 +18,14 @@
 - [x] **T8 · Driver + Admin light pass** + breadcrumb i18n.
 - [x] **T9 · API docs (Postman/OpenAPI) + OWASP audit** — 33 paths via l5-swagger; securitySchemes + servers added; SEC-001–006 fixed; 181 tests green. Commit `4f6ec48`.
 - [x] **T10 · README + seed demo finalize** — Sprint 6 demo path, OWASP table, admin creation note, token expiry note, current status updated.
-- [ ] **T11 · Oracle Cloud Free Tier deploy (guided)** — VM, ports (VCN + iptables), Docker, compose,
-  migrate/seed, verify URL.
-- [ ] **T12 · Housekeeping** — move `planning/` → `docs/`, demo recording, finalize this file.
+- [x] **T11 · VPS deploy (Depacloud, Docker)** — Dockerfile (multi-stage, retry-resilient composer),
+  `docker-compose.prod.yml`, `.dockerignore`, migrate/seed, verify URL.
+  Live at **http://103.253.244.92**. Deviations from plan: Oracle A1 out of
+  capacity; switched to Depacloud VPS (2 CPU / 2 GB RAM / 40 GB). Several
+  build/runtime fixes along the way (composer retry, MySQL root user conflict,
+  `DB::prohibitDestructiveCommands`, `fakerphp/faker` in require-dev).
+- [x] **T12 · Housekeeping** — move `planning/` → `docs/planning/`, README updated with live URL and
+  corrected deploy runbook, progress.md finalized.
 
 ## Deviations / notes (record here, do not commit until T12)
 
@@ -110,4 +115,7 @@ order/address/cart/admin by pre-existing Sprint 1-5 tests — only the driver-jo
 
 ## Known gaps at submission
 
-- _(fill in only if a task genuinely cannot ship — with the reason)_
+- **No Playwright visual QA** (owner instruction since Sprint 5) — layouts reasoned from code;
+  accepted gap, not an oversight.
+- **42 pre-existing PHPStan errors** (pre-date Sprint 6, not runtime bugs, not in Definition of Done).
+- **iPaymu real gateway removed** — top-up is dummy/in-process; documented in README and OWASP table.
