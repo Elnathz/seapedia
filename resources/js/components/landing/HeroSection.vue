@@ -1,4 +1,4 @@
-<script setup lang="ts">
+    <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { ArrowRight, ShieldCheck, ReceiptText, Truck } from '@lucide/vue';
 import { onMounted, onUnmounted, ref } from 'vue';
@@ -158,7 +158,7 @@ cancelAnimationFrame(rafId);
                             class="col-span-2 overflow-hidden rounded-2xl bg-white/10 shadow-2xl ring-1 ring-white/20"
                         >
                             <img
-                                src="/images/banner/hero/hero.jpeg"
+                                src="/hero.svg"
                                 alt="SEAPEDIA Marketplace"
                                 class="h-56 w-full object-cover xl:h-64"
                                 loading="eager"

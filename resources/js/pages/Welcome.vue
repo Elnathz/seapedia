@@ -36,7 +36,7 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="SEAPEDIA — Marketplace Kampus" />
+    <Head title="SEAPEDIA | Marketplace Kampus" />
     <HeroSection />
     <TrustBand />
     <FeaturedStrip :products="featured" />

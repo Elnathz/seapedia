@@ -38,7 +38,7 @@ function searchCatalog() {
         >
             <!-- Logo -->
             <Link :href="home()" class="flex shrink-0 items-center">
-                <Logo class="h-9 w-auto" />
+                <Logo class="h-16 w-auto" />
             </Link>
 
             <!-- Search bar (hidden on mobile) -->

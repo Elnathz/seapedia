@@ -53,7 +53,7 @@ router.on('navigate', (event) => {
 });
 
 createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    title: (title) => (title ? `${title} | ${appName}` : appName),
     layout: (name) => {
         switch (true) {
             case name === 'Welcome':
