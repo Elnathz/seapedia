@@ -21,7 +21,7 @@ const items = [
 </script>
 
 <template>
-    <section class="border-b border-border bg-muted/30">
+    <section id="cara-kerja" class="border-b border-border bg-muted/30">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
                 <div

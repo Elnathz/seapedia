@@ -61,7 +61,7 @@ const roles = [
 </script>
 
 <template>
-    <section class="border-b border-border py-12 sm:py-16">
+    <section id="jadi-mitra" class="border-b border-border py-12 sm:py-16">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="mb-10 text-center">
                 <h2 class="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
