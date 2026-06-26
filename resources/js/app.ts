@@ -20,6 +20,10 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
  */
 function resolveInitialLocale(): 'id' | 'en' {
     try {
+        if (typeof document === 'undefined') {
+            return 'id';
+        }
+
         const json =
             document.querySelector('script[data-page]')?.textContent ?? '{}';
         const page = JSON.parse(json) as { props?: { locale?: string } };
@@ -81,10 +85,13 @@ createInertiaApp({
     },
 });
 
-// This will set light / dark mode on page load...
-initializeTheme();
-// Sprint 6: force light-only for demo — dark toggle hidden from UI, infra kept
-document.documentElement.classList.remove('dark');
+// Browser-only bootstrapping — skipped during Inertia SSR (no DOM in Node).
+if (typeof document !== 'undefined') {
+    // This will set light / dark mode on page load...
+    initializeTheme();
+    // Sprint 6: force light-only for demo — dark toggle hidden from UI, infra kept
+    document.documentElement.classList.remove('dark');
 
-// This will listen for flash toast data from the server...
-initializeFlashToast();
+    // This will listen for flash toast data from the server...
+    initializeFlashToast();
+}
