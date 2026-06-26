@@ -150,73 +150,16 @@ cancelAnimationFrame(rafId);
                     </div>
                 </div>
 
-                <!-- Right: image grid with parallax -->
+                <!-- Right: single hero illustration with parallax -->
                 <div class="relative hidden lg:block">
-                    <div ref="parallaxEl" class="grid grid-cols-2 gap-3 transition-none">
-                        <!-- Main large image -->
-                        <div
-                            class="col-span-2 overflow-hidden rounded-2xl bg-white/10 shadow-2xl ring-1 ring-white/20"
-                        >
-                            <img
-                                src="/hero.svg"
-                                alt="SEAPEDIA Marketplace"
-                                class="h-56 w-full object-cover xl:h-64"
-                                loading="eager"
-                                onerror="this.parentElement.classList.add('hero-img-placeholder')"
-                            />
-                        </div>
-                        <!-- Side images row -->
-                        <div
-                            class="overflow-hidden rounded-xl bg-white/10 shadow-md ring-1 ring-white/20"
-                        >
-                            <img
-                                src="/images/banner/side/side1.jpeg"
-                                alt="Produk kampus"
-                                class="h-36 w-full object-cover xl:h-40"
-                                loading="lazy"
-                                onerror="this.style.display='none'"
-                            />
-                        </div>
-                        <div
-                            class="overflow-hidden rounded-xl bg-white/10 shadow-md ring-1 ring-white/20"
-                        >
-                            <img
-                                src="/images/banner/side/side2.jpeg"
-                                alt="Produk kampus"
-                                class="h-36 w-full object-cover xl:h-40"
-                                loading="lazy"
-                                onerror="this.style.display='none'"
-                            />
-                        </div>
-                        <div
-                            class="overflow-hidden rounded-xl bg-white/10 shadow-md ring-1 ring-white/20"
-                        >
-                            <img
-                                src="/images/banner/side/side3.jpeg"
-                                alt="Produk kampus"
-                                class="h-28 w-full object-cover xl:h-32"
-                                loading="lazy"
-                                onerror="this.style.display='none'"
-                            />
-                        </div>
-                        <div
-                            class="overflow-hidden rounded-xl bg-white/10 shadow-md ring-1 ring-white/20"
-                        >
-                            <img
-                                src="/images/banner/side/side4.jpeg"
-                                alt="Produk kampus"
-                                class="h-28 w-full object-cover xl:h-32"
-                                loading="lazy"
-                                onerror="this.style.display='none'"
-                            />
-                        </div>
-                    </div>
-                    <!-- Logo mark watermark behind image grid -->
-                    <div
-                        class="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.04]"
-                        aria-hidden="true"
-                    >
-                        <Logo variant="mark" class="h-64 w-64" />
+                    <div ref="parallaxEl" class="transition-none">
+                        <img
+                            src="/hero.svg"
+                            alt="SEAPEDIA Marketplace"
+                            class="h-auto w-full object-contain"
+                            loading="eager"
+                            onerror="this.parentElement.classList.add('hero-img-placeholder')"
+                        />
                     </div>
                 </div>
             </div>
