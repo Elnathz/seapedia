@@ -45,24 +45,17 @@ FROM php:8.3-fpm-alpine AS production
 
 WORKDIR /app
 
+# Runtime libs only — extensions copied from php-deps, no recompile needed
 RUN apk add --no-cache \
     libpng \
     libjpeg-turbo \
     freetype \
     libzip \
     oniguruma \
-    icu-libs \
-    && docker-php-ext-install -j"$(nproc)" \
-        pdo_mysql \
-        mbstring \
-        exif \
-        pcntl \
-        bcmath \
-        gd \
-        zip \
-        intl \
-        opcache
+    icu-libs
 
+COPY --from=php-deps /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
+COPY --from=php-deps /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 COPY --from=php-deps /app/vendor ./vendor
@@ -84,7 +77,6 @@ FROM nginx:1.27-alpine AS nginx-web
 
 WORKDIR /app/public
 
-# Copy the built static assets from node-build so nginx can serve them directly
 COPY --from=node-build /app/public ./
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
