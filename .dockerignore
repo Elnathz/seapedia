@@ -1,0 +1,51 @@
+# Build context hygiene — keep the image small and avoid leaking host state.
+# NOTE: the wayfinder-generated dirs (resources/js/actions|routes|wayfinder) are
+# committed on purpose and MUST NOT be ignored here — the Docker build needs them.
+
+# VCS / tooling
+.git
+.github
+.gitattributes
+.idea
+.vscode
+.fleet
+.nova
+.zed
+.claude
+.playwright-mcp
+
+# Secrets / local env — compose injects env via env_file, never bake .env into layers
+.env
+.env.*
+auth.json
+
+# Dependencies / build output — regenerated inside the image by the build stages
+node_modules
+vendor
+public/build
+public/hot
+public/storage
+
+# Runtime/cache artifacts from the host
+bootstrap/cache/*.php
+storage/api-docs
+storage/logs/*.log
+storage/pail
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*.php
+storage/*.key
+.phpunit.cache
+.phpunit.result.cache
+
+# Tests & docs — not needed at runtime (production install is --no-dev)
+tests
+docs
+planning
+postman
+README.md
+
+# Docker meta
+Dockerfile
+.dockerignore
+docker-compose*.yml
