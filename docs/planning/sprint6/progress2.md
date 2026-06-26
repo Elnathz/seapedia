@@ -25,19 +25,21 @@ Tracks `plan2.md` only (the UI-refinement v2 slices). Original Sprint 6 tasks (T
       use in header + landing. Optional tighter mark variant for 16–32px favicon.
 
 ## Slices (in order)
-- [ ] **R0 · Tokens + logo + dark-mode removal** — rewrite `:root` to Bright Sea, add `--brand`,
-      sweep hardcoded teal/white → tokens, force light + hide appearance toggle, wire logo + favicon.
-- [ ] **R1 · Landing + public reviews** — sea hero/banner, logo lockup, coral sale accents.
-      - [ ] Navbar: **hapus toggle bahasa** (pindah ke Settings user), tambah **search bar besar** +
-            "Kategori", link "Cara Kerja"/"Jadi Mitra", Masuk/Daftar; opsional strip promo tipis.
-      - [ ] **Hero interaktif**: pusaran logo berputar, wave-divider beranimasi, entrance fade-up,
-            **parallax** (desktop=mouse, mobile=scroll, rAF-throttled, hormati prefers-reduced-motion).
-      - [ ] Hero image + product photos sesuai spec di `plan2.md` (hero 2400×1350; produk 1:1 800/1200px).
-- [ ] **R2 · Auth (login / register / role-select)** — white cards on sea-tinted backdrop.
-- [ ] **R3 · Catalog + product detail + store** — white cards, sea CTA, coral discount badges.
-- [ ] **R4 · Seller pages** — dashboard / store / product / incoming.
-- [ ] **R5 · Buyer pages** — cart / checkout / orders / wallet.
-- [ ] **R6 · Driver + Admin** — consistency pass.
+- [x] **R0 · Tokens + logo + dark-mode removal** — `feat(ui): adopt bright-sea light-only palette and
+      new logo` (commit 591cb82). Rewrote `:root`, added `--brand`, Logo.vue, force light, sweep
+      emerald → primary in driver/seller pages.
+- [x] **R1 · Landing + public reviews** — `feat(ui): redesign landing hero with sea gradient,
+      animations, and navbar search` (commit 011df39). Sea gradient hero, rotating mark, fade-up,
+      parallax (desktop=mouse, mobile=scroll), wave divider, promo bar, search bar.
+      - [!] Hero image + product photos: photos pendemo perlu diisi secara manual (placeholder ok).
+- [x] **R2 · Auth (login / register / role-select)** — `feat(ui): upgrade auth layout left panel to
+      sea gradient with rotating mark` (commit f18c300).
+- [x] **R3 · Catalog + product detail + store** — `feat(ui): fix catalog and store product cards to
+      1:1 aspect ratio` (commit 2c8f1b7). Fixed aspect-video → aspect-square, hover polish.
+- [x] **R4 · Seller pages** — clean, no hardcoded colors; tokens auto-applied. Included in R4–R6 commit.
+- [x] **R5 · Buyer pages** — `style(ui): remove dead dark: variants and migrate neutral tokens to
+      semantic` (commit f3203d5). Cleaned wallet, cart, topup dark: dead code.
+- [x] **R6 · Driver + Admin** — consistency sweep included in above commit (LanguageTabs, components).
 
 ## Known gaps / notes
 - Playwright visual-QA intentionally skipped (memory: no-playwright-sprint5-onward) — verify manually
