@@ -82,23 +82,23 @@ const { t } = useI18n();
                 :href="catalogShow.url(product.slug)"
             >
                 <Card
-                    class="h-full cursor-pointer transition-colors hover:border-primary"
+                    class="group h-full cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
                 >
                     <div
-                        class="relative aspect-video overflow-hidden rounded-t-xl border-b border-border"
+                        class="relative aspect-square overflow-hidden rounded-t-xl border-b border-border bg-muted"
                     >
                         <img
                             v-if="product.image_path"
                             :src="`/storage/${product.image_path}`"
                             :alt="product.name"
                             loading="lazy"
-                            class="size-full object-cover"
+                            class="size-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                         <PlaceholderPattern v-else />
                     </div>
                     <CardContent class="flex flex-col gap-1 pt-4">
                         <h2 class="font-medium">{{ product.name }}</h2>
-                        <p class="mt-1 font-semibold tabular-nums">
+                        <p class="mt-1 font-semibold tabular-nums text-primary">
                             {{ formatIDR(product.price) }}
                         </p>
                     </CardContent>

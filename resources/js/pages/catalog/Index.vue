@@ -127,7 +127,7 @@ function visit(params: Record<string, string | number>) {
                         class="h-full cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
                     >
                         <div
-                            class="relative aspect-video overflow-hidden rounded-t-xl border-b border-border bg-muted"
+                            class="relative aspect-square overflow-hidden rounded-t-xl border-b border-border bg-muted"
                         >
                             <img
                                 v-if="product.image_path"
