@@ -83,6 +83,8 @@ createInertiaApp({
 
 // This will set light / dark mode on page load...
 initializeTheme();
+// Sprint 6: force light-only for demo — dark toggle hidden from UI, infra kept
+document.documentElement.classList.remove('dark');
 
 // This will listen for flash toast data from the server...
 initializeFlashToast();

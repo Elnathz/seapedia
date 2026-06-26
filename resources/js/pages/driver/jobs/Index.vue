@@ -120,7 +120,7 @@ function goToPage(page: number) {
                     <div class="flex shrink-0 items-center gap-3">
                         <div class="text-right">
                             <p
-                                class="font-semibold text-emerald-600 tabular-nums dark:text-emerald-400"
+                                class="font-semibold text-primary tabular-nums"
                             >
                                 +{{ formatIDR(job.earning_preview) }}
                             </p>

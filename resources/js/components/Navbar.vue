@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
-import AppLogo from '@/components/AppLogo.vue';
+import Logo from '@/components/brand/Logo.vue';
 import LocaleToggle from '@/components/LocaleToggle.vue';
 import RoleBadge from '@/components/RoleBadge.vue';
 import { Button } from '@/components/ui/button';
@@ -14,15 +14,16 @@ const { t } = useI18n();
 
 <template>
     <header
-        class="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur"
+        class="sticky top-0 z-40 border-b border-border bg-white/95 backdrop-blur"
     >
         <div
-            class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6"
+            class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
         >
-            <Link :href="home()" class="flex items-center gap-2">
-                <AppLogo />
+            <Link :href="home()" class="flex shrink-0 items-center">
+                <Logo class="h-9 w-auto" />
             </Link>
 
+            <!-- Authenticated: locale + role badge + dashboard CTA -->
             <div v-if="auth.isAuthenticated" class="flex items-center gap-3">
                 <LocaleToggle />
                 <RoleBadge />
@@ -30,8 +31,9 @@ const { t } = useI18n();
                     <Link :href="dashboard()">{{ t('nav.dashboard') }}</Link>
                 </Button>
             </div>
+
+            <!-- Guest: Masuk + Daftar -->
             <div v-else class="flex items-center gap-2">
-                <LocaleToggle />
                 <Button as-child variant="ghost" size="sm">
                     <Link :href="login()">{{ t('nav.login') }}</Link>
                 </Button>

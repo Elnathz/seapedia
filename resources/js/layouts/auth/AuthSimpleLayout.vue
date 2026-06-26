@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import AppLogo from '@/components/AppLogo.vue';
+import Logo from '@/components/brand/Logo.vue';
 import { home } from '@/routes';
 
 defineProps<{
@@ -15,8 +15,8 @@ defineProps<{
         <div
             class="hidden w-1/2 flex-col justify-between bg-primary p-10 text-primary-foreground lg:flex xl:w-5/12"
         >
-            <Link :href="home()" class="flex items-center gap-2">
-                <span class="text-xl font-bold tracking-tight">SEAPEDIA</span>
+            <Link :href="home()">
+                <Logo class="h-10 w-auto brightness-0 invert" />
             </Link>
             <div class="space-y-4">
                 <p class="text-4xl font-bold leading-tight xl:text-5xl">
@@ -37,8 +37,8 @@ defineProps<{
                 <div class="flex flex-col gap-8">
                     <!-- Mobile logo -->
                     <div class="flex flex-col items-center gap-4 lg:hidden">
-                        <Link :href="home()" class="flex items-center gap-2">
-                            <AppLogo />
+                        <Link :href="home()">
+                            <Logo class="h-9 w-auto" />
                         </Link>
                     </div>
 

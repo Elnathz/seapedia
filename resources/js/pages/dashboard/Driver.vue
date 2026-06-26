@@ -130,7 +130,7 @@ const { t, locale } = useI18n();
                             </p>
                         </div>
                         <p
-                            class="font-semibold text-emerald-600 tabular-nums dark:text-emerald-400"
+                            class="font-semibold text-primary tabular-nums"
                         >
                             +{{ formatIDR(entry.earning_amount) }}
                         </p>

@@ -32,8 +32,8 @@ const roles = [
         icon: Store,
         title: 'Penjual',
         tagline: 'Buka toko dan jual produkmu',
-        color: 'text-emerald-500',
-        bg: 'bg-emerald-500/10',
+        color: 'text-primary',
+        bg: 'bg-primary/10',
         features: [
             'Buat & kelola toko sendiri',
             'Upload produk dengan foto',

@@ -63,7 +63,7 @@ const { t } = useI18n();
                             {{ t('report.totalIncome') }}
                         </p>
                         <p
-                            class="mt-1 text-2xl font-semibold text-emerald-600 tabular-nums dark:text-emerald-400"
+                            class="mt-1 text-2xl font-semibold text-primary tabular-nums"
                         >
                             {{ formatIDR(props.report.total_income) }}
                         </p>

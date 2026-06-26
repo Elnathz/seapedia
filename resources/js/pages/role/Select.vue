@@ -26,8 +26,8 @@ const roleConfig: Record<string, { icon: typeof ShoppingBag; label: string; tagl
         icon: Store,
         label: 'Penjual',
         tagline: 'Kelola toko dan jual produkmu',
-        color: 'text-emerald-500',
-        bg: 'bg-emerald-500/10',
+        color: 'text-primary',
+        bg: 'bg-primary/10',
     },
     driver: {
         icon: Truck,

@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import Logo from '@/components/brand/Logo.vue';
 </script>
 
 <template>
     <div
-        class="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground"
+        class="flex aspect-square size-8 shrink-0 items-center justify-center rounded-md bg-sidebar-primary p-1"
     >
-        <AppLogoIcon class="size-5 fill-current text-white dark:text-black" />
+        <Logo variant="mark" class="size-full" />
     </div>
-    <div class="ml-1 grid flex-1 text-left text-sm">
-        <span class="mb-0.5 truncate leading-tight font-semibold"
-            >SEAPEDIA</span
-        >
+    <div class="ml-1 grid flex-1 text-left text-sm leading-tight">
+        <span class="truncate font-semibold">SEAPEDIA</span>
     </div>
 </template>

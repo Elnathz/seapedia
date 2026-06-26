@@ -214,10 +214,10 @@ function confirmAction() {
 
                     <!-- Signature: the 80/20 split, made legible -->
                     <div
-                        class="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 dark:border-emerald-900/60 dark:bg-emerald-950/30"
+                        class="rounded-xl border border-primary/20 bg-primary/5 p-4"
                     >
                         <p
-                            class="text-xs font-medium text-emerald-700 dark:text-emerald-300"
+                            class="text-xs font-medium text-primary"
                         >
                             {{
                                 job.status === 'completed'
@@ -226,7 +226,7 @@ function confirmAction() {
                             }}
                         </p>
                         <p
-                            class="mt-1 text-2xl font-bold text-emerald-600 tabular-nums dark:text-emerald-400"
+                            class="mt-1 text-2xl font-bold text-primary tabular-nums"
                         >
                             +{{
                                 formatIDR(
@@ -237,13 +237,13 @@ function confirmAction() {
                             }}
                         </p>
                         <div
-                            class="mt-3 flex h-2 overflow-hidden rounded-full bg-emerald-100 dark:bg-emerald-900/50"
+                            class="mt-3 flex h-2 overflow-hidden rounded-full bg-primary/10"
                             aria-hidden="true"
                         >
-                            <div class="h-full w-[80%] bg-emerald-500" />
+                            <div class="h-full w-[80%] bg-primary" />
                         </div>
                         <p
-                            class="mt-2 text-xs text-emerald-700/80 dark:text-emerald-300/80"
+                            class="mt-2 text-xs text-primary/70"
                         >
                             {{ t('driver.earningShareNote') }}
                         </p>
