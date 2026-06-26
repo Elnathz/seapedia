@@ -23,9 +23,12 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       # Serve user uploads directly from the storage volume
       - app_storage:/app/storage/app:ro
+      # Mount Let's Encrypt certs (managed by host Certbot)
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - app
     networks:
