@@ -13,7 +13,7 @@ RUN npm ci --prefer-offline
 # Need composer vendor for artisan to work
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-interaction --no-scripts --quiet
+RUN composer install --no-dev --no-interaction --no-scripts --quiet --ignore-platform-reqs
 
 COPY . .
 RUN npm run build
