@@ -13,20 +13,40 @@ defineProps<{
     <div class="flex min-h-svh bg-background">
         <!-- Left brand panel — desktop only -->
         <div
-            class="hidden w-1/2 flex-col justify-between bg-primary p-10 text-primary-foreground lg:flex xl:w-5/12"
+            class="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-gradient-to-br from-[#13B5C4] to-[#0A7180] p-10 text-white lg:flex xl:w-5/12"
         >
-            <Link :href="home()">
+            <!-- Decorative rotating mark -->
+            <div
+                class="auth-mark pointer-events-none absolute -right-16 -top-16 h-[420px] w-[420px] opacity-[0.1]"
+                aria-hidden="true"
+            >
+                <Logo variant="mark" class="h-full w-full" />
+            </div>
+            <div
+                class="auth-mark pointer-events-none absolute -bottom-20 -left-20 h-[320px] w-[320px] opacity-[0.07]"
+                aria-hidden="true"
+                style="animation-delay: -18s"
+            >
+                <Logo variant="mark" class="h-full w-full" />
+            </div>
+
+            <!-- Logo -->
+            <Link :href="home()" class="relative z-10">
                 <Logo class="h-10 w-auto brightness-0 invert" />
             </Link>
-            <div class="space-y-4">
+
+            <!-- Brand copy -->
+            <div class="relative z-10 space-y-4">
                 <p class="text-4xl font-bold leading-tight xl:text-5xl">
                     Satu akun.<br />Tiga peran.
                 </p>
-                <p class="text-primary-foreground/80 text-lg">
+                <p class="text-lg text-white/80">
                     Belanja, jualan, antar — satu saldo untuk semuanya.
                 </p>
             </div>
-            <p class="text-sm text-primary-foreground/60">
+
+            <!-- Footer -->
+            <p class="relative z-10 text-sm text-white/60">
                 &copy; {{ new Date().getFullYear() }} SEAPEDIA · Marketplace Kampus
             </p>
         </div>
@@ -55,3 +75,22 @@ defineProps<{
         </div>
     </div>
 </template>
+
+<style scoped>
+@keyframes seapedia-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.auth-mark {
+    animation: seapedia-spin 40s linear infinite;
+    transform-origin: center center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-mark {
+        animation: none !important;
+    }
+}
+</style>
