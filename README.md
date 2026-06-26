@@ -338,7 +338,7 @@ Adjust the env variable if you need longer-lived tokens for demo sessions.
 
 ## Production deploy (Depacloud VPS)
 
-**Live URL: http://103.253.244.92**
+**Live URL: https://seapedia.web.id** (IP: `103.253.244.92`)
 
 The `docker-compose.prod.yml` runs three services: `app` (php-fpm), `web`
 (nginx with baked static files), `db` (MySQL 8 with named volume). Docker
@@ -378,6 +378,18 @@ docker compose -f docker-compose.prod.yml exec app php artisan storage:link
 # 8. Open http://<PUBLIC_IP>
 ```
 
+### HTTPS via Let's Encrypt (Certbot)
+
+```bash
+# Stop nginx to free port 80 for the ACME challenge
+docker compose -f docker-compose.prod.yml stop web
+certbot certonly --standalone -d seapedia.web.id --agree-tos -m your@email.com --non-interactive
+docker compose -f docker-compose.prod.yml up -d
+```
+
+Certs are stored on the host at `/etc/letsencrypt/live/<domain>/` and mounted read-only into
+the `web` container. Certbot installs an automatic renewal cron — no manual renewal needed.
+
 ### Re-deploy after a git pull
 
 ```bash
@@ -392,7 +404,7 @@ Sprint 6 (final sprint) is complete — security hardening, landing page
 redesign, auth/role-select rework, all seller/buyer/driver/admin UI reworks,
 OpenAPI spec (33 endpoints, OWASP audit clean), and production Docker deploy.
 
-**Live at http://103.253.244.92**
+**Live at https://seapedia.web.id**
 
 Sprint logs live under `docs/planning/` (moved from `planning/` at T12).
 

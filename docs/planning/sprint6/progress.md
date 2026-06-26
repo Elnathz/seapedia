@@ -26,6 +26,10 @@
   `DB::prohibitDestructiveCommands`, `fakerphp/faker` in require-dev).
 - [x] **T12 · Housekeeping** — move `planning/` → `docs/planning/`, README updated with live URL and
   corrected deploy runbook, progress.md finalized.
+- [x] **Post-T12 · HTTPS + custom domain** — Let's Encrypt cert via Certbot (`certbot certonly
+  --standalone`), nginx config updated (HTTP→HTTPS redirect + port 443 + TLS ciphers), port 443
+  exposed in `docker-compose.prod.yml`, `/etc/letsencrypt` mounted read-only into `web` container.
+  Live at **https://seapedia.web.id** (A record + apex record at Dewabiz registrar → `103.253.244.92`).
 
 ## Deviations / notes (record here, do not commit until T12)
 
@@ -112,6 +116,17 @@ order/address/cart/admin by pre-existing Sprint 1-5 tests — only the driver-jo
   phpstan errors vs the pre-existing 42).
 - README still needs (T10): document "top-up is dummy/in-process, no external callback, no webhook
   by design" and the `TOPUP_PROCESSING_SECONDS` knob.
+
+## Deviations from plan (T11)
+
+| Plan | Actual | Reason |
+|------|--------|--------|
+| Oracle Cloud Free Tier (A1 Flex ARM) | Depacloud VPS (2 CPU / 2 GB / 40 GB, x86) | Oracle A1 out of capacity in all ADs |
+| HTTPS optional (no webhook) | HTTPS implemented via Let's Encrypt | Domain `seapedia.web.id` purchased; evaluator gets padlock |
+| `composer install` straightforward | Retry loop (5x) + `COMPOSER_MAX_PARALLEL_HTTP=6` | VPS → api.github.com connection timeouts |
+| `migrate:fresh --seed --force` | Needs `config:clear` + `-e APP_ENV=local` override | `DB::prohibitDestructiveCommands` in AppServiceProvider hard-blocks even with `--force` |
+| `fakerphp/faker` in `require-dev` | Moved to `require` | Production `--no-dev` install left `$this->faker` null in seeders |
+| `MYSQL_USER` + `MYSQL_PASSWORD` in compose | Removed — root only | MySQL 8 rejects `MYSQL_USER=root`; healthcheck used `CMD` (no shell expansion) → fixed to `CMD-SHELL` |
 
 ## Known gaps at submission
 
