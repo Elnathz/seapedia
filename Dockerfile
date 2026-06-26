@@ -1,10 +1,19 @@
 # ── Stage 1: JS/CSS build ────────────────────────────────────────────────────
 FROM node:22-alpine AS node-build
 
+# Wayfinder vite plugin calls `php artisan wayfinder:generate` during build
+RUN apk add --no-cache php83 php83-cli php83-phar php83-openssl php83-tokenizer php83-mbstring php83-xml php83-xmlwriter php83-dom php83-json \
+    && ln -sf /usr/bin/php83 /usr/bin/php
+
 WORKDIR /app
 
 COPY package.json package-lock.json ./
 RUN npm ci --prefer-offline
+
+# Need composer vendor for artisan to work
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-interaction --no-scripts --quiet
 
 COPY . .
 RUN npm run build
