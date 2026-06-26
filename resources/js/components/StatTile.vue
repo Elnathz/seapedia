@@ -25,8 +25,8 @@ const accentBar: Record<Accent, string> = {
 const accentIcon: Record<Accent, string> = {
     default: 'text-muted-foreground',
     primary: 'text-primary',
-    amber: 'text-amber-600 dark:text-amber-400',
-    sky: 'text-sky-600 dark:text-sky-400',
+    amber: 'text-amber-600',
+    sky: 'text-sky-600',
     destructive: 'text-destructive',
 };
 </script>

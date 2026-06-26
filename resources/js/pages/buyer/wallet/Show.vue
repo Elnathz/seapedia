@@ -201,7 +201,7 @@ function goToPage(page: number) {
                             <component
                                 :is="tx.direction === 'credit' ? ArrowDownLeft : ArrowUpRight"
                                 class="size-4"
-                                :class="tx.direction === 'credit' ? 'text-green-600 dark:text-green-400' : 'text-rose-600 dark:text-rose-400'"
+                                :class="tx.direction === 'credit' ? 'text-green-600' : 'text-rose-600'"
                             />
                         </div>
                         <div class="min-w-0 flex-1">
@@ -213,7 +213,7 @@ function goToPage(page: number) {
                         <div class="shrink-0 text-right">
                             <p
                                 class="font-semibold tabular-nums"
-                                :class="tx.direction === 'credit' ? 'text-green-600 dark:text-green-400' : 'text-rose-600 dark:text-rose-400'"
+                                :class="tx.direction === 'credit' ? 'text-green-600' : 'text-rose-600'"
                             >
                                 {{ tx.direction === 'credit' ? '+' : '-' }}{{ formatIDR(tx.amount) }}
                             </p>
@@ -244,7 +244,7 @@ function goToPage(page: number) {
                                 <TableCell>
                                     <span
                                         class="inline-flex items-center gap-1 text-sm"
-                                        :class="tx.direction === 'credit' ? 'text-green-600 dark:text-green-400' : 'text-rose-600 dark:text-rose-400'"
+                                        :class="tx.direction === 'credit' ? 'text-green-600' : 'text-rose-600'"
                                     >
                                         <component :is="tx.direction === 'credit' ? ArrowDownLeft : ArrowUpRight" class="size-3.5" />
                                         {{ tx.direction === 'credit' ? t('wallet.directionCredit') : t('wallet.directionDebit') }}
@@ -252,7 +252,7 @@ function goToPage(page: number) {
                                 </TableCell>
                                 <TableCell
                                     class="text-right font-medium tabular-nums"
-                                    :class="tx.direction === 'credit' ? 'text-green-600 dark:text-green-400' : 'text-rose-600 dark:text-rose-400'"
+                                    :class="tx.direction === 'credit' ? 'text-green-600' : 'text-rose-600'"
                                 >
                                     {{ tx.direction === 'credit' ? '+' : '-' }}{{ formatIDR(tx.amount) }}
                                 </TableCell>

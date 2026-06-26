@@ -88,9 +88,9 @@ const statusText: Record<TopupStatusKey, string> = {
                     :class="{
                         'bg-muted text-muted-foreground':
                             props.topup.status === 'pending',
-                        'bg-green-100 text-green-600 dark:bg-green-950 dark:text-green-400':
+                        'bg-green-100 text-green-600':
                             props.topup.status === 'paid',
-                        'bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-400':
+                        'bg-rose-100 text-rose-600':
                             props.topup.status === 'failed' ||
                             props.topup.status === 'expired',
                     }"

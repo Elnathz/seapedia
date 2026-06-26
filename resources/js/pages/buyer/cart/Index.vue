@@ -131,7 +131,7 @@ function clearAll() {
                             </p>
                             <p
                                 v-if="item.quantity > item.product.stock"
-                                class="mt-1 text-xs text-amber-600 dark:text-amber-400"
+                                class="mt-1 text-xs text-amber-600"
                             >
                                 {{
                                     t('cart.stockWarning', {
