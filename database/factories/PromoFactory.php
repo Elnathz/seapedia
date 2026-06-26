@@ -20,7 +20,7 @@ class PromoFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => Str::upper(fake()->unique()->bothify('PROMO##??')),
+            'code' => Str::upper($this->faker->unique()->bothify('PROMO##??')),
             'type' => DiscountType::Fixed,
             'value' => 20_000,
             'max_discount' => null,

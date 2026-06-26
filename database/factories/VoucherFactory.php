@@ -20,7 +20,7 @@ class VoucherFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => Str::upper(fake()->unique()->bothify('VOUCHER##??')),
+            'code' => Str::upper($this->faker->unique()->bothify('VOUCHER##??')),
             'type' => DiscountType::Percentage,
             'value' => 10,
             'max_discount' => 50_000,

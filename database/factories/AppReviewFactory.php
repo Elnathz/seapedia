@@ -21,9 +21,9 @@ class AppReviewFactory extends Factory
     {
         return [
             'user_id' => null,
-            'reviewer_name' => fake()->name(),
-            'rating' => fake()->numberBetween(1, 5),
-            'comment' => fake()->sentence(12),
+            'reviewer_name' => $this->faker->name(),
+            'rating' => $this->faker->numberBetween(1, 5),
+            'comment' => $this->faker->sentence(12),
         ];
     }
 }

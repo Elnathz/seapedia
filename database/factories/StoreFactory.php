@@ -21,13 +21,13 @@ class StoreFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->unique()->company();
+        $name = $this->faker->unique()->company();
 
         return [
             'user_id' => User::factory(),
             'name' => $name,
-            'slug' => Str::slug($name).'-'.fake()->unique()->numberBetween(1000, 9999),
-            'description' => fake()->sentence(15),
+            'slug' => Str::slug($name).'-'.$this->faker->unique()->numberBetween(1000, 9999),
+            'description' => $this->faker->sentence(15),
             'is_active' => true,
         ];
     }
