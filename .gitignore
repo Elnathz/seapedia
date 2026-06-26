@@ -8,9 +8,10 @@
 /storage/*.key
 /storage/pail
 /storage/api-docs
-/resources/js/actions
-/resources/js/routes
-/resources/js/wayfinder
+# wayfinder generated files committed so Docker build doesn't need PHP at build time
+# /resources/js/actions
+# /resources/js/routes
+# /resources/js/wayfinder
 /vendor
 .DS_Store
 .env

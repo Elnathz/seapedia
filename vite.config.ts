@@ -37,8 +37,9 @@ export default defineConfig({
                 },
             },
         }),
-        wayfinder({
-            formVariants: true,
-        }),
+        // Skipped when DOCKER_BUILD=true — generated files are committed to repo
+        ...(process.env.DOCKER_BUILD !== 'true'
+            ? [wayfinder({ formVariants: true })]
+            : []),
     ],
 });
