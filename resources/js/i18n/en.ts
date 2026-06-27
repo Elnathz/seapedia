@@ -10,6 +10,8 @@ export default {
         home: 'Home',
         login: 'Log in',
         register: 'Register',
+        catalog: 'Catalog',
+        allCategories: 'All categories',
         dashboard: 'Dashboard',
         myStore: 'My Store',
         products: 'Products',

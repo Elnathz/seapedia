@@ -10,6 +10,8 @@ export default {
         home: 'Beranda',
         login: 'Masuk',
         register: 'Daftar',
+        catalog: 'Katalog',
+        allCategories: 'Semua kategori',
         dashboard: 'Dashboard',
         myStore: 'Toko Saya',
         products: 'Produk',
