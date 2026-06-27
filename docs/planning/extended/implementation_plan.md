@@ -18,7 +18,7 @@
 | Validasi form  | **Tighten** semua FormRequest yang sudah ada (bukan bikin dari nol — 25 request sudah ada): max length wajar, range numerik, image ≤ 2MB. Server-side = batas keamanan (Level 7A graded); cermin client-side untuk UX (`maxlength`, cek ukuran file sebelum upload). |
 | Tanda wajib    | Semua field wajib pakai komponen `RequiredMark` (`<span class="text-destructive">*</span>` + `aria-label="wajib"`). Dipasang di label semua form: register, store, produk, kategori, alamat, top-up, checkout, review, voucher/promo. |
 | Feedback error | `InputError` per-field di **semua** form + toast `vue-sonner` (sudah terinstall) untuk flash/error global (login salah, upload kebesaran). Tombol submit `disabled` + spinner saat `form.processing`. |
-| Swagger        | `storage/api-docs/api-docs.json` **statis/manual** (0 anotasi `@OA` di kode, 33 path terdokumentasi). **JANGAN jalankan `l5-swagger:generate`** (akan meng-wipe doc). Tambah path endpoint kategori baru secara **manual** ke JSON. |
+| Swagger        | **Annotation-driven** (KOREKSI 28 Juni — klaim "statis" sebelumnya keliru): 17 controller pakai atribut PHP `#[OA\...]` (≈38 operasi); `storage/api-docs/api-docs.json` **gitignored & di-generate** via `l5-swagger:generate`. Untuk endpoint API baru (mis. kategori), **tambah atribut `#[OA]`** lalu generate ulang — bukan edit JSON manual. |
 
 ---
 
@@ -49,6 +49,9 @@ Hero gradient: from-[#13B5C4] to-[#0A7180]
 ---
 
 ### 1.0 Category System (Hierarki Induk → Sub) — FOUNDATION, KERJAKAN PALING AWAL
+
+> [!NOTE]
+> **✅ SELESAI DIIMPLEMENTASIKAN (28 Juni, di Opus).** Commits: `dd7d824` foundation (schema/model/service/seed) · `8c1a087` seller picker + shared prop · `95c1394` filter katalog + chips · `77da71d` navbar mega-dropdown · `1a2caac` landing grid · `7bb4bf8` admin CRUD. 189 test hijau (termasuk subtree filter + admin guard tests).
 
 > [!IMPORTANT]
 > Kategori mengubah skema `products` + factory + seeder. **WAJIB selesai sebelum** task produk/katalog/admin lain — kalau tidak `migrate:fresh --seed` gagal (FK `category_id`).
@@ -1130,6 +1133,9 @@ CHANGES:
 
 ### 2.4 Seller Product Card & Form Polish (Visual)
 
+> [!NOTE]
+> **✅ SELESAI (28 Juni).** Commit `8006d9a` — list produk seller diubah dari tabel 6-kolom (jebol di mobile) jadi card grid 2→4 kolom dengan badge kategori, harga, chip stok; form picker + cek gambar 2MB sudah di `8c1a087`.
+
 > Fungsi category picker + validasi sudah dikerjakan di **§1.0c**. Section ini fokus **tampilan**: card produk seller + layout form. Ikuti design skill (`ui-ux-pro-max` + `frontend-design`) — bukan default shadcn polos.
 
 #### Seller Product List — `resources/js/pages/seller/products/Index.vue`
@@ -1211,10 +1217,10 @@ Multi-Role Campus Marketplace — COMPFEST 18 SE Academy
 
 > **Status Level 7C (3 pts) — hasil audit (28 Juni): ~70% jadi, tinggal rapikan.**
 > - ✅ README sudah dokumentasikan single-store, PPN 12% base, discount-before-PPN, driver earning 80%, overdue SLA + time-sim, demo accounts.
-> - ✅ Demo seeder lengkap; Swagger UI di `/api/documentation` (33 path); Postman specs ada.
+> - ✅ Demo seeder lengkap; Swagger UI di `/api/documentation` (annotation-driven, `#[OA]`); Postman specs ada.
 > - ⚠️ **Buang 31 penyebutan "sprint"** di README (`grep -ni sprint README.md`) + hilangkan catatan carry-over internal.
 > - ⚠️ **Tambah bagian baru**: "Kategori Produk" (hierarki, admin-managed) + "Security" (rangkum hasil §3.3: SQLi/XSS/validasi/RBAC/session).
-> - ⚠️ **Swagger statis**: jangan regenerate; tambah path `/api/v1/categories` ke `api-docs.json` manual bila endpoint API kategori dibuat.
+> - ⚠️ **Swagger annotation-driven**: bila menambah endpoint API kategori, tambahkan atribut `#[OA]` di controller lalu `l5-swagger:generate` (jangan edit JSON manual). `api-docs.json` tidak di-commit (gitignored).
 
 ### 3.2 CLAUDE.md Update
 
