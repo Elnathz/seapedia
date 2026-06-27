@@ -1298,3 +1298,237 @@ Uji manual di **360 / 768 / 1280 / 1920px** (target demo 1920). Fokus: navbar/bo
 |                         | Final commit + push                           | 30 min  |
 
 **Total: ~30 jam kerja dalam ~46 jam.** Kategori naik ke prioritas teratas (foundation). Kalau waktu mepet, urutan korban (dari paling boleh dipotong): 1.3 Popular Stores → animasi premium 1.2 → halaman kategori khusus (1.0d#4, filter katalog sudah menutupi). **Jangan korbankan 3.3 (graded) & 1.0a (foundation).**
+
+---
+
+# EXTENDED BATCH (28 Juni) — Banner · Crop · Seeder · Responsive · Aset Gambar
+
+> [!IMPORTANT]
+> **Implementer = Sonnet ATAU Gemini 3.1 Pro (Antigravity).** Instruksi di bawah model-agnostic. Semua keputusan sudah diaudit terhadap `docs/SEAPEDIA_SPEC.md` — banner/crop/kategori adalah **enhancement UI/bonus** (spec "be creative"), tidak mengubah business rule inti (PPN 12%, single-store cart, lifecycle 5 status, overdue refund, escrow).
+> Status fitur kategori: lihat §1.0 (✅ selesai). Status flow checkout→delivery→refund: lihat §4.6 (✅ sudah benar, hanya verifikasi).
+
+## 4.0 Sistem Banner (admin-managed, layout megamart) — FITUR BARU
+
+**Konsep:** banner storefront ala marketplace — **tengah carousel besar + 2 banner kecil kiri + 2 kanan** (desktop), stack di mobile. Dikelola admin (CRUD + upload).
+
+#### 4.0a Backend
+
+```
+NEW migration: create_banners_table
+  id
+  placement   string(10)        // 'main' | 'side'
+  image_path  string
+  title       string
+  subtitle    string nullable
+  badge_label string nullable   // mis. "Gratis ongkir"
+  cta_label   string nullable   // mis. "Belanja sekarang"
+  cta_url     string nullable   // mis. "/catalog?category=makanan"
+  sort_order  unsignedInteger default 0
+  is_active   boolean default true
+  timestamps
+  index ['placement','is_active','sort_order']
+
+NEW app/Models/Banner.php — Fillable semua kolom di atas; cast is_active bool; scopeActive.
+
+NEW app/Services/BannerService.php
+  - mainActive(): Banner::active where placement='main' orderBy sort_order
+  - sideActive(): Banner::active where placement='side' orderBy sort_order limit 4
+  - forStorefront(): ['main' => mainActive(), 'side' => sideActive()]   // dipakai CatalogController
+  - listForAdmin(), create(), update(), delete() (+ hapus file gambar saat delete)
+
+NEW FormRequests: StoreBannerRequest, UpdateBannerRequest
+  placement   required|in:main,side
+  title       required|string|max:120
+  subtitle    nullable|string|max:200
+  badge_label nullable|string|max:40
+  cta_label   nullable|string|max:40
+  cta_url     nullable|string|max:200
+  image       nullable(required on store)|image|mimes:jpg,jpeg,png,webp|max:2048
+  is_active   sometimes|boolean
+
+NEW app/Http/Controllers/Web/Admin/BannerController.php — index/store/update/destroy (thin → BannerService), Inertia::flash toast. Pakai ProductService-style image store.
+
+ROUTE (grup admin web.php): Route::resource style →
+  admin/banners GET index, POST store, PUT {banner} update, DELETE {banner} destroy (names admin.banners.*)
+
+CatalogController::index → tambahkan prop 'banners' => app(BannerService::class)->forStorefront()
+```
+
+#### 4.0b Frontend
+
+```
+NEW resources/js/components/storefront/BannerImage.vue
+  - props: banner (image_path, title, cta_url, badge_label?)
+  - <Link :href="cta_url ?? catalog"> img object-cover rounded-xl + optional badge overlay
+  - aspect: side banner ~3:2
+
+NEW resources/js/components/storefront/BannerCarousel.vue
+  - props: slides (main banners)
+  - auto-rotate (interval ~5s, pause on hover, RESPECT prefers-reduced-motion → no auto-rotate)
+  - prev/next arrows + dot indicators; slide via transform translateX (transform-only, easing ease-out)
+  - aspect ~2.5:1
+
+FILE resources/js/pages/catalog/Index.vue — GANTI hero teks dengan blok banner di ATAS search+chip:
+  Desktop (lg): <div class="hidden lg:grid grid-cols-4 gap-3">
+    col-1: <BannerImage v-for side.slice(0,2)>     (stack 2)
+    col-span-2: <BannerCarousel :slides="main">
+    col-4: <BannerImage v-for side.slice(2,4)>     (stack 2)
+  Mobile/tablet: <div class="lg:hidden space-y-3">
+    <BannerCarousel :slides="main">
+    <div class="grid grid-cols-2 gap-3"><BannerImage v-for side></div>
+  Search bar + chip kategori (§1.0d#2) tetap, DI BAWAH banner.
+  Fallback: kalau banners kosong, tampilkan hero teks lama (jangan blank).
+```
+
+#### 4.0c Admin UI + seeder
+
+```
+NEW resources/js/pages/admin/banners/Index.vue — list (grid kartu preview gambar + placement badge + toggle aktif), tombol Tambah, dialog create/edit (pakai ImageCropField §4.1), hapus konfirmasi. RequiredMark + InputError.
+AppSidebar.vue → item admin "Banner" (icon Images).
+NEW database/seeders/BannerSeeder.php — 3 main + 4 side (gambar dari §4.4), daftarkan di DatabaseSeeder.
+i18n: admin.manageBannersTitle, addBanner, dst.
+```
+
+DoD: migration+model+factory+seeder · Service+Request+Controller+route admin · komponen + layout katalog responsif · `pint`+lint hijau · commit `feat(catalog): add admin-managed storefront banners`.
+
+## 4.1 Upload gambar: crop adaptif + preview — FITUR BARU
+
+**Rasio menyesuaikan kebutuhan** (BUKAN selalu 1:1): produk **1:1**, banner main **2.5:1**, banner side **3:2**.
+
+```
+DEP: npm i vue-advanced-cropper   (Vue 3, maintained)
+
+NEW resources/js/components/ImageCropField.vue  (reusable)
+  props: aspectRatio:number (1 | 2.5 | 1.5), maxBytes:number=2_097_152, name:string='image', label?
+  - <input type="file"> tersembunyi/styled → on change: cek ukuran (>maxBytes → toast error + reject),
+    buka <Cropper :stencil-props="{ aspectRatio }"> di dalam Dialog/inline.
+  - tombol "Terapkan": cropper.getResult().canvas.toBlob() → new File([blob], 'image.jpg', {type:'image/jpeg'})
+  - Submit ke Inertia <Form name="...">: gunakan DataTransfer untuk meng-inject File hasil crop ke
+    sebuah <input type="file" :name="name"> tersembunyi:
+        const dt = new DataTransfer(); dt.items.add(croppedFile); hiddenFileInput.files = dt.files;
+    (cara ini mempertahankan komponen Inertia <Form> yang sudah ada — tanpa refactor ke useForm)
+  - Preview live thumbnail hasil crop. Hormati prefers-reduced-motion (tanpa animasi crop).
+
+INTEGRASI:
+  - resources/js/pages/seller/products/Form.vue → ganti field gambar dengan <ImageCropField :aspect-ratio="1" />
+  - admin/banners dialog → <ImageCropField :aspect-ratio="placement==='main' ? 2.5 : 1.5" />
+  Server tetap validasi image|mimes|max:2048 (batas keamanan, jangan andalkan client).
+```
+
+DoD: commit `feat(product): add adaptive image cropper for uploads`.
+
+## 4.2 Seeder semua kondisi (DEMO-READY lintas role) — graded (demo)
+
+> Tujuan: panitia login peran apa pun langsung lihat data realistis di SEMUA kondisi. Gunakan `ClockService`/sim-time untuk stamp tanggal, dan Service yang ada (Checkout/Order/Delivery/Overdue) — JANGAN set status manual (golden rule 7).
+
+```
+PERLUAS StoreProductSeeder → ~6-8 toko (pakai user multi-role + seller tambahan di DemoUserSeeder),
+  tiap toko 5-8 produk lintas kategori, harga & stok variatif (sertakan 1-2 stok=0), gambar dari §4.4.
+
+PERLUAS DemoUserSeeder → tambah seller2..seller6, buyer2, buyer3, driver2. Semua punya wallet.
+
+NEW/PERLUAS OrderConditionSeeder (atau di BuyerDemoSeeder) — buat order via CheckoutService lalu
+  majukan lewat Service sampai status target, sehingga tiap status TERWAKILI:
+    - Sedang Dikemas        (baru checkout)
+    - Menunggu Pengirim     (seller proses via OrderService)
+    - Sedang Dikirim        (driver ambil via DeliveryService)
+    - Pesanan Selesai       (driver complete → seller+driver dibayar)
+    - Dikembalikan          (stamp sla_due_at lampau → OverdueService::sweep())
+  Variasikan: metode kirim Instant/NextDay/Regular; sebagian pakai voucher, sebagian promo.
+  Buyer1 = "buyer super" punya minimal 1 order tiap status + histori topup + 2 alamat.
+
+DRIVER: driver1 punya 1 job aktif (Sedang Dikirim) + 2 job selesai (earnings) ; sisakan 2-3 job
+  "Menunggu Pengirim" available untuk didemo "take job".
+
+DISCOUNT (DiscountSeeder): voucher aktif, voucher expired, voucher used-up, promo aktif, promo expired.
+
+ADMIN: otomatis terisi (monitoring melihat semua di atas).
+
+BannerSeeder: 3 main + 4 side (§4.4).
+
+Update README "Demo Accounts" + "Demo Flow" agar mencantumkan akun & kondisi baru.
+```
+
+DoD: `migrate:fresh --seed` sukses & idempoten; commit `feat(db): seed all order/role conditions for demo`.
+
+## 4.3 Responsive <400px + Copy natural (graded UI)
+
+```
+NAVBAR (resources/js/components/Navbar.vue) — fix mepet di <400px (screenshot 378px):
+  - Logo: class "h-10 sm:h-12 lg:h-16" (jangan h-16 di mobile — kebesaran).
+  - Container: kurangi gap (gap-2), pastikan CTA "Masuk"/"Daftar" size-sm dan tidak terpotong.
+  - Promo top-bar tetap hidden < sm.
+HERO (HeroSection.vue) & grid: audit overflow di 360/375/390 — text-2xl base, px-4, tidak ada fixed-width.
+BOTTOM-NAV mobile (lihat §1.5) untuk menu utama di mobile.
+
+EM-DASH (—) → buang dari SEMUA copy yang tampil, tulis seperti ketikan manusia:
+  - HeroSection.vue:106  "Belanja, jualan, antar — satu saldo..."  → "Belanja, jualan, antar. Satu saldo untuk semuanya. Ganti peran kapan saja tanpa keluar akun."
+  - RoleCards.vue:71     "Pilih peranmu — bisa ganti..."           → "Pilih peranmu. Bisa ganti kapan saja tanpa daftar ulang."
+  - RoleCards.vue:124    "Mulai sekarang — gratis"                 → "Mulai sekarang, gratis"
+  - TrustBand.vue:8      "...sebelum checkout — tidak ada..."      → "...sebelum checkout. Tidak ada biaya tersembunyi."
+  - i18n id.ts:266 (driver empty) & cek en.ts                      → ganti "—" jadi titik/koma.
+  (Komentar HTML yang mengandung "—" boleh diabaikan; hanya teks tampil.)
+  GREP wajib sebelum selesai: `grep -rn "—" resources/js/pages resources/js/components --include=*.vue` → 0 di teks tampil.
+```
+
+DoD: cek manual 360/375/390/768/1280/1920; commit `fix(ui): repair sub-400px layout and remove em-dashes from copy`.
+
+## 4.4 Rencana Aset Gambar + Prompt Gemini (dokumen)
+
+> Gaya: **banner = studio/editorial, bersih, modern, nuansa teal SEAPEDIA**; produk = foto produk realistis latar bersih. Semua 3:2/2.5:1/1:1 sesuai slot. Simpan di `public/images/banners/` dan `storage/app/public/products/` (atau via seeder generate).
+
+### Banner utama (carousel) — 3 gambar @ **1200×480 px** (2.5:1), < 300KB WEBP
+
+| File | Tema | Prompt Gemini |
+| --- | --- | --- |
+| `banner-main-1.webp` | Gratis ongkir pesanan pertama | "Wide editorial marketplace banner, 1200x480, teal (#0E7C8B) to bright-cyan gradient, a friendly campus student holding a small parcel, soft studio lighting, clean minimal composition with empty space on the right for text, modern flat-illustration + photographic blend, no text, high quality" |
+| `banner-main-2.webp` | Diskon kuliner kampus | "Wide promo banner 1200x480, appetizing Indonesian campus street food (nasi goreng, es teh) arranged top-down on a teal pastel background, studio food photography, vibrant, clean negative space left side, no text" |
+| `banner-main-3.webp` | Jadi kurir kampus | "Wide banner 1200x480, a cheerful student courier on a bicycle with a delivery bag, dynamic motion, teal and amber accents, modern editorial style, soft gradient background, copy space, no text" |
+
+### Banner samping — 4 gambar @ **600×400 px** (3:2), < 150KB WEBP
+
+| File | Tema | Prompt |
+| --- | --- | --- |
+| `banner-side-1.webp` | Elektronik | "Square-ish 600x400 product banner, neatly arranged campus gadgets (earbuds, phone, power bank) on teal pastel studio backdrop, top-down, minimal, no text" |
+| `banner-side-2.webp` | Fashion | "600x400 banner, folded campus apparel (hoodie, tote bag) in teal/white palette, soft studio light, flat-lay, clean, no text" |
+| `banner-side-3.webp` | Minuman | "600x400 banner, iced coffee and milk tea cups with condensation, teal background, studio drink photography, fresh, no text" |
+| `banner-side-4.webp` | Kebutuhan harian | "600x400 banner, daily campus essentials (snacks, stationery) flat-lay on teal pastel, tidy grid, minimal, no text" |
+
+### Produk — 1:1 @ **800×800 px**, < 200KB WEBP, 1 utama/produk (~40)
+
+Prompt template per kategori (ganti `<item>`): "Realistic e-commerce product photo of `<item>`, centered, clean light-gray seamless studio background, soft even lighting, 1:1 square, sharp focus, no text, no watermark."
+Contoh item per kategori: Makanan→nasi goreng/snack box; Minuman→kopi susu/es teh; Elektronik→earbuds/power bank; Fashion→hoodie/tote; Kebutuhan Harian→sembako/sabun.
+
+> Catatan: crop 1:1 di app (§4.1) menjamin keseragaman walau sumber tidak persis square.
+
+## 4.5 Enhance halaman seller (storefront profil)
+
+```
+FILE resources/js/pages/stores/Show.vue (sudah ada — perkaya):
+  - Header band: avatar inisial (gradient dari nama, gaya PopularStores), nama toko besar,
+    jumlah produk, "Bergabung sejak {bulan tahun}", deskripsi toko.
+  - Grid produk (sudah ada) — selaraskan card dengan katalog (badge kategori, harga, stok).
+  - Empty state bila belum ada produk.
+StoreController::show / StoreService::publicShow → sertakan products_count, created_at, description, eager-load category.
+catalog/Show.vue: nama toko sudah klik → halaman ini (verifikasi).
+```
+
+DoD: commit `feat(store): enrich public seller storefront page`.
+
+## 4.6 Audit Kesesuaian Spec (✅ diverifikasi 28 Juni)
+
+| Aturan spec | Status | Bukti |
+| --- | --- | --- |
+| PPN 12% di checkout | ✅ | `CheckoutService::preview/commit` |
+| Single-store cart | ✅ | `CartService` (tolak produk beda toko) |
+| Lifecycle 5 status + history | ✅ | `OrderStatus` enum + `OrderService::transition` (tiap perubahan tulis history) |
+| Seller proses dulu sebelum driver | ✅ | `Menunggu Pengirim` gate di DeliveryService |
+| Driver find/take/complete + 1 driver/order | ✅ | `DeliveryService` (lockForUpdate take-job) |
+| Driver earning (80% ongkir) + escrow seller saat selesai | ✅ | `DeliveryService::complete` |
+| Overdue auto-refund/return (idempoten, no double) | ✅ | `OverdueService::sweep` (sentinel `refunded_at`) + restock + transition Dikembalikan |
+| Simulasi next-day | ✅ | `php artisan seapedia:advance-day` (`AdvanceDay` command) |
+| Wallet integer IDR, transaksi terkunci | ✅ | `WalletService` + `DB::transaction`+`lockForUpdate` |
+| XSS (no v-html) / SQLi (Eloquent only) | ✅ | grep bersih |
+| RBAC active-role server-side | ✅ | `EnsureActiveRole` + `RoleService` |
+
+**Tambahan (kategori/banner/crop) = bonus UI, tidak melanggar spec.** Yang masih perlu dikerjakan untuk skor penuh: validasi tighten non-produk (§3.3), admin monitoring 2.1 (graded), README rewrite, security notes.
