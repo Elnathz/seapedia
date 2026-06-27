@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\CategoryService;
 use App\Services\RoleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -9,7 +10,10 @@ use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-    public function __construct(private readonly RoleService $roleService) {}
+    public function __construct(
+        private readonly RoleService $roleService,
+        private readonly CategoryService $categories,
+    ) {}
 
     /**
      * The root template that's loaded on the first page visit.
@@ -51,6 +55,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'locale' => App::getLocale(),
+            'categories' => fn () => $this->categories->tree(),
         ];
     }
 }
