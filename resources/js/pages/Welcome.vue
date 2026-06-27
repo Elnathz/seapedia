@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import CategoryGrid from '@/components/landing/CategoryGrid.vue';
 import FeaturedStrip from '@/components/landing/FeaturedStrip.vue';
 import HeroSection from '@/components/landing/HeroSection.vue';
 import ReviewsSection from '@/components/landing/ReviewsSection.vue';
@@ -39,6 +40,7 @@ defineProps<{
     <Head title="SEAPEDIA | Marketplace Kampus" />
     <HeroSection />
     <TrustBand />
+    <CategoryGrid />
     <FeaturedStrip :products="featured" />
     <RoleCards />
     <ReviewsSection :reviews="reviews" />
