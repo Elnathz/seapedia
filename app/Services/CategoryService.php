@@ -41,7 +41,22 @@ class CategoryService
      */
     public function descendantIds(Category $category): array
     {
-        return [$category->id, ...$category->children()->pluck('id')->all()];
+        $category->loadMissing('children:id,parent_id');
+
+        return [$category->id, ...$category->children->pluck('id')->all()];
+    }
+
+    /**
+     * Resolve an active category by slug for the public catalog, eager-loading
+     * the parent (breadcrumb) and children (subtree filter) it needs.
+     */
+    public function findActiveBySlug(string $slug): ?Category
+    {
+        return Category::query()
+            ->active()
+            ->with(['parent:id,name,slug', 'children:id,parent_id'])
+            ->where('slug', $slug)
+            ->first();
     }
 
     /**

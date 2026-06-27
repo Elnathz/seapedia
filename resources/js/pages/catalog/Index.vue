@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Search } from '@lucide/vue';
-import { ref } from 'vue';
+import { ChevronRight, Search } from '@lucide/vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import EmptyState from '@/components/EmptyState.vue';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
@@ -19,6 +19,7 @@ import {
     PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Spinner } from '@/components/ui/spinner';
+import { useCategories } from '@/composables/useCategories';
 import { formatIDR } from '@/lib/utils';
 import { index as catalogIndex, show as catalogShow } from '@/routes/catalog';
 
@@ -47,24 +48,80 @@ interface PaginatedProducts {
     total: number;
 }
 
+interface ActiveCategory {
+    id: number;
+    name: string;
+    slug: string;
+    parent: { name: string; slug: string } | null;
+}
+
 const props = defineProps<{
     products: PaginatedProducts;
     search: string | null;
+    activeCategory: ActiveCategory | null;
 }>();
 
 const query = ref(props.search ?? '');
 const loading = ref(false);
 const { t } = useI18n();
+const { categories } = useCategories();
+
+// The parent whose subcategory row should be shown: the active category's
+// parent when a child is selected, or the active category itself when it is a
+// parent. Null means no category filter (the "Semua" chip is active).
+const activeParentSlug = computed(
+    () =>
+        props.activeCategory?.parent?.slug ??
+        props.activeCategory?.slug ??
+        null,
+);
+
+const subCategories = computed(
+    () =>
+        categories.value.find((root) => root.slug === activeParentSlug.value)
+            ?.children ?? [],
+);
 
 function applySearch() {
-    visit(query.value ? { q: query.value } : {});
+    visit(
+        buildParams({ category: props.activeCategory?.slug, q: query.value }),
+    );
+}
+
+function selectCategory(slug: string | null) {
+    visit(buildParams({ category: slug ?? undefined, q: props.search }));
 }
 
 function goToPage(page: number) {
-    visit({
-        ...(props.search ? { q: props.search } : {}),
-        page,
-    });
+    visit(
+        buildParams({
+            category: props.activeCategory?.slug,
+            q: props.search,
+            page,
+        }),
+    );
+}
+
+function buildParams(input: {
+    category?: string;
+    q?: string | null;
+    page?: number;
+}): Record<string, string | number> {
+    const params: Record<string, string | number> = {};
+
+    if (input.q) {
+        params.q = input.q;
+    }
+
+    if (input.category) {
+        params.category = input.category;
+    }
+
+    if (input.page) {
+        params.page = input.page;
+    }
+
+    return params;
 }
 
 function visit(params: Record<string, string | number>) {
@@ -108,6 +165,83 @@ function visit(params: Record<string, string | number>) {
             </div>
         </div>
 
+        <!-- Category filter chips -->
+        <div class="-mx-4 mt-6 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+            <div class="flex w-max gap-2 sm:w-auto sm:flex-wrap">
+                <button
+                    type="button"
+                    class="rounded-full border px-4 py-2 text-sm font-medium transition-colors"
+                    :class="
+                        !activeCategory
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                    "
+                    @click="selectCategory(null)"
+                >
+                    {{ t('catalog.allCategories') }}
+                </button>
+                <button
+                    v-for="root in categories"
+                    :key="root.id"
+                    type="button"
+                    class="rounded-full border px-4 py-2 text-sm font-medium transition-colors"
+                    :class="
+                        root.slug === activeParentSlug
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                    "
+                    @click="selectCategory(root.slug)"
+                >
+                    {{ root.name }}
+                </button>
+            </div>
+        </div>
+
+        <!-- Subcategory chips for the active parent -->
+        <div
+            v-if="subCategories.length"
+            class="-mx-4 mt-3 overflow-x-auto px-4 sm:mx-0 sm:px-0"
+        >
+            <div class="flex w-max gap-2 sm:w-auto sm:flex-wrap">
+                <button
+                    v-for="child in subCategories"
+                    :key="child.id"
+                    type="button"
+                    class="rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors"
+                    :class="
+                        child.slug === activeCategory?.slug
+                            ? 'border-primary/60 bg-primary/10 text-primary'
+                            : 'border-border bg-card text-muted-foreground hover:text-foreground'
+                    "
+                    @click="selectCategory(child.slug)"
+                >
+                    {{ child.name }}
+                </button>
+            </div>
+        </div>
+
+        <!-- Active category breadcrumb -->
+        <div
+            v-if="activeCategory"
+            class="mt-6 flex items-center gap-1.5 text-sm text-muted-foreground"
+        >
+            <span>{{ t('catalog.title') }}</span>
+            <ChevronRight class="size-3.5" />
+            <template v-if="activeCategory.parent">
+                <button
+                    type="button"
+                    class="hover:text-foreground"
+                    @click="selectCategory(activeCategory.parent.slug)"
+                >
+                    {{ activeCategory.parent.name }}
+                </button>
+                <ChevronRight class="size-3.5" />
+            </template>
+            <span class="font-medium text-foreground">
+                {{ activeCategory.name }}
+            </span>
+        </div>
+
         <EmptyState
             v-if="products.data.length === 0"
             :title="t('catalog.emptyTitle')"
@@ -149,8 +283,14 @@ function visit(params: Record<string, string | number>) {
                             <Badge variant="secondary" class="w-fit text-xs">
                                 {{ product.store.name }}
                             </Badge>
-                            <h2 class="mt-1 line-clamp-2 font-medium leading-snug">{{ product.name }}</h2>
-                            <p class="mt-1.5 font-semibold tabular-nums text-primary">
+                            <h2
+                                class="mt-1 line-clamp-2 leading-snug font-medium"
+                            >
+                                {{ product.name }}
+                            </h2>
+                            <p
+                                class="mt-1.5 font-semibold text-primary tabular-nums"
+                            >
                                 {{ formatIDR(product.price) }}
                             </p>
                         </CardContent>

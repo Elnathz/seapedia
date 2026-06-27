@@ -39,6 +39,8 @@ export default {
         emptyTitle: 'No products found',
         emptyDescription: 'Try a different keyword or browse all products.',
         backToCatalog: 'Back to catalog',
+        allCategories: 'All',
+        categoryHeading: '{name} category',
         stock: 'Stock',
         storeActive: 'Active Store',
     },

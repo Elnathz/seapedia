@@ -39,6 +39,8 @@ export default {
         emptyTitle: 'Produk tidak ditemukan',
         emptyDescription: 'Coba kata kunci lain atau lihat semua produk.',
         backToCatalog: 'Kembali ke katalog',
+        allCategories: 'Semua',
+        categoryHeading: 'Kategori {name}',
         stock: 'Stok',
         storeActive: 'Toko Aktif',
     },

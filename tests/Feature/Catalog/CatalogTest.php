@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Catalog;
 
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -50,6 +51,37 @@ class CatalogTest extends TestCase
             ->where('products.total', 1)
             ->where('products.data.0.id', $match->id)
         );
+    }
+
+    public function test_catalog_filters_by_category_subtree(): void
+    {
+        $store = Store::factory()->create(['is_active' => true]);
+
+        $parent = Category::factory()->create(['slug' => 'minuman']);
+        $kopi = Category::factory()->create(['parent_id' => $parent->id, 'slug' => 'kopi']);
+        $teh = Category::factory()->create(['parent_id' => $parent->id, 'slug' => 'teh']);
+        $other = Category::factory()->create(['slug' => 'elektronik']);
+
+        $kopiProduct = Product::factory()->create(['store_id' => $store->id, 'is_active' => true, 'category_id' => $kopi->id]);
+        Product::factory()->create(['store_id' => $store->id, 'is_active' => true, 'category_id' => $teh->id]);
+        Product::factory()->create(['store_id' => $store->id, 'is_active' => true, 'category_id' => $other->id]);
+
+        // A parent slug returns its whole subtree (kopi + teh), excluding others.
+        $this->get(route('catalog.index', ['category' => 'minuman']))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->where('products.total', 2)
+                ->where('activeCategory.slug', 'minuman')
+            );
+
+        // A child slug returns only that leaf's products.
+        $this->get(route('catalog.index', ['category' => 'kopi']))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->where('products.total', 1)
+                ->where('products.data.0.id', $kopiProduct->id)
+                ->where('activeCategory.parent.slug', 'minuman')
+            );
     }
 
     public function test_inactive_product_detail_returns_404(): void
