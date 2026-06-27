@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property int $id
  * @property int $store_id
+ * @property int $category_id
  * @property string $name
  * @property string $slug
  * @property string|null $description
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $image_path
  * @property bool $is_active
  */
-#[Fillable(['store_id', 'name', 'slug', 'description', 'price', 'stock', 'image_path', 'is_active'])]
+#[Fillable(['store_id', 'category_id', 'name', 'slug', 'description', 'price', 'stock', 'image_path', 'is_active'])]
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
@@ -40,5 +41,13 @@ class Product extends Model
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
+    }
+
+    /**
+     * @return BelongsTo<Category, $this>
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 }

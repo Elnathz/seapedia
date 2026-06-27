@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -25,6 +26,8 @@ class ProductFactory extends Factory
 
         return [
             'store_id' => Store::factory(),
+            'category_id' => Category::query()->whereNotNull('parent_id')->inRandomOrder()->value('id')
+                ?? Category::factory(),
             'name' => $name,
             'slug' => Str::slug($name).'-'.$this->faker->unique()->numberBetween(1000, 9999),
             'description' => $this->faker->sentence(15),

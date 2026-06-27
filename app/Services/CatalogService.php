@@ -17,7 +17,7 @@ class CatalogService
     public function index(?string $search = null, int $perPage = 12): LengthAwarePaginator
     {
         return Product::query()
-            ->with('store:id,name,slug')
+            ->with(['store:id,name,slug', 'category:id,name,slug'])
             ->where('is_active', true)
             ->whereHas('store', fn ($query) => $query->where('is_active', true))
             ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
@@ -40,7 +40,7 @@ class CatalogService
     public function find(string $slug): ?Product
     {
         return Product::query()
-            ->with('store:id,name,slug,is_active')
+            ->with(['store:id,name,slug,is_active', 'category:id,name,slug,parent_id'])
             ->where('slug', $slug)
             ->where('is_active', true)
             ->whereHas('store', fn ($query) => $query->where('is_active', true))

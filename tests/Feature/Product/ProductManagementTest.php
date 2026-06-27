@@ -3,6 +3,7 @@
 namespace Tests\Feature\Product;
 
 use App\Enums\RoleName;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\Role;
 use App\Models\Store;
@@ -41,6 +42,7 @@ class ProductManagementTest extends TestCase
         $response = $this->actingAsSeller($seller)->post(route('seller.products.store'), [
             'name' => 'Kopi Susu',
             'description' => 'Kopi susu segar.',
+            'category_id' => Category::factory()->create()->id,
             'price' => 18000,
             'stock' => 20,
             'image' => $image,
@@ -77,6 +79,7 @@ class ProductManagementTest extends TestCase
         $response = $this->actingAsSeller($seller)->put(route('seller.products.update', $product), [
             'name' => 'Nama Baru',
             'description' => 'Deskripsi baru.',
+            'category_id' => $product->category_id,
             'price' => 25000,
             'stock' => 10,
         ]);
@@ -109,7 +112,8 @@ class ProductManagementTest extends TestCase
 
         $response = $this->actingAsSeller($intruder)->put(route('seller.products.update', $product), [
             'name' => 'Diretas',
-            'price' => 1,
+            'category_id' => $product->category_id,
+            'price' => 100,
             'stock' => 1,
         ]);
 

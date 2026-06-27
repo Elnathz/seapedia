@@ -13,12 +13,13 @@ class ProductService
     private const IMAGE_DIRECTORY = 'products';
 
     /**
-     * @param  array{name: string, description: ?string, price: int, stock: int}  $data
+     * @param  array{name: string, description: ?string, price: int, stock: int, category_id: int}  $data
      */
     public function createForStore(Store $store, array $data, ?UploadedFile $image): Product
     {
         return Product::create([
             'store_id' => $store->id,
+            'category_id' => $data['category_id'],
             'name' => $data['name'],
             'slug' => $this->uniqueSlug($data['name']),
             'description' => $data['description'] ?? null,
@@ -30,7 +31,7 @@ class ProductService
     }
 
     /**
-     * @param  array{name: string, description: ?string, price: int, stock: int}  $data
+     * @param  array{name: string, description: ?string, price: int, stock: int, category_id: int}  $data
      */
     public function update(Product $product, array $data, ?UploadedFile $image): Product
     {
@@ -38,6 +39,7 @@ class ProductService
         $newImage = $image ? $this->storeImage($image) : null;
 
         $product->update([
+            'category_id' => $data['category_id'],
             'name' => $data['name'],
             'slug' => $data['name'] === $product->name
                 ? $product->slug

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\User;
 use App\Services\ProductService;
 use App\Services\StoreService;
@@ -29,9 +30,9 @@ class StoreProductSeeder extends Seeder
             storeName: 'Toko Berkah',
             description: 'Toko kelontong dan jasa cetak di lingkungan kampus.',
             products: [
-                ['name' => 'Kopi Susu Gula Aren', 'description' => 'Kopi susu segar dengan gula aren asli, diseduh setiap pagi.', 'price' => 18_000, 'stock' => 24],
-                ['name' => 'Fotokopi & Print Dokumen', 'description' => 'Layanan fotokopi dan print per halaman, hitam-putih maupun warna.', 'price' => 500, 'stock' => 999],
-                ['name' => 'Stiker Custom', 'description' => 'Stiker vinyl custom sesuai desain pesanan, tahan air.', 'price' => 10_000, 'stock' => 60],
+                ['name' => 'Kopi Susu Gula Aren', 'description' => 'Kopi susu segar dengan gula aren asli, diseduh setiap pagi.', 'price' => 18_000, 'stock' => 24, 'category' => 'kopi'],
+                ['name' => 'Fotokopi & Print Dokumen', 'description' => 'Layanan fotokopi dan print per halaman, hitam-putih maupun warna.', 'price' => 500, 'stock' => 999, 'category' => 'umum'],
+                ['name' => 'Stiker Custom', 'description' => 'Stiker vinyl custom sesuai desain pesanan, tahan air.', 'price' => 10_000, 'stock' => 60, 'category' => 'umum'],
             ],
         );
 
@@ -40,15 +41,15 @@ class StoreProductSeeder extends Seeder
             storeName: 'Warung Mama Lia',
             description: 'Warung makan dan minuman, favorit anak kos sekitar kampus.',
             products: [
-                ['name' => 'Nasi Goreng Spesial', 'description' => 'Nasi goreng dengan telur, ayam suwir, dan acar timun.', 'price' => 22_000, 'stock' => 15],
-                ['name' => 'Es Teh Manis', 'description' => 'Teh manis dingin, cocok untuk menemani makan siang.', 'price' => 5_000, 'stock' => 40],
-                ['name' => 'Snack Box Rapat', 'description' => 'Paket snack untuk rapat atau acara organisasi kampus.', 'price' => 15_000, 'stock' => 30],
+                ['name' => 'Nasi Goreng Spesial', 'description' => 'Nasi goreng dengan telur, ayam suwir, dan acar timun.', 'price' => 22_000, 'stock' => 15, 'category' => 'makanan-berat'],
+                ['name' => 'Es Teh Manis', 'description' => 'Teh manis dingin, cocok untuk menemani makan siang.', 'price' => 5_000, 'stock' => 40, 'category' => 'teh'],
+                ['name' => 'Snack Box Rapat', 'description' => 'Paket snack untuk rapat atau acara organisasi kampus.', 'price' => 15_000, 'stock' => 30, 'category' => 'cemilan'],
             ],
         );
     }
 
     /**
-     * @param  array<int, array{name: string, description: string, price: int, stock: int}>  $products
+     * @param  array<int, array{name: string, description: string, price: int, stock: int, category: string}>  $products
      */
     private function seedStore(string $username, string $storeName, string $description, array $products): void
     {
@@ -64,6 +65,7 @@ class StoreProductSeeder extends Seeder
         ]);
 
         foreach ($products as $data) {
+            $data['category_id'] = Category::query()->where('slug', $data['category'])->value('id');
             $product = $this->products->createForStore($store, $data, null);
             $product->update(['image_path' => $this->generatePlaceholderImage()]);
         }
