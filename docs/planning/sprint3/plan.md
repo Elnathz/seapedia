@@ -289,7 +289,7 @@ Discussed and **deferred to the final sprint** (Sprint 6 polish), so the heavies
   (search + hero banner + featured products + categories + store highlights + reviews), keeping
   `/catalog` as the full listing. The brief Level 1 allows a "landing page OR home page" and requires
   it to read as "a marketplace, not only a single-store catalog"; a product-rich home (Shopee/
-  Tokopedia/MegaMart style) scores best on the UI bonus. **Assets already prepared by the owner** in
+  Tokopedia/Shopee style) scores best on the UI bonus. **Assets already prepared by the owner** in
   `public/images/` (`banner/`, `banner/hero/`, `banner/side/`, `category/`).
 - **Real demo product photos + product re-theme** — `public/images/product/` holds real photos
   (iPhone 17 / 17 Pro Max colourways, Tenda, rel pancing, kantong plastik vakum, pelapis kabel

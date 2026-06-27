@@ -20,7 +20,7 @@
 | `1a2caac` | Landing `CategoryGrid` (animasi Premium, reduced-motion) |
 | `7bb4bf8` | Admin Category CRUD + menu sidebar + guard hapus + 7 test |
 | `8006d9a` | Seller product list: tabel → card grid responsif + badge kategori |
-| `771a089` · `8026e32` | chore: eslint exclude megamart · track skill motion-design/decision-guard |
+| `771a089` · `8026e32` | chore: eslint exclude reference project · track skill motion-design/decision-guard |
 
 Validasi produk sudah diketatkan (name max:150, price min:100|max:100jt, stock max:1jt, category required).
 
@@ -30,7 +30,7 @@ Validasi produk sudah diketatkan (name max:150, price min:100|max:100jt, stock m
 2. **§3.3 Validation pass** — tighten FormRequest non-produk + RequiredMark/InputError/toast menyeluruh (graded security).
 3. **§2.1 Admin monitoring** (users/stores/products/orders/deliveries/overdue) — graded 3pt.
 4. **§4.3 Responsive <400px + buang em-dash** — navbar mepet (screenshot 378px), copy natural.
-5. **§4.0 Banner admin (layout megamart)** + **§4.1 crop adaptif** (produk 1:1, banner 2.5:1/3:2) — `vue-advanced-cropper`.
+5. **§4.0 Banner admin (marketplace layout)** + **§4.1 crop adaptif** (produk 1:1, banner 2.5:1/3:2) — `vue-advanced-cropper`.
 6. **§1.4 buyer redirect ke /catalog** + **§1.5 bottom-nav role-aware** (UX mobile).
 7. **§4.5 enhance halaman seller** (sudah ada versi dasar).
 8. **§4.4 aset gambar** (generate via prompt Gemini di plan) → pasang ke seeder banner/produk.
@@ -51,7 +51,7 @@ Akun demo: `admin`, `seller1`, `buyer1`, `driver1`, `multi1` (password lihat REA
 
 ## 5. Catatan handoff (PENTING — biar tidak terjebak)
 
-- **megamart/e-commerce/ = nested git repo**, muncul sebagai `?? megamart/`, BUKAN gitignored. **Jangan `git add -A`/`git add .`** — stage path eksplisit. Pakai megamart hanya sebagai **referensi internal**; JANGAN sebut megamart di file yang di-commit (CLAUDE.md aturan: tanpa jejak referensi e-commerce lain).
+- **Ada nested git repo referensi** di working tree (untracked, muncul sebagai satu entri `?? <folder>/`), BUKAN gitignored. **Jangan `git add -A`/`git add .`** — stage path eksplisit. Path referensi per fitur ada di catatan lokal `.claude/reference-map.md` (gitignored, tidak ikut ter-push). JANGAN sebut nama referensi e-commerce lain di file yang di-commit, komentar, atau pesan commit (aturan CLAUDE.md).
 - **Wayfinder** (`resources/js/actions`, `routes`, `wayfinder`) di-track per kebijakan Docker, tapi `npm run build` regenerasi dengan diff reformat (noise). Commit hanya file wayfinder yang benar-benar berubah (controller/route baru, `git add -f` untuk file baru), lalu `git checkout -- resources/js/actions resources/js/routes resources/js/wayfinder` untuk buang sisanya. Ada perubahan `.gitignore` uncommitted milik user (ingin ignore wayfinder) — JANGAN buang; kebijakan ini belum final.
 - **Swagger annotation-driven** (`#[OA]` di 17 controller, `api-docs.json` gitignored/generated). Endpoint API baru: tambah atribut `#[OA]` lalu `l5-swagger:generate`. Jangan edit JSON manual.
 - **Playwright/visual-QA dilewati** (keputusan user) — verifikasi tampilan manual di browser; catat di sini bila ada gap.

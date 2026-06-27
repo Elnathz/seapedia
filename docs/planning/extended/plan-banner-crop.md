@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add admin-managed storefront banners (megamart-style big-center carousel + small side banners on `/catalog`) and an adaptive image cropper (1:1 products, 2.5:1 main banner, 3:2 side banner) reused by the product and banner upload forms.
+**Goal:** Add admin-managed storefront banners (marketplace-style big-center carousel + small side banners on `/catalog`) and an adaptive image cropper (1:1 products, 2.5:1 main banner, 3:2 side banner) reused by the product and banner upload forms.
 
 **Architecture:** A `banners` table (placement `main`|`side`) behind `BannerService`; thin `Admin\BannerController` CRUD; Vue `BannerCarousel` + `BannerImage` rendered on the catalog index from a `banners` prop; a reusable `ImageCropField.vue` (wraps `vue-advanced-cropper`) that crops to a configurable aspect ratio and injects the cropped `File` into the existing Inertia `<Form>` via `DataTransfer`.
 
@@ -17,7 +17,7 @@
 - Icons from `@lucide/vue` only (no emoji). Required fields use `<RequiredMark />` + `<InputError />`.
 - Image uploads validated server-side: `image|mimes:jpg,jpeg,png,webp|max:2048`.
 - Run via Sail: `./vendor/bin/sail ...`. Format before commit: `sail pint` + `sail npm run lint`. Tests: `sail artisan test`.
-- Do NOT name megamart or any other e-commerce reference in committed files.
+- Do NOT name any external e-commerce reference (folders, products, or commit messages) in committed files.
 - Banners are a bonus UI enhancement; they must not alter core business rules.
 
 ## File Structure

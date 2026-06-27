@@ -1307,7 +1307,7 @@ Uji manual di **360 / 768 / 1280 / 1920px** (target demo 1920). Fokus: navbar/bo
 > **Implementer = Sonnet ATAU Gemini 3.1 Pro (Antigravity).** Instruksi di bawah model-agnostic. Semua keputusan sudah diaudit terhadap `docs/SEAPEDIA_SPEC.md` — banner/crop/kategori adalah **enhancement UI/bonus** (spec "be creative"), tidak mengubah business rule inti (PPN 12%, single-store cart, lifecycle 5 status, overdue refund, escrow).
 > Status fitur kategori: lihat §1.0 (✅ selesai). Status flow checkout→delivery→refund: lihat §4.6 (✅ sudah benar, hanya verifikasi).
 
-## 4.0 Sistem Banner (admin-managed, layout megamart) — FITUR BARU
+## 4.0 Sistem Banner (admin-managed, layout storefront marketplace) — FITUR BARU
 
 **Konsep:** banner storefront ala marketplace — **tengah carousel besar + 2 banner kecil kiri + 2 kanan** (desktop), stack di mobile. Dikelola admin (CRUD + upload).
 
