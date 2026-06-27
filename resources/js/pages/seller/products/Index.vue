@@ -17,14 +17,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 import { formatIDR } from '@/lib/utils';
 import { create as createProduct } from '@/routes/seller/products';
 
@@ -35,6 +27,7 @@ interface ProductRow {
     stock: number;
     image_path: string | null;
     is_active: boolean;
+    category: { name: string } | null;
 }
 
 defineProps<{
@@ -71,134 +64,156 @@ const { t } = useI18n();
             @action="router.visit(createProduct().url)"
         />
 
-        <Table v-else>
-            <TableHeader>
-                <TableRow>
-                    <TableHead>{{ t('product.columnImage') }}</TableHead>
-                    <TableHead>{{ t('product.columnName') }}</TableHead>
-                    <TableHead>{{ t('product.columnPrice') }}</TableHead>
-                    <TableHead>{{ t('product.columnStock') }}</TableHead>
-                    <TableHead>{{ t('product.columnStatus') }}</TableHead>
-                    <TableHead class="text-right">{{
-                        t('product.columnActions')
-                    }}</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                <TableRow v-for="product in products" :key="product.id">
-                    <TableCell>
-                        <img
-                            v-if="product.image_path"
-                            :src="`/storage/${product.image_path}`"
-                            :alt="product.name"
-                            loading="lazy"
-                            class="size-12 rounded-md border border-border object-cover"
-                        />
-                        <div
-                            v-else
-                            class="flex size-12 items-center justify-center rounded-md border border-dashed border-border text-muted-foreground"
+        <div
+            v-else
+            class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
+        >
+            <div
+                v-for="product in products"
+                :key="product.id"
+                class="group flex flex-col overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-md"
+            >
+                <!-- Image -->
+                <div
+                    class="relative aspect-square overflow-hidden border-b border-border bg-muted"
+                >
+                    <img
+                        v-if="product.image_path"
+                        :src="`/storage/${product.image_path}`"
+                        :alt="product.name"
+                        loading="lazy"
+                        class="size-full object-cover"
+                    />
+                    <div
+                        v-else
+                        class="flex size-full items-center justify-center text-muted-foreground"
+                    >
+                        <Package class="size-8" />
+                    </div>
+                    <Badge
+                        v-if="product.stock === 0"
+                        variant="destructive"
+                        class="absolute top-2 right-2"
+                    >
+                        {{ t('product.outOfStock') }}
+                    </Badge>
+                    <Badge
+                        v-if="!product.is_active"
+                        variant="secondary"
+                        class="absolute top-2 left-2"
+                    >
+                        {{ t('product.inactive') }}
+                    </Badge>
+                </div>
+
+                <!-- Body -->
+                <div class="flex flex-1 flex-col gap-1.5 p-3">
+                    <Badge
+                        v-if="product.category"
+                        variant="secondary"
+                        class="w-fit text-xs"
+                    >
+                        {{ product.category.name }}
+                    </Badge>
+                    <h3
+                        class="line-clamp-2 text-sm leading-snug font-medium text-foreground"
+                    >
+                        {{ product.name }}
+                    </h3>
+                    <p class="font-semibold tabular-nums text-primary">
+                        {{ formatIDR(product.price) }}
+                    </p>
+                    <p
+                        class="text-xs"
+                        :class="
+                            product.stock === 0
+                                ? 'text-destructive'
+                                : 'text-muted-foreground'
+                        "
+                    >
+                        {{ t('product.stockLabel') }}:
+                        <span class="tabular-nums">{{ product.stock }}</span>
+                    </p>
+
+                    <!-- Actions -->
+                    <div
+                        class="mt-auto flex items-center gap-2 border-t border-border pt-3"
+                    >
+                        <Button
+                            as-child
+                            size="sm"
+                            variant="outline"
+                            class="flex-1"
                         >
-                            <Package class="size-5" />
-                        </div>
-                    </TableCell>
-                    <TableCell class="font-medium">{{
-                        product.name
-                    }}</TableCell>
-                    <TableCell class="tabular-nums">{{
-                        formatIDR(product.price)
-                    }}</TableCell>
-                    <TableCell class="tabular-nums">{{
-                        product.stock
-                    }}</TableCell>
-                    <TableCell>
-                        <Badge
-                            :variant="
-                                product.is_active ? 'secondary' : 'outline'
-                            "
-                        >
-                            {{
-                                product.is_active
-                                    ? t('product.active')
-                                    : t('product.inactive')
-                            }}
-                        </Badge>
-                    </TableCell>
-                    <TableCell class="text-right">
-                        <div class="flex justify-end gap-2">
-                            <Button as-child size="sm" variant="outline">
-                                <Link
-                                    :href="
-                                        SellerProductController.edit.url(
-                                            product.id,
-                                        )
-                                    "
+                            <Link
+                                :href="
+                                    SellerProductController.edit.url(product.id)
+                                "
+                            >
+                                <Pencil class="size-4" />
+                                {{ t('product.editAction') }}
+                            </Link>
+                        </Button>
+
+                        <Dialog>
+                            <DialogTrigger as-child>
+                                <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    class="text-destructive hover:text-destructive"
                                 >
-                                    <Pencil class="size-4" />
+                                    <Trash2 class="size-4" />
                                     <span class="sr-only">{{
-                                        t('product.edit', {
+                                        t('product.delete', {
                                             name: product.name,
                                         })
                                     }}</span>
-                                </Link>
-                            </Button>
-
-                            <Dialog>
-                                <DialogTrigger as-child>
-                                    <Button size="sm" variant="destructive">
-                                        <Trash2 class="size-4" />
-                                        <span class="sr-only">{{
-                                            t('product.delete', {
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <Form
+                                    v-bind="
+                                        SellerProductController.destroy.form(
+                                            product.id,
+                                        )
+                                    "
+                                    :options="{ preserveScroll: true }"
+                                    v-slot="{ processing }"
+                                >
+                                    <DialogHeader class="space-y-3">
+                                        <DialogTitle>{{
+                                            t('product.deleteConfirmTitle', {
                                                 name: product.name,
                                             })
-                                        }}</span>
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <Form
-                                        v-bind="
-                                            SellerProductController.destroy.form(
-                                                product.id,
-                                            )
-                                        "
-                                        :options="{ preserveScroll: true }"
-                                        v-slot="{ processing }"
-                                    >
-                                        <DialogHeader class="space-y-3">
-                                            <DialogTitle>{{
+                                        }}</DialogTitle>
+                                        <DialogDescription>
+                                            {{
                                                 t(
-                                                    'product.deleteConfirmTitle',
-                                                    { name: product.name },
+                                                    'product.deleteConfirmDescription',
                                                 )
-                                            }}</DialogTitle>
-                                            <DialogDescription>
-                                                {{
-                                                    t(
-                                                        'product.deleteConfirmDescription',
-                                                    )
-                                                }}
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <DialogFooter class="mt-4 gap-2">
-                                            <DialogClose as-child>
-                                                <Button variant="secondary">{{
-                                                    t('common.cancel')
-                                                }}</Button>
-                                            </DialogClose>
-                                            <Button
-                                                type="submit"
-                                                variant="destructive"
-                                                :disabled="processing"
-                                            >
-                                                {{ t('product.deleteConfirm') }}
-                                            </Button>
-                                        </DialogFooter>
-                                    </Form>
-                                </DialogContent>
-                            </Dialog>
-                        </div>
-                    </TableCell>
-                </TableRow>
-            </TableBody>
-        </Table>
+                                            }}
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter class="mt-4 gap-2">
+                                        <DialogClose as-child>
+                                            <Button variant="secondary">{{
+                                                t('common.cancel')
+                                            }}</Button>
+                                        </DialogClose>
+                                        <Button
+                                            type="submit"
+                                            variant="destructive"
+                                            :disabled="processing"
+                                        >
+                                            {{ t('product.deleteConfirm') }}
+                                        </Button>
+                                    </DialogFooter>
+                                </Form>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>

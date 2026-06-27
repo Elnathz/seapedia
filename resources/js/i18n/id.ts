@@ -97,6 +97,8 @@ export default {
         columnActions: 'Aksi',
         active: 'Aktif',
         inactive: 'Nonaktif',
+        outOfStock: 'Stok habis',
+        editAction: 'Edit',
         edit: 'Edit {name}',
         delete: 'Hapus {name}',
         deleteConfirmTitle: 'Hapus "{name}"?',

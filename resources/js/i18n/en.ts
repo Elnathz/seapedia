@@ -97,6 +97,8 @@ export default {
         columnActions: 'Actions',
         active: 'Active',
         inactive: 'Inactive',
+        outOfStock: 'Out of stock',
+        editAction: 'Edit',
         edit: 'Edit {name}',
         delete: 'Delete {name}',
         deleteConfirmTitle: 'Delete "{name}"?',
