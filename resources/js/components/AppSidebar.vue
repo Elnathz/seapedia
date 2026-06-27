@@ -10,6 +10,7 @@ import {
     Receipt,
     ShoppingCart,
     Store,
+    Tags,
     Ticket,
     Truck,
     Wallet,
@@ -30,6 +31,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as indexAdminCategories } from '@/routes/admin/categories';
 import { index as indexAdminPromos } from '@/routes/admin/promos';
 import { index as indexAdminVouchers } from '@/routes/admin/vouchers';
 import { index as indexBuyerAddresses } from '@/routes/buyer/addresses';
@@ -122,6 +124,11 @@ const mainNavItems = computed<NavItem[]>(() => {
 
     if (auth.user?.is_admin) {
         items.push(
+            {
+                title: t('admin.manageCategoriesTitle'),
+                href: indexAdminCategories(),
+                icon: Tags,
+            },
             {
                 title: t('admin.managePromosTitle'),
                 href: indexAdminPromos(),

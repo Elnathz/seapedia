@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Web\Admin\ClockController as AdminClockController;
 use App\Http\Controllers\Web\Admin\PromoController as AdminPromoController;
 use App\Http\Controllers\Web\Admin\VoucherController as AdminVoucherController;
@@ -105,6 +106,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('vouchers', [AdminVoucherController::class, 'store'])->name('vouchers.store');
         Route::get('vouchers/{voucher}', [AdminVoucherController::class, 'show'])->name('vouchers.show');
         Route::patch('vouchers/{voucher}/toggle-active', [AdminVoucherController::class, 'toggleActive'])->name('vouchers.toggleActive');
+
+        Route::get('categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+        Route::post('categories', [AdminCategoryController::class, 'store'])->name('categories.store');
+        Route::put('categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
+        Route::delete('categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
     });
 });
 

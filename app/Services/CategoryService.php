@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 
 class CategoryService
 {
@@ -72,5 +73,71 @@ class CategoryService
             ->with(['children' => fn ($query) => $query->withCount('products')->orderBy('sort_order')])
             ->orderBy('sort_order')
             ->get();
+    }
+
+    /**
+     * @param  array{name: string, parent_id?: ?int, icon?: ?string, is_active?: bool}  $data
+     */
+    public function create(array $data): Category
+    {
+        return Category::create([
+            'parent_id' => $data['parent_id'] ?? null,
+            'name' => $data['name'],
+            'slug' => $this->uniqueSlug($data['name']),
+            'icon' => $data['icon'] ?? null,
+            'is_active' => $data['is_active'] ?? true,
+            'sort_order' => Category::query()->max('sort_order') + 1,
+        ]);
+    }
+
+    /**
+     * @param  array{name: string, parent_id?: ?int, icon?: ?string, is_active?: bool}  $data
+     */
+    public function update(Category $category, array $data): Category
+    {
+        $category->update([
+            'parent_id' => $data['parent_id'] ?? null,
+            'name' => $data['name'],
+            'slug' => $data['name'] === $category->name
+                ? $category->slug
+                : $this->uniqueSlug($data['name'], $category->id),
+            'icon' => $data['icon'] ?? null,
+            'is_active' => $data['is_active'] ?? $category->is_active,
+        ]);
+
+        return $category->refresh();
+    }
+
+    /**
+     * A category can only be deleted once it holds no products and no
+     * children, so deleting never cascades away a seller's products.
+     */
+    public function isDeletable(Category $category): bool
+    {
+        return ! $category->products()->exists() && ! $category->children()->exists();
+    }
+
+    public function delete(Category $category): void
+    {
+        $category->delete();
+    }
+
+    private function uniqueSlug(string $name, ?int $ignoreId = null): string
+    {
+        $base = Str::slug($name);
+        $slug = $base;
+        $suffix = 1;
+
+        while (
+            Category::query()
+                ->where('slug', $slug)
+                ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
+                ->exists()
+        ) {
+            $slug = "{$base}-{$suffix}";
+            $suffix++;
+        }
+
+        return $slug;
     }
 }
