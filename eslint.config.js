@@ -76,6 +76,7 @@ export default defineConfigWithVueTs(
         ignores: [
             'vendor',
             'node_modules',
+            'megamart',
             'public',
             'bootstrap/ssr',
             'tailwind.config.js',
