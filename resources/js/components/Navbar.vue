@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { Link, router } from '@inertiajs/vue3';
+import { Link, router, usePage } from '@inertiajs/vue3';
 import { Flame, Search } from '@lucide/vue';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Logo from '@/components/brand/Logo.vue';
-import LocaleToggle from '@/components/LocaleToggle.vue';
 import RoleBadge from '@/components/RoleBadge.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -24,6 +23,9 @@ const auth = useAuthStore();
 const { t } = useI18n();
 const { categories } = useCategories();
 
+const page = usePage();
+const isLandingPage = computed(() => page.component === 'Welcome');
+
 const searchQuery = ref('');
 
 function searchCatalog() {
@@ -38,6 +40,39 @@ import { Menu, X } from '@lucide/vue';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 const showMobileSearch = ref(false);
+
+function easeInOutCubic(t: number): number {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function scrollToSection(e: Event, id: string) {
+    e.preventDefault();
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    const navbarOffset = 80;
+    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navbarOffset;
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    
+    // 500ms duration matching "Premium" motion personality
+    const duration = 500;
+    let start: number | null = null;
+
+    function animation(currentTime: number) {
+        if (start === null) start = currentTime;
+        const timeElapsed = currentTime - start;
+        const progress = Math.min(timeElapsed / duration, 1);
+        
+        window.scrollTo(0, startPosition + distance * easeInOutCubic(progress));
+
+        if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+        }
+    }
+
+    requestAnimationFrame(animation);
+}
 </script>
 
 <template>
@@ -57,7 +92,7 @@ const showMobileSearch = ref(false);
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:gap-3 sm:px-6 lg:gap-4 lg:px-8">
             <div class="flex items-center gap-2 sm:gap-4">
                 <!-- Mobile Category Menu (Sheet) -->
-                <Sheet v-if="categories.length">
+                <Sheet v-if="categories.length && !isLandingPage">
                     <SheetTrigger as-child>
                         <Button variant="ghost" size="icon" class="lg:hidden shrink-0">
                             <Menu class="size-5" />
@@ -65,7 +100,7 @@ const showMobileSearch = ref(false);
                     </SheetTrigger>
                     <SheetContent side="left" class="w-80">
                         <SheetHeader>
-                            <SheetTitle class="text-left">{{ t('nav.catalog') }}</SheetTitle>
+                            <SheetTitle class="text-left">Kategori</SheetTitle>
                         </SheetHeader>
                         <div class="mt-6 flex flex-col gap-4">
                             <div v-for="root in categories" :key="root.id">
@@ -86,16 +121,25 @@ const showMobileSearch = ref(false);
                 </Sheet>
 
                 <!-- Logo -->
-                <Link :href="home()" class="flex shrink-0 items-center">
+                <Link :href="isLandingPage ? home() : catalogUrl()" class="flex shrink-0 items-center">
                     <Logo class="h-10 w-auto sm:h-12 lg:h-16" />
                 </Link>
 
+                <!-- Landing Page Menu -->
+                <div v-if="isLandingPage" class="hidden lg:flex items-center gap-6">
+                    <a href="#roles" @click="scrollToSection($event, 'roles')" class="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Peran</a>
+                    <a href="#stores" @click="scrollToSection($event, 'stores')" class="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Toko Populer</a>
+                    <a href="#categories" @click="scrollToSection($event, 'categories')" class="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Kategori</a>
+                    <a href="#featured" @click="scrollToSection($event, 'featured')" class="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Produk Unggulan</a>
+                    <a href="#reviews" @click="scrollToSection($event, 'reviews')" class="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Ulasan</a>
+                </div>
+
                 <!-- Category mega-dropdown (lg+) -->
-                <NavigationMenu v-if="categories.length" class="hidden shrink-0 lg:flex">
+                <NavigationMenu v-else-if="categories.length" class="hidden shrink-0 lg:flex">
                     <NavigationMenuList>
                         <NavigationMenuItem>
                             <NavigationMenuTrigger class="bg-transparent">
-                                {{ t('nav.catalog') }}
+                                Kategori
                             </NavigationMenuTrigger>
                             <NavigationMenuContent>
                                 <div class="grid w-[34rem] grid-cols-2 gap-x-6 gap-y-4 p-5">
@@ -130,7 +174,7 @@ const showMobileSearch = ref(false);
             </div>
 
             <!-- Search bar (desktop) -->
-            <form class="hidden flex-1 md:flex" @submit.prevent="searchCatalog">
+            <form v-if="!isLandingPage" class="hidden flex-1 md:flex" @submit.prevent="searchCatalog">
                 <div class="flex w-full max-w-2xl overflow-hidden rounded-xl border border-border bg-muted/60 ring-1 ring-transparent transition-all focus-within:border-primary/40 focus-within:bg-white focus-within:ring-primary/20">
                     <input v-model="searchQuery" type="search" placeholder="Cari produk, toko, atau kategori..." class="w-full bg-transparent px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none" autocomplete="off" />
                     <button type="submit" class="flex shrink-0 items-center gap-1.5 bg-primary px-4 text-sm font-medium text-white transition-colors hover:bg-primary/90">
@@ -142,17 +186,16 @@ const showMobileSearch = ref(false);
 
             <div class="flex items-center gap-2">
                 <!-- Mobile search toggle -->
-                <Button variant="ghost" size="icon" class="md:hidden" @click="showMobileSearch = !showMobileSearch">
+                <Button v-if="!isLandingPage" variant="ghost" size="icon" class="md:hidden" @click="showMobileSearch = !showMobileSearch">
                     <X v-if="showMobileSearch" class="size-5" />
                     <Search v-else class="size-5" />
                 </Button>
 
                 <!-- Authenticated state -->
                 <template v-if="auth.isAuthenticated">
-                    <Link :href="catalogUrl()" class="hidden rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:inline-flex">
-                        {{ t('nav.catalog') }}
-                    </Link>
-                    <LocaleToggle class="hidden sm:inline-flex" />
+                    <Button v-if="isLandingPage" as-child variant="default" size="sm" class="hidden sm:inline-flex bg-primary font-semibold text-white shadow-sm transition-transform hover:scale-105 active:scale-95">
+                        <Link :href="catalogUrl()">Mulai Belanja 🛍️</Link>
+                    </Button>
                     <RoleBadge />
                     <Button as-child size="sm">
                         <Link :href="dashboard()">{{ t('nav.dashboard') }}</Link>
@@ -161,10 +204,9 @@ const showMobileSearch = ref(false);
 
                 <!-- Guest CTAs -->
                 <template v-else>
-                    <Link :href="catalogUrl()" class="hidden rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:inline-flex">
-                        {{ t('nav.catalog') }}
-                    </Link>
-                    <LocaleToggle class="hidden sm:inline-flex" />
+                    <Button v-if="isLandingPage" as-child variant="default" size="sm" class="hidden sm:inline-flex bg-primary font-semibold text-white shadow-sm transition-transform hover:scale-105 active:scale-95">
+                        <Link :href="catalogUrl()">Jelajahi Katalog 🛍️</Link>
+                    </Button>
                     <Button as-child variant="ghost" size="sm" class="hidden sm:inline-flex">
                         <Link :href="login()">{{ t('nav.login') }}</Link>
                     </Button>
@@ -176,7 +218,7 @@ const showMobileSearch = ref(false);
         </div>
 
         <!-- Mobile Search Dropdown -->
-        <div v-if="showMobileSearch" class="border-t border-border p-3 md:hidden">
+        <div v-if="showMobileSearch && !isLandingPage" class="border-t border-border p-3 md:hidden">
             <form @submit.prevent="searchCatalog" class="flex w-full overflow-hidden rounded-lg border border-border bg-muted/60">
                 <input v-model="searchQuery" type="search" placeholder="Cari produk..." class="w-full bg-transparent px-3 py-2 text-sm text-foreground focus:outline-none" autocomplete="off" />
                 <button type="submit" class="bg-primary px-3 text-white">

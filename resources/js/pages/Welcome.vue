@@ -48,10 +48,10 @@ defineProps<{
 <template>
     <Head title="SEAPEDIA | Marketplace Kampus" />
     <HeroSection />
-    <RoleCards />
+    <RoleCards id="roles" />
     <TrustBand />
-    <PopularStores :stores="popularStores" />
-    <CategoryGrid />
-    <FeaturedStrip :products="featured" />
-    <ReviewsSection :reviews="reviews" />
+    <PopularStores id="stores" :stores="popularStores" />
+    <CategoryGrid id="categories" />
+    <FeaturedStrip id="featured" :products="featured" />
+    <ReviewsSection id="reviews" :reviews="reviews" />
 </template>
