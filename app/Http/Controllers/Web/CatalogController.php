@@ -31,20 +31,19 @@ class CatalogController extends Controller
         $sort = in_array($request->string('sort')->value(), ['price_asc', 'price_desc']) ? $request->string('sort')->value() : null;
         $category = $categorySlug ? $this->categories->findActiveBySlug($categorySlug) : null;
 
+        $hasFilters = $search || $categorySlug || $sort || $request->has('price_min') || $request->has('price_max') || $request->has('in_stock');
+
+        if ($hasFilters) {
+            return Inertia::render('catalog/Search', [
+                'products' => $this->catalog->index($search, $category, $sort),
+                'filters' => $request->only(['q', 'category', 'sort', 'price_min', 'price_max', 'in_stock']),
+                'categories' => $this->categories->tree()->map(fn ($c) => ['id' => $c->id, 'name' => $c->name, 'slug' => $c->slug]),
+            ]);
+        }
+
         return Inertia::render('catalog/Index', [
-            'products' => $this->catalog->index($search, $category, $sort),
-            'search' => $search,
-            'sort' => $sort,
+            'products' => $this->catalog->index(null, null, null),
             'banners' => $this->banners->forStorefront(),
-            'activeCategory' => $category ? [
-                'id' => $category->id,
-                'name' => $category->name,
-                'slug' => $category->slug,
-                'parent' => $category->parent ? [
-                    'name' => $category->parent->name,
-                    'slug' => $category->parent->slug,
-                ] : null,
-            ] : null,
             'personalizedProducts' => $this->catalog->personalized($request->user()),
             'popularCategories' => $this->categories->tree()->map(fn ($c) => ['id' => $c->id, 'name' => $c->name, 'slug' => $c->slug])->take(6),
         ]);
@@ -55,6 +54,8 @@ class CatalogController extends Controller
         $found = $this->catalog->find($product);
 
         abort_if($found === null, 404);
+        
+        $found->load(['variants', 'images', 'category', 'store']);
 
         if (auth()->check()) {
             ProductView::create([

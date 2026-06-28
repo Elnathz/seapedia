@@ -1,4 +1,6 @@
 {
+    "auth.failed": "Kredensial yang diberikan tidak cocok dengan catatan kami.",
+    "auth.password": "Kata sandi salah.",
     "Store created.": "Toko berhasil dibuat.",
     "Store updated.": "Toko berhasil diperbarui.",
     "Product created.": "Produk berhasil dibuat.",

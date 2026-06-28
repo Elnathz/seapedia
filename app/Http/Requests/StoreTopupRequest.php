@@ -20,7 +20,7 @@ class StoreTopupRequest extends FormRequest
             'amount' => [
                 'required',
                 'integer',
-                'min:' . config('payment.topup.min_amount', 10000),
+                'min:'.config('payment.topup.min_amount', 10000),
                 'max:100000000',
             ],
         ];
@@ -32,7 +32,7 @@ class StoreTopupRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'amount.min' => 'Minimal top up Rp' . number_format(config('payment.topup.min_amount', 10000), 0, ',', '.') . '.',
+            'amount.min' => 'Minimal top up Rp'.number_format(config('payment.topup.min_amount', 10000), 0, ',', '.').'.',
             'amount.max' => 'Maksimal top up Rp100.000.000.',
         ];
     }

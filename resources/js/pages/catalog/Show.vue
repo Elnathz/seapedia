@@ -209,7 +209,7 @@ function confirmClearAndAdd() {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
             <!-- LEFT: Image Gallery -->
             <div class="flex flex-col gap-4">
-                <div class="bg-muted rounded-2xl flex items-center justify-center aspect-square overflow-hidden border border-border relative group">
+                <div class="bg-muted rounded-2xl flex items-center justify-center aspect-square md:aspect-auto md:h-[500px] overflow-hidden border border-border relative group">
                     <img v-if="activeImage" :src="activeImage" :alt="product.name" class="w-full h-full object-cover transition-transform duration-500 ease-out-expo hover:scale-105" />
                     <PlaceholderPattern v-else />
                     
@@ -257,6 +257,35 @@ function confirmClearAndAdd() {
                     <Badge v-else variant="destructive" class="gap-1.5 py-1 px-3 text-sm">
                         <XCircle class="size-4" /> Stok Habis
                     </Badge>
+                </div>
+
+                <!-- Store Info -->
+                <div class="mt-6 mb-2">
+                    <Link
+                        :href="storeShow.url(product.store.slug)"
+                        class="flex items-center gap-4 rounded-2xl border-2 border-border/50 bg-muted/30 p-4 transition-all duration-300 hover:border-primary/50 hover:bg-muted/50 hover:shadow-sm group"
+                    >
+                        <Avatar class="size-12 border-2 border-background shadow-sm group-hover:scale-105 transition-transform">
+                            <AvatarFallback class="bg-primary/10 text-primary font-bold text-base">{{
+                                getInitials(product.store.name)
+                            }}</AvatarFallback>
+                        </Avatar>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <p class="text-sm font-bold text-foreground">
+                                    {{ product.store.name }}
+                                </p>
+                                <Badge
+                                    v-if="product.store.is_active"
+                                    variant="secondary"
+                                    class="bg-blue-500/15 text-blue-600 hover:bg-blue-500/25 border-transparent h-4 px-1 text-[9px] uppercase font-bold"
+                                >
+                                    PRO
+                                </Badge>
+                            </div>
+                            <p class="text-[11px] text-muted-foreground mt-0.5">Kunjungi Toko →</p>
+                        </div>
+                    </Link>
                 </div>
 
                 <hr class="my-6 border-border" />
@@ -314,17 +343,15 @@ function confirmClearAndAdd() {
                         <div class="flex flex-col sm:flex-row gap-3 mt-4">
                             <Button
                                 variant="outline"
-                                size="lg"
-                                class="w-full gap-2.5 border-2 border-primary text-primary hover:bg-primary/5 h-14 rounded-xl text-base font-bold transition-transform active:scale-[0.98]"
+                                class="flex-1 gap-2.5 border-2 border-primary text-primary hover:bg-primary/5 h-11 rounded-xl font-bold transition-transform active:scale-[0.98]"
                                 :disabled="adding || buyingNow || currentStock <= 0 || (props.product.variants?.length > 0 && !selectedVariant)"
                                 @click="addToCart(false, false)"
                             >
-                                <ShoppingCart class="size-5" />
+                                <ShoppingCart class="size-4" />
                                 + Keranjang
                             </Button>
                             <Button
-                                size="lg"
-                                class="w-full gap-2.5 h-14 rounded-xl text-base font-bold shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all active:scale-[0.98]"
+                                class="flex-1 gap-2.5 h-11 rounded-xl font-bold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all active:scale-[0.98]"
                                 :disabled="adding || buyingNow || currentStock <= 0 || (props.product.variants?.length > 0 && !selectedVariant)"
                                 @click="addToCart(false, true)"
                             >
@@ -356,35 +383,7 @@ function confirmClearAndAdd() {
                         Belum ada deskripsi.
                     </p>
                 </div>
-                
-                <!-- Store Info -->
-                <div class="mt-8">
-                    <Link
-                        :href="storeShow.url(product.store.slug)"
-                        class="flex items-center gap-4 rounded-2xl border-2 border-border/50 bg-muted/30 p-5 transition-all duration-300 hover:border-primary/50 hover:bg-muted/50 hover:shadow-sm group"
-                    >
-                        <Avatar class="size-14 border-2 border-background shadow-sm group-hover:scale-105 transition-transform">
-                            <AvatarFallback class="bg-primary/10 text-primary font-bold text-lg">{{
-                                getInitials(product.store.name)
-                            }}</AvatarFallback>
-                        </Avatar>
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2">
-                                <p class="text-base font-bold text-foreground">
-                                    {{ product.store.name }}
-                                </p>
-                                <Badge
-                                    v-if="product.store.is_active"
-                                    variant="secondary"
-                                    class="bg-blue-500/15 text-blue-600 hover:bg-blue-500/25 border-transparent h-5 px-1.5 text-[10px] uppercase font-bold"
-                                >
-                                    PRO
-                                </Badge>
-                            </div>
-                            <p class="text-sm text-muted-foreground mt-1">Kunjungi Toko →</p>
-                        </div>
-                    </Link>
-                </div>
+
             </div>
         </div>
 

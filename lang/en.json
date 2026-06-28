@@ -1,4 +1,6 @@
 {
+    "auth.failed": "These credentials do not match our records.",
+    "auth.password": "The password you entered is incorrect.",
     "Store created.": "Store created.",
     "Store updated.": "Store updated.",
     "Product created.": "Product created.",

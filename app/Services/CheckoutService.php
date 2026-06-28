@@ -40,7 +40,7 @@ class CheckoutService
         // actually charges — commit re-prices from the live product under a
         // lock, and the buyer must be charged exactly what the summary shows.
         $subtotal = $cart->items->sum(
-            fn ($item) => ($item->product?->price ?? $item->price_snapshot) * $item->quantity,
+            fn ($item) => ($item->variant?->price ?? $item->product?->price ?? $item->price_snapshot) * $item->quantity,
         );
 
         $discount = $this->discounts->resolve($promoCode, $voucherCode, $subtotal);
@@ -92,6 +92,7 @@ class CheckoutService
             // two concurrent multi-product checkouts can never deadlock by
             // acquiring the same two row locks in opposite order.
             $lockedProducts = [];
+            $lockedVariants = [];
             foreach ($cart->items->sortBy('product_id') as $item) {
                 $product = Product::query()->lockForUpdate()->find($item->product_id);
 
@@ -104,6 +105,19 @@ class CheckoutService
                     ]);
                 }
 
+                if ($item->product_variant_id) {
+                    $variant = \App\Models\ProductVariant::query()->lockForUpdate()->find($item->product_variant_id);
+                    if (! $variant || $variant->stock < $item->quantity) {
+                        throw ValidationException::withMessages([
+                            'stock' => [__('Insufficient stock for variant :variant (:stock left).', [
+                                'variant' => $variant?->name ?? (string) $item->product_variant_id,
+                                'stock' => $variant?->stock ?? 0,
+                            ])],
+                        ]);
+                    }
+                    $lockedVariants[$item->id] = $variant;
+                }
+
                 $lockedProducts[$item->id] = $product;
             }
 
@@ -112,13 +126,17 @@ class CheckoutService
 
             foreach ($cart->items as $item) {
                 $product = $lockedProducts[$item->id];
-                $lineSubtotal = $product->price * $item->quantity;
+                $variant = $lockedVariants[$item->id] ?? null;
+                $price = $variant ? $variant->price : $product->price;
+                $lineSubtotal = $price * $item->quantity;
                 $subtotal += $lineSubtotal;
 
                 $orderItemsData[] = [
                     'product_id' => $product->id,
+                    'product_variant_id' => $variant?->id,
                     'product_name_snapshot' => $product->name,
-                    'price_snapshot' => $product->price,
+                    'product_variant_name_snapshot' => $variant?->name,
+                    'price_snapshot' => $price,
                     'quantity' => $item->quantity,
                     'line_subtotal' => $lineSubtotal,
                 ];
@@ -146,6 +164,9 @@ class CheckoutService
             foreach ($lockedProducts as $cartItemId => $product) {
                 $quantity = $cart->items->firstWhere('id', $cartItemId)->quantity;
                 $product->decrement('stock', $quantity);
+                if (isset($lockedVariants[$cartItemId])) {
+                    $lockedVariants[$cartItemId]->decrement('stock', $quantity);
+                }
             }
 
             $now = $this->clock->now();

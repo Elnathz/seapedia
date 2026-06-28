@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, router, usePage } from '@inertiajs/vue3';
-import { Flame, Search, Zap, Tag } from '@lucide/vue';
+import { Flame, Search, Zap, Tag, ShoppingCart, X, Menu } from '@lucide/vue';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Logo from '@/components/brand/Logo.vue';
@@ -24,11 +24,19 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from '@/components/ui/sheet';
 import UserInfo from '@/components/UserInfo.vue';
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useCategories } from '@/composables/useCategories';
 import { dashboard, home, login, register } from '@/routes';
 import { index as catalogIndex } from '@/routes/catalog';
+import { index as cartIndex } from '@/routes/buyer/cart';
 import { useAuthStore } from '@/stores/auth';
 
 const auth = useAuthStore();
@@ -68,8 +76,7 @@ function searchCatalog() {
 function catalogUrl(slug?: string) {
     return catalogIndex.url(slug ? { query: { category: slug } } : undefined);
 }
-import { Menu, X } from '@lucide/vue';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+
 
 const showMobileSearch = ref(false);
 
@@ -236,6 +243,16 @@ function scrollToSection(e: Event, id: string) {
                         <Link :href="catalogUrl()">Mulai Belanja</Link>
                     </Button>
                     <RoleBadge />
+                    
+                    <Button v-if="auth.activeRole === 'buyer'" as-child variant="ghost" size="icon" class="relative hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground mr-1">
+                        <Link :href="cartIndex.url()">
+                            <ShoppingCart class="size-[22px]" />
+                            <span v-if="auth.cartItemCount > 0" class="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-white shadow-sm ring-2 ring-white">
+                                {{ auth.cartItemCount > 10 ? '10+' : auth.cartItemCount }}
+                            </span>
+                        </Link>
+                    </Button>
+
                     <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                             <Button variant="ghost" class="gap-2 px-2 py-1.5 focus-visible:ring-0">

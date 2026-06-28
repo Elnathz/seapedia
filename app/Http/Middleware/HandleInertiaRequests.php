@@ -52,6 +52,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user,
                 'roles' => $user ? array_map(fn ($role) => $role->value, $user->ownedRoles()) : [],
                 'activeRole' => $user ? $this->roleService->resolveActiveRole($request)?->value : null,
+                'cartItemCount' => $user ? ($user->cart ? $user->cart->items()->count() : 0) : 0,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'locale' => App::getLocale(),

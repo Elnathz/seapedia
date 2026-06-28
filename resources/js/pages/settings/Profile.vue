@@ -161,8 +161,7 @@ const roles = computed(() => {
             </CardHeader>
             <CardContent>
                 <Form
-                    :action="route('password.update')"
-                    method="post"
+                    v-bind="SecurityController.update.form()"
                     class="space-y-4"
                     v-slot="{ errors, processing }"
                 >

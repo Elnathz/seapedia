@@ -7,7 +7,6 @@ use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
 use App\Models\Store;
 use App\Models\Wallet;
-use App\Models\Delivery;
 use App\Services\RoleService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;

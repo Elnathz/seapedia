@@ -22,9 +22,9 @@ class CartService
      * different store is rejected with a 422 unless `$replaceStore` is set,
      * in which case the cart is cleared first (the UI's "Clear & add").
      */
-    public function addItem(User $user, Product $product, int $quantity, bool $replaceStore = false): CartItem
+    public function addItem(User $user, Product $product, ?\App\Models\ProductVariant $variant, int $quantity, bool $replaceStore = false): CartItem
     {
-        return DB::transaction(function () use ($user, $product, $quantity, $replaceStore) {
+        return DB::transaction(function () use ($user, $product, $variant, $quantity, $replaceStore) {
             $cart = $this->resolveOrCreateFor($user);
 
             if ($cart->store_id !== null && $cart->store_id !== $product->store_id) {
@@ -45,15 +45,24 @@ class CartService
                 $cart->update(['store_id' => $product->store_id]);
             }
 
-            $item = CartItem::query()
+            $query = CartItem::query()
                 ->where('cart_id', $cart->id)
-                ->where('product_id', $product->id)
-                ->first();
+                ->where('product_id', $product->id);
+                
+            if ($variant) {
+                $query->where('product_variant_id', $variant->id);
+            } else {
+                $query->whereNull('product_variant_id');
+            }
+                
+            $item = $query->first();
+
+            $priceSnapshot = $variant ? $variant->price : $product->price;
 
             if ($item) {
                 $item->update([
                     'quantity' => $item->quantity + $quantity,
-                    'price_snapshot' => $product->price,
+                    'price_snapshot' => $priceSnapshot,
                 ]);
 
                 return $item->refresh();
@@ -62,8 +71,9 @@ class CartService
             return CartItem::create([
                 'cart_id' => $cart->id,
                 'product_id' => $product->id,
+                'product_variant_id' => $variant?->id,
                 'quantity' => $quantity,
-                'price_snapshot' => $product->price,
+                'price_snapshot' => $priceSnapshot,
             ]);
         });
     }
@@ -104,6 +114,7 @@ class CartService
             ->with([
                 'store:id,name,slug',
                 'items.product:id,name,slug,image_path,price,stock,store_id',
+                'items.variant:id,product_id,name,price,stock',
             ])
             ->firstOrCreate(['user_id' => $user->id]);
     }
