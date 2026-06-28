@@ -27,11 +27,13 @@ class CatalogController extends Controller
     {
         $search = $request->string('q')->value() ?: null;
         $categorySlug = $request->string('category')->value() ?: null;
+        $sort = in_array($request->string('sort')->value(), ['price_asc', 'price_desc']) ? $request->string('sort')->value() : null;
         $category = $categorySlug ? $this->categories->findActiveBySlug($categorySlug) : null;
 
         return Inertia::render('catalog/Index', [
-            'products' => $this->catalog->index($search, $category),
+            'products' => $this->catalog->index($search, $category, $sort),
             'search' => $search,
+            'sort' => $sort,
             'banners' => $this->banners->forStorefront(),
             'activeCategory' => $category ? [
                 'id' => $category->id,

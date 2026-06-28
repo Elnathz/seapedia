@@ -18,19 +18,24 @@ class CatalogService
      * loaded with only its public columns so the payload never exposes
      * internal fields (owner `user_id`, timestamps) to the client.
      */
-    public function index(?string $search = null, ?Category $category = null, int $perPage = 12): LengthAwarePaginator
+    public function index(?string $search = null, ?Category $category = null, ?string $sort = null, int $perPage = 12): LengthAwarePaginator
     {
         $categoryIds = $category ? $this->categories->descendantIds($category) : null;
 
-        return Product::query()
+        $query = Product::query()
             ->with(['store:id,name,slug', 'category:id,name,slug'])
             ->where('is_active', true)
-            ->whereHas('store', fn ($query) => $query->where('is_active', true))
-            ->when($search, fn ($query) => $query->where('name', 'like', "%{$search}%"))
-            ->when($categoryIds, fn ($query) => $query->whereIn('category_id', $categoryIds))
-            ->latest()
-            ->paginate($perPage)
-            ->withQueryString();
+            ->whereHas('store', fn ($q) => $q->where('is_active', true))
+            ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"))
+            ->when($categoryIds, fn ($q) => $q->whereIn('category_id', $categoryIds));
+
+        match ($sort) {
+            'price_asc' => $query->orderBy('price'),
+            'price_desc' => $query->orderByDesc('price'),
+            default => $query->latest(),
+        };
+
+        return $query->paginate($perPage)->withQueryString();
     }
 
     public function featured(int $limit = 6): Collection

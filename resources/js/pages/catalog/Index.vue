@@ -20,6 +20,13 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { useCategories } from '@/composables/useCategories';
 import { formatIDR } from '@/lib/utils';
@@ -61,11 +68,13 @@ interface ActiveCategory {
 const props = defineProps<{
     products: PaginatedProducts;
     search: string | null;
+    sort: string | null;
     activeCategory: ActiveCategory | null;
     banners: { main: BannerNode[]; side: BannerNode[] };
 }>();
 
 const query = ref(props.search ?? '');
+const sortValue = ref(props.sort ?? 'newest');
 const loading = ref(false);
 const { t } = useI18n();
 const { categories } = useCategories();
@@ -88,12 +97,17 @@ const subCategories = computed(
 
 function applySearch() {
     visit(
-        buildParams({ category: props.activeCategory?.slug, q: query.value }),
+        buildParams({ category: props.activeCategory?.slug, q: query.value, sort: sortValue.value }),
     );
 }
 
 function selectCategory(slug: string | null) {
-    visit(buildParams({ category: slug ?? undefined, q: props.search }));
+    visit(buildParams({ category: slug ?? undefined, q: props.search, sort: sortValue.value }));
+}
+
+function applySort(val: string) {
+    sortValue.value = val;
+    visit(buildParams({ category: props.activeCategory?.slug, q: props.search, sort: val }));
 }
 
 function goToPage(page: number) {
@@ -101,6 +115,7 @@ function goToPage(page: number) {
         buildParams({
             category: props.activeCategory?.slug,
             q: props.search,
+            sort: sortValue.value,
             page,
         }),
     );
@@ -109,21 +124,26 @@ function goToPage(page: number) {
 function buildParams(input: {
     category?: string;
     q?: string | null;
+    sort?: string;
     page?: number;
 }): Record<string, string | number> {
     const params: Record<string, string | number> = {};
 
     if (input.q) {
-        params.q = input.q;
-    }
+params.q = input.q;
+}
 
     if (input.category) {
-        params.category = input.category;
-    }
+params.category = input.category;
+}
+
+    if (input.sort && input.sort !== 'newest') {
+params.sort = input.sort;
+}
 
     if (input.page) {
-        params.page = input.page;
-    }
+params.page = input.page;
+}
 
     return params;
 }
@@ -178,9 +198,9 @@ function visit(params: Record<string, string | number>) {
             </p>
         </div>
 
-        <!-- Search bar -->
-        <div class="mt-6 flex max-w-md items-center gap-2">
-            <div class="relative flex-1">
+        <!-- Search bar + sort -->
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+            <div class="relative flex-1 min-w-48 max-w-md">
                 <Search
                     class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
                 />
@@ -192,7 +212,20 @@ function visit(params: Record<string, string | number>) {
                     @blur="applySearch"
                 />
             </div>
+            <Select :model-value="sortValue" @update:model-value="applySort">
+                <SelectTrigger class="w-44">
+                    <SelectValue placeholder="Urutkan" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="newest">Terbaru</SelectItem>
+                    <SelectItem value="price_asc">Harga Terendah</SelectItem>
+                    <SelectItem value="price_desc">Harga Tertinggi</SelectItem>
+                </SelectContent>
+            </Select>
             <Spinner v-if="loading" class="size-4" />
+            <p class="text-sm text-muted-foreground ml-auto">
+                {{ products.total }} produk
+            </p>
         </div>
 
         <!-- Category filter chips -->
@@ -280,7 +313,7 @@ function visit(params: Record<string, string | number>) {
         />
 
         <template v-else>
-            <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                 <Link
                     v-for="product in products.data"
                     :key="product.id"

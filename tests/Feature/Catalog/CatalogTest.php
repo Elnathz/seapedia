@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Catalog;
 
+use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Store;
@@ -125,8 +126,8 @@ class CatalogTest extends TestCase
 
     public function test_catalog_only_shows_active_banners_in_storefront(): void
     {
-        \App\Models\Banner::factory()->create(['placement' => 'main', 'is_active' => true, 'title' => 'Aktif']);
-        \App\Models\Banner::factory()->create(['placement' => 'main', 'is_active' => false, 'title' => 'Nonaktif']);
+        Banner::factory()->create(['placement' => 'main', 'is_active' => true, 'title' => 'Aktif']);
+        Banner::factory()->create(['placement' => 'main', 'is_active' => false, 'title' => 'Nonaktif']);
 
         $response = $this->get(route('catalog.index'));
 
