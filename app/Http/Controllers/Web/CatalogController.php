@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Services\BannerService;
 use App\Services\CatalogService;
 use App\Services\CategoryService;
 use Illuminate\Http\Request;
@@ -14,6 +15,7 @@ class CatalogController extends Controller
     public function __construct(
         private readonly CatalogService $catalog,
         private readonly CategoryService $categories,
+        private readonly BannerService $banners,
     ) {}
 
     /**
@@ -30,6 +32,7 @@ class CatalogController extends Controller
         return Inertia::render('catalog/Index', [
             'products' => $this->catalog->index($search, $category),
             'search' => $search,
+            'banners' => $this->banners->forStorefront(),
             'activeCategory' => $category ? [
                 'id' => $category->id,
                 'name' => $category->name,

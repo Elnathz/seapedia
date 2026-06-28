@@ -5,6 +5,8 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import EmptyState from '@/components/EmptyState.vue';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
+import BannerCarousel from '@/components/storefront/BannerCarousel.vue';
+import BannerImage from '@/components/storefront/BannerImage.vue';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -22,6 +24,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { useCategories } from '@/composables/useCategories';
 import { formatIDR } from '@/lib/utils';
 import { index as catalogIndex, show as catalogShow } from '@/routes/catalog';
+import type { BannerNode } from '@/types/banner';
 
 interface Store {
     id: number;
@@ -59,6 +62,7 @@ const props = defineProps<{
     products: PaginatedProducts;
     search: string | null;
     activeCategory: ActiveCategory | null;
+    banners: { main: BannerNode[]; side: BannerNode[] };
 }>();
 
 const query = ref(props.search ?? '');
@@ -139,7 +143,31 @@ function visit(params: Record<string, string | number>) {
     <Head :title="t('catalog.title')" />
 
     <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        <!-- Banner block -->
+        <div v-if="banners.main.length || banners.side.length">
+            <!-- Desktop: 2 side | carousel | 2 side -->
+            <div class="hidden gap-3 lg:grid lg:grid-cols-4">
+                <div class="flex flex-col gap-3">
+                    <BannerImage v-for="b in banners.side.slice(0, 2)" :key="b.id" :banner="b" />
+                </div>
+                <div class="col-span-2">
+                    <BannerCarousel v-if="banners.main.length" :slides="banners.main" />
+                </div>
+                <div class="flex flex-col gap-3">
+                    <BannerImage v-for="b in banners.side.slice(2, 4)" :key="b.id" :banner="b" />
+                </div>
+            </div>
+            <!-- Mobile/tablet: carousel then 2-col side grid -->
+            <div class="space-y-3 lg:hidden">
+                <BannerCarousel v-if="banners.main.length" :slides="banners.main" />
+                <div v-if="banners.side.length" class="grid grid-cols-2 gap-3">
+                    <BannerImage v-for="b in banners.side" :key="b.id" :banner="b" />
+                </div>
+            </div>
+        </div>
+        <!-- Fallback hero when no banners -->
         <div
+            v-else
             class="overflow-hidden rounded-2xl bg-gradient-to-br from-primary/15 via-secondary/40 to-background px-6 py-10 sm:px-10 sm:py-14"
         >
             <h1 class="text-2xl font-semibold sm:text-3xl">
@@ -148,21 +176,23 @@ function visit(params: Record<string, string | number>) {
             <p class="mt-2 max-w-md text-sm text-muted-foreground sm:text-base">
                 {{ t('catalog.heroSubtitle') }}
             </p>
-            <div class="mt-6 flex max-w-md items-center gap-2">
-                <div class="relative flex-1">
-                    <Search
-                        class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-                    />
-                    <Input
-                        v-model="query"
-                        :placeholder="t('catalog.searchPlaceholder')"
-                        class="pl-9"
-                        @keyup.enter="applySearch"
-                        @blur="applySearch"
-                    />
-                </div>
-                <Spinner v-if="loading" class="size-4" />
+        </div>
+
+        <!-- Search bar -->
+        <div class="mt-6 flex max-w-md items-center gap-2">
+            <div class="relative flex-1">
+                <Search
+                    class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                />
+                <Input
+                    v-model="query"
+                    :placeholder="t('catalog.searchPlaceholder')"
+                    class="pl-9"
+                    @keyup.enter="applySearch"
+                    @blur="applySearch"
+                />
             </div>
+            <Spinner v-if="loading" class="size-4" />
         </div>
 
         <!-- Category filter chips -->
