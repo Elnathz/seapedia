@@ -28,12 +28,16 @@
 | `f826a82` | Sort dropdown catalog (newest/price_asc/price_desc) + grid 4-kolom desktop |
 | `9e0bef9` | Validation tightening: name min:2/max:100, username min:3/max:30, phone regex, max length everywhere, expiry after:today |
 | `d82b321` | All-condition seeders: `OrderConditionSeeder` (5 status order), `StoreProductSeeder` (7 stores x 3-8 produk), `DiscountSeeder` (voucher/promo aktif/expired/inactive/used-up), `BuyerDemoSeeder` (semua buyer di-topup), `DemoUserSeeder` (seller1..seller7) |
+| `a80530a` | Enhance storefront: gradient avatar, product count + join date meta, 4-column grid |
+| `e2c9cff` | Rewrite README: no sprint mentions, updated credentials/codes, Kategori section, Security notes |
 
-## 3. Yang BELUM (urut prioritas)
+## 3. Yang BELUM
 
-1. **Section 4.5 Enhance halaman seller** (`stores/Show.vue`) — avatar inisial gradient, join date, product count, grid alignment dengan catalog cards.
-2. **Section 3.1 README rewrite** — buang kata "sprint", tambah Kategori + Security sections, jelaskan plain `php artisan serve` sebagai primary + Docker alternatif.
-3. **Section 2.1 Admin monitoring pages** — 6 halaman (users/stores/products/orders/deliveries/overdue) sudah dikerjaan (plan-banner-crop.md), perlu diverifikasi route+controller sudah lengkap dan halaman ter-render.
+Secara substansial, hampir semua fitur utama sudah terimplementasi. Item di bawah adalah polish/verifikasi final:
+
+1. Verifikasi admin monitoring pages ter-render: browse ke `/admin/users`, `/admin/stores`, `/admin/products`, `/admin/orders`, `/admin/deliveries`, `/admin/overdue` — pastikan semua halaman ter-load dengan data dari seeder.
+2. Banner images perlu dicek: `public/images/banners/banner-main-*.png` dan `banner-side-*.png` ada di filesystem (file .png sudah ada sebagai untracked files).
+3. Build production: `./vendor/bin/sail npm run build` + verifikasi semua page berfungsi di build (bukan Vite HMR).
 
 ## 4. Cara menjalankan
 
