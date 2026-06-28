@@ -28,10 +28,20 @@ class BuyerCartController extends Controller
     {
         $data = $request->validated();
         $product = Product::findOrFail($data['product_id']);
+        
+        $variant = null;
+        if (!empty($data['product_variant_id'])) {
+            $variant = \App\Models\ProductVariant::where('product_id', $product->id)
+                ->findOrFail($data['product_variant_id']);
+        } elseif ($product->variants()->exists()) {
+            // If the product has variants, require a variant to be selected
+            return back()->withErrors(['product_variant_id' => 'Silakan pilih varian produk.']);
+        }
 
         $this->carts->addItem(
             $request->user(),
             $product,
+            $variant,
             $data['quantity'],
             (bool) ($data['replace'] ?? false),
         );

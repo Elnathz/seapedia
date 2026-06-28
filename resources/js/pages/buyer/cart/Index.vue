@@ -110,8 +110,8 @@ function clearAll() {
                 <Card v-for="item in cart.items" :key="item.id">
                     <CardContent class="flex items-center gap-4 pt-6">
                         <img
-                            v-if="item.product.image_path"
-                            :src="`/storage/${item.product.image_path}`"
+                            v-if="item.variant?.image_path || item.product.image_path"
+                            :src="`/storage/${item.variant?.image_path || item.product.image_path}`"
                             :alt="item.product.name"
                             class="size-16 rounded-md border border-border object-cover"
                         />
@@ -124,18 +124,21 @@ function clearAll() {
 
                         <div class="flex-1">
                             <p class="font-medium">{{ item.product.name }}</p>
+                            <p v-if="item.variant" class="text-xs font-semibold text-primary bg-primary/10 w-fit px-2 py-0.5 rounded-full mt-1 mb-1">
+                                Varian: {{ item.variant.name }}
+                            </p>
                             <p
                                 class="text-sm text-muted-foreground tabular-nums"
                             >
                                 {{ formatIDR(item.price_snapshot) }}
                             </p>
                             <p
-                                v-if="item.quantity > item.product.stock"
+                                v-if="item.quantity > (item.variant?.stock ?? item.product.stock)"
                                 class="mt-1 text-xs text-amber-600"
                             >
                                 {{
                                     t('cart.stockWarning', {
-                                        stock: item.product.stock,
+                                        stock: item.variant?.stock ?? item.product.stock,
                                     })
                                 }}
                             </p>
