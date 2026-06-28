@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Models\Store;
+use App\Models\ProductImage;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -12,56 +14,188 @@ class ProductService
 {
     private const IMAGE_DIRECTORY = 'products';
 
-    /**
-     * @param  array{name: string, description: ?string, price: int, stock: int, category_id: int}  $data
-     */
-    public function createForStore(Store $store, array $data, ?UploadedFile $image): Product
+    public function createForStore(Store $store, array $data): Product
     {
-        return Product::create([
-            'store_id' => $store->id,
-            'category_id' => $data['category_id'],
-            'name' => $data['name'],
-            'slug' => $this->uniqueSlug($data['name']),
-            'description' => $data['description'] ?? null,
-            'price' => $data['price'],
-            'stock' => $data['stock'],
-            'image_path' => $image ? $this->storeImage($image) : null,
-            'is_active' => true,
-        ]);
+        return DB::transaction(function () use ($store, $data) {
+            $hasVariants = $data['has_variants'] ?? false;
+            
+            // Calculate base price and total stock from variants if has_variants
+            $basePrice = $hasVariants ? (int) min(array_column($data['variants'], 'price')) : $data['price'];
+            $totalStock = $hasVariants ? (int) array_sum(array_column($data['variants'], 'stock')) : $data['stock'];
+
+            $product = Product::create([
+                'store_id' => $store->id,
+                'category_id' => $data['category_id'],
+                'name' => $data['name'],
+                'slug' => $this->uniqueSlug($data['name']),
+                'description' => $data['description'] ?? null,
+                'price' => $basePrice,
+                'stock' => $totalStock,
+                'image_path' => null, // Will update after images are processed
+                'is_active' => true,
+            ]);
+
+            $createdVariants = [];
+            // Handle variants
+            if ($hasVariants && !empty($data['variants'])) {
+                foreach ($data['variants'] as $variantData) {
+                    $createdVariants[] = $product->variants()->create([
+                        'variant_type' => null,
+                        'name' => $variantData['name'],
+                        'price' => $variantData['price'],
+                        'stock' => $variantData['stock'],
+                        'is_active' => true,
+                    ]);
+                }
+            }
+
+            // Handle images
+            if (!empty($data['images'])) {
+                foreach ($data['images'] as $index => $image) {
+                    $path = $this->storeImage($image);
+                    
+                    // Find if any variant uses this image
+                    $variantId = null;
+                    if ($hasVariants && !empty($data['variants'])) {
+                        foreach ($data['variants'] as $vIndex => $variantData) {
+                            if (isset($variantData['image_index']) && (int) $variantData['image_index'] === $index) {
+                                $variantId = $createdVariants[$vIndex]->id;
+                                break;
+                            }
+                        }
+                    }
+
+                    $product->images()->create([
+                        'product_variant_id' => $variantId,
+                        'image_path' => $path,
+                        'is_primary' => $index === 0,
+                        'sort_order' => $index,
+                    ]);
+
+                    if ($index === 0) {
+                        $product->update(['image_path' => $path]);
+                    }
+                }
+            }
+
+            return $product;
+        });
     }
 
-    /**
-     * @param  array{name: string, description: ?string, price: int, stock: int, category_id: int}  $data
-     */
-    public function update(Product $product, array $data, ?UploadedFile $image): Product
+    public function update(Product $product, array $data): Product
     {
-        $oldImage = $product->image_path;
-        $newImage = $image ? $this->storeImage($image) : null;
+        return DB::transaction(function () use ($product, $data) {
+            $hasVariants = $data['has_variants'] ?? false;
+            
+            $basePrice = $hasVariants ? (int) min(array_column($data['variants'], 'price')) : $data['price'];
+            $totalStock = $hasVariants ? (int) array_sum(array_column($data['variants'], 'stock')) : $data['stock'];
 
-        $product->update([
-            'category_id' => $data['category_id'],
-            'name' => $data['name'],
-            'slug' => $data['name'] === $product->name
-                ? $product->slug
-                : $this->uniqueSlug($data['name'], $product->id),
-            'description' => $data['description'] ?? null,
-            'price' => $data['price'],
-            'stock' => $data['stock'],
-            'image_path' => $newImage ?? $oldImage,
-        ]);
+            $product->update([
+                'category_id' => $data['category_id'],
+                'name' => $data['name'],
+                'slug' => $data['name'] === $product->name
+                    ? $product->slug
+                    : $this->uniqueSlug($data['name'], $product->id),
+                'description' => $data['description'] ?? null,
+                'price' => $basePrice,
+                'stock' => $totalStock,
+            ]);
 
-        // Only drop the previous file once the new one is safely stored and the
-        // row points at it — a failed upload leaves the old image intact.
-        if ($newImage && $oldImage) {
-            $this->deleteImage($oldImage);
-        }
+            // Handle deleted images
+            if (!empty($data['deleted_image_ids'])) {
+                $imagesToDelete = $product->images()->whereIn('id', $data['deleted_image_ids'])->get();
+                foreach ($imagesToDelete as $img) {
+                    $this->deleteImage($img->image_path);
+                    $img->delete();
+                }
+            }
 
-        return $product->refresh();
+            // Handle variants update (sync)
+            $existingVariantIds = [];
+            $createdVariants = [];
+            
+            if ($hasVariants && !empty($data['variants'])) {
+                foreach ($data['variants'] as $vIndex => $variantData) {
+                    if (!empty($variantData['id'])) {
+                        // Update existing
+                        $variant = $product->variants()->find($variantData['id']);
+                        if ($variant) {
+                            $variant->update([
+                                'name' => $variantData['name'],
+                                'price' => $variantData['price'],
+                                'stock' => $variantData['stock'],
+                            ]);
+                            $existingVariantIds[] = $variant->id;
+                            $createdVariants[$vIndex] = $variant;
+                        }
+                    } else {
+                        // Create new
+                        $variant = $product->variants()->create([
+                            'variant_type' => null,
+                            'name' => $variantData['name'],
+                            'price' => $variantData['price'],
+                            'stock' => $variantData['stock'],
+                            'is_active' => true,
+                        ]);
+                        $existingVariantIds[] = $variant->id;
+                        $createdVariants[$vIndex] = $variant;
+                    }
+                }
+            }
+            
+            // Delete removed variants
+            $product->variants()->whereNotIn('id', $existingVariantIds)->delete();
+
+            // Handle new images
+            if (!empty($data['images'])) {
+                $maxSortOrder = $product->images()->max('sort_order') ?? -1;
+                
+                foreach ($data['images'] as $index => $image) {
+                    $path = $this->storeImage($image);
+                    $sortOrder = $maxSortOrder + 1 + $index;
+                    
+                    // Note: mapping new images to variants during update can be tricky if the UI mixes existing/new images
+                    // We map by image_index if provided
+                    $variantId = null;
+                    if ($hasVariants && !empty($data['variants'])) {
+                        foreach ($data['variants'] as $vIndex => $variantData) {
+                            if (isset($variantData['image_index']) && (int) $variantData['image_index'] === $index) {
+                                if (isset($createdVariants[$vIndex])) {
+                                    $variantId = $createdVariants[$vIndex]->id;
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    $product->images()->create([
+                        'product_variant_id' => $variantId,
+                        'image_path' => $path,
+                        'is_primary' => false, // Set to false initially, we can re-evaluate primary image later
+                        'sort_order' => $sortOrder,
+                    ]);
+                }
+            }
+            
+            // Ensure primary image exists and is set on product
+            $primaryImage = $product->images()->orderBy('sort_order')->first();
+            if ($primaryImage) {
+                $product->images()->whereNot('id', $primaryImage->id)->update(['is_primary' => false]);
+                $primaryImage->update(['is_primary' => true]);
+                $product->update(['image_path' => $primaryImage->image_path]);
+            } else {
+                $product->update(['image_path' => null]);
+            }
+
+            return $product->refresh();
+        });
     }
 
     public function delete(Product $product): void
     {
-        $this->deleteImage($product->image_path);
+        foreach ($product->images as $img) {
+            $this->deleteImage($img->image_path);
+        }
         $product->delete();
     }
 

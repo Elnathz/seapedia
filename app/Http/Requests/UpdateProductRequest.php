@@ -20,9 +20,19 @@ class UpdateProductRequest extends FormRequest
             'name' => ['required', 'string', 'min:3', 'max:150'],
             'description' => ['nullable', 'string', 'max:2000'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
-            'price' => ['required', 'integer', 'min:100', 'max:100000000'],
-            'stock' => ['required', 'integer', 'min:0', 'max:1000000'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'price' => ['required_without:has_variants', 'nullable', 'integer', 'min:100', 'max:100000000'],
+            'stock' => ['required_without:has_variants', 'nullable', 'integer', 'min:0', 'max:1000000'],
+            'images' => ['nullable', 'array', 'max:5'],
+            'images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'deleted_image_ids' => ['nullable', 'array'],
+            'deleted_image_ids.*' => ['integer'],
+            'has_variants' => ['required', 'boolean'],
+            'variants' => ['required_if:has_variants,true', 'array', 'min:1'],
+            'variants.*.id' => ['nullable', 'integer'],
+            'variants.*.name' => ['required_if:has_variants,true', 'string', 'max:150'],
+            'variants.*.price' => ['required_if:has_variants,true', 'integer', 'min:100', 'max:100000000'],
+            'variants.*.stock' => ['required_if:has_variants,true', 'integer', 'min:0', 'max:1000000'],
+            'variants.*.image_index' => ['nullable', 'integer', 'min:0', 'max:4'],
         ];
     }
 
@@ -35,7 +45,8 @@ class UpdateProductRequest extends FormRequest
             'category_id.required' => 'Pilih kategori produk.',
             'category_id.exists' => 'Kategori yang dipilih tidak valid.',
             'price.min' => 'Harga minimal Rp100.',
-            'image.max' => 'Ukuran gambar maksimal 2MB.',
+            'images.*.max' => 'Ukuran gambar maksimal 2MB.',
+            'variants.*.price.min' => 'Harga varian minimal Rp100.',
         ];
     }
 }

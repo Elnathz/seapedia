@@ -46,7 +46,7 @@ class SellerProductController extends Controller
 
         abort_if($store === null, 404);
 
-        $this->products->createForStore($store, $request->validated(), $request->file('image'));
+        $this->products->createForStore($store, $request->validated());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Product created.')]);
 
@@ -57,6 +57,8 @@ class SellerProductController extends Controller
     {
         $this->authorize('update', $product);
 
+        $product->load(['variants', 'images']);
+
         return Inertia::render('seller/products/Form', [
             'product' => $product,
         ]);
@@ -66,7 +68,7 @@ class SellerProductController extends Controller
     {
         $this->authorize('update', $product);
 
-        $this->products->update($product, $request->validated(), $request->file('image'));
+        $this->products->update($product, $request->validated());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Product updated.')]);
 
