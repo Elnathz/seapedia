@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Enums\RoleName;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SelectRoleRequest;
 use App\Services\RoleService;
@@ -30,7 +31,12 @@ class RoleController extends Controller
 
     public function store(SelectRoleRequest $request): RedirectResponse
     {
-        $this->roleService->setActiveRoleInSession($request, $request->role());
+        $role = $request->role();
+        $this->roleService->setActiveRoleInSession($request, $role);
+
+        if ($role->value === RoleName::Buyer->value) {
+            return redirect()->route('catalog.index');
+        }
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
