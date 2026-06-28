@@ -19,7 +19,7 @@ class BannerSeeder extends Seeder
             Banner::create([
                 ...$b,
                 'placement' => 'main',
-                'image_path' => 'images/banners/banner-main-'.($i + 1).'.webp',
+                'image_path' => 'images/banners/banner-main-'.($i + 1).'.png',
                 'sort_order' => $i,
                 'is_active' => true,
             ]);
@@ -36,7 +36,7 @@ class BannerSeeder extends Seeder
             Banner::create([
                 ...$b,
                 'placement' => 'side',
-                'image_path' => 'images/banners/banner-side-'.($i + 1).'.webp',
+                'image_path' => 'images/banners/banner-side-'.($i + 1).'.png',
                 'sort_order' => $i,
                 'is_active' => true,
             ]);
