@@ -22,46 +22,46 @@ class BuyerDemoSeeder extends Seeder
     ) {}
 
     /**
-     * Gives buyer1 and multi1 a topped-up wallet (via TopupService, so the
-     * ledger has a real entry, not a raw balance write) and a saved
-     * address, then walks buyer1 through one real checkout against
-     * seller1's store — stacking both demo discount codes (§5.3) so the
-     * combination rule, the buyer's spending report, and the seller's
-     * income report all have a discounted order to reconcile against —
-     * all through the same Services a real user would hit, per §12 and
-     * golden rule 2.
+     * Gives every buyer (buyer1..buyer3 + multi1) a topped-up wallet and a
+     * saved address via the same Services a real user would hit (§12, golden
+     * rule 2). buyer1 also walks through one full checkout with both demo
+     * discount codes (PROMO20K + HEMAT10) to exercise the §5.3 combination
+     * rule and populate the buyer's/seller's spending reports.
+     *
+     * The "processing" delay (§ Sprint 6 T2) is a UX affordance — seeders
+     * skip it by setting `payment.topup.processing_seconds => 0`.
      */
     public function run(): void
     {
-        // The seeded wallets need to be credited immediately (the orders
-        // below depend on the balance being there) — the buyer-facing
-        // "processing" delay (§ Sprint 6 T2) is a UX affordance, not
-        // something a seeder should wait through.
         config(['payment.topup.processing_seconds' => 0]);
 
-        $buyer = User::query()->where('username', 'buyer1')->first();
-        $multi = User::query()->where('username', 'multi1')->first();
-
-        if ($buyer) {
-            $this->topups->checkStatus($this->topups->create($buyer, 500_000));
-
-            $address = $this->addresses->createForUser($buyer, [
-                'recipient_name' => 'Buyer One',
-                'phone' => '081234567890',
-                'full_address' => 'Jl. Kampus No. 1, Semarang',
-            ]);
-
-            $this->seedSampleOrder($buyer, $address);
+        // buyer1: full checkout with discount codes.
+        $buyer1 = User::query()->where('username', 'buyer1')->first();
+        if ($buyer1) {
+            $this->topupIfEmpty($buyer1, 500_000);
+            $address = $this->seedAddressIfMissing($buyer1, 'Buyer One', '081234567890', 'Jl. Kampus No. 1, Semarang');
+            $this->seedSampleOrder($buyer1, $address);
         }
 
-        if ($multi) {
-            $this->topups->checkStatus($this->topups->create($multi, 300_000));
+        // buyer2: topped up, no orders yet.
+        $buyer2 = User::query()->where('username', 'buyer2')->first();
+        if ($buyer2) {
+            $this->topupIfEmpty($buyer2, 300_000);
+            $this->seedAddressIfMissing($buyer2, 'Buyer Two', '082233445566', 'Jl. Kost Biru No. 2, Semarang');
+        }
 
-            $this->addresses->createForUser($multi, [
-                'recipient_name' => 'Multi Role',
-                'phone' => '089876543210',
-                'full_address' => 'Jl. Mahasiswa No. 2, Semarang',
-            ]);
+        // buyer3: topped up, no orders yet.
+        $buyer3 = User::query()->where('username', 'buyer3')->first();
+        if ($buyer3) {
+            $this->topupIfEmpty($buyer3, 200_000);
+            $this->seedAddressIfMissing($buyer3, 'Buyer Three', '083344556677', 'Jl. Asrama UNDIP No. 3, Semarang');
+        }
+
+        // multi1: topped up, has a store but no buyer orders yet.
+        $multi = User::query()->where('username', 'multi1')->first();
+        if ($multi) {
+            $this->topupIfEmpty($multi, 300_000);
+            $this->seedAddressIfMissing($multi, 'Multi Role', '089876543210', 'Jl. Mahasiswa No. 2, Semarang');
         }
     }
 
@@ -79,5 +79,25 @@ class BuyerDemoSeeder extends Seeder
         // combination rule with real seeded data.
         $this->carts->addItem($buyer, $product, 6);
         $this->checkout->commit($buyer, $address, DeliveryMethod::Regular, 'PROMO20K', 'HEMAT10');
+    }
+
+    private function seedAddressIfMissing(User $user, string $recipientName, string $phone, string $address): Address
+    {
+        if ($user->addresses()->exists()) {
+            return $user->addresses()->first();
+        }
+
+        return $this->addresses->createForUser($user, [
+            'recipient_name' => $recipientName,
+            'phone' => $phone,
+            'full_address' => $address,
+        ]);
+    }
+
+    private function topupIfEmpty(User $user, int $amount): void
+    {
+        if ($user->wallet->balance <= 0) {
+            $this->topups->checkStatus($this->topups->create($user, $amount));
+        }
     }
 }

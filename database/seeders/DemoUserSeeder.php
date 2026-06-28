@@ -32,6 +32,15 @@ class DemoUserSeeder extends Seeder
         ]);
         $this->roleService->assignRoles($seller, [RoleName::Seller->value]);
 
+        for ($i = 2; $i <= 7; $i++) {
+            $s = User::factory()->create([
+                'name' => "Seller $i",
+                'username' => "seller$i",
+                'email' => "seller$i@seapedia.test",
+            ]);
+            $this->roleService->assignRoles($s, [RoleName::Seller->value]);
+        }
+
         $buyer = User::factory()->create([
             'name' => 'Buyer One',
             'username' => 'buyer1',
@@ -39,12 +48,28 @@ class DemoUserSeeder extends Seeder
         ]);
         $this->roleService->assignRoles($buyer, [RoleName::Buyer->value]);
 
+        for ($i = 2; $i <= 3; $i++) {
+            $b = User::factory()->create([
+                'name' => "Buyer $i",
+                'username' => "buyer$i",
+                'email' => "buyer$i@seapedia.test",
+            ]);
+            $this->roleService->assignRoles($b, [RoleName::Buyer->value]);
+        }
+
         $driver = User::factory()->create([
             'name' => 'Driver One',
             'username' => 'driver1',
             'email' => 'driver1@seapedia.test',
         ]);
         $this->roleService->assignRoles($driver, [RoleName::Driver->value]);
+
+        $driver2 = User::factory()->create([
+            'name' => 'Driver Two',
+            'username' => 'driver2',
+            'email' => 'driver2@seapedia.test',
+        ]);
+        $this->roleService->assignRoles($driver2, [RoleName::Driver->value]);
 
         $multi = User::factory()->create([
             'name' => 'Multi Role',
