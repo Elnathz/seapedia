@@ -2,9 +2,9 @@
 import { Form, Head } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { toast } from 'vue-sonner';
 import SellerProductController from '@/actions/App/Http/Controllers/Web/SellerProductController';
 import Heading from '@/components/Heading.vue';
+import ImageCropField from '@/components/ImageCropField.vue';
 import InputError from '@/components/InputError.vue';
 import RequiredMark from '@/components/RequiredMark.vue';
 import { Button } from '@/components/ui/button';
@@ -43,8 +43,6 @@ defineOptions({
 
 const { t } = useI18n();
 const { categories } = useCategories();
-
-const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 
 const formBinding = computed(() =>
     props.product
@@ -91,34 +89,9 @@ if (props.product) {
     }
 }
 
-const previewUrl = ref<string | null>(
-    props.product?.image_path ? `/storage/${props.product.image_path}` : null,
-);
-
-function resetPreview() {
-    previewUrl.value = props.product?.image_path
-        ? `/storage/${props.product.image_path}`
-        : null;
-}
-
-function onImageChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-
-    if (file && file.size > MAX_IMAGE_BYTES) {
-        toast.error(t('product.imageTooLarge'));
-        input.value = '';
-        resetPreview();
-
-        return;
-    }
-
-    previewUrl.value = file ? URL.createObjectURL(file) : null;
-
-    if (!file) {
-        resetPreview();
-    }
-}
+const initialImageUrl = props.product?.image_path
+    ? `/storage/${props.product.image_path}`
+    : null;
 </script>
 
 <template>
@@ -264,24 +237,16 @@ function onImageChange(event: Event) {
             </div>
 
             <div class="grid gap-2">
-                <Label for="image">{{ t('product.imageLabel') }}</Label>
-                <Input
-                    id="image"
+                <Label>{{ t('product.imageLabel') }}</Label>
+                <ImageCropField
+                    :aspect-ratio="1"
                     name="image"
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp"
-                    @change="onImageChange"
+                    :initial-url="initialImageUrl"
                 />
                 <p class="text-xs text-muted-foreground">
                     {{ t('product.imageHelp') }}
                 </p>
                 <InputError :message="errors.image" />
-                <img
-                    v-if="previewUrl"
-                    :src="previewUrl"
-                    :alt="t('product.imagePreviewAlt')"
-                    class="mt-2 size-32 rounded-md border border-border object-cover"
-                />
             </div>
 
             <Button :disabled="processing" type="submit">
