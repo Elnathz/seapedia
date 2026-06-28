@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import CategoryGrid from '@/components/landing/CategoryGrid.vue';
 import FeaturedStrip from '@/components/landing/FeaturedStrip.vue';
 import HeroSection from '@/components/landing/HeroSection.vue';
+import PopularStores from '@/components/landing/PopularStores.vue';
 import ReviewsSection from '@/components/landing/ReviewsSection.vue';
 import RoleCards from '@/components/landing/RoleCards.vue';
 import TrustBand from '@/components/landing/TrustBand.vue';
@@ -30,9 +31,17 @@ interface Review {
     created_at: string;
 }
 
+interface PopularStore {
+    id: number;
+    name: string;
+    slug: string;
+    products_count: number;
+}
+
 defineProps<{
     featured: Product[];
     reviews: Review[];
+    popularStores: PopularStore[];
 }>();
 </script>
 
@@ -40,6 +49,7 @@ defineProps<{
     <Head title="SEAPEDIA | Marketplace Kampus" />
     <HeroSection />
     <TrustBand />
+    <PopularStores :stores="popularStores" />
     <CategoryGrid />
     <FeaturedStrip :products="featured" />
     <RoleCards />

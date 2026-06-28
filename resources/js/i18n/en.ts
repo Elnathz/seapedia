@@ -87,6 +87,8 @@ export default {
         imageLabel: 'Product image',
         imageHelp: 'JPG, PNG, or WEBP. Max 2MB.',
         imageTooLarge: 'Image size must be 2MB or less.',
+        cropChoose: 'Choose image',
+        cropApply: 'Apply',
         imagePreviewAlt: 'Product image preview',
         columnImage: 'Image',
         columnName: 'Name',

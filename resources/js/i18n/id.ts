@@ -87,6 +87,8 @@ export default {
         imageLabel: 'Gambar produk',
         imageHelp: 'JPG, PNG, atau WEBP. Maksimal 2MB.',
         imageTooLarge: 'Ukuran gambar maksimal 2MB.',
+        cropChoose: 'Pilih gambar',
+        cropApply: 'Terapkan',
         imagePreviewAlt: 'Pratinjau gambar produk',
         columnImage: 'Gambar',
         columnName: 'Nama',

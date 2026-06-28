@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3';
-import { Search } from '@lucide/vue';
+import { Flame, Search } from '@lucide/vue';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Logo from '@/components/brand/Logo.vue';
@@ -38,10 +38,15 @@ function catalogUrl(slug?: string) {
 
 <template>
     <!-- Promo top-bar (desktop only) -->
-    <div
-        class="hidden border-b border-primary/20 bg-primary py-1.5 text-center text-xs font-medium text-white sm:block"
-    >
-        Satu akun untuk Belanja · Jualan · Antar
+    <div class="hidden border-b border-primary/20 bg-gradient-to-r from-primary via-brand to-primary py-1.5 text-center text-xs font-medium text-white sm:block">
+        <div class="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4">
+            <Flame class="size-3.5 text-white/90" />
+            <span>Gratis ongkir pesanan pertama</span>
+            <span class="text-white/40">·</span>
+            <span>Diskon hingga 20%</span>
+            <span class="text-white/40">·</span>
+            <span>Daftar sekarang</span>
+        </div>
     </div>
 
     <header
@@ -143,6 +148,12 @@ function catalogUrl(slug?: string) {
 
             <!-- Authenticated state -->
             <div v-if="auth.isAuthenticated" class="flex items-center gap-2">
+                <Link
+                    :href="catalogUrl()"
+                    class="hidden rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:inline-flex"
+                >
+                    {{ t('nav.catalog') }}
+                </Link>
                 <LocaleToggle />
                 <RoleBadge />
                 <Button as-child size="sm">
@@ -152,6 +163,12 @@ function catalogUrl(slug?: string) {
 
             <!-- Guest CTAs -->
             <div v-else class="flex shrink-0 items-center gap-2">
+                <Link
+                    :href="catalogUrl()"
+                    class="hidden rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:inline-flex"
+                >
+                    {{ t('nav.catalog') }}
+                </Link>
                 <Button as-child variant="ghost" size="sm">
                     <Link :href="login()">{{ t('nav.login') }}</Link>
                 </Button>
@@ -161,4 +178,10 @@ function catalogUrl(slug?: string) {
             </div>
         </div>
     </header>
+    <!-- SVG wave divider -->
+    <div class="pointer-events-none relative z-30 -mt-px" aria-hidden="true">
+        <svg viewBox="0 0 1440 32" fill="none" preserveAspectRatio="none" class="block w-full" style="height: 24px">
+            <path d="M0 16 C240 32 480 0 720 16 C960 32 1200 0 1440 16 L1440 32 L0 32 Z" class="fill-primary/[0.07]" />
+        </svg>
+    </div>
 </template>
