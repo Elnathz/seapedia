@@ -17,6 +17,21 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return $this->profileRules($this->user()->id);
+        return array_merge(
+            $this->profileRules($this->user()?->id),
+            ['phone' => $this->phoneRules()],
+        );
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.min' => 'Nama minimal 2 karakter.',
+            'name.max' => 'Nama maksimal 100 karakter.',
+            'phone.regex' => 'Nomor telepon hanya boleh berisi angka.',
+        ];
     }
 }

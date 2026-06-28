@@ -23,4 +23,16 @@ class StoreAddressRequest extends FormRequest
             'is_default' => ['nullable', 'boolean'],
         ];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'recipient_name.max' => 'Nama penerima maksimal 100 karakter.',
+            'phone.regex' => 'Nomor telepon hanya boleh berisi angka.',
+            'full_address.max' => 'Alamat maksimal 500 karakter.',
+        ];
+    }
 }

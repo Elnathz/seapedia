@@ -4,6 +4,7 @@ import {
     AlertTriangle,
     BadgePercent,
     BarChart3,
+    ExternalLink,
     Images,
     Inbox,
     LayoutGrid,
@@ -24,6 +25,7 @@ import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import RoleBadge from '@/components/RoleBadge.vue';
+import { Button } from '@/components/ui/button';
 import {
     Sidebar,
     SidebarContent,
@@ -47,6 +49,7 @@ import { index as indexSellerOrders } from '@/routes/seller/orders';
 import { index as indexSellerProducts } from '@/routes/seller/products';
 import { index as indexSellerReports } from '@/routes/seller/reports';
 import { show as showSellerStore } from '@/routes/seller/store';
+import { index as catalogIndex } from '@/routes/catalog';
 import { useAuthStore } from '@/stores/auth';
 import type { NavItem } from '@/types';
 
@@ -176,6 +179,22 @@ const mainNavItems = computed<NavItem[]>(() => {
         </SidebarContent>
 
         <SidebarFooter>
+            <!-- Admin: Preview Halaman Publik -->
+            <div v-if="auth.user?.is_admin" class="mx-3 mb-3 flex flex-col gap-2 rounded-xl border border-border bg-muted/50 p-3">
+                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Lihat Halaman</p>
+                <Button as-child variant="outline" size="sm" class="w-full justify-between text-xs">
+                    <Link :href="catalogIndex.url()" target="_blank">
+                        Halaman Toko
+                        <ExternalLink class="size-3" />
+                    </Link>
+                </Button>
+                <Button as-child variant="outline" size="sm" class="w-full justify-between text-xs">
+                    <Link :href="catalogIndex.url()" target="_blank">
+                        Katalog Produk
+                        <ExternalLink class="size-3" />
+                    </Link>
+                </Button>
+            </div>
             <NavUser />
         </SidebarFooter>
     </Sidebar>

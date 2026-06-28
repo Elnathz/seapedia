@@ -22,4 +22,16 @@ class StoreAppReviewRequest extends FormRequest
             'comment' => ['required', 'string', 'max:1000'],
         ];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'reviewer_name.max' => 'Nama maksimal 80 karakter.',
+            'rating.between' => 'Rating harus antara 1 sampai 5.',
+            'comment.max' => 'Komentar maksimal 1000 karakter.',
+        ];
+    }
 }

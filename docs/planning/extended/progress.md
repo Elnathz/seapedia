@@ -1,6 +1,6 @@
 # SEAPEDIA — Progress & Handoff (untuk implementer Sonnet / Gemini 3.1 Pro)
 
-> Ditulis 28 Juni di Opus, diupdate 28 Juni malam. Sumber kebenaran: `docs/SEAPEDIA_SPEC.md` (yang dinilai) > `docs/SEAPEDIA_TDD.md` > `docs/planning/extended/implementation_plan.md` > `CLAUDE.md`.
+> Ditulis 28 Juni di Opus, diupdate 28 Juni malam + 29 Juni pagi. Sumber kebenaran: `docs/SEAPEDIA_SPEC.md` (yang dinilai) > `docs/SEAPEDIA_TDD.md` > `docs/planning/extended/implementation_plan.md` > `CLAUDE.md`.
 > Deadline: **30 Juni 23:59**.
 
 ## 1. Status global
@@ -10,7 +10,7 @@
 - Flow uang **lengkap & benar**: checkout potong wallet -> seller proses -> driver ambil -> selesai (escrow lepas ke seller + driver 80% ongkir) -> overdue auto-refund idempoten.
 - Banner system: `banners` table, `BannerService`, admin CRUD page, adaptive crop (1:1 produk, 2.5:1 main, 3:2 side), demo images via `images/banners/` public folder.
 
-## 2. Yang SUDAH selesai (komit per sesi, sesi ini 28 Juni malam)
+## 2. Yang SUDAH selesai (komit per sesi, sesi ini 29 Juni pagi)
 
 | Commit | Isi |
 | --- | --- |
@@ -30,14 +30,24 @@
 | `d82b321` | All-condition seeders: `OrderConditionSeeder` (5 status order), `StoreProductSeeder` (7 stores x 3-8 produk), `DiscountSeeder` (voucher/promo aktif/expired/inactive/used-up), `BuyerDemoSeeder` (semua buyer di-topup), `DemoUserSeeder` (seller1..seller7) |
 | `a80530a` | Enhance storefront: gradient avatar, product count + join date meta, 4-column grid |
 | `e2c9cff` | Rewrite README: no sprint mentions, updated credentials/codes, Kategori section, Security notes |
+| **[NEW 29 Juni]** | **Wave navbar enhancement: gradient shift animation, flame icon pulse, wave sway animation** |
+| **[NEW 29 Juni]** | **Emoji removed from CTA buttons (Navbar.vue)** |
+| **[NEW 29 Juni]** | **Role cards: premium scroll-triggered animation with IntersectionObserver** |
+| **[NEW 29 Juni]** | **Catalog MegaMart-style: 4-col desktop, 2-col mobile, sort dropdown, product count display** |
+| **[NEW 29 Juni]** | **Admin sidebar: preview buttons "Lihat Halaman" (Toko/Katalog)** |
+| **[NEW 29 Juni]** | **Storefront page: category badge, stock badge, enhanced product card** |
+| **[NEW 29 Juni]** | **Profile page overhaul: header gradient avatar, role badges, 4 sections (Profil/Keamanan/Role-specific/Hapus Akun)** |
+| **[NEW 29 Juni]** | **Validation tightening: Indonesian error messages, ProfileUpdateRequest + phone, StoreAppReviewRequest, StoreAddressRequest, StoreTopupRequest, StoreVoucherRequest, StorePromoRequest** |
+| **[NEW 29 Juni]** | **CLAUDE.md update: removed sprint references, added current status, updated DoD** |
 
 ## 3. Yang BELUM
 
 Secara substansial, hampir semua fitur utama sudah terimplementasi. Item di bawah adalah polish/verifikasi final:
 
-1. Verifikasi admin monitoring pages ter-render: browse ke `/admin/users`, `/admin/stores`, `/admin/products`, `/admin/orders`, `/admin/deliveries`, `/admin/overdue` — pastikan semua halaman ter-load dengan data dari seeder.
+1. **Verifikasi admin monitoring pages ter-render**: browse ke `/admin/users`, `/admin/stores`, `/admin/products`, `/admin/orders`, `/admin/deliveries`, `/admin/overdue` — pastikan semua halaman ter-load dengan data dari seeder.
 2. Banner images perlu dicek: `public/images/banners/banner-main-*.png` dan `banner-side-*.png` ada di filesystem (file .png sudah ada sebagai untracked files).
-3. Build production: `./vendor/bin/sail npm run build` + verifikasi semua page berfungsi di build (bukan Vite HMR).
+3. **Build production**: `./vendor/bin/sail npm run build` + verifikasi semua page berfungsi di build (bukan Vite HMR).
+4. **Run final test**: `./vendor/bin/sail artisan test --parallel` untuk pastikan 197 tests masih hijau setelah perubahan.
 
 ## 4. Cara menjalankan
 

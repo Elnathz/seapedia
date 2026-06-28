@@ -11,38 +11,29 @@ any task. They are authoritative.
 graded. `docs/SEAPEDIA_TDD.md` is our faithful distillation that fills in the HOW (locked values,
 schema, decisions the brief leaves open).
 
-When implementing any sprint, read sources in this order:
-`planning/sprint{N}/plan.md` → the sprint's design doc (`docs/specs/...`, if one exists)
-→ `docs/SEAPEDIA_TDD.md` (the § cited per task) → this `CLAUDE.md` (golden rules).
+When implementing any feature, read sources in this order:
+`planning/extended/implementation_plan.md` → `docs/SEAPEDIA_TDD.md` (the § cited per task)
+→ this `CLAUDE.md` (golden rules).
 **If the TDD or a plan ever conflicts with the brief, the brief wins. Otherwise the TDD wins over
 the plan/CLAUDE** — flag the conflict in `progress.md`.
+
+## Current Status (28 Juni 2026)
+
+**Level 1-6 DONE.** All 197 tests green. Production deployed at https://seapedia.web.id.
+
+Recent enhancements:
+- Wave navbar + animated gradient promo bar
+- Premium role cards with scroll-triggered animations
+- Catalog MegaMart-style layout (4-col desktop, 2-col mobile, banners)
+- Admin preview buttons (Lihat Toko/Katalog)
+- Storefront seller page with gradient avatar + category badges
+- Profile page overhaul (4 sections, role-specific stats)
+- Validation tightening + Indonesian error messages
+- All-condition seeders (7 stores, 5 order statuses)
 
 ## Stack
 
 Laravel 13 (PHP 8.3) · Inertia · Vue 3 + TypeScript · shadcn-vue · Tailwind 4 · MySQL 8 · Docker · Sanctum · Pest · iPaymu (v2). TypeScript is kept loose (`any` allowed where it unblocks).
-
-## Plan before you build (MANDATORY)
-
-0. **Do not write feature code for a sprint until you have written its plan and I have approved it.** At the start of each sprint:
-   - Read the relevant TDD sections + the `sprint-planner` skill.
-   - Write the plan to **`planning/sprint{N}/plan.md`** (structure defined in the `sprint-planner` skill).
-   - **STOP and wait for my approval.** Do not begin implementation in the same turn.
-   - During the sprint, keep `planning/sprint{N}/progress.md` updated (check off tasks as committed).
-   - The `planning/` folder is committed (`docs(planning): add sprint{N} plan`).
-
-## Execution model (EVERY sprint)
-
-- **Planning is done on Opus; implementation is done on Claude Sonnet.** After a plan is approved, the
-  feature slices are implemented with the model set to Sonnet. Every sprint plan must carry an
-  "Instructions for the Sonnet implementer" section. (Owner switches `/model` → Sonnet to implement.)
-- **Every UI slice is designed with the design skills before it is built.** Invoke `ui-ux-pro-max`
-  (+ `frontend-design` for aesthetic direction) at the UI step of every slice — see golden rule 11a.
-  The sprint plan names the design direction (palette/type/signature) the slice will follow, not just
-  the shadcn components it adds.
-- **Every UI slice is visually verified with the Playwright MCP server** (`mcp__playwright__*`): after
-  `sail npm run dev`, navigate each new/changed page, screenshot at **360 / 768 / 1280px**, and confirm
-  empty/loading/error states, responsive nav (mobile bottom-nav vs desktop sidebar), and dark mode
-  before committing. Every sprint plan lists its Playwright visual-QA checks.
 
 ## Golden rules
 
@@ -74,7 +65,6 @@ Laravel 13 (PHP 8.3) · Inertia · Vue 3 + TypeScript · shadcn-vue · Tailwind 
 - FormRequest + Policy (if ownership) + Service method (transactional where needed). Files placed per §2.5 structure.
 - Controller (web) + route behind correct middleware. Add `/api/v1` + Swagger annotation for core flows.
 - Inertia page **designed via the `ui-ux-pro-max`/`frontend-design` skills** (golden rule 11a) — built on the UI kit, but with a deliberate palette/type/hierarchy/signature, not raw shadcn defaults; responsive; has empty/error/loading states.
-- UI slices are **visually verified via Playwright MCP** (screenshots at 360/768/1280, states, dark mode).
 - A Pest feature test for any concurrency/idempotency-critical path.
 - **`pint` + ESLint/Prettier pass.**
 - One focused commit. Conventional message: `feat(scope): ...`, `fix(scope): ...`.

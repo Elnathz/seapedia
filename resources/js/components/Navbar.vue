@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link, router, usePage } from '@inertiajs/vue3';
-import { Flame, Search } from '@lucide/vue';
-import { ref, computed } from 'vue';
+import { Flame, Search, Zap, Tag } from '@lucide/vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Logo from '@/components/brand/Logo.vue';
 import RoleBadge from '@/components/RoleBadge.vue';
@@ -14,6 +14,18 @@ import {
     NavigationMenuList,
     NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from '@/components/ui/avatar';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import UserInfo from '@/components/UserInfo.vue';
+import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useCategories } from '@/composables/useCategories';
 import { dashboard, home, login, register } from '@/routes';
 import { index as catalogIndex } from '@/routes/catalog';
@@ -25,6 +37,26 @@ const { categories } = useCategories();
 
 const page = usePage();
 const isLandingPage = computed(() => page.component === 'Welcome');
+const user = computed(() => page.props.auth.user as import('@/types').User);
+
+// Promo bar — rotating messages
+const promoMessages = [
+    { icon: Flame, text: 'Gratis ongkir pesanan pertama kamu' },
+    { icon: Tag,   text: 'Diskon hingga 20% dengan kode promo' },
+    { icon: Zap,   text: 'Daftar sekarang dan langsung bisa belanja' },
+];
+const promoIndex = ref(0);
+let promoTimer: ReturnType<typeof setInterval> | null = null;
+
+onMounted(() => {
+    promoTimer = setInterval(() => {
+        promoIndex.value = (promoIndex.value + 1) % promoMessages.length;
+    }, 3500);
+});
+
+onUnmounted(() => {
+    if (promoTimer) clearInterval(promoTimer);
+});
 
 const searchQuery = ref('');
 
@@ -76,19 +108,26 @@ function scrollToSection(e: Event, id: string) {
 </script>
 
 <template>
-    <!-- Promo top-bar (desktop only) -->
-    <div class="hidden border-b border-primary/20 bg-gradient-to-r from-primary via-brand to-primary py-1.5 text-center text-xs font-medium text-white sm:block">
-        <div class="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4">
-            <Flame class="size-3.5 text-white/90" />
-            <span>Gratis ongkir pesanan pertama</span>
-            <span class="text-white/40">·</span>
-            <span>Diskon hingga 20%</span>
-            <span class="text-white/40">·</span>
-            <span>Daftar sekarang</span>
+    <!-- Animated Promo top-bar (desktop only) -->
+    <div class="promo-bar hidden border-b border-primary/20 bg-gradient-to-r from-primary via-brand to-primary py-1.5 text-center text-xs font-medium text-white sm:block overflow-hidden">
+        <div class="relative mx-auto flex max-w-7xl items-center justify-center gap-2 px-4">
+            <TransitionGroup
+                enter-active-class="transition-all duration-500 ease-out"
+                enter-from-class="opacity-0 translate-y-3"
+                enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition-all duration-400 ease-in absolute"
+                leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 -translate-y-3"
+            >
+                <div :key="promoIndex" class="flex items-center justify-center gap-2">
+                    <component :is="promoMessages[promoIndex].icon" class="promo-icon size-3.5 text-white/90" />
+                    <span>{{ promoMessages[promoIndex].text }}</span>
+                </div>
+            </TransitionGroup>
         </div>
     </div>
 
-    <header class="sticky top-0 z-40 bg-white/95 shadow-sm backdrop-blur">
+    <header class="sticky top-0 z-40 bg-white/95 shadow-sm backdrop-blur overflow-visible">
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:gap-3 sm:px-6 lg:gap-4 lg:px-8">
             <div class="flex items-center gap-2 sm:gap-4">
                 <!-- Mobile Category Menu (Sheet) -->
@@ -194,18 +233,31 @@ function scrollToSection(e: Event, id: string) {
                 <!-- Authenticated state -->
                 <template v-if="auth.isAuthenticated">
                     <Button v-if="isLandingPage" as-child variant="default" size="sm" class="hidden sm:inline-flex bg-primary font-semibold text-white shadow-sm transition-transform hover:scale-105 active:scale-95">
-                        <Link :href="catalogUrl()">Mulai Belanja 🛍️</Link>
+                        <Link :href="catalogUrl()">Mulai Belanja</Link>
                     </Button>
                     <RoleBadge />
-                    <Button as-child size="sm">
-                        <Link :href="dashboard()">{{ t('nav.dashboard') }}</Link>
-                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                            <Button variant="ghost" class="gap-2 px-2 py-1.5 focus-visible:ring-0">
+                                <UserInfo :user="user" class="hidden md:flex" />
+                                <Avatar v-if="user" class="h-8 w-8 md:hidden overflow-hidden rounded-lg">
+                                    <AvatarImage v-if="user.avatar" :src="user.avatar" :alt="user.name" />
+                                    <AvatarFallback class="rounded-lg bg-primary text-primary-foreground text-xs font-semibold">
+                                        {{ user.name.substring(0, 2).toUpperCase() }}
+                                    </AvatarFallback>
+                                </Avatar>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" class="w-56 rounded-lg" :side-offset="8">
+                            <UserMenuContent :user="user" />
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </template>
 
                 <!-- Guest CTAs -->
                 <template v-else>
                     <Button v-if="isLandingPage" as-child variant="default" size="sm" class="hidden sm:inline-flex bg-primary font-semibold text-white shadow-sm transition-transform hover:scale-105 active:scale-95">
-                        <Link :href="catalogUrl()">Jelajahi Katalog 🛍️</Link>
+                        <Link :href="catalogUrl()">Jelajahi Katalog</Link>
                     </Button>
                     <Button as-child variant="ghost" size="sm" class="hidden sm:inline-flex">
                         <Link :href="login()">{{ t('nav.login') }}</Link>
@@ -227,11 +279,64 @@ function scrollToSection(e: Event, id: string) {
             </form>
         </div>
 
-        <!-- SVG wave divider integrated as bottom edge -->
-        <div class="pointer-events-none relative z-30" aria-hidden="true" style="margin-bottom: -24px;">
-            <svg viewBox="0 0 1440 32" fill="none" preserveAspectRatio="none" class="block w-full" style="height: 24px">
-                <path d="M0 16 C240 32 480 0 720 16 C960 32 1200 0 1440 16 L1440 32 L0 32 Z" class="fill-primary/[0.07]" />
+        <!-- SVG Wave — anchored to bottom of sticky header, scrolls with it -->
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full overflow-hidden" aria-hidden="true" style="height: 36px;">
+            <svg
+                viewBox="0 0 1440 48"
+                fill="none"
+                preserveAspectRatio="none"
+                class="navbar-wave absolute inset-0 h-full w-[110%] -left-[5%]"
+            >
+                <path
+                    d="M0 24 C180 48 360 0 540 24 C720 48 900 0 1080 24 C1260 48 1440 0 1440 24 L1440 48 L0 48 Z"
+                    class="fill-primary/20"
+                />
+                <path
+                    d="M0 32 C240 48 480 8 720 32 C960 48 1200 8 1440 32 L1440 48 L0 48 Z"
+                    class="fill-primary/10"
+                />
             </svg>
         </div>
     </header>
+
 </template>
+
+<style scoped>
+/* Premium motion: 350-500ms, cubic-bezier(0.4,0,0.2,1) */
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+@keyframes flame-pulse {
+    0%, 100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 2px rgba(255, 200, 100, 0.6));
+    }
+    50% {
+        opacity: 0.85;
+        filter: drop-shadow(0 0 6px rgba(255, 150, 50, 0.9));
+    }
+}
+
+@keyframes wave-sway {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-40px); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .promo-bar {
+        background-size: 200% 100%;
+        animation: gradient-shift 8s ease-in-out infinite;
+    }
+
+    .promo-icon {
+        animation: flame-pulse 2s ease-in-out infinite;
+    }
+
+    .navbar-wave {
+        animation: wave-sway 10s ease-in-out infinite;
+        will-change: transform;
+    }
+}
+</style>

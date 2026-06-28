@@ -25,7 +25,7 @@ class StoreVoucherRequest extends FormRequest
                 'required', 'integer', 'min:1',
                 function (string $attribute, mixed $value, callable $fail): void {
                     if ($this->input('type') === DiscountType::Percentage->value && $value > 100) {
-                        $fail(__('Percentage value cannot exceed 100.'));
+                        $fail('Persentase tidak boleh lebih dari 100%.');
                     }
                 },
             ],
@@ -34,6 +34,18 @@ class StoreVoucherRequest extends FormRequest
             'expiry_date' => ['required', 'date', 'after:today'],
             'usage_limit' => ['required', 'integer', 'min:1'],
             'is_active' => ['sometimes', 'boolean'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'code.unique' => 'Kode voucher sudah digunakan.',
+            'expiry_date.after' => 'Tanggal kedaluwarsa harus setelah hari ini.',
+            'usage_limit.min' => 'Batas penggunaan minimal 1.',
         ];
     }
 }

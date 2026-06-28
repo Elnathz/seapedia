@@ -293,10 +293,12 @@ function visit(params: Record<string, string | number>) {
                     {{ root.name }}
                 </button>
             </div>
-            
+
             <div class="flex items-center gap-3">
                 <Spinner v-if="loading" class="size-4" />
-                <p class="text-sm text-muted-foreground hidden sm:block">{{ products.total }} produk</p>
+                <p class="text-sm text-muted-foreground">
+                    Menampilkan {{ allProducts.length }} dari {{ products.total }} produk
+                </p>
                 <Select :model-value="sortValue" @update:model-value="applySort">
                     <SelectTrigger class="w-44">
                         <SelectValue placeholder="Urutkan" />

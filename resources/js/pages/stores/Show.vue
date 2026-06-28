@@ -14,7 +14,9 @@ interface Product {
     slug: string;
     name: string;
     price: number;
+    stock: number;
     image_path: string | null;
+    category: { name: string } | null;
 }
 
 interface Store {
@@ -118,9 +120,21 @@ function formatDate(dateStr: string): string {
                             class="size-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                         <PlaceholderPattern v-else />
+                        <span
+                            v-if="product.stock === 0"
+                            class="absolute top-2 right-2 rounded-full bg-destructive px-2 py-0.5 text-xs font-medium text-white"
+                        >
+                            Habis
+                        </span>
                     </div>
                     <CardContent class="flex flex-col gap-1 pt-3 sm:pt-4">
-                        <h2 class="text-sm font-medium leading-tight">{{ product.name }}</h2>
+                        <span
+                            v-if="product.category"
+                            class="w-fit rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                        >
+                            {{ product.category.name }}
+                        </span>
+                        <h2 class="text-sm font-medium leading-tight line-clamp-2">{{ product.name }}</h2>
                         <p class="mt-0.5 font-semibold tabular-nums text-primary sm:text-base">
                             {{ formatIDR(product.price) }}
                         </p>
