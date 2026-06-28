@@ -9,13 +9,13 @@ defineProps<{ banner: BannerNode }>();
 <template>
     <Link
         :href="banner.cta_url ?? '/catalog'"
-        class="group relative block overflow-hidden rounded-xl border border-border"
+        class="group relative block overflow-hidden rounded-xl border border-border h-full"
     >
         <img
             :src="bannerSrc(banner.image_path)"
             :alt="banner.title"
             loading="lazy"
-            class="aspect-[3/2] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            class="h-full w-full object-cover lg:aspect-auto aspect-[3/2] transition-transform duration-300 group-hover:scale-105"
         />
         <span
             v-if="banner.badge_label"

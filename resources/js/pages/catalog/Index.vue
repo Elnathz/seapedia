@@ -172,23 +172,20 @@ function visit(params: Record<string, string | number>) {
     <!-- Banner block (Full Width) -->
     <div class="w-full">
         <div v-if="banners.main.length || banners.side.length" class="mx-auto max-w-7xl">
-            <!-- Desktop: 2 side | carousel | 2 side -->
-            <div class="hidden gap-3 lg:grid lg:grid-cols-4 px-4 py-6 sm:px-6">
-                <div class="flex flex-col gap-3">
-                    <BannerImage v-for="b in banners.side.slice(0, 2)" :key="b.id" :banner="b" />
+            <!-- Desktop: carousel (2/3) | 2 side banners (1/3) -->
+            <div class="hidden gap-3 lg:grid lg:grid-cols-3 px-4 py-6 sm:px-6 h-[420px]">
+                <div class="col-span-2 h-full min-h-0 min-w-0">
+                    <BannerCarousel v-if="banners.main.length" :slides="banners.main" class="h-full w-full" />
                 </div>
-                <div class="col-span-2">
-                    <BannerCarousel v-if="banners.main.length" :slides="banners.main" />
-                </div>
-                <div class="flex flex-col gap-3">
-                    <BannerImage v-for="b in banners.side.slice(2, 4)" :key="b.id" :banner="b" />
+                <div class="flex flex-col gap-3 h-full overflow-hidden min-h-0 min-w-0">
+                    <BannerImage v-for="b in banners.side.slice(0, 2)" :key="b.id" :banner="b" class="flex-1 h-1/2 object-cover min-h-0" />
                 </div>
             </div>
             <!-- Mobile/tablet: carousel then 2-col side grid -->
             <div class="space-y-3 lg:hidden px-4 py-4">
                 <BannerCarousel v-if="banners.main.length" :slides="banners.main" />
                 <div v-if="banners.side.length" class="grid grid-cols-2 gap-3">
-                    <BannerImage v-for="b in banners.side" :key="b.id" :banner="b" />
+                    <BannerImage v-for="b in banners.side.slice(0, 2)" :key="b.id" :banner="b" />
                 </div>
             </div>
         </div>
@@ -229,23 +226,25 @@ function visit(params: Record<string, string | number>) {
         <!-- Pilihan Untukmu -->
         <div v-if="personalizedProducts && personalizedProducts.length > 0 && !activeCategory && !query" class="mb-10">
             <h2 class="text-xl font-bold mb-4">Pilihan Untukmu</h2>
-            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                 <Link
                     v-for="product in personalizedProducts"
                     :key="product.id"
                     :href="catalogShow.url(product.slug)"
-                    class="group"
+                    class="group block h-full"
                 >
-                    <Card class="h-full cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
-                        <div class="relative aspect-square overflow-hidden rounded-t-xl border-b border-border bg-muted">
+                    <Card class="h-full cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-md p-0 gap-0 flex flex-col">
+                        <div class="relative aspect-square w-full overflow-hidden border-b border-border bg-muted/30">
                             <img v-if="product.image_path" :src="`/storage/${product.image_path}`" :alt="product.name" loading="lazy" class="size-full object-cover transition-transform duration-300 group-hover:scale-105" />
                             <PlaceholderPattern v-else />
-                            <Badge v-if="product.stock === 0" variant="destructive" class="absolute top-2 right-2">Habis</Badge>
+                            <Badge v-if="product.stock === 0" variant="destructive" class="absolute top-2 right-2 text-[10px] px-1.5 py-0 h-5">Habis</Badge>
                         </div>
-                        <CardContent class="flex flex-col gap-1 pt-4">
-                            <Badge variant="secondary" class="w-fit text-xs">{{ product.store.name }}</Badge>
-                            <h2 class="mt-1 line-clamp-2 leading-snug font-medium">{{ product.name }}</h2>
-                            <p class="mt-1.5 font-semibold text-primary tabular-nums">{{ formatIDR(product.price) }}</p>
+                        <CardContent class="flex flex-col gap-1 p-3 flex-1">
+                            <h2 class="line-clamp-2 leading-tight text-[13px] font-medium">{{ product.name }}</h2>
+                            <p class="mt-0.5 font-bold text-foreground text-sm tabular-nums">{{ formatIDR(product.price) }}</p>
+                            <div class="mt-auto pt-1.5 flex items-center gap-1.5">
+                                <span class="text-[11px] text-muted-foreground line-clamp-1">{{ product.store.name }}</span>
+                            </div>
                         </CardContent>
                     </Card>
                 </Link>
@@ -334,23 +333,25 @@ function visit(params: Record<string, string | number>) {
         />
 
         <template v-else>
-            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                 <Link
                     v-for="product in allProducts"
                     :key="product.id"
                     :href="catalogShow.url(product.slug)"
-                    class="group"
+                    class="group block h-full"
                 >
-                    <Card class="h-full cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
-                        <div class="relative aspect-square overflow-hidden rounded-t-xl border-b border-border bg-muted">
+                    <Card class="h-full cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-md p-0 gap-0 flex flex-col">
+                        <div class="relative aspect-square w-full overflow-hidden border-b border-border bg-muted/30">
                             <img v-if="product.image_path" :src="`/storage/${product.image_path}`" :alt="product.name" loading="lazy" class="size-full object-cover transition-transform duration-300 group-hover:scale-105" />
                             <PlaceholderPattern v-else />
-                            <Badge v-if="product.stock === 0" variant="destructive" class="absolute top-2 right-2">Habis</Badge>
+                            <Badge v-if="product.stock === 0" variant="destructive" class="absolute top-2 right-2 text-[10px] px-1.5 py-0 h-5">Habis</Badge>
                         </div>
-                        <CardContent class="flex flex-col gap-1 pt-4">
-                            <Badge variant="secondary" class="w-fit text-xs">{{ product.store.name }}</Badge>
-                            <h2 class="mt-1 line-clamp-2 leading-snug font-medium">{{ product.name }}</h2>
-                            <p class="mt-1.5 font-semibold text-primary tabular-nums">{{ formatIDR(product.price) }}</p>
+                        <CardContent class="flex flex-col gap-1 p-3 flex-1">
+                            <h2 class="line-clamp-2 leading-tight text-[13px] font-medium">{{ product.name }}</h2>
+                            <p class="mt-0.5 font-bold text-foreground text-sm tabular-nums">{{ formatIDR(product.price) }}</p>
+                            <div class="mt-auto pt-1.5 flex items-center gap-1.5">
+                                <span class="text-[11px] text-muted-foreground line-clamp-1">{{ product.store.name }}</span>
+                            </div>
                         </CardContent>
                     </Card>
                 </Link>

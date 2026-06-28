@@ -32,24 +32,24 @@ clearInterval(timer);
 
 <template>
     <div
-        class="relative overflow-hidden rounded-xl border border-border"
+        class="relative overflow-hidden rounded-xl border border-border h-full min-h-0 min-w-0"
         @mouseenter="timer && clearInterval(timer)"
         @mouseleave="timer = props.slides.length > 1 ? setInterval(() => go(active + 1), 5000) : null"
     >
         <div
-            class="flex transition-transform duration-500 ease-out motion-reduce:transition-none"
+            class="flex transition-transform duration-500 ease-out h-full min-h-0 min-w-0 motion-reduce:transition-none"
             :style="{ transform: `translateX(-${active * 100}%)` }"
         >
             <Link
                 v-for="slide in slides"
                 :key="slide.id"
                 :href="slide.cta_url ?? '/catalog'"
-                class="block w-full shrink-0"
+                class="block w-full h-full shrink-0 relative"
             >
                 <img
                     :src="bannerSrc(slide.image_path)"
                     :alt="slide.title"
-                    class="aspect-[5/2] w-full object-cover"
+                    class="h-full w-full object-cover lg:aspect-auto aspect-[5/2]"
                 />
                 <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-6">
                     <p class="text-xl font-bold text-white">{{ slide.title }}</p>

@@ -127,7 +127,7 @@ function scrollToSection(e: Event, id: string) {
         </div>
     </div>
 
-    <header class="sticky top-0 z-40 bg-white/95 shadow-sm backdrop-blur overflow-visible">
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur overflow-visible border-b border-border/40">
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:gap-3 sm:px-6 lg:gap-4 lg:px-8">
             <div class="flex items-center gap-2 sm:gap-4">
                 <!-- Mobile Category Menu (Sheet) -->
@@ -279,21 +279,21 @@ function scrollToSection(e: Event, id: string) {
             </form>
         </div>
 
-        <!-- SVG Wave — anchored to bottom of sticky header, scrolls with it -->
-        <div class="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full overflow-hidden" aria-hidden="true" style="height: 36px;">
+        <!-- SVG Wave — flat top attaches to navbar, wavy bottom hangs down -->
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full overflow-hidden" aria-hidden="true" style="height: 32px;">
             <svg
                 viewBox="0 0 1440 48"
                 fill="none"
                 preserveAspectRatio="none"
-                class="navbar-wave absolute inset-0 h-full w-[110%] -left-[5%]"
+                class="navbar-wave absolute inset-0 h-full w-[120%] -left-[10%] drop-shadow-sm"
             >
                 <path
-                    d="M0 24 C180 48 360 0 540 24 C720 48 900 0 1080 24 C1260 48 1440 0 1440 24 L1440 48 L0 48 Z"
-                    class="fill-primary/20"
+                    d="M0 0 L0 32 C240 48 480 8 720 32 C960 48 1200 8 1440 32 L1440 0 Z"
+                    class="fill-primary/10"
                 />
                 <path
-                    d="M0 32 C240 48 480 8 720 32 C960 48 1200 8 1440 32 L1440 48 L0 48 Z"
-                    class="fill-primary/10"
+                    d="M0 0 L0 24 C180 48 360 0 540 24 C720 48 900 0 1080 24 C1260 48 1440 0 1440 24 L1440 0 Z"
+                    class="fill-primary/20"
                 />
             </svg>
         </div>
