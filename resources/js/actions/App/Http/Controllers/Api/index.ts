@@ -12,22 +12,21 @@ import Seller from './Seller'
 import SellerReportController from './SellerReportController'
 import Driver from './Driver'
 import Admin from './Admin'
-
 const Api = {
     AuthController: Object.assign(AuthController, AuthController),
-    RoleController: Object.assign(RoleController, RoleController),
-    MeController: Object.assign(MeController, MeController),
-    CatalogController: Object.assign(CatalogController, CatalogController),
-    BuyerWalletController: Object.assign(BuyerWalletController, BuyerWalletController),
-    BuyerAddressController: Object.assign(BuyerAddressController, BuyerAddressController),
-    BuyerCartController: Object.assign(BuyerCartController, BuyerCartController),
-    CheckoutController: Object.assign(CheckoutController, CheckoutController),
-    BuyerOrderController: Object.assign(BuyerOrderController, BuyerOrderController),
-    BuyerReportController: Object.assign(BuyerReportController, BuyerReportController),
-    Seller: Object.assign(Seller, Seller),
-    SellerReportController: Object.assign(SellerReportController, SellerReportController),
-    Driver: Object.assign(Driver, Driver),
-    Admin: Object.assign(Admin, Admin),
+RoleController: Object.assign(RoleController, RoleController),
+MeController: Object.assign(MeController, MeController),
+CatalogController: Object.assign(CatalogController, CatalogController),
+BuyerWalletController: Object.assign(BuyerWalletController, BuyerWalletController),
+BuyerAddressController: Object.assign(BuyerAddressController, BuyerAddressController),
+BuyerCartController: Object.assign(BuyerCartController, BuyerCartController),
+CheckoutController: Object.assign(CheckoutController, CheckoutController),
+BuyerOrderController: Object.assign(BuyerOrderController, BuyerOrderController),
+BuyerReportController: Object.assign(BuyerReportController, BuyerReportController),
+Seller: Object.assign(Seller, Seller),
+SellerReportController: Object.assign(SellerReportController, SellerReportController),
+Driver: Object.assign(Driver, Driver),
+Admin: Object.assign(Admin, Admin),
 }
 
 export default Api

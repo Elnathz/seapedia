@@ -1,9 +1,9 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\AuthController::store
-* @see app/Http/Controllers/Api/AuthController.php:45
-* @route '/api/v1/login'
-*/
+ * @see app/Http/Controllers/Api/AuthController.php:45
+ * @route '/api/v1/login'
+ */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
@@ -16,50 +16,49 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AuthController::store
-* @see app/Http/Controllers/Api/AuthController.php:45
-* @route '/api/v1/login'
-*/
+ * @see app/Http/Controllers/Api/AuthController.php:45
+ * @route '/api/v1/login'
+ */
 store.url = (options?: RouteQueryOptions) => {
     return store.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\Api\AuthController::store
-* @see app/Http/Controllers/Api/AuthController.php:45
-* @route '/api/v1/login'
-*/
+ * @see app/Http/Controllers/Api/AuthController.php:45
+ * @route '/api/v1/login'
+ */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
 
-/**
+    /**
 * @see \App\Http\Controllers\Api\AuthController::store
-* @see app/Http/Controllers/Api/AuthController.php:45
-* @route '/api/v1/login'
-*/
-const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
+ * @see app/Http/Controllers/Api/AuthController.php:45
+ * @route '/api/v1/login'
+ */
+    const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: store.url(options),
+        method: 'post',
+    })
 
-/**
+            /**
 * @see \App\Http\Controllers\Api\AuthController::store
-* @see app/Http/Controllers/Api/AuthController.php:45
-* @route '/api/v1/login'
-*/
-storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-store.form = storeForm
-
+ * @see app/Http/Controllers/Api/AuthController.php:45
+ * @route '/api/v1/login'
+ */
+        storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: store.url(options),
+            method: 'post',
+        })
+    
+    store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\AuthController::destroy
-* @see app/Http/Controllers/Api/AuthController.php:76
-* @route '/api/v1/logout'
-*/
+ * @see app/Http/Controllers/Api/AuthController.php:76
+ * @route '/api/v1/logout'
+ */
 export const destroy = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: destroy.url(options),
     method: 'post',
@@ -72,45 +71,44 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\AuthController::destroy
-* @see app/Http/Controllers/Api/AuthController.php:76
-* @route '/api/v1/logout'
-*/
+ * @see app/Http/Controllers/Api/AuthController.php:76
+ * @route '/api/v1/logout'
+ */
 destroy.url = (options?: RouteQueryOptions) => {
     return destroy.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\Api\AuthController::destroy
-* @see app/Http/Controllers/Api/AuthController.php:76
-* @route '/api/v1/logout'
-*/
+ * @see app/Http/Controllers/Api/AuthController.php:76
+ * @route '/api/v1/logout'
+ */
 destroy.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: destroy.url(options),
     method: 'post',
 })
 
-/**
+    /**
 * @see \App\Http\Controllers\Api\AuthController::destroy
-* @see app/Http/Controllers/Api/AuthController.php:76
-* @route '/api/v1/logout'
-*/
-const destroyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(options),
-    method: 'post',
-})
+ * @see app/Http/Controllers/Api/AuthController.php:76
+ * @route '/api/v1/logout'
+ */
+    const destroyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: destroy.url(options),
+        method: 'post',
+    })
 
-/**
+            /**
 * @see \App\Http\Controllers\Api\AuthController::destroy
-* @see app/Http/Controllers/Api/AuthController.php:76
-* @route '/api/v1/logout'
-*/
-destroyForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(options),
-    method: 'post',
-})
-
-destroy.form = destroyForm
-
+ * @see app/Http/Controllers/Api/AuthController.php:76
+ * @route '/api/v1/logout'
+ */
+        destroyForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: destroy.url(options),
+            method: 'post',
+        })
+    
+    destroy.form = destroyForm
 const AuthController = { store, destroy }
 
 export default AuthController

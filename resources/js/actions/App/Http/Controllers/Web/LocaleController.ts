@@ -1,9 +1,9 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Web\LocaleController::update
-* @see app/Http/Controllers/Web/LocaleController.php:20
-* @route '/locale'
-*/
+ * @see app/Http/Controllers/Web/LocaleController.php:20
+ * @route '/locale'
+ */
 export const update = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: update.url(options),
     method: 'post',
@@ -16,45 +16,44 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\LocaleController::update
-* @see app/Http/Controllers/Web/LocaleController.php:20
-* @route '/locale'
-*/
+ * @see app/Http/Controllers/Web/LocaleController.php:20
+ * @route '/locale'
+ */
 update.url = (options?: RouteQueryOptions) => {
     return update.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\Web\LocaleController::update
-* @see app/Http/Controllers/Web/LocaleController.php:20
-* @route '/locale'
-*/
+ * @see app/Http/Controllers/Web/LocaleController.php:20
+ * @route '/locale'
+ */
 update.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: update.url(options),
     method: 'post',
 })
 
-/**
+    /**
 * @see \App\Http\Controllers\Web\LocaleController::update
-* @see app/Http/Controllers/Web/LocaleController.php:20
-* @route '/locale'
-*/
-const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(options),
-    method: 'post',
-})
+ * @see app/Http/Controllers/Web/LocaleController.php:20
+ * @route '/locale'
+ */
+    const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: update.url(options),
+        method: 'post',
+    })
 
-/**
+            /**
 * @see \App\Http\Controllers\Web\LocaleController::update
-* @see app/Http/Controllers/Web/LocaleController.php:20
-* @route '/locale'
-*/
-updateForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(options),
-    method: 'post',
-})
-
-update.form = updateForm
-
+ * @see app/Http/Controllers/Web/LocaleController.php:20
+ * @route '/locale'
+ */
+        updateForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: update.url(options),
+            method: 'post',
+        })
+    
+    update.form = updateForm
 const LocaleController = { update }
 
 export default LocaleController

@@ -1,9 +1,9 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::index
-* @see app/Http/Controllers/Api/Admin/PromoController.php:26
-* @route '/api/v1/admin/promos'
-*/
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:26
+ * @route '/api/v1/admin/promos'
+ */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
     method: 'get',
@@ -16,75 +16,72 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::index
-* @see app/Http/Controllers/Api/Admin/PromoController.php:26
-* @route '/api/v1/admin/promos'
-*/
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:26
+ * @route '/api/v1/admin/promos'
+ */
 index.url = (options?: RouteQueryOptions) => {
     return index.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::index
-* @see app/Http/Controllers/Api/Admin/PromoController.php:26
-* @route '/api/v1/admin/promos'
-*/
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:26
+ * @route '/api/v1/admin/promos'
+ */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
     method: 'get',
 })
-
 /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::index
-* @see app/Http/Controllers/Api/Admin/PromoController.php:26
-* @route '/api/v1/admin/promos'
-*/
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:26
+ * @route '/api/v1/admin/promos'
+ */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
 
-/**
+    /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::index
-* @see app/Http/Controllers/Api/Admin/PromoController.php:26
-* @route '/api/v1/admin/promos'
-*/
-const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:26
+ * @route '/api/v1/admin/promos'
+ */
+    const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: index.url(options),
+        method: 'get',
+    })
 
-/**
+            /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::index
-* @see app/Http/Controllers/Api/Admin/PromoController.php:26
-* @route '/api/v1/admin/promos'
-*/
-indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:26
+ * @route '/api/v1/admin/promos'
+ */
+        indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: index.url(options),
+            method: 'get',
+        })
+            /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::index
-* @see app/Http/Controllers/Api/Admin/PromoController.php:26
-* @route '/api/v1/admin/promos'
-*/
-indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-index.form = indexForm
-
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:26
+ * @route '/api/v1/admin/promos'
+ */
+        indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: index.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    index.form = indexForm
 /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::store
-* @see app/Http/Controllers/Api/Admin/PromoController.php:41
-* @route '/api/v1/admin/promos'
-*/
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:41
+ * @route '/api/v1/admin/promos'
+ */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
@@ -97,50 +94,49 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::store
-* @see app/Http/Controllers/Api/Admin/PromoController.php:41
-* @route '/api/v1/admin/promos'
-*/
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:41
+ * @route '/api/v1/admin/promos'
+ */
 store.url = (options?: RouteQueryOptions) => {
     return store.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::store
-* @see app/Http/Controllers/Api/Admin/PromoController.php:41
-* @route '/api/v1/admin/promos'
-*/
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:41
+ * @route '/api/v1/admin/promos'
+ */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
 
-/**
+    /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::store
-* @see app/Http/Controllers/Api/Admin/PromoController.php:41
-* @route '/api/v1/admin/promos'
-*/
-const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:41
+ * @route '/api/v1/admin/promos'
+ */
+    const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: store.url(options),
+        method: 'post',
+    })
 
-/**
+            /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::store
-* @see app/Http/Controllers/Api/Admin/PromoController.php:41
-* @route '/api/v1/admin/promos'
-*/
-storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-store.form = storeForm
-
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:41
+ * @route '/api/v1/admin/promos'
+ */
+        storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: store.url(options),
+            method: 'post',
+        })
+    
+    store.form = storeForm
 /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::show
-* @see app/Http/Controllers/Api/Admin/PromoController.php:56
-* @route '/api/v1/admin/promos/{promo}'
-*/
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:56
+ * @route '/api/v1/admin/promos/{promo}'
+ */
 export const show = (args: { promo: number | { id: number } } | [promo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
@@ -153,31 +149,31 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::show
-* @see app/Http/Controllers/Api/Admin/PromoController.php:56
-* @route '/api/v1/admin/promos/{promo}'
-*/
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:56
+ * @route '/api/v1/admin/promos/{promo}'
+ */
 show.url = (args: { promo: number | { id: number } } | [promo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { promo: args }
     }
 
-    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-        args = { promo: args.id }
-    }
-
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { promo: args.id }
+        }
+    
     if (Array.isArray(args)) {
         args = {
-            promo: args[0],
-        }
+                    promo: args[0],
+                }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-        promo: typeof args.promo === 'object'
-        ? args.promo.id
-        : args.promo,
-    }
+                        promo: typeof args.promo === 'object'
+                ? args.promo.id
+                : args.promo,
+                }
 
     return show.definition.url
             .replace('{promo}', parsedArgs.promo.toString())
@@ -186,65 +182,62 @@ show.url = (args: { promo: number | { id: number } } | [promo: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::show
-* @see app/Http/Controllers/Api/Admin/PromoController.php:56
-* @route '/api/v1/admin/promos/{promo}'
-*/
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:56
+ * @route '/api/v1/admin/promos/{promo}'
+ */
 show.get = (args: { promo: number | { id: number } } | [promo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
-
 /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::show
-* @see app/Http/Controllers/Api/Admin/PromoController.php:56
-* @route '/api/v1/admin/promos/{promo}'
-*/
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:56
+ * @route '/api/v1/admin/promos/{promo}'
+ */
 show.head = (args: { promo: number | { id: number } } | [promo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
 
-/**
+    /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::show
-* @see app/Http/Controllers/Api/Admin/PromoController.php:56
-* @route '/api/v1/admin/promos/{promo}'
-*/
-const showForm = (args: { promo: number | { id: number } } | [promo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:56
+ * @route '/api/v1/admin/promos/{promo}'
+ */
+    const showForm = (args: { promo: number | { id: number } } | [promo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        action: show.url(args, options),
+        method: 'get',
+    })
 
-/**
+            /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::show
-* @see app/Http/Controllers/Api/Admin/PromoController.php:56
-* @route '/api/v1/admin/promos/{promo}'
-*/
-showForm.get = (args: { promo: number | { id: number } } | [promo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:56
+ * @route '/api/v1/admin/promos/{promo}'
+ */
+        showForm.get = (args: { promo: number | { id: number } } | [promo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: show.url(args, options),
+            method: 'get',
+        })
+            /**
 * @see \App\Http\Controllers\Api\Admin\PromoController::show
-* @see app/Http/Controllers/Api/Admin/PromoController.php:56
-* @route '/api/v1/admin/promos/{promo}'
-*/
-showForm.head = (args: { promo: number | { id: number } } | [promo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-show.form = showForm
-
+ * @see app/Http/Controllers/Api/Admin/PromoController.php:56
+ * @route '/api/v1/admin/promos/{promo}'
+ */
+        showForm.head = (args: { promo: number | { id: number } } | [promo: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+            action: show.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'HEAD',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'get',
+        })
+    
+    show.form = showForm
 const promos = {
     index: Object.assign(index, index),
-    store: Object.assign(store, store),
-    show: Object.assign(show, show),
+store: Object.assign(store, store),
+show: Object.assign(show, show),
 }
 
 export default promos

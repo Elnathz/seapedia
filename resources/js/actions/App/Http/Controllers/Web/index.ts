@@ -17,27 +17,26 @@ import BuyerOrderController from './BuyerOrderController'
 import BuyerReportController from './BuyerReportController'
 import DriverJobController from './DriverJobController'
 import Admin from './Admin'
-
 const Web = {
     HomeController: Object.assign(HomeController, HomeController),
-    LocaleController: Object.assign(LocaleController, LocaleController),
-    CatalogController: Object.assign(CatalogController, CatalogController),
-    StoreController: Object.assign(StoreController, StoreController),
-    AppReviewController: Object.assign(AppReviewController, AppReviewController),
-    DashboardController: Object.assign(DashboardController, DashboardController),
-    RoleController: Object.assign(RoleController, RoleController),
-    SellerStoreController: Object.assign(SellerStoreController, SellerStoreController),
-    SellerProductController: Object.assign(SellerProductController, SellerProductController),
-    SellerOrderController: Object.assign(SellerOrderController, SellerOrderController),
-    SellerReportController: Object.assign(SellerReportController, SellerReportController),
-    BuyerWalletController: Object.assign(BuyerWalletController, BuyerWalletController),
-    BuyerAddressController: Object.assign(BuyerAddressController, BuyerAddressController),
-    BuyerCartController: Object.assign(BuyerCartController, BuyerCartController),
-    CheckoutController: Object.assign(CheckoutController, CheckoutController),
-    BuyerOrderController: Object.assign(BuyerOrderController, BuyerOrderController),
-    BuyerReportController: Object.assign(BuyerReportController, BuyerReportController),
-    DriverJobController: Object.assign(DriverJobController, DriverJobController),
-    Admin: Object.assign(Admin, Admin),
+LocaleController: Object.assign(LocaleController, LocaleController),
+CatalogController: Object.assign(CatalogController, CatalogController),
+StoreController: Object.assign(StoreController, StoreController),
+AppReviewController: Object.assign(AppReviewController, AppReviewController),
+DashboardController: Object.assign(DashboardController, DashboardController),
+RoleController: Object.assign(RoleController, RoleController),
+SellerStoreController: Object.assign(SellerStoreController, SellerStoreController),
+SellerProductController: Object.assign(SellerProductController, SellerProductController),
+SellerOrderController: Object.assign(SellerOrderController, SellerOrderController),
+SellerReportController: Object.assign(SellerReportController, SellerReportController),
+BuyerWalletController: Object.assign(BuyerWalletController, BuyerWalletController),
+BuyerAddressController: Object.assign(BuyerAddressController, BuyerAddressController),
+BuyerCartController: Object.assign(BuyerCartController, BuyerCartController),
+CheckoutController: Object.assign(CheckoutController, CheckoutController),
+BuyerOrderController: Object.assign(BuyerOrderController, BuyerOrderController),
+BuyerReportController: Object.assign(BuyerReportController, BuyerReportController),
+DriverJobController: Object.assign(DriverJobController, DriverJobController),
+Admin: Object.assign(Admin, Admin),
 }
 
 export default Web
