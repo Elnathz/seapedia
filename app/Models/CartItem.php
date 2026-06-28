@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $quantity
  * @property int $price_snapshot
  */
-#[Fillable(['cart_id', 'product_id', 'quantity', 'price_snapshot'])]
+#[Fillable(['cart_id', 'product_id', 'product_variant_id', 'quantity', 'price_snapshot'])]
 class CartItem extends Model
 {
     /** @use HasFactory<CartItemFactory> */
@@ -43,5 +43,10 @@ class CartItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function variant(): BelongsTo
+    {
+        return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 }
