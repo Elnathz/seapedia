@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { ArrowLeft } from '@lucide/vue';
+import { ArrowLeft, Package } from '@lucide/vue';
 import { useI18n } from 'vue-i18n';
 import EmptyState from '@/components/EmptyState.vue';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { useInitials } from '@/composables/useInitials';
 import { formatIDR } from '@/lib/utils';
@@ -25,13 +23,23 @@ interface Store {
     slug: string;
     description: string | null;
     is_active: boolean;
+    created_at: string;
     products: Product[];
+    products_count: number;
 }
 
 defineProps<{ store: Store }>();
 
-const { getInitials } = useInitials();
+const { getInitials, getGradientClass } = useInitials();
 const { t } = useI18n();
+
+function formatDate(dateStr: string): string {
+    return new Intl.DateTimeFormat('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+    }).format(new Date(dateStr));
+}
 </script>
 
 <template>
@@ -46,18 +54,24 @@ const { t } = useI18n();
             {{ t('catalog.backToCatalog') }}
         </Link>
 
-        <div class="mt-6 flex items-center gap-4">
-            <Avatar class="size-14">
-                <AvatarFallback class="text-lg">{{
-                    getInitials(store.name)
-                }}</AvatarFallback>
-            </Avatar>
-            <div>
-                <div class="flex items-center gap-2">
-                    <h1 class="text-xl font-semibold">{{ store.name }}</h1>
-                    <Badge v-if="store.is_active" variant="secondary">{{
-                        t('catalog.storeActive')
-                    }}</Badge>
+        <!-- Store header -->
+        <div class="mt-6 flex items-start gap-4">
+            <!-- Gradient avatar with initials -->
+            <div
+                class="flex size-16 shrink-0 items-center justify-center rounded-full text-xl font-bold text-white shadow-sm sm:size-20"
+                :class="getGradientClass(store.name)"
+            >
+                {{ getInitials(store.name) }}
+            </div>
+            <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                    <h1 class="text-xl font-semibold sm:text-2xl">{{ store.name }}</h1>
+                    <span
+                        v-if="store.is_active"
+                        class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700"
+                    >
+                        {{ t('catalog.storeActive') }}
+                    </span>
                 </div>
                 <p
                     v-if="store.description"
@@ -65,9 +79,18 @@ const { t } = useI18n();
                 >
                     {{ store.description }}
                 </p>
+                <!-- Meta: product count + join date -->
+                <div class="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                    <span class="inline-flex items-center gap-1">
+                        <Package class="size-3.5" />
+                        {{ store.products_count }} {{ store.products_count === 1 ? 'produk' : 'produk' }}
+                    </span>
+                    <span>Bergabung {{ formatDate(store.created_at) }}</span>
+                </div>
             </div>
         </div>
 
+        <!-- Product grid — 4 columns like catalog -->
         <EmptyState
             v-if="store.products.length === 0"
             :title="t('store.noProductsTitle')"
@@ -75,7 +98,7 @@ const { t } = useI18n();
             class="mt-10"
         />
 
-        <div v-else class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div v-else class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
             <Link
                 v-for="product in store.products"
                 :key="product.id"
@@ -96,9 +119,9 @@ const { t } = useI18n();
                         />
                         <PlaceholderPattern v-else />
                     </div>
-                    <CardContent class="flex flex-col gap-1 pt-4">
-                        <h2 class="font-medium">{{ product.name }}</h2>
-                        <p class="mt-1 font-semibold tabular-nums text-primary">
+                    <CardContent class="flex flex-col gap-1 pt-3 sm:pt-4">
+                        <h2 class="text-sm font-medium leading-tight">{{ product.name }}</h2>
+                        <p class="mt-0.5 font-semibold tabular-nums text-primary sm:text-base">
                             {{ formatIDR(product.price) }}
                         </p>
                     </CardContent>

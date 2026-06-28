@@ -45,7 +45,8 @@ class StoreService
     public function publicShow(string $slug): ?Store
     {
         return Store::query()
-            ->select(['id', 'name', 'slug', 'description', 'is_active'])
+            ->select(['id', 'name', 'slug', 'description', 'is_active', 'created_at'])
+            ->withCount('products as products_count')
             ->with(['products' => fn ($query) => $query
                 ->select(['id', 'store_id', 'name', 'slug', 'price', 'image_path'])
                 ->where('is_active', true)
