@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Controllers\Web\Admin\AdminDeliveryController;
+use App\Http\Controllers\Web\Admin\AdminOrderController;
+use App\Http\Controllers\Web\Admin\AdminOverdueController;
+use App\Http\Controllers\Web\Admin\AdminProductController;
+use App\Http\Controllers\Web\Admin\AdminStoreController;
+use App\Http\Controllers\Web\Admin\AdminUserController;
+use App\Http\Controllers\Web\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\Web\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Web\Admin\ClockController as AdminClockController;
 use App\Http\Controllers\Web\Admin\PromoController as AdminPromoController;
@@ -111,6 +118,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('categories', [AdminCategoryController::class, 'store'])->name('categories.store');
         Route::put('categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
         Route::delete('categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
+
+        // Monitoring
+        Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+        Route::get('stores', [AdminStoreController::class, 'index'])->name('stores.index');
+        Route::get('products', [AdminProductController::class, 'index'])->name('products.index');
+        Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
+        Route::get('deliveries', [AdminDeliveryController::class, 'index'])->name('deliveries.index');
+        Route::get('overdue', [AdminOverdueController::class, 'index'])->name('overdue.index');
+
+        // Banners
+        Route::get('banners', [AdminBannerController::class, 'index'])->name('banners.index');
+        Route::post('banners', [AdminBannerController::class, 'store'])->name('banners.store');
+        Route::put('banners/{banner}', [AdminBannerController::class, 'update'])->name('banners.update');
+        Route::delete('banners/{banner}', [AdminBannerController::class, 'destroy'])->name('banners.destroy');
     });
 });
 

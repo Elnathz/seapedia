@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import {
+    AlertTriangle,
     BadgePercent,
     BarChart3,
+    Images,
     Inbox,
     LayoutGrid,
     MapPin,
@@ -13,6 +15,7 @@ import {
     Tags,
     Ticket,
     Truck,
+    Users,
     Wallet,
 } from '@lucide/vue';
 import { computed } from 'vue';
@@ -124,6 +127,12 @@ const mainNavItems = computed<NavItem[]>(() => {
 
     if (auth.user?.is_admin) {
         items.push(
+            { title: 'Pengguna', href: '/admin/users', icon: Users },
+            { title: 'Toko', href: '/admin/stores', icon: Store },
+            { title: 'Produk', href: '/admin/products', icon: Package },
+            { title: 'Pesanan', href: '/admin/orders', icon: Inbox },
+            { title: 'Pengiriman', href: '/admin/deliveries', icon: Truck },
+            { title: 'Overdue', href: '/admin/overdue', icon: AlertTriangle },
             {
                 title: t('admin.manageCategoriesTitle'),
                 href: indexAdminCategories(),
@@ -139,6 +148,7 @@ const mainNavItems = computed<NavItem[]>(() => {
                 href: indexAdminVouchers(),
                 icon: BadgePercent,
             },
+            { title: 'Banner', href: '/admin/banners', icon: Images },
         );
     }
 
