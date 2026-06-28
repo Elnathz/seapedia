@@ -60,7 +60,7 @@ function storeInitials(name: string): string {
                     </div>
                 </div>
                 <Button as-child variant="ghost" size="sm" class="gap-1 text-primary hover:text-primary">
-                    <Link :href="catalogIndex.url()">
+                    <Link href="/catalog">
                         Lihat semua
                         <ArrowRight class="size-4" />
                     </Link>

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/AppLayout.vue';
 
-interface Owner {
+interface User {
     id: number;
     name: string;
     email: string;
@@ -16,7 +16,7 @@ interface Store {
     id: number;
     name: string;
     slug: string;
-    owner: Owner | null;
+    user: User | null;
     products_count: number;
     created_at: string;
 }
@@ -76,7 +76,7 @@ watch(search, (val) => {
                         <TableRow v-for="store in stores.data" :key="store.id">
                             <TableCell class="font-mono text-xs">{{ store.id }}</TableCell>
                             <TableCell class="font-medium">{{ store.name }}</TableCell>
-                            <TableCell class="text-sm text-muted-foreground">{{ store.owner?.name ?? '-' }}</TableCell>
+                            <TableCell class="text-sm text-muted-foreground">{{ store.user?.name ?? '-' }}</TableCell>
                             <TableCell>{{ store.products_count }}</TableCell>
                             <TableCell class="text-xs text-muted-foreground">{{ store.created_at?.slice(0, 10) }}</TableCell>
                         </TableRow>

@@ -12,7 +12,7 @@ import {
 import type { Component } from 'vue';
 import { onMounted, onUnmounted, ref } from 'vue';
 import { useCategories } from '@/composables/useCategories';
-import { index as catalogIndex } from '@/routes/catalog';
+
 
 const { categories } = useCategories();
 
@@ -32,7 +32,7 @@ function iconFor(name: string | null): Component {
 }
 
 function categoryUrl(slug: string) {
-    return catalogIndex.url({ query: { category: slug } });
+    return `/catalog?category=${slug}`;
 }
 
 const sectionRef = ref<HTMLElement | null>(null);
@@ -83,7 +83,7 @@ onUnmounted(() => observer?.disconnect());
                     </p>
                 </div>
                 <Link
-                    :href="catalogIndex.url()"
+                    href="/catalog"
                     class="hidden shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline sm:inline-flex"
                 >
                     Lihat semua

@@ -7,7 +7,7 @@ import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import { Card, CardContent } from '@/components/ui/card';
 import { useInitials } from '@/composables/useInitials';
 import { formatIDR } from '@/lib/utils';
-import { index as catalogIndex, show as catalogShow } from '@/routes/catalog';
+
 
 interface Product {
     id: number;
@@ -47,7 +47,7 @@ function formatDate(dateStr: string): string {
 
     <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <Link
-            :href="catalogIndex.url()"
+            href="/catalog"
             class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
             <ArrowLeft class="size-4" />
@@ -102,7 +102,7 @@ function formatDate(dateStr: string): string {
             <Link
                 v-for="product in store.products"
                 :key="product.id"
-                :href="catalogShow.url(product.slug)"
+                :href="`/catalog/${product.slug}`"
             >
                 <Card
                     class="group h-full cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-md"

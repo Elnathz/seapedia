@@ -16,7 +16,7 @@ class AdminStoreController extends Controller
 
         $stores = Store::query()
             ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"))
-            ->with('owner:id,name,email')
+            ->with('user:id,name,email')
             ->withCount('products')
             ->orderByDesc('created_at')
             ->paginate(15)

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProductView;
 use App\Services\BannerService;
 use App\Services\CatalogService;
 use App\Services\CategoryService;
@@ -44,6 +45,8 @@ class CatalogController extends Controller
                     'slug' => $category->parent->slug,
                 ] : null,
             ] : null,
+            'personalizedProducts' => $this->catalog->personalized($request->user()),
+            'popularCategories' => $this->categories->tree()->map(fn ($c) => ['id' => $c->id, 'name' => $c->name, 'slug' => $c->slug])->take(6),
         ]);
     }
 
@@ -52,6 +55,14 @@ class CatalogController extends Controller
         $found = $this->catalog->find($product);
 
         abort_if($found === null, 404);
+
+        if (auth()->check()) {
+            ProductView::create([
+                'user_id' => auth()->id(),
+                'product_id' => $found->id,
+                'category_id' => $found->category_id,
+            ]);
+        }
 
         return Inertia::render('catalog/Show', ['product' => $found]);
     }

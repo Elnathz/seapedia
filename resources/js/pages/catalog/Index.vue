@@ -1,25 +1,17 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ChevronRight, Search } from '@lucide/vue';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import EmptyState from '@/components/EmptyState.vue';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import BannerCarousel from '@/components/storefront/BannerCarousel.vue';
 import BannerImage from '@/components/storefront/BannerImage.vue';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationFirst,
-    PaginationItem,
-    PaginationLast,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination';
+
 import {
     Select,
     SelectContent,
@@ -71,6 +63,8 @@ const props = defineProps<{
     sort: string | null;
     activeCategory: ActiveCategory | null;
     banners: { main: BannerNode[]; side: BannerNode[] };
+    personalizedProducts: Product[];
+    popularCategories: ActiveCategory[];
 }>();
 
 const query = ref(props.search ?? '');
@@ -89,17 +83,23 @@ const activeParentSlug = computed(
         null,
 );
 
+const allProducts = ref<Product[]>([...props.products.data]);
+let isLoadMore = false;
+
+watch(() => props.products.data, (newData) => {
+    if (isLoadMore) {
+        allProducts.value.push(...newData);
+        isLoadMore = false;
+    } else {
+        allProducts.value = [...newData];
+    }
+});
+
 const subCategories = computed(
     () =>
         categories.value.find((root) => root.slug === activeParentSlug.value)
             ?.children ?? [],
 );
-
-function applySearch() {
-    visit(
-        buildParams({ category: props.activeCategory?.slug, q: query.value, sort: sortValue.value }),
-    );
-}
 
 function selectCategory(slug: string | null) {
     visit(buildParams({ category: slug ?? undefined, q: props.search, sort: sortValue.value }));
@@ -119,6 +119,13 @@ function goToPage(page: number) {
             page,
         }),
     );
+}
+
+function loadMore() {
+    if (props.products.current_page < props.products.last_page) {
+        isLoadMore = true;
+        goToPage(props.products.current_page + 1);
+    }
 }
 
 function buildParams(input: {
@@ -162,11 +169,11 @@ function visit(params: Record<string, string | number>) {
 <template>
     <Head :title="t('catalog.title')" />
 
-    <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <!-- Banner block -->
-        <div v-if="banners.main.length || banners.side.length">
+    <!-- Banner block (Full Width) -->
+    <div class="w-full">
+        <div v-if="banners.main.length || banners.side.length" class="mx-auto max-w-7xl">
             <!-- Desktop: 2 side | carousel | 2 side -->
-            <div class="hidden gap-3 lg:grid lg:grid-cols-4">
+            <div class="hidden gap-3 lg:grid lg:grid-cols-4 px-4 py-6 sm:px-6">
                 <div class="flex flex-col gap-3">
                     <BannerImage v-for="b in banners.side.slice(0, 2)" :key="b.id" :banner="b" />
                 </div>
@@ -178,7 +185,7 @@ function visit(params: Record<string, string | number>) {
                 </div>
             </div>
             <!-- Mobile/tablet: carousel then 2-col side grid -->
-            <div class="space-y-3 lg:hidden">
+            <div class="space-y-3 lg:hidden px-4 py-4">
                 <BannerCarousel v-if="banners.main.length" :slides="banners.main" />
                 <div v-if="banners.side.length" class="grid grid-cols-2 gap-3">
                     <BannerImage v-for="b in banners.side" :key="b.id" :banner="b" />
@@ -188,114 +195,72 @@ function visit(params: Record<string, string | number>) {
         <!-- Fallback hero when no banners -->
         <div
             v-else
-            class="overflow-hidden rounded-2xl bg-gradient-to-br from-primary/15 via-secondary/40 to-background px-6 py-10 sm:px-10 sm:py-14"
+            class="mx-auto max-w-7xl px-4 py-6 sm:px-6"
         >
-            <h1 class="text-2xl font-semibold sm:text-3xl">
-                {{ t('catalog.heroTitle') }}
-            </h1>
-            <p class="mt-2 max-w-md text-sm text-muted-foreground sm:text-base">
-                {{ t('catalog.heroSubtitle') }}
-            </p>
-        </div>
-
-        <!-- Search bar + sort -->
-        <div class="mt-6 flex flex-wrap items-center gap-3">
-            <div class="relative flex-1 min-w-48 max-w-md">
-                <Search
-                    class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-                />
-                <Input
-                    v-model="query"
-                    :placeholder="t('catalog.searchPlaceholder')"
-                    class="pl-9"
-                    @keyup.enter="applySearch"
-                    @blur="applySearch"
-                />
+            <div class="overflow-hidden rounded-2xl bg-gradient-to-br from-primary/15 via-secondary/40 to-background px-6 py-10 sm:px-10 sm:py-14">
+                <h1 class="text-2xl font-semibold sm:text-3xl">
+                    {{ t('catalog.heroTitle') }}
+                </h1>
+                <p class="mt-2 max-w-md text-sm text-muted-foreground sm:text-base">
+                    {{ t('catalog.heroSubtitle') }}
+                </p>
             </div>
-            <Select :model-value="sortValue" @update:model-value="applySort">
-                <SelectTrigger class="w-44">
-                    <SelectValue placeholder="Urutkan" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="newest">Terbaru</SelectItem>
-                    <SelectItem value="price_asc">Harga Terendah</SelectItem>
-                    <SelectItem value="price_desc">Harga Tertinggi</SelectItem>
-                </SelectContent>
-            </Select>
-            <Spinner v-if="loading" class="size-4" />
-            <p class="text-sm text-muted-foreground ml-auto">
-                {{ products.total }} produk
-            </p>
         </div>
+    </div>
 
-        <!-- Category filter chips -->
-        <div class="-mx-4 mt-6 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-            <div class="flex w-max gap-2 sm:w-auto sm:flex-wrap">
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+        
+        <!-- Kategori Populer -->
+        <div v-if="popularCategories && popularCategories.length > 0 && !activeCategory && !query" class="mb-10">
+            <h2 class="text-xl font-bold mb-4">Kategori Populer</h2>
+            <div class="flex gap-3 overflow-x-auto pb-2">
                 <button
+                    v-for="cat in popularCategories"
+                    :key="cat.id"
                     type="button"
-                    class="rounded-full border px-4 py-2 text-sm font-medium transition-colors"
-                    :class="
-                        !activeCategory
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                    "
-                    @click="selectCategory(null)"
+                    class="shrink-0 rounded-xl border border-border bg-card px-5 py-3 text-sm font-medium transition-colors hover:border-primary/40 hover:text-primary"
+                    @click="selectCategory(cat.slug)"
                 >
-                    {{ t('catalog.allCategories') }}
-                </button>
-                <button
-                    v-for="root in categories"
-                    :key="root.id"
-                    type="button"
-                    class="rounded-full border px-4 py-2 text-sm font-medium transition-colors"
-                    :class="
-                        root.slug === activeParentSlug
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                    "
-                    @click="selectCategory(root.slug)"
-                >
-                    {{ root.name }}
+                    {{ cat.name }}
                 </button>
             </div>
         </div>
 
-        <!-- Subcategory chips for the active parent -->
-        <div
-            v-if="subCategories.length"
-            class="-mx-4 mt-3 overflow-x-auto px-4 sm:mx-0 sm:px-0"
-        >
-            <div class="flex w-max gap-2 sm:w-auto sm:flex-wrap">
-                <button
-                    v-for="child in subCategories"
-                    :key="child.id"
-                    type="button"
-                    class="rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors"
-                    :class="
-                        child.slug === activeCategory?.slug
-                            ? 'border-primary/60 bg-primary/10 text-primary'
-                            : 'border-border bg-card text-muted-foreground hover:text-foreground'
-                    "
-                    @click="selectCategory(child.slug)"
+        <!-- Pilihan Untukmu -->
+        <div v-if="personalizedProducts && personalizedProducts.length > 0 && !activeCategory && !query" class="mb-10">
+            <h2 class="text-xl font-bold mb-4">Pilihan Untukmu</h2>
+            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                <Link
+                    v-for="product in personalizedProducts"
+                    :key="product.id"
+                    :href="catalogShow.url(product.slug)"
+                    class="group"
                 >
-                    {{ child.name }}
-                </button>
+                    <Card class="h-full cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
+                        <div class="relative aspect-square overflow-hidden rounded-t-xl border-b border-border bg-muted">
+                            <img v-if="product.image_path" :src="`/storage/${product.image_path}`" :alt="product.name" loading="lazy" class="size-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                            <PlaceholderPattern v-else />
+                            <Badge v-if="product.stock === 0" variant="destructive" class="absolute top-2 right-2">Habis</Badge>
+                        </div>
+                        <CardContent class="flex flex-col gap-1 pt-4">
+                            <Badge variant="secondary" class="w-fit text-xs">{{ product.store.name }}</Badge>
+                            <h2 class="mt-1 line-clamp-2 leading-snug font-medium">{{ product.name }}</h2>
+                            <p class="mt-1.5 font-semibold text-primary tabular-nums">{{ formatIDR(product.price) }}</p>
+                        </CardContent>
+                    </Card>
+                </Link>
             </div>
         </div>
+
+        <!-- Section Title for All Products -->
+        <h2 v-if="!activeCategory && !query" class="text-xl font-bold mb-4">Jelajahi Produk</h2>
 
         <!-- Active category breadcrumb -->
-        <div
-            v-if="activeCategory"
-            class="mt-6 flex items-center gap-1.5 text-sm text-muted-foreground"
-        >
+        <div v-if="activeCategory" class="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground">
             <span>{{ t('catalog.title') }}</span>
             <ChevronRight class="size-3.5" />
             <template v-if="activeCategory.parent">
-                <button
-                    type="button"
-                    class="hover:text-foreground"
-                    @click="selectCategory(activeCategory.parent.slug)"
-                >
+                <button type="button" class="hover:text-foreground" @click="selectCategory(activeCategory.parent.slug)">
                     {{ activeCategory.parent.name }}
                 </button>
                 <ChevronRight class="size-3.5" />
@@ -305,87 +270,100 @@ function visit(params: Record<string, string | number>) {
             </span>
         </div>
 
+        <!-- Sort & Filter Bar -->
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+            <div class="flex flex-wrap items-center gap-2">
+                <!-- Category filter chips -->
+                <button
+                    type="button"
+                    class="rounded-full border px-4 py-2 text-sm font-medium transition-colors"
+                    :class="!activeCategory ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'"
+                    @click="selectCategory(null)"
+                >
+                    Semua
+                </button>
+                <button
+                    v-for="root in categories"
+                    :key="root.id"
+                    type="button"
+                    class="rounded-full border px-4 py-2 text-sm font-medium transition-colors"
+                    :class="root.slug === activeParentSlug ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'"
+                    @click="selectCategory(root.slug)"
+                >
+                    {{ root.name }}
+                </button>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <Spinner v-if="loading" class="size-4" />
+                <p class="text-sm text-muted-foreground hidden sm:block">{{ products.total }} produk</p>
+                <Select :model-value="sortValue" @update:model-value="applySort">
+                    <SelectTrigger class="w-44">
+                        <SelectValue placeholder="Urutkan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="newest">Terbaru</SelectItem>
+                        <SelectItem value="price_asc">Harga Terendah</SelectItem>
+                        <SelectItem value="price_desc">Harga Tertinggi</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+        </div>
+
+        <!-- Subcategory chips for the active parent -->
+        <div v-if="subCategories.length" class="mb-6 flex w-max gap-2 sm:w-auto sm:flex-wrap overflow-x-auto pb-2">
+            <button
+                v-for="child in subCategories"
+                :key="child.id"
+                type="button"
+                class="shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors"
+                :class="child.slug === activeCategory?.slug ? 'border-primary/60 bg-primary/10 text-primary' : 'border-border bg-card text-muted-foreground hover:text-foreground'"
+                @click="selectCategory(child.slug)"
+            >
+                {{ child.name }}
+            </button>
+        </div>
+
         <EmptyState
-            v-if="products.data.length === 0"
+            v-if="allProducts.length === 0"
             :title="t('catalog.emptyTitle')"
             :description="t('catalog.emptyDescription')"
             class="mt-10"
         />
 
         <template v-else>
-            <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                 <Link
-                    v-for="product in products.data"
+                    v-for="product in allProducts"
                     :key="product.id"
                     :href="catalogShow.url(product.slug)"
                     class="group"
                 >
-                    <Card
-                        class="h-full cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
-                    >
-                        <div
-                            class="relative aspect-square overflow-hidden rounded-t-xl border-b border-border bg-muted"
-                        >
-                            <img
-                                v-if="product.image_path"
-                                :src="`/storage/${product.image_path}`"
-                                :alt="product.name"
-                                loading="lazy"
-                                class="size-full object-cover transition-transform duration-300 group-hover:scale-105"
-                            />
+                    <Card class="h-full cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
+                        <div class="relative aspect-square overflow-hidden rounded-t-xl border-b border-border bg-muted">
+                            <img v-if="product.image_path" :src="`/storage/${product.image_path}`" :alt="product.name" loading="lazy" class="size-full object-cover transition-transform duration-300 group-hover:scale-105" />
                             <PlaceholderPattern v-else />
-                            <Badge
-                                v-if="product.stock === 0"
-                                variant="destructive"
-                                class="absolute top-2 right-2"
-                            >
-                                Stok habis
-                            </Badge>
+                            <Badge v-if="product.stock === 0" variant="destructive" class="absolute top-2 right-2">Habis</Badge>
                         </div>
                         <CardContent class="flex flex-col gap-1 pt-4">
-                            <Badge variant="secondary" class="w-fit text-xs">
-                                {{ product.store.name }}
-                            </Badge>
-                            <h2
-                                class="mt-1 line-clamp-2 leading-snug font-medium"
-                            >
-                                {{ product.name }}
-                            </h2>
-                            <p
-                                class="mt-1.5 font-semibold text-primary tabular-nums"
-                            >
-                                {{ formatIDR(product.price) }}
-                            </p>
+                            <Badge variant="secondary" class="w-fit text-xs">{{ product.store.name }}</Badge>
+                            <h2 class="mt-1 line-clamp-2 leading-snug font-medium">{{ product.name }}</h2>
+                            <p class="mt-1.5 font-semibold text-primary tabular-nums">{{ formatIDR(product.price) }}</p>
                         </CardContent>
                     </Card>
                 </Link>
             </div>
 
-            <Pagination
-                v-if="products.last_page > 1"
-                :items-per-page="products.per_page"
-                :total="products.total"
-                :default-page="products.current_page"
-                class="mt-10"
-                @update:page="goToPage"
-            >
-                <PaginationContent v-slot="{ items }">
-                    <PaginationFirst />
-                    <PaginationPrevious />
-                    <template v-for="(item, index) in items" :key="index">
-                        <PaginationItem
-                            v-if="item.type === 'page'"
-                            :value="item.value"
-                            :is-active="item.value === products.current_page"
-                        >
-                            {{ item.value }}
-                        </PaginationItem>
-                        <PaginationEllipsis v-else />
-                    </template>
-                    <PaginationNext />
-                    <PaginationLast />
-                </PaginationContent>
-            </Pagination>
+            <!-- Tampilkan Lebih Banyak -->
+            <div v-if="products.current_page < products.last_page" class="mt-10 flex justify-center">
+                <Button variant="outline" size="lg" :disabled="loading" @click="loadMore" class="w-full max-w-sm rounded-full">
+                    <Spinner v-if="loading" class="mr-2 size-4" />
+                    Tampilkan Lebih Banyak
+                </Button>
+            </div>
+            <div v-else class="mt-10 text-center text-sm text-muted-foreground">
+                <p>Anda telah melihat semua produk.</p>
+            </div>
         </template>
     </div>
 </template>

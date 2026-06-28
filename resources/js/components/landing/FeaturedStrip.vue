@@ -3,7 +3,6 @@ import { Link } from '@inertiajs/vue3';
 import { ArrowRight, ShoppingBag } from '@lucide/vue';
 import { Button } from '@/components/ui/button';
 import { formatIDR } from '@/lib/utils';
-import { show as catalogShow, index as catalogIndex } from '@/routes/catalog';
 
 interface Store {
     id: number;
@@ -34,7 +33,7 @@ defineProps<{ products: Product[] }>();
                     <p class="mt-1 text-sm text-muted-foreground">Produk terbaru dari toko-toko aktif</p>
                 </div>
                 <Button as-child variant="ghost" size="sm" class="gap-1 text-primary hover:text-primary">
-                    <Link :href="catalogIndex.url()">
+                    <Link href="/catalog">
                         Lihat semua
                         <ArrowRight class="size-4" />
                     </Link>
@@ -57,7 +56,7 @@ defineProps<{ products: Product[] }>();
                 <Link
                     v-for="product in products"
                     :key="product.id"
-                    :href="catalogShow.url({ product: product.slug })"
+                    :href="`/catalog/${product.slug}`"
                     class="group w-48 shrink-0 overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-md lg:w-auto"
                 >
                     <div class="relative aspect-square overflow-hidden bg-muted">

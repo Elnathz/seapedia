@@ -31,10 +31,11 @@ const props = defineProps<{
 }>();
 
 const search = ref(props.filters.q ?? '');
-const statusFilter = ref(props.filters.status ?? '');
+const statusFilter = ref(props.filters.status || 'all');
 
 function applyFilter() {
-    router.get('/admin/orders', { q: search.value, status: statusFilter.value }, { preserveState: true, replace: true });
+    const status = statusFilter.value === 'all' ? '' : statusFilter.value;
+    router.get('/admin/orders', { q: search.value, status }, { preserveState: true, replace: true });
 }
 
 watch(search, applyFilter);
@@ -81,7 +82,7 @@ return 'outline';
                         <SelectValue placeholder="Semua status" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">Semua status</SelectItem>
+                        <SelectItem value="all">Semua status</SelectItem>
                         <SelectItem v-for="s in statuses" :key="s" :value="s">{{ s.replace(/_/g, ' ') }}</SelectItem>
                     </SelectContent>
                 </Select>

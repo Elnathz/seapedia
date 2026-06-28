@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\Web\RoleController::select
-* @see app/Http/Controllers/Web/RoleController.php:21
+* @see app/Http/Controllers/Web/RoleController.php:22
 * @route '/role/select'
 */
 export const select = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ select.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::select
-* @see app/Http/Controllers/Web/RoleController.php:21
+* @see app/Http/Controllers/Web/RoleController.php:22
 * @route '/role/select'
 */
 select.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ select.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::select
-* @see app/Http/Controllers/Web/RoleController.php:21
+* @see app/Http/Controllers/Web/RoleController.php:22
 * @route '/role/select'
 */
 select.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ select.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::select
-* @see app/Http/Controllers/Web/RoleController.php:21
+* @see app/Http/Controllers/Web/RoleController.php:22
 * @route '/role/select'
 */
 select.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ select.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::select
-* @see app/Http/Controllers/Web/RoleController.php:21
+* @see app/Http/Controllers/Web/RoleController.php:22
 * @route '/role/select'
 */
 const selectForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const selectForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::select
-* @see app/Http/Controllers/Web/RoleController.php:21
+* @see app/Http/Controllers/Web/RoleController.php:22
 * @route '/role/select'
 */
 selectForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ selectForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::select
-* @see app/Http/Controllers/Web/RoleController.php:21
+* @see app/Http/Controllers/Web/RoleController.php:22
 * @route '/role/select'
 */
 selectForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ select.form = selectForm
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::store
-* @see app/Http/Controllers/Web/RoleController.php:31
+* @see app/Http/Controllers/Web/RoleController.php:32
 * @route '/role/select'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -97,7 +97,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::store
-* @see app/Http/Controllers/Web/RoleController.php:31
+* @see app/Http/Controllers/Web/RoleController.php:32
 * @route '/role/select'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::store
-* @see app/Http/Controllers/Web/RoleController.php:31
+* @see app/Http/Controllers/Web/RoleController.php:32
 * @route '/role/select'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::store
-* @see app/Http/Controllers/Web/RoleController.php:31
+* @see app/Http/Controllers/Web/RoleController.php:32
 * @route '/role/select'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -126,7 +126,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::store
-* @see app/Http/Controllers/Web/RoleController.php:31
+* @see app/Http/Controllers/Web/RoleController.php:32
 * @route '/role/select'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

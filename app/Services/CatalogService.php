@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductView;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -57,5 +59,32 @@ class CatalogService
             ->where('is_active', true)
             ->whereHas('store', fn ($query) => $query->where('is_active', true))
             ->first();
+    }
+
+    public function personalized(?User $user = null, int $limit = 4): Collection
+    {
+        $query = Product::query()
+            ->with(['store:id,name,slug', 'category:id,name,slug'])
+            ->where('is_active', true)
+            ->whereHas('store', fn ($q) => $q->where('is_active', true));
+
+        if ($user) {
+            $topCategoryId = ProductView::where('user_id', $user->id)
+                ->select('category_id')
+                ->selectRaw('count(*) as views')
+                ->groupBy('category_id')
+                ->orderByDesc('views')
+                ->value('category_id');
+
+            if ($topCategoryId) {
+                $query->where('category_id', $topCategoryId);
+            } else {
+                $query->inRandomOrder();
+            }
+        } else {
+            $query->inRandomOrder();
+        }
+
+        return $query->limit($limit)->get();
     }
 }

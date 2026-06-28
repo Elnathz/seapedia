@@ -29,10 +29,11 @@ const props = defineProps<{
     statuses: string[];
 }>();
 
-const statusFilter = ref(props.filters.status ?? '');
+const statusFilter = ref(props.filters.status || 'all');
 
 watch(statusFilter, (val) => {
-    router.get('/admin/deliveries', { status: val }, { preserveState: true, replace: true });
+    const status = val === 'all' ? '' : val;
+    router.get('/admin/deliveries', { status }, { preserveState: true, replace: true });
 });
 
 const statusVariant = (s: string): 'default' | 'secondary' | 'outline' => {
@@ -67,7 +68,7 @@ return 'outline';
                         <SelectValue placeholder="Semua status" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">Semua status</SelectItem>
+                        <SelectItem value="all">Semua status</SelectItem>
                         <SelectItem v-for="s in statuses" :key="s" :value="s">{{ s }}</SelectItem>
                     </SelectContent>
                 </Select>

@@ -95,7 +95,7 @@ cancelAnimationFrame(rafId);
                     <!-- Headline -->
                     <div class="space-y-3">
                         <h1
-                            class="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl"
+                            class="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl"
                         >
                             Satu akun.<br />
                             <span class="text-white/90 underline decoration-white/30 underline-offset-4">
@@ -114,7 +114,7 @@ cancelAnimationFrame(rafId);
                             size="lg"
                             class="gap-2 bg-white text-primary hover:bg-white/90"
                         >
-                            <Link :href="catalogIndex.url()">
+                            <Link href="/catalog">
                                 Jelajahi Katalog
                                 <ArrowRight class="size-4" />
                             </Link>
