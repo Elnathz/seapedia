@@ -12,10 +12,6 @@ class DashboardController extends Controller
 {
     public function __construct(private readonly DashboardService $dashboard) {}
 
-    /**
-     * Role-aware dashboard shell (TDD §13 Day 1 — balance placeholder per
-     * role; real per-role functionality lands in later sprints).
-     */
     public function index(Request $request): Response
     {
         $view = $this->dashboard->buildView($request);
