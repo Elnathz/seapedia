@@ -103,7 +103,7 @@ cancelAnimationFrame(rafId);
                             </span>
                         </h1>
                         <p class="max-w-md text-lg text-white/80 sm:text-xl">
-                            Belanja, jualan, antar — satu saldo untuk semuanya. Ganti peran kapan saja tanpa keluar akun.
+                            Belanja, jualan, antar. Satu saldo untuk semuanya. Ganti peran kapan saja tanpa keluar akun.
                         </p>
                     </div>
 

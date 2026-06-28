@@ -25,7 +25,7 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Daftar — SEAPEDIA" />
+    <Head title="Daftar | SEAPEDIA" />
 
     <Form
         v-bind="store.form()"
@@ -120,7 +120,7 @@ defineOptions({
 
             <div class="grid gap-2">
                 <Label>Pilih peran</Label>
-                <p class="text-xs text-muted-foreground">Pilih satu atau lebih — bisa diubah nanti.</p>
+                <p class="text-xs text-muted-foreground">Pilih satu atau lebih. Bisa diubah nanti.</p>
                 <div class="flex flex-col gap-3">
                     <Label
                         v-for="role in roles"

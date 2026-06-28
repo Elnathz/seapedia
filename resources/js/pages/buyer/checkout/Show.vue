@@ -260,7 +260,7 @@ function confirmCheckout() {
                                     :key="address.id"
                                     :value="address.id"
                                 >
-                                    {{ address.recipient_name }} —
+                                    {{ address.recipient_name }},
                                     {{ address.full_address }}
                                 </SelectItem>
                             </SelectContent>

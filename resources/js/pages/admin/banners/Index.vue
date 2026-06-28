@@ -119,7 +119,7 @@ return;
             <Heading
                 variant="small"
                 title="Kelola Banner"
-                description="Atur banner katalog — bagian utama (2.5:1) dan samping (3:2)."
+                description="Atur banner katalog: bagian utama (2.5:1) dan samping (3:2)."
             />
             <Button @click="openCreate">
                 <Plus class="mr-2 size-4" />

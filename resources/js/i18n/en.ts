@@ -265,7 +265,7 @@ export default {
         sellerEmptyDescription:
             'Your income will show up here once buyers check out from your store.',
         sellerBreakdownEmpty:
-            'No delivered orders yet — income only counts once an order reaches Pesanan Selesai.',
+            'No delivered orders yet. Income is only counted once an order reaches Pesanan Selesai.',
     },
     driver: {
         jobsTitle: 'Available Jobs',

@@ -265,7 +265,7 @@ export default {
         sellerEmptyDescription:
             'Pendapatan Anda akan muncul di sini setelah pembeli checkout dari toko Anda.',
         sellerBreakdownEmpty:
-            'Belum ada pesanan yang selesai diantar — pendapatan baru terhitung saat status menjadi Pesanan Selesai.',
+            'Belum ada pesanan yang selesai diantar. Pendapatan baru terhitung saat status menjadi Pesanan Selesai.',
     },
     driver: {
         jobsTitle: 'Pesanan Tersedia',

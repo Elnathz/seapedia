@@ -5,7 +5,7 @@ const items = [
     {
         icon: ReceiptText,
         title: 'PPN 12% Transparan',
-        desc: 'Pajak dihitung otomatis dan ditampilkan sebelum checkout — tidak ada biaya tersembunyi.',
+        desc: 'Pajak dihitung otomatis dan ditampilkan sebelum checkout. Tidak ada biaya tersembunyi.',
     },
     {
         icon: ShieldCheck,

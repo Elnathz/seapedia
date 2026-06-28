@@ -40,14 +40,14 @@ const roleConfig: Record<string, { icon: typeof ShoppingBag; label: string; tagl
 </script>
 
 <template>
-    <Head title="Pilih peran — SEAPEDIA" />
+    <Head title="Pilih peran | SEAPEDIA" />
 
     <div class="flex min-h-svh items-center justify-center bg-background p-4">
         <div class="w-full max-w-md">
             <div class="mb-8 text-center">
                 <h1 class="text-2xl font-bold tracking-tight text-foreground">Pilih cara lanjut</h1>
                 <p class="mt-2 text-sm text-muted-foreground">
-                    Akunmu punya beberapa peran. Pilih satu untuk sekarang — bisa ganti kapan saja.
+                    Akunmu punya beberapa peran. Pilih satu untuk sekarang, bisa ganti kapan saja.
                 </p>
             </div>
 

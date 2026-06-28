@@ -113,7 +113,7 @@ defineProps<{
                     v-if="reviews.data.length === 0"
                     class="text-sm text-muted-foreground"
                 >
-                    No reviews yet — be the first to share your experience.
+                    No reviews yet. Be the first to share your experience.
                 </p>
 
                 <Card v-for="review in reviews.data" :key="review.id">
