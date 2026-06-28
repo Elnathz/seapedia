@@ -110,4 +110,29 @@ class CatalogTest extends TestCase
 
         $response->assertNotFound();
     }
+
+    public function test_catalog_passes_banners_prop_with_main_and_side_keys(): void
+    {
+        $response = $this->get(route('catalog.index'));
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->has('banners')
+            ->has('banners.main')
+            ->has('banners.side')
+        );
+    }
+
+    public function test_catalog_only_shows_active_banners_in_storefront(): void
+    {
+        \App\Models\Banner::factory()->create(['placement' => 'main', 'is_active' => true, 'title' => 'Aktif']);
+        \App\Models\Banner::factory()->create(['placement' => 'main', 'is_active' => false, 'title' => 'Nonaktif']);
+
+        $response = $this->get(route('catalog.index'));
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->has('banners.main', 1)
+        );
+    }
 }
