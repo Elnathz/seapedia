@@ -22,8 +22,8 @@ class UpdateStoreRequest extends FormRequest
         $store = $this->route('store');
 
         return [
-            'name' => ['required', 'string', 'max:255', Rule::unique('stores', 'name')->ignore($store->id)],
-            'description' => ['nullable', 'string', 'max:2000'],
+            'name' => ['required', 'string', 'min:3', 'max:100', Rule::unique('stores', 'name')->ignore($store->id)],
+            'description' => ['nullable', 'string', 'max:500'],
         ];
     }
 }

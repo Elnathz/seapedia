@@ -28,7 +28,7 @@ trait ProfileValidationRules
      */
     protected function nameRules(): array
     {
-        return ['required', 'string', 'max:255'];
+        return ['required', 'string', 'min:2', 'max:100'];
     }
 
     /**
@@ -61,7 +61,8 @@ trait ProfileValidationRules
         return [
             'required',
             'string',
-            'max:255',
+            'min:3',
+            'max:30',
             'alpha_dash',
             $userId === null
                 ? Rule::unique(User::class)
@@ -76,6 +77,6 @@ trait ProfileValidationRules
      */
     protected function phoneRules(): array
     {
-        return ['nullable', 'string', 'max:30'];
+        return ['nullable', 'string', 'regex:/^[0-9+\-\s]+$/', 'max:20'];
     }
 }

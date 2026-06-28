@@ -17,7 +17,7 @@ class StoreAppReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'reviewer_name' => ['required', 'string', 'max:255'],
+            'reviewer_name' => ['required', 'string', 'max:80'],
             'rating' => ['required', 'integer', 'between:1,5'],
             'comment' => ['required', 'string', 'max:1000'],
         ];

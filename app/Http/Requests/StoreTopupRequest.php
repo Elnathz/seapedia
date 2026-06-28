@@ -17,7 +17,7 @@ class StoreTopupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'amount' => ['required', 'integer', 'min:'.config('payment.topup.min_amount')],
+            'amount' => ['required', 'integer', 'min:'.config('payment.topup.min_amount'), 'max:100000000'],
         ];
     }
 }

@@ -20,8 +20,8 @@ class PreviewCheckoutRequest extends FormRequest
     {
         return [
             'delivery_method' => ['required', new Enum(DeliveryMethod::class)],
-            'promo_code' => ['nullable', 'string', 'max:32'],
-            'voucher_code' => ['nullable', 'string', 'max:32'],
+            'promo_code' => ['nullable', 'string', 'max:50'],
+            'voucher_code' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

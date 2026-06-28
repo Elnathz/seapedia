@@ -19,7 +19,7 @@ class StorePromoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => ['required', 'string', 'max:32', 'unique:promos,code'],
+            'code' => ['required', 'string', 'max:50', 'unique:promos,code'],
             'type' => ['required', new Enum(DiscountType::class)],
             'value' => [
                 'required', 'integer', 'min:1',
@@ -31,7 +31,7 @@ class StorePromoRequest extends FormRequest
             ],
             'max_discount' => ['nullable', 'integer', 'min:0'],
             'min_spend' => ['nullable', 'integer', 'min:0'],
-            'expiry_date' => ['required', 'date'],
+            'expiry_date' => ['required', 'date', 'after:today'],
             'is_active' => ['sometimes', 'boolean'],
         ];
     }

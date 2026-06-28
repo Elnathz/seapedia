@@ -19,7 +19,7 @@ class StoreVoucherRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => ['required', 'string', 'max:32', 'unique:vouchers,code'],
+            'code' => ['required', 'string', 'max:50', 'unique:vouchers,code'],
             'type' => ['required', new Enum(DiscountType::class)],
             'value' => [
                 'required', 'integer', 'min:1',
@@ -31,7 +31,7 @@ class StoreVoucherRequest extends FormRequest
             ],
             'max_discount' => ['nullable', 'integer', 'min:0'],
             'min_spend' => ['nullable', 'integer', 'min:0'],
-            'expiry_date' => ['required', 'date'],
+            'expiry_date' => ['required', 'date', 'after:today'],
             'usage_limit' => ['required', 'integer', 'min:1'],
             'is_active' => ['sometimes', 'boolean'],
         ];
