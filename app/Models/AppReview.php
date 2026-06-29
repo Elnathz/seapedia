@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $rating
  * @property string $comment
  */
-#[Fillable(['user_id', 'reviewer_name', 'rating', 'comment'])]
+#[Fillable(['user_id', 'reviewer_name', 'rating', 'comment', 'role'])]
 class AppReview extends Model
 {
     /** @use HasFactory<AppReviewFactory> */

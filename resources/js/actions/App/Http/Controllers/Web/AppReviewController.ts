@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Web\AppReviewController::store
- * @see app/Http/Controllers/Web/AppReviewController.php:29
+ * @see app/Http/Controllers/Web/AppReviewController.php:34
  * @route '/reviews'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\AppReviewController::store
- * @see app/Http/Controllers/Web/AppReviewController.php:29
+ * @see app/Http/Controllers/Web/AppReviewController.php:34
  * @route '/reviews'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\AppReviewController::store
- * @see app/Http/Controllers/Web/AppReviewController.php:29
+ * @see app/Http/Controllers/Web/AppReviewController.php:34
  * @route '/reviews'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\AppReviewController::store
- * @see app/Http/Controllers/Web/AppReviewController.php:29
+ * @see app/Http/Controllers/Web/AppReviewController.php:34
  * @route '/reviews'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\AppReviewController::store
- * @see app/Http/Controllers/Web/AppReviewController.php:29
+ * @see app/Http/Controllers/Web/AppReviewController.php:34
  * @route '/reviews'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

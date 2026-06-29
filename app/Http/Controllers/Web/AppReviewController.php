@@ -16,10 +16,15 @@ class AppReviewController extends Controller
     /**
      * Public, paginated review list (TDD §8 "GET /reviews").
      */
-    public function index(): Response
+    public function index(\Illuminate\Http\Request $request): Response
     {
         return Inertia::render('reviews/Index', [
-            'reviews' => $this->reviews->paginated(),
+            'reviews' => $this->reviews->paginated(
+                12, 
+                $request->query('role'), 
+                $request->query('rating') ? (int) $request->query('rating') : null
+            ),
+            'filters' => $request->only(['role', 'rating'])
         ]);
     }
 

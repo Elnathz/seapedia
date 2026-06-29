@@ -17,15 +17,19 @@ class AppReviewService
             'user_id' => $userId,
             'reviewer_name' => $data['reviewer_name'],
             'rating' => $data['rating'],
+            'role' => $data['role'] ?? null,
             'comment' => $data['comment'],
         ]);
     }
 
-    public function paginated(int $perPage = 10): LengthAwarePaginator
+    public function paginated(int $perPage = 10, ?string $role = null, ?int $rating = null): LengthAwarePaginator
     {
         return AppReview::query()
+            ->when($role, fn ($q) => $q->where('role', $role))
+            ->when($rating, fn ($q) => $q->where('rating', $rating))
             ->latest()
-            ->paginate($perPage);
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function recent(int $limit = 6): Collection
@@ -33,6 +37,6 @@ class AppReviewService
         return AppReview::query()
             ->latest()
             ->limit($limit)
-            ->get(['id', 'reviewer_name', 'rating', 'comment', 'created_at']);
+            ->get(['id', 'reviewer_name', 'rating', 'role', 'comment', 'created_at']);
     }
 }
