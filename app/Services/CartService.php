@@ -27,6 +27,19 @@ class CartService
         return DB::transaction(function () use ($user, $product, $variant, $quantity, $replaceStore) {
             $cart = $this->resolveOrCreateFor($user);
 
+            // §MULTI-ROLE CONFLICT GUARD 1 — buyer == seller
+            // A user may own both a buyer and a seller role. They must NOT be
+            // allowed to purchase from their own store, because that creates
+            // circular money (payment → income on the same wallet) and a false
+            // audit trail. This is enforced here — the earliest possible point —
+            // so the restriction holds even if the caller bypasses the UI and
+            // posts directly to the API.
+            if ($product->store->user_id === $user->id) {
+                throw ValidationException::withMessages([
+                    'product' => [__('Anda tidak dapat membeli produk dari toko Anda sendiri.')],
+                ]);
+            }
+
             if ($cart->store_id !== null && $cart->store_id !== $product->store_id) {
                 if (! $replaceStore) {
                     throw ValidationException::withMessages([

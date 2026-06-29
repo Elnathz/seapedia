@@ -88,6 +88,17 @@ class CheckoutService
                 ]);
             }
 
+            // §MULTI-ROLE CONFLICT GUARD 1 — defense-in-depth (checkout layer)
+            // CartService already rejects own-store products at add-time, but a
+            // determined actor could POST directly to /buyer/checkout with a
+            // manipulated cart state. We re-check here, inside the locked
+            // transaction, so the API surface is equally hardened.
+            if ($cart->store !== null && $cart->store->user_id === $user->id) {
+                throw ValidationException::withMessages([
+                    'cart' => [__('Anda tidak dapat checkout produk dari toko Anda sendiri.')],
+                ]);
+            }
+
             // Locked in ascending product_id order (not cart-item order) so
             // two concurrent multi-product checkouts can never deadlock by
             // acquiring the same two row locks in opposite order.

@@ -92,6 +92,24 @@ class DeliveryService
             }
 
             $order = Order::query()->lockForUpdate()->findOrFail($locked->order_id);
+            $order->load('store');
+
+            // §MULTI-ROLE CONFLICT GUARD 2 — defense-in-depth (service layer)
+            // DeliveryPolicy::take() is the primary gate, but a driver reaching
+            // this method directly (e.g. via a future API refactor) must also be
+            // blocked. We re-check inside the locked transaction to be certain.
+            if ($order->buyer_id === $driver->id) {
+                throw ValidationException::withMessages([
+                    'delivery' => [__('Anda tidak dapat mengambil pekerjaan untuk pesanan yang Anda buat sendiri.')],
+                ]);
+            }
+
+            // §MULTI-ROLE CONFLICT GUARD 3 — courier == seller owner
+            if ($order->store->user_id === $driver->id) {
+                throw ValidationException::withMessages([
+                    'delivery' => [__('Anda tidak dapat mengambil pekerjaan untuk pesanan dari toko Anda sendiri.')],
+                ]);
+            }
 
             $locked->update([
                 'driver_id' => $driver->id,
