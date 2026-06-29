@@ -27,24 +27,28 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         foreach ($this->tree as $order => $parent) {
-            $root = Category::query()->create([
-                'parent_id' => null,
-                'name' => $parent['name'],
-                'slug' => Str::slug($parent['name']),
-                'icon' => $parent['icon'],
-                'is_active' => true,
-                'sort_order' => $order,
-            ]);
+            $root = Category::query()->firstOrCreate(
+                ['slug' => Str::slug($parent['name'])],
+                [
+                    'parent_id' => null,
+                    'name' => $parent['name'],
+                    'icon' => $parent['icon'],
+                    'is_active' => true,
+                    'sort_order' => $order,
+                ]
+            );
 
             foreach ($parent['children'] as $childOrder => $childName) {
-                Category::query()->create([
-                    'parent_id' => $root->id,
-                    'name' => $childName,
-                    'slug' => Str::slug($childName),
-                    'icon' => null,
-                    'is_active' => true,
-                    'sort_order' => $childOrder,
-                ]);
+                Category::query()->firstOrCreate(
+                    ['slug' => Str::slug($childName)],
+                    [
+                        'parent_id' => $root->id,
+                        'name' => $childName,
+                        'icon' => null,
+                        'is_active' => true,
+                        'sort_order' => $childOrder,
+                    ]
+                );
             }
         }
     }
