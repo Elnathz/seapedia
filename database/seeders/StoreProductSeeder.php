@@ -148,8 +148,14 @@ class StoreProductSeeder extends Seeder
             return;
         }
 
-        // Skip if store already exists (idempotent on re-run).
+        // Skip if store already exists (idempotent on re-run), but reset stock.
         if ($user->store) {
+            foreach ($products as $data) {
+                $product = $user->store->products()->where('name', $data['name'])->first();
+                if ($product) {
+                    $product->update(['stock' => $data['stock']]);
+                }
+            }
             return;
         }
 
