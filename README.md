@@ -60,14 +60,15 @@ If you need to manually promote an existing user to an admin role, you can run t
 ## Demo Credentials
 
 All seeded accounts have the password: `password`.
+*Note: Since Usernames and Display Names are randomly generated using Faker for realism, please login using their fixed **Email** addresses below.*
 
-| Username   | Role(s)              | Notes                                                                                                   |
-| ---------- | --------------------- | -------------------------------------------------------------------------------------------------------- |
-| `admin`    | Admin (`is_admin`)    | Admin monitoring dashboard, voucher/promo management, overdue time machine.                              |
-| `seller1`  | Seller                | Store "Toko Berkah" (3 products). Other sellers: `seller2`..`seller7`.                                 |
-| `buyer1`   | Buyer                 | Wallet balance Rp 500.000, 1 address, active orders.                                                     |
-| `driver1`  | Driver                | 1 active job, 2 completed jobs.                                                                          |
-| `multi1`   | Buyer, Seller, Driver  | Store "Warung Mama Lia" (3 products), Wallet balance Rp 300.000.                                         |
+| Email                     | Role(s)                | Notes                                                                                                   |
+| ------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------- |
+| `admin@seapedia.test`     | Admin (`is_admin`)     | Admin monitoring dashboard, voucher/promo management, overdue time machine.                             |
+| `seller1@seapedia.test`   | Seller                 | Store "Toko Berkah" (3 products). Other sellers: `seller2@seapedia.test`..`seller7@seapedia.test`.      |
+| `buyer1@seapedia.test`    | Buyer                  | Wallet balance Rp 500.000, 1 address, active orders.                                                    |
+| `driver1@seapedia.test`   | Driver                 | 1 active job, 2 completed jobs.                                                                         |
+| `multi1@seapedia.test`    | Buyer, Seller, Driver  | Store "Warung Mama Lia" (3 products), Wallet balance Rp 300.000.                                        |
 
 ## Core Business Rules & Features
 
