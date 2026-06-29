@@ -11,6 +11,7 @@ import { formatIDR } from '@/lib/utils';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import RequiredMark from '@/components/RequiredMark.vue';
+import AddressList from '@/components/profile/AddressList.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -38,6 +39,7 @@ const user = computed(() => page.props.auth.user!);
 const wallet = computed(() => page.props.wallet as { balance: number } | null);
 const store = computed(() => page.props.store as { name: string; products_count: number } | null);
 const driverStats = computed(() => page.props.driver_stats as { completed_jobs: number; total_earnings: number } | null);
+const addresses = computed(() => page.props.addresses as any[] | undefined);
 
 const roles = computed(() => {
     const r: string[] = [];
@@ -227,6 +229,9 @@ const roles = computed(() => {
                 </div>
             </CardContent>
         </Card>
+
+        <!-- Address List for Buyer -->
+        <AddressList v-if="auth.activeRole === 'buyer' && addresses !== undefined" :addresses="addresses" />
 
         <Card v-if="auth.activeRole === 'seller' && store">
             <CardHeader class="pb-4">
