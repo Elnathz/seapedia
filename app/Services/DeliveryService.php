@@ -24,13 +24,15 @@ class DeliveryService
     /**
      * Jobs no driver has claimed yet, newest first, eager-loaded (no N+1).
      */
-    public function availableJobs(int $perPage = 10): LengthAwarePaginator
+    public function availableJobs(int $perPage = 10, ?string $method = null): LengthAwarePaginator
     {
         return Delivery::query()
             ->where('status', DeliveryStatus::Available)
+            ->when($method, fn ($q) => $q->whereHas('order', fn ($oq) => $oq->where('delivery_method', $method)))
             ->with(['order.store:id,name'])
             ->latest()
-            ->paginate($perPage);
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     /**

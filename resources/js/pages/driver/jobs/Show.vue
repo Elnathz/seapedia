@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DriverJobController from '@/actions/App/Http/Controllers/Web/DriverJobController';
 import Heading from '@/components/Heading.vue';
@@ -89,6 +89,8 @@ const methodLabelKey: Record<DeliveryMethodKey, string> = {
     regular: 'checkout.regular',
 };
 
+import { toast } from 'vue-sonner';
+
 function confirmAction() {
     confirmOpen.value = false;
     processing.value = true;
@@ -102,12 +104,40 @@ function confirmAction() {
         action,
         {},
         {
+            onError: (errors) => {
+                if (errors.delivery) {
+                    toast.error(errors.delivery);
+                }
+            },
             onFinish: () => {
                 processing.value = false;
             },
         },
     );
 }
+
+const elapsedTime = ref<string>('00:00:00');
+let timer: ReturnType<typeof setInterval>;
+
+onMounted(() => {
+    if (props.job.status === 'taken') {
+        const start = new Date(props.job.order.created_sim_at).getTime();
+        timer = setInterval(() => {
+            const now = new Date().getTime();
+            const diff = now - start;
+            if (diff > 0) {
+                const h = Math.floor(diff / 3600000);
+                const m = Math.floor((diff % 3600000) / 60000);
+                const s = Math.floor((diff % 60000) / 1000);
+                elapsedTime.value = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            }
+        }, 1000);
+    }
+});
+
+onUnmounted(() => {
+    if (timer) clearInterval(timer);
+});
 </script>
 
 <template>
@@ -120,9 +150,14 @@ function confirmAction() {
                 :title="job.order.code"
                 :description="formatDateTime(job.order.created_sim_at, locale)"
             />
-            <Badge :variant="deliveryStatusBadgeVariant(job.status)">
-                {{ deliveryStatusLabel(job.status) }}
-            </Badge>
+            <div class="flex items-center gap-2">
+                <Badge v-if="job.status === 'taken'" variant="destructive" class="font-mono text-sm">
+                    {{ elapsedTime }}
+                </Badge>
+                <Badge :variant="deliveryStatusBadgeVariant(job.status)">
+                    {{ deliveryStatusLabel(job.status) }}
+                </Badge>
+            </div>
         </div>
 
         <div class="grid min-w-0 gap-6 lg:grid-cols-3">

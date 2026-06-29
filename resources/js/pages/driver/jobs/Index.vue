@@ -41,7 +41,7 @@ interface PaginatedJobs {
     total: number;
 }
 
-const props = defineProps<{ jobs: PaginatedJobs }>();
+const props = defineProps<{ jobs: PaginatedJobs; currentMethod?: string; activeJob?: any }>();
 
 defineOptions({
     layout: {
@@ -62,8 +62,23 @@ const methodLabelKey: Record<DeliveryMethodKey, string> = {
 function goToPage(page: number) {
     router.get(
         DriverJobController.index.url(),
-        { page },
+        { page, method: props.currentMethod },
         { preserveState: true, preserveScroll: true, replace: true },
+    );
+}
+
+const methods = [
+    { value: '', label: 'Semua' },
+    { value: 'instant', label: 'Instant' },
+    { value: 'next_day', label: 'Next Day' },
+    { value: 'regular', label: 'Regular' },
+];
+
+function filterMethod(method: string) {
+    router.get(
+        DriverJobController.index.url(),
+        { method },
+        { preserveState: true, preserveScroll: true },
     );
 }
 </script>
@@ -73,6 +88,36 @@ function goToPage(page: number) {
 
     <div class="flex flex-col gap-6">
         <Heading variant="small" :title="t('driver.jobsTitle')" />
+
+        <div v-if="props.activeJob" class="bg-destructive/10 border border-destructive/20 rounded-xl p-4 flex items-center justify-between">
+            <div>
+                <h3 class="font-bold text-destructive flex items-center gap-2">
+                    <Truck class="size-4" />
+                    Pekerjaan Aktif!
+                </h3>
+                <p class="text-sm text-destructive/80 mt-1">Anda memiliki pengiriman yang belum selesai.</p>
+            </div>
+            <Link :href="DriverJobController.show.url(props.activeJob.id)" class="bg-destructive text-destructive-foreground px-4 py-2 rounded font-medium text-sm hover:bg-destructive/90 transition-colors">
+                Lanjutkan
+            </Link>
+        </div>
+
+        <!-- Tabs Filter -->
+        <div class="flex overflow-x-auto pb-2 scrollbar-hide gap-2 border-b border-border">
+            <button
+                v-for="m in methods"
+                :key="m.value"
+                @click="filterMethod(m.value)"
+                class="whitespace-nowrap border-b-2 px-4 py-2 text-sm font-medium transition-colors"
+                :class="[
+                    (props.currentMethod || '') === m.value
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted',
+                ]"
+            >
+                {{ m.label }}
+            </button>
+        </div>
 
         <EmptyState
             v-if="props.jobs.data.length === 0"

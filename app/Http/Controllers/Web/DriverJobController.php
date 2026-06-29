@@ -19,10 +19,13 @@ class DriverJobController extends Controller
     /**
      * Jobs no driver has claimed yet.
      */
-    public function index(): Response
+    public function index(\Illuminate\Http\Request $request): Response
     {
+        $method = $request->query('method');
         return Inertia::render('driver/jobs/Index', [
-            'jobs' => $this->deliveries->availableJobs(),
+            'jobs' => $this->deliveries->availableJobs(10, $method),
+            'currentMethod' => $method,
+            'activeJob' => $this->deliveries->activeJobFor($request->user()),
         ]);
     }
 
