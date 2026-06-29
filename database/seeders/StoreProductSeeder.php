@@ -35,9 +35,31 @@ class StoreProductSeeder extends Seeder
             storeName: 'Toko Berkah',
             description: 'Toko kelontong dan jasa cetak di lingkungan kampus.',
             products: [
-                ['name' => 'Kopi Susu Gula Aren', 'description' => 'Kopi susu segar dengan gula aren asli, diseduh setiap pagi.', 'price' => 18_000, 'stock' => 24, 'category' => 'kopi'],
-                ['name' => 'Fotokopi & Print Dokumen', 'description' => 'Layanan fotokopi dan print per halaman, hitam-putih maupun warna.', 'price' => 500, 'stock' => 999, 'category' => 'umum'],
-                ['name' => 'Stiker Custom', 'description' => 'Stiker vinyl custom sesuai desain pesanan, tahan air.', 'price' => 10_000, 'stock' => 60, 'category' => 'umum'],
+                [
+                    'name' => 'Kopi Susu Gula Aren Premium', 
+                    'description' => "Nikmati kelezatan Kopi Susu Gula Aren Premium dari Toko Berkah yang diracik khusus untuk menemani waktu begadang atau nongkrong Anda. Menggunakan biji kopi pilihan jenis Arabica blend yang di-roasting medium-dark untuk menghasilkan aroma kopi yang kuat namun tetap ramah di lambung.\n\nDipadukan dengan susu segar berkualitas dan gula aren asli yang legit alami tanpa pemanis buatan, menciptakan perpaduan rasa pahit kopi dan manis creamy yang sangat seimbang. Sangat pas disajikan dingin di siang hari yang terik atau hangat di malam hari.\n\nTersedia dalam beberapa varian ukuran sesuai kebutuhan Anda, mulai dari cup standar untuk dinikmati sendiri, hingga botol literan yang cocok untuk stok di kulkas kosan atau diminum beramai-ramai.",
+                    'price' => 18_000, 
+                    'stock' => 50, 
+                    'category' => 'kopi',
+                    'has_variants' => true,
+                    'variants' => [
+                        ['name' => 'Cup Reguler (14oz)', 'price' => 18_000, 'stock' => 30],
+                        ['name' => 'Cup Large (16oz)', 'price' => 22_000, 'stock' => 15],
+                        ['name' => 'Botol 1 Liter', 'price' => 85_000, 'stock' => 5],
+                    ],
+                ],
+                [
+                    'name' => 'Stiker Vinyl Custom Anti Air', 
+                    'description' => "Cetak stiker desain Anda sendiri dengan kualitas premium! Stiker vinyl custom kami menggunakan bahan dasar plastik yang 100% anti air, anti robek, dan memiliki daya rekat ekstra kuat. Sangat cocok diaplikasikan pada helm, laptop, motor, tumblr, hingga kemasan produk jualan Anda.\n\nDicetak menggunakan mesin digital printing resolusi tinggi yang menjamin warna tajam, detail yang presisi, dan tidak mudah pudar meskipun terpapar sinar matahari langsung. Anda bisa memilih hasil akhir (finishing) sesuai selera, baik glossy yang mengkilap maupun doff/matte yang elegan.\n\nKami melayani pemesanan tanpa minimal order yang memberatkan. Cukup kirimkan desain Anda dalam format PNG atau PDF, dan kami akan memotongnya secara presisi (kiss cut atau die cut) sesuai kontur gambar.", 
+                    'price' => 10_000, 
+                    'stock' => 100, 
+                    'category' => 'umum',
+                    'has_variants' => true,
+                    'variants' => [
+                        ['name' => 'A3+ Glossy (Kiss Cut)', 'price' => 15_000, 'stock' => 50],
+                        ['name' => 'A3+ Doff (Kiss Cut)', 'price' => 15_000, 'stock' => 50],
+                    ],
+                ],
             ],
         );
 
@@ -46,9 +68,31 @@ class StoreProductSeeder extends Seeder
             storeName: 'Warung Mama Lia',
             description: 'Warung makan dan minuman, favorit anak kos sekitar kampus.',
             products: [
-                ['name' => 'Nasi Goreng Spesial', 'description' => 'Nasi goreng dengan telur, ayam suwir, dan acar timun.', 'price' => 22_000, 'stock' => 15, 'category' => 'makanan-berat'],
-                ['name' => 'Es Teh Manis', 'description' => 'Teh manis dingin, cocok untuk menemani makan siang.', 'price' => 5_000, 'stock' => 40, 'category' => 'teh'],
-                ['name' => 'Snack Box Rapat', 'description' => 'Paket snack untuk rapat atau acara organisasi kampus.', 'price' => 15_000, 'stock' => 30, 'category' => 'cemilan'],
+                [
+                    'name' => 'Nasi Goreng Spesial Mama Lia', 
+                    'description' => "Nasi Goreng Spesial racikan rahasia Mama Lia yang sudah melegenda di kalangan mahasiswa kampus. Digoreng menggunakan wajan baja tebal dengan api besar (wok hei) untuk menghasilkan aroma smokey yang menggugah selera. Menggunakan beras pera pilihan yang tidak lembek saat digoreng.\n\nPorsi kuli yang sangat mengenyangkan, disajikan lengkap dengan suwiran ayam kampung, telur mata sapi setengah matang, kerupuk udang renyah, dan acar timun segar. Bumbu rempahnya meresap sempurna hingga ke setiap butir nasi, dijamin membuat Anda ketagihan sejak suapan pertama.\n\nAnda bisa memesan tingkat kepedasan sesuai selera, mulai dari tidak pedas sama sekali hingga pedas gila. Tersedia juga varian tambahan topping seperti sosis, bakso, atau ati ampela.", 
+                    'price' => 22_000, 
+                    'stock' => 30, 
+                    'category' => 'makanan-berat',
+                    'has_variants' => true,
+                    'variants' => [
+                        ['name' => 'Pedas Sedang + Telur Dadar', 'price' => 22_000, 'stock' => 15],
+                        ['name' => 'Pedas Gila + Telur Ceplok', 'price' => 22_000, 'stock' => 15],
+                    ],
+                ],
+                [
+                    'name' => 'Snack Box Acara Kampus', 
+                    'description' => "Solusi konsumsi praktis untuk berbagai kegiatan organisasi, rapat BEM, kepanitiaan, atau seminar kampus. Snack Box Warung Mama Lia dikemas dalam kotak higienis yang rapi dan elegan, memudahkan distribusi kepada peserta acara tanpa perlu repot menyiapkan piring.\n\nSetiap box berisi kombinasi kue basah tradisional dan modern yang dibuat segar (freshly baked) setiap pagi tanpa bahan pengawet. Tersedia dalam berbagai pilihan paket yang bisa disesuaikan dengan budget acara Anda, mulai dari paket ekonomis hingga paket premium.\n\nKami siap menerima pesanan dalam jumlah besar (hingga ribuan box) dengan jaminan ketepatan waktu pengiriman. Silakan pilih varian paket yang paling sesuai dengan kebutuhan acara Anda.", 
+                    'price' => 15_000, 
+                    'stock' => 100, 
+                    'category' => 'cemilan',
+                    'has_variants' => true,
+                    'variants' => [
+                        ['name' => 'Paket Ekonomis (3 Kue + Air)', 'price' => 10_000, 'stock' => 50],
+                        ['name' => 'Paket Standar (4 Kue + Teh Kotak)', 'price' => 15_000, 'stock' => 50],
+                        ['name' => 'Paket Premium (5 Kue + Kopi/Jus)', 'price' => 20_000, 'stock' => 50],
+                    ],
+                ],
             ],
         );
 
@@ -59,10 +103,31 @@ class StoreProductSeeder extends Seeder
             storeName: 'Kedai Kopi Nusantara',
             description: 'Berbagai varian kopi dari seluruh Indonesia, bisa biji atau sachet.',
             products: [
-                ['name' => 'Kopi Toraja 250g', 'description' => 'Biji kopi Toraja sangrai medium, cocok untuk V60 atau drip.', 'price' => 45_000, 'stock' => 20, 'category' => 'kopi'],
-                ['name' => 'Kopi Robusta Gayo 100g', 'description' => 'Biji kopi Robusta Gayo, rasa pahit pekat dan body kuat.', 'price' => 22_000, 'stock' => 35, 'category' => 'kopi'],
-                ['name' => 'Sachet Latte Gula Aren', 'description' => 'Sachet kopi latte siap seduh dengan rasa gula aren.', 'price' => 8_000, 'stock' => 100, 'category' => 'kopi'],
-                ['name' => 'Coklat Organik 100g', 'description' => 'Coklat batangan dari kakao organik, tanpa gula tambahan.', 'price' => 18_000, 'stock' => 0, 'category' => 'cemilan'],
+                [
+                    'name' => 'Biji Kopi Arabica Toraja Sapan', 
+                    'description' => "Biji kopi Arabica single origin dari dataran tinggi Sapan, Toraja. Ditanam di ketinggian 1600 mdpl yang menghasilkan profil rasa kompleks dengan keasaman (acidity) medium-high yang menyegarkan. Anda akan menemukan notes rempah (spices), dark chocolate, dan hint herbal yang sangat unik dan khas Toraja.\n\nKami melakukan proses roasting (penyangraian) dalam batch kecil setiap minggunya untuk menjamin kesegaran kopi yang Anda terima. Level roasting medium sangat cocok untuk diseduh menggunakan metode manual brew seperti V60, Chemex, atau Kalita Wave.\n\nTersedia dalam bentuk biji utuh (whole bean) agar kesegarannya terjaga lebih lama, atau Anda bisa memilih varian giling kasar/halus sesuai dengan alat seduh yang Anda miliki di rumah.", 
+                    'price' => 75_000, 
+                    'stock' => 20, 
+                    'category' => 'kopi',
+                    'has_variants' => true,
+                    'variants' => [
+                        ['name' => 'Biji Utuh 250g', 'price' => 75_000, 'stock' => 10],
+                        ['name' => 'Giling V60 250g', 'price' => 75_000, 'stock' => 5],
+                        ['name' => 'Giling Espresso 250g', 'price' => 75_000, 'stock' => 5],
+                    ],
+                ],
+                [
+                    'name' => 'Kopi Robusta Gayo Premium', 
+                    'description' => "Kopi Robusta Gayo pilihan dengan tingkat kepekatan (body) yang sangat tebal dan rasa pahit yang mantap. Cocok untuk Anda yang membutuhkan asupan kafein tinggi di pagi hari atau sebagai bahan dasar campuran es kopi susu kekinian.\n\nDi-roasting hingga level dark untuk memaksimalkan aroma gosong karamel dan cokelat pekat. Karena bodinya yang kuat, kopi ini sangat pas jika dipadukan dengan krimer kental manis atau susu full cream tanpa kehilangan karakter aslinya.\n\nDikemas dalam standing pouch aluminium foil yang dilengkapi dengan zipper lock dan one-way valve untuk mengeluarkan gas CO2 pasca-roasting sekaligus mencegah udara luar masuk merusak kopi.", 
+                    'price' => 25_000, 
+                    'stock' => 35, 
+                    'category' => 'kopi',
+                    'has_variants' => true,
+                    'variants' => [
+                        ['name' => 'Biji Utuh 100g', 'price' => 25_000, 'stock' => 20],
+                        ['name' => 'Giling Halus (Tubruk) 100g', 'price' => 25_000, 'stock' => 15],
+                    ],
+                ],
             ],
         );
 
@@ -120,12 +185,30 @@ class StoreProductSeeder extends Seeder
             storeName: 'Dapur Mama Diah',
             description: 'Makanan rumahan segar, MasBro dan MasSis favorit.',
             products: [
-                ['name' => 'Nasi box Ayam Geprek', 'description' => 'Nasi + ayam geprek + sambal + lalapan, cocok untuk acara.', 'price' => 25_000, 'stock' => 30, 'category' => 'makanan-berat'],
-                ['name' => 'Mie Goreng Spesial', 'description' => 'Mie goreng dengan telur, sayur, dan topping lengkap.', 'price' => 20_000, 'stock' => 25, 'category' => 'makanan-berat'],
-                ['name' => 'Paket Diet 5 Hari', 'description' => 'Paket makanan diet seminggu, konsultasi gratis.', 'price' => 150_000, 'stock' => 10, 'category' => 'makanan-berat'],
-                ['name' => 'Keripik Singkong 250g', 'description' => 'Keripik singkong renyah tanpa MSG, varian original dan pedas.', 'price' => 15_000, 'stock' => 60, 'category' => 'cemilan'],
-                ['name' => 'Bolu Gulung 4 Rasa', 'description' => 'Bolu gulung lembut, pilihan rasa: keju, pandan, cokelat, strawberry.', 'price' => 30_000, 'stock' => 12, 'category' => 'cemilan'],
-                ['name' => 'Es Jeruk Peras', 'description' => 'Jeruk peras segar, tanpa gula tambahan.', 'price' => 8_000, 'stock' => 0, 'category' => 'jus'],
+                [
+                    'name' => 'Nasi Box Ayam Geprek Spesial', 
+                    'description' => "Paket komplit Nasi Box Ayam Geprek Spesial dari Dapur Mama Diah, pilihan nomor satu untuk makan siang yang mengenyangkan. Menggunakan beras pulen kualitas premium dan potongan ayam segar berukuran besar yang digoreng krispi dengan bumbu rempah rahasia.\n\nSetiap porsinya dilengkapi dengan sambal bawang geprek yang pedasnya nendang, lalapan segar (kol, timun, kemangi), dan taburan bawang goreng renyah. Sambalnya diulek dadakan menggunakan cabai rawit merah pilihan untuk menjaga kesegaran dan cita rasa pedas alaminya.\n\nSangat cocok untuk dipesan sebagai menu makan siang harian, acara syukuran, atau konsumsi kepanitiaan kampus. Dikemas dalam kotak bento eksklusif yang tahan panas dan anti bocor, sehingga aman saat proses pengiriman.", 
+                    'price' => 25_000, 
+                    'stock' => 30, 
+                    'category' => 'makanan-berat',
+                    'has_variants' => true,
+                    'variants' => [
+                        ['name' => 'Geprek Original (Dada)', 'price' => 25_000, 'stock' => 15],
+                        ['name' => 'Geprek Keju Mozzarella', 'price' => 30_000, 'stock' => 15],
+                    ],
+                ],
+                [
+                    'name' => 'Mie Goreng Seafood Melimpah', 
+                    'description' => "Mie Goreng ala restoran Chinese Food yang disajikan dengan porsi jumbo dan isian seafood yang sangat melimpah. Menggunakan mie telur kenyal yang dimasak dengan suhu tinggi (high heat) untuk menghasilkan aroma khas masakan wajan besi (wok hei) yang menggoda selera.\n\nDiperkaya dengan potongan udang kupas segar, cumi-cumi kenyal, bakso ikan, telur orak-arik, dan aneka sayuran hijau (sawi, kubis). Bumbu saus tiram dan kecap manis racikan sendiri membuatnya memiliki perpaduan rasa gurih, manis, dan sedikit pedas lada putih yang sangat pas di lidah.\n\nBisa di-request untuk tidak menggunakan MSG atau menyesuaikan tingkat kepedasan. Kami menjamin setiap bahan seafood yang digunakan adalah fresh catch (tangkapan segar) harian.", 
+                    'price' => 35_000, 
+                    'stock' => 25, 
+                    'category' => 'makanan-berat',
+                    'has_variants' => true,
+                    'variants' => [
+                        ['name' => 'Level Pedas 0 (Tidak Pedas)', 'price' => 35_000, 'stock' => 10],
+                        ['name' => 'Level Pedas 3 (Sedang)', 'price' => 35_000, 'stock' => 15],
+                    ],
+                ],
             ],
         );
 
@@ -134,12 +217,30 @@ class StoreProductSeeder extends Seeder
             storeName: 'Style House',
             description: 'Pakaian trendy dan affordable untuk mahasiswa.',
             products: [
-                ['name' => 'Kemeja Flanel Kotak-kotak', 'description' => 'Kemeja flanel lengan panjang, bahan katun nyaman.', 'price' => 89_000, 'stock' => 20, 'category' => 'pria'],
-                ['name' => 'Hoodie Oversize Unisex', 'description' => 'Hoodie fleece tebal, unisex, tersedia S-XXL.', 'price' => 125_000, 'stock' => 15, 'category' => 'pria'],
-                ['name' => 'Rok Mini Plisket', 'description' => 'Rok plisket mini untuk gaya kasual sehari-hari.', 'price' => 55_000, 'stock' => 25, 'category' => 'wanita'],
-                ['name' => 'T-Shirt Graphic Print', 'description' => 'T-shirt cotton combed 30s dengan print original.', 'price' => 65_000, 'stock' => 40, 'category' => 'pria'],
-                ['name' => 'Sling Bag Canvas', 'description' => 'Tas selempang canvas dengan banyak kompartemen.', 'price' => 75_000, 'stock' => 18, 'category' => 'wanita'],
-                ['name' => 'Kaos Polo Premium', 'description' => 'Kaos polo pique cotton, cocok untuk semi-formal.', 'price' => 95_000, 'stock' => 0, 'category' => 'pria'],
+                [
+                    'name' => 'Kemeja Flanel Kotak Premium', 
+                    'description' => "Tampil stylish dan kasual dengan Kemeja Flanel Kotak Premium dari Style House. Dibuat menggunakan material 100% katun flanel impor yang sangat lembut, tebal namun tidak membuat gerah saat dipakai beraktivitas seharian di kampus atau saat hangout bersama teman.\n\nPotongan pola regular fit dirancang khusus untuk pas di bentuk badan pria Asia, memberikan siluet yang proporsional tanpa terlihat kebesaran. Jahitannya sangat rapi dan presisi dengan menggunakan benang nylon kuat, memastikan kemeja ini awet dan tidak mudah robek pada bagian ketiak atau kancing.\n\nKemeja ini sangat serbaguna, bisa dipakai sebagai pakaian utama yang dikancingkan rapi, atau dijadikan outer (luaran) dengan paduan kaos polos di dalamnya. Warna kain telah melalui proses pre-washed sehingga tidak akan luntur atau menyusut saat dicuci.", 
+                    'price' => 89_000, 
+                    'stock' => 20, 
+                    'category' => 'pria',
+                    'has_variants' => true,
+                    'variants' => [
+                        ['name' => 'Kotak Merah Hitam (L)', 'price' => 89_000, 'stock' => 10],
+                        ['name' => 'Kotak Biru Dongker (XL)', 'price' => 89_000, 'stock' => 10],
+                    ],
+                ],
+                [
+                    'name' => 'Sling Bag Canvas Minimalis', 
+                    'description' => "Tas selempang (sling bag) berbahan kanvas tebal dengan desain minimalis ala Korea, pilihan tepat untuk menemani aktivitas harian para mahasiswi. Ukurannya sangat pas, tidak terlalu besar namun memiliki kapasitas (kompartemen) yang cukup untuk membawa dompet, HP, makeup pouch, dan charger.\n\nDilengkapi dengan tali selempang yang dapat diatur panjang-pendeknya (adjustable strap) dan menggunakan material hardware besi anti karat yang mewah. Di bagian dalam terdapat lapisan furing satin anti air dan kantong kecil ber-ritsleting untuk menyimpan barang berharga seperti kunci motor atau kartu-kartu penting.\n\nTersedia dalam berbagai pilihan warna pastel yang estetik dan mudah dipadu-padankan dengan outfit keseharian Anda. Mudah dibersihkan (washable) jika terkena noda ringan.", 
+                    'price' => 75_000, 
+                    'stock' => 18, 
+                    'category' => 'wanita',
+                    'has_variants' => true,
+                    'variants' => [
+                        ['name' => 'Warna Beige', 'price' => 75_000, 'stock' => 9],
+                        ['name' => 'Warna Sage Green', 'price' => 75_000, 'stock' => 9],
+                    ],
+                ],
             ],
         );
 
@@ -148,11 +249,30 @@ class StoreProductSeeder extends Seeder
             storeName: 'Sembako Sejahtera',
             description: 'Sembako lengkap dengan harga grosir untuk mahasiswa dan warga.',
             products: [
-                ['name' => 'Beras Premium 5kg', 'description' => 'Beras IR 64 premium, bersih dan pulen.', 'price' => 75_000, 'stock' => 30, 'category' => 'sembako'],
-                ['name' => 'Minyak Goreng 2L', 'description' => 'Minyak goreng kelapa sawit, non-RBD.', 'price' => 28_000, 'stock' => 50, 'category' => 'sembako'],
-                ['name' => 'Gula Pasir 1kg', 'description' => 'Gula pasir pilihan, bersih dan kering.', 'price' => 15_000, 'stock' => 60, 'category' => 'sembako'],
-                ['name' => 'Telur Ayam 1 Papan (30 butir)', 'description' => 'Telur ayam ras segar, langsung dari petani.', 'price' => 42_000, 'stock' => 20, 'category' => 'sembako'],
-                ['name' => 'Sabun Cuci 900ml', 'description' => 'Sabun cuci cair dengan formula pekat, 30 kali cucian.', 'price' => 18_000, 'stock' => 40, 'category' => 'perawatan'],
+                [
+                    'name' => 'Beras IR64 Super Pulen', 
+                    'description' => "Beras kelas premium jenis IR64 asli dari hasil panen petani lokal pilihan. Beras ini terkenal dengan karakteristiknya yang sangat putih, bersih tanpa gabah/batu kecil, dan tidak menggunakan bahan pemutih atau pengawet kimia berbahaya.\n\nSaat dimasak, beras ini akan menghasilkan nasi yang bertekstur sangat pulen, mengembang dengan sempurna, dan tidak mudah basi atau menguning jika disimpan di dalam magic com selama 24 jam. Sangat cocok disajikan dengan berbagai lauk pauk khas Indonesia.\n\nDikemas dalam karung laminasi tebal yang aman dari kutu beras dan kelembapan. Kemasan ekonomis ini sangat pas untuk stok bulanan anak kos maupun keluarga kecil. Harga dijamin lebih murah dibanding beli di minimarket!", 
+                    'price' => 75_000, 
+                    'stock' => 30, 
+                    'category' => 'sembako',
+                    'has_variants' => true,
+                    'variants' => [
+                        ['name' => 'Kemasan Karung 5kg', 'price' => 75_000, 'stock' => 20],
+                        ['name' => 'Kemasan Karung 10kg', 'price' => 145_000, 'stock' => 10],
+                    ],
+                ],
+                [
+                    'name' => 'Minyak Goreng Kelapa Sawit', 
+                    'description' => "Minyak goreng berkualitas tinggi yang diproses dari buah kelapa sawit segar pilihan melalui 5 kali proses penyaringan (filtering) mutakhir. Menghasilkan minyak yang sangat jernih, berwarna keemasan, dan tidak mudah keruh atau beku meskipun disimpan di tempat dingin.\n\nKandungan omega 9 dan Vitamin A alaminya tetap terjaga berkat teknologi pemanasan suhu rendah. Minyak ini juga lebih hemat saat digunakan karena tidak cepat menghitam setelah beberapa kali penggorengan, membuat masakan Anda matang lebih merata dan ekstra renyah (crispy).\n\nSangat direkomendasikan untuk menggoreng segala jenis makanan mulai dari lauk pauk, kerupuk, hingga aneka gorengan. Dilengkapi kemasan pouch tebal anti-bocor atau jerigen tebal yang aman dikirim menggunakan ekspedisi.", 
+                    'price' => 35_000, 
+                    'stock' => 50, 
+                    'category' => 'sembako',
+                    'has_variants' => true,
+                    'variants' => [
+                        ['name' => 'Pouch Refill 2 Liter', 'price' => 35_000, 'stock' => 30],
+                        ['name' => 'Jerigen 5 Liter', 'price' => 85_000, 'stock' => 20],
+                    ],
+                ],
             ],
         );
 
