@@ -89,7 +89,7 @@ class RoleService
      */
     public function assignRoles(User $user, array $roleNames): void
     {
-        $user->roles()->attach(
+        $user->roles()->syncWithoutDetaching(
             Role::query()->whereIn('name', $roleNames)->pluck('id'),
         );
     }
