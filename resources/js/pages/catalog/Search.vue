@@ -33,7 +33,7 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { ChevronDown, Search } from 'lucide-vue-next';
+import { ChevronDown, Search } from '@lucide/vue';
 
 interface Store {
     id: number;
