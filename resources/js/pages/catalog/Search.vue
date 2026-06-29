@@ -21,6 +21,19 @@ import {
 import { formatIDR } from '@/lib/utils';
 import { index as catalogIndex, show as catalogShow } from '@/routes/catalog';
 
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { ChevronDown, Search } from 'lucide-vue-next';
 
 interface Store {
     id: number;
@@ -70,6 +83,14 @@ const priceMax = ref(props.filters?.price_max || '');
 const selectedCategories = ref<string[]>(props.filters?.categories ? (Array.isArray(props.filters.categories) ? props.filters.categories : [props.filters.categories]) : []);
 const sortBy = ref(props.filters?.sort || 'best_match');
 const showMobileFilter = ref(false);
+
+const searchCategory = ref('');
+const isCategoryCollapsibleOpen = ref(true);
+
+const filteredCategories = computed(() => {
+    if (!searchCategory.value) return props.categories;
+    return props.categories.filter(c => c.name.toLowerCase().includes(searchCategory.value.toLowerCase()));
+});
 
 watch(() => props.filters, (newFilters) => {
     searchQuery.value = newFilters?.q || '';
@@ -195,17 +216,6 @@ const clearAllFilters = () => {
                     </div>
                 </div>
 
-                <!-- Ketersediaan -->
-                <div class="space-y-4">
-                    <h4 class="text-sm font-bold text-foreground">Ketersediaan</h4>
-                    <div class="flex items-center space-x-2">
-                        <Checkbox id="in_stock" :checked="inStock" @update:checked="(v) => { inStock = !!v; applyFilters(); }" />
-                        <label for="in_stock" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
-                            Hanya stok tersedia
-                        </label>
-                    </div>
-                </div>
-
                 <!-- Rentang Harga -->
                 <div class="space-y-4">
                     <h4 class="text-sm font-bold text-foreground">Rentang Harga (Rp)</h4>
@@ -218,16 +228,58 @@ const clearAllFilters = () => {
                 </div>
 
                 <!-- Kategori -->
-                <div v-if="categories && categories.length > 0" class="space-y-4">
-                    <h4 class="text-sm font-bold text-foreground">Kategori</h4>
-                    <div class="space-y-3 max-h-64 overflow-y-auto pr-2">
-                        <div v-for="cat in categories" :key="cat.id" class="flex items-center space-x-2">
-                            <Checkbox :id="'cat_' + cat.id" :checked="selectedCategories.includes(String(cat.id))" @update:checked="toggleCategory(cat.id)" />
-                            <label :for="'cat_' + cat.id" class="text-sm font-medium leading-none cursor-pointer">
-                                {{ cat.name }}
-                            </label>
+                <div v-if="categories && categories.length > 0" class="border-t border-border pt-4">
+                    <Collapsible v-model:open="isCategoryCollapsibleOpen" class="w-full">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-sm font-bold text-foreground">Kategori</h4>
+                            <CollapsibleTrigger as-child>
+                                <Button variant="ghost" size="sm" class="h-6 w-6 p-0">
+                                    <ChevronDown class="h-4 w-4 transition-transform duration-200" :class="{ 'rotate-180': isCategoryCollapsibleOpen }" />
+                                </Button>
+                            </CollapsibleTrigger>
                         </div>
-                    </div>
+                        <CollapsibleContent class="space-y-3">
+                            <div class="space-y-3">
+                                <div v-for="cat in categories.slice(0, 5)" :key="cat.id" class="flex items-center space-x-2">
+                                    <Checkbox :id="'cat_' + cat.id" :checked="selectedCategories.includes(String(cat.id))" @update:checked="toggleCategory(cat.id)" />
+                                    <label :for="'cat_' + cat.id" class="text-sm font-medium leading-none cursor-pointer">
+                                        {{ cat.name }}
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Modal Lihat Semua Kategori -->
+                            <Dialog v-if="categories.length > 5">
+                                <DialogTrigger as-child>
+                                    <button class="text-sm font-semibold text-primary mt-3 hover:underline text-left w-full">
+                                        Lihat Semua
+                                    </button>
+                                </DialogTrigger>
+                                <DialogContent class="sm:max-w-[425px]">
+                                    <DialogHeader>
+                                        <DialogTitle>Kategori</DialogTitle>
+                                    </DialogHeader>
+                                    <div class="py-4">
+                                        <div class="relative mb-4">
+                                            <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            <Input v-model="searchCategory" type="text" placeholder="Cari Kategori..." class="pl-9" />
+                                        </div>
+                                        <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                                            <div v-for="cat in filteredCategories" :key="cat.id" class="flex items-center space-x-2">
+                                                <Checkbox :id="'modal_cat_' + cat.id" :checked="selectedCategories.includes(String(cat.id))" @update:checked="toggleCategory(cat.id)" />
+                                                <label :for="'modal_cat_' + cat.id" class="text-sm font-medium leading-none cursor-pointer">
+                                                    {{ cat.name }}
+                                                </label>
+                                            </div>
+                                            <div v-if="filteredCategories.length === 0" class="text-sm text-muted-foreground text-center py-4">
+                                                Kategori tidak ditemukan.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
+                        </CollapsibleContent>
+                    </Collapsible>
                 </div>
             </aside>
 
