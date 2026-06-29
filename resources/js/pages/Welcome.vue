@@ -8,7 +8,10 @@ import ReviewsSection from '@/components/landing/ReviewsSection.vue';
 import RoleCards from '@/components/landing/RoleCards.vue';
 import WhyChooseSeapedia from '@/components/landing/WhyChooseSeapedia.vue';
 import WhatIsSeapedia from '@/components/landing/WhatIsSeapedia.vue';
-import Footer from '@/components/landing/Footer.vue';
+import { ArrowRight } from '@lucide/vue';
+import { Button } from '@/components/ui/button';
+import { Link } from '@inertiajs/vue3';
+import { register } from '@/routes';
 
 interface Store {
     id: number;
@@ -57,5 +60,30 @@ defineProps<{
     <CategoryGrid id="categories" />
     <FeaturedStrip id="featured" :products="featured" />
     <ReviewsSection id="reviews" :reviews="reviews" />
-    <Footer />
+    
+    <!-- Final CTA -->
+    <div class="bg-card px-4 py-20 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl">
+            <div class="overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-brand px-6 py-12 sm:px-12 sm:py-16 text-center text-white relative shadow-xl">
+                <!-- Decorative elements -->
+                <div class="absolute -top-24 -left-24 size-48 rounded-full bg-white/10 blur-2xl"></div>
+                <div class="absolute -bottom-24 -right-24 size-48 rounded-full bg-white/10 blur-2xl"></div>
+                
+                <div class="relative z-10 mx-auto max-w-2xl">
+                    <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Siap memulai?</h2>
+                    <p class="mx-auto mt-4 max-w-xl text-lg text-white/90">
+                        Daftar sekarang dan rasakan marketplace multi‑role.
+                    </p>
+                    <div class="mt-8 flex justify-center">
+                        <Button as-child size="lg" class="bg-white text-primary hover:bg-white/90 gap-2 group transition-transform hover:scale-105">
+                            <Link :href="register()">
+                                Daftar Gratis
+                                <ArrowRight class="size-4 transition-transform group-hover:translate-x-1" />
+                            </Link>
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
