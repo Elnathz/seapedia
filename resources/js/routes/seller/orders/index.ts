@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Web\SellerOrderController::show
- * @see app/Http/Controllers/Web/SellerOrderController.php:33
+ * @see app/Http/Controllers/Web/SellerOrderController.php:37
  * @route '/seller/orders/{order}'
  */
 export const show = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\SellerOrderController::show
- * @see app/Http/Controllers/Web/SellerOrderController.php:33
+ * @see app/Http/Controllers/Web/SellerOrderController.php:37
  * @route '/seller/orders/{order}'
  */
 show.url = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -122,7 +122,7 @@ show.url = (args: { order: string | number } | [order: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Web\SellerOrderController::show
- * @see app/Http/Controllers/Web/SellerOrderController.php:33
+ * @see app/Http/Controllers/Web/SellerOrderController.php:37
  * @route '/seller/orders/{order}'
  */
 show.get = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -131,7 +131,7 @@ show.get = (args: { order: string | number } | [order: string | number ] | strin
 })
 /**
 * @see \App\Http\Controllers\Web\SellerOrderController::show
- * @see app/Http/Controllers/Web/SellerOrderController.php:33
+ * @see app/Http/Controllers/Web/SellerOrderController.php:37
  * @route '/seller/orders/{order}'
  */
 show.head = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -141,7 +141,7 @@ show.head = (args: { order: string | number } | [order: string | number ] | stri
 
     /**
 * @see \App\Http\Controllers\Web\SellerOrderController::show
- * @see app/Http/Controllers/Web/SellerOrderController.php:33
+ * @see app/Http/Controllers/Web/SellerOrderController.php:37
  * @route '/seller/orders/{order}'
  */
     const showForm = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -151,7 +151,7 @@ show.head = (args: { order: string | number } | [order: string | number ] | stri
 
             /**
 * @see \App\Http\Controllers\Web\SellerOrderController::show
- * @see app/Http/Controllers/Web/SellerOrderController.php:33
+ * @see app/Http/Controllers/Web/SellerOrderController.php:37
  * @route '/seller/orders/{order}'
  */
         showForm.get = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -160,7 +160,7 @@ show.head = (args: { order: string | number } | [order: string | number ] | stri
         })
             /**
 * @see \App\Http\Controllers\Web\SellerOrderController::show
- * @see app/Http/Controllers/Web/SellerOrderController.php:33
+ * @see app/Http/Controllers/Web/SellerOrderController.php:37
  * @route '/seller/orders/{order}'
  */
         showForm.head = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -176,7 +176,7 @@ show.head = (args: { order: string | number } | [order: string | number ] | stri
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Web\SellerOrderController::process
- * @see app/Http/Controllers/Web/SellerOrderController.php:50
+ * @see app/Http/Controllers/Web/SellerOrderController.php:54
  * @route '/seller/orders/{order}/process'
  */
 export const process = (args: { order: number | { id: number } } | [order: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ process.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\SellerOrderController::process
- * @see app/Http/Controllers/Web/SellerOrderController.php:50
+ * @see app/Http/Controllers/Web/SellerOrderController.php:54
  * @route '/seller/orders/{order}/process'
  */
 process.url = (args: { order: number | { id: number } } | [order: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -224,7 +224,7 @@ process.url = (args: { order: number | { id: number } } | [order: number | { id:
 
 /**
 * @see \App\Http\Controllers\Web\SellerOrderController::process
- * @see app/Http/Controllers/Web/SellerOrderController.php:50
+ * @see app/Http/Controllers/Web/SellerOrderController.php:54
  * @route '/seller/orders/{order}/process'
  */
 process.post = (args: { order: number | { id: number } } | [order: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -234,7 +234,7 @@ process.post = (args: { order: number | { id: number } } | [order: number | { id
 
     /**
 * @see \App\Http\Controllers\Web\SellerOrderController::process
- * @see app/Http/Controllers/Web/SellerOrderController.php:50
+ * @see app/Http/Controllers/Web/SellerOrderController.php:54
  * @route '/seller/orders/{order}/process'
  */
     const processForm = (args: { order: number | { id: number } } | [order: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -244,7 +244,7 @@ process.post = (args: { order: number | { id: number } } | [order: number | { id
 
             /**
 * @see \App\Http\Controllers\Web\SellerOrderController::process
- * @see app/Http/Controllers/Web/SellerOrderController.php:50
+ * @see app/Http/Controllers/Web/SellerOrderController.php:54
  * @route '/seller/orders/{order}/process'
  */
         processForm.post = (args: { order: number | { id: number } } | [order: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

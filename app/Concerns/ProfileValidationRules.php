@@ -70,13 +70,8 @@ trait ProfileValidationRules
         ];
     }
 
-    /**
-     * Get the validation rules used to validate phone numbers (§7, optional).
-     *
-     * @return array<int, ValidationRule|array<mixed>|string>
-     */
     protected function phoneRules(): array
     {
-        return ['nullable', 'string', 'regex:/^[0-9+\-\s]+$/', 'max:20'];
+        return ['required', 'string', 'regex:/^(08|\+62)[0-9]{8,12}$/', 'max:20'];
     }
 }

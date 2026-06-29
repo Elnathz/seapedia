@@ -14,3 +14,15 @@
 - **Catalog Show UI:** Memperbaiki layout tombol "Keranjang" dan "Beli Langsung" menjadi *flex-1* agar luasnya terbagi rata secara 50/50. Memindahkan bagian *Info Toko* agar tampil di atas bagian pemilihan varian produk.
 - **Profile SSR Fix:** Mengganti pemanggilan rute global `route('password.update')` (yang *error* pada *Inertia SSR* karena bukan *Ziggy*) dengan *auto-routing* bawaan *Wayfinder*: `SecurityController.update.form()`.
 - **Status:** **DONE**. Code telah di-commit ke Git secara keseluruhan.
+
+## Plan: Phase 5 (UI/UX & Flow Improvements)
+- **Redirect:** Buyer diarahkan ke `/catalog` setelah login/register.
+- **Menu Profil & Navbar:** Memindahkan *role switcher* ke dalam menu dropdown profil. Menyederhanakan dropdown khusus untuk halaman Dashboard (hanya ganti role dan logout).
+- **Sidebar Dashboard:** Merapikan menu, menghapus 'Keranjang' dan 'Alamat', menambahkan menu 'Pengaturan', serta mengubah logo menggunakan *wordmark*.
+- **Alamat:** Memindahkan form pengaturan alamat ke dalam pengaturan Profil. Menambahkan field agar lebih detail (Provinsi, Kota, Kode Pos).
+- **Nomor HP:** Menyambungkan dan memastikan data input nomor HP di awal registrasi tersimpan ke tabel pengguna.
+- **Pesanan Saya:** Merombak tampilan *card* pesanan agar menampilkan detail foto produk dan item, serta menambahkan *Tabs Filter* untuk status pesanan (Semua, Sedang Dikemas, dsb.).
+- **Detail Pesanan:** Merombak tampilan detail pesanan agar menampilkan foto item dengan *link* produk, nama toko, dan info Driver pengirim (Sesuai SEAPEDIA_SPEC.md, aplikasi ini menggunakan Driver internal, bukan kurir resi eksternal).
+- **Pesanan Tersedia (Driver):** Menambahkan filter berdasarkan Metode Pengiriman (Instan, Next Day, Reguler), merombak UI menjadi lebih *compact*, menampilkan *countdown* sisa waktu (SLA) auto-cancel, dan **menambahkan Banner Peringatan** jika Driver masih memiliki *Active Job* agar alur pengambilan pesanan jelas.
+- **Produk Toko (Seller):** Merombak *card* produk agar tampil lebih padat (*compact*) dan dikelompokkan berdasarkan kategorinya layaknya antarmuka Admin Megamart.
+- **Status:** **PLANNING** (Lihat *tab* `implementation_plan.md` untuk detail dan revisi dari pengguna).

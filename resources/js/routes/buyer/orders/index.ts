@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:22
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:26
  * @route '/buyer/orders/{order}'
  */
 export const show = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:22
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:26
  * @route '/buyer/orders/{order}'
  */
 show.url = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -122,7 +122,7 @@ show.url = (args: { order: string | number } | [order: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:22
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:26
  * @route '/buyer/orders/{order}'
  */
 show.get = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -131,7 +131,7 @@ show.get = (args: { order: string | number } | [order: string | number ] | strin
 })
 /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:22
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:26
  * @route '/buyer/orders/{order}'
  */
 show.head = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -141,7 +141,7 @@ show.head = (args: { order: string | number } | [order: string | number ] | stri
 
     /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:22
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:26
  * @route '/buyer/orders/{order}'
  */
     const showForm = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -151,7 +151,7 @@ show.head = (args: { order: string | number } | [order: string | number ] | stri
 
             /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:22
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:26
  * @route '/buyer/orders/{order}'
  */
         showForm.get = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -160,7 +160,7 @@ show.head = (args: { order: string | number } | [order: string | number ] | stri
         })
             /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:22
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:26
  * @route '/buyer/orders/{order}'
  */
         showForm.head = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
