@@ -229,57 +229,69 @@ const clearAllFilters = () => {
 
                 <!-- Kategori -->
                 <div v-if="categories && categories.length > 0" class="border-t border-border pt-4">
-                    <Collapsible v-model:open="isCategoryCollapsibleOpen" class="w-full">
-                        <div class="flex items-center justify-between mb-3">
-                            <h4 class="text-sm font-bold text-foreground">Kategori</h4>
+                    <h4 class="text-sm font-bold text-foreground mb-3">Kategori</h4>
+                    <div class="space-y-1">
+                        <Collapsible v-for="parent in categories.slice(0, 5)" :key="parent.id" class="w-full group/cat">
                             <CollapsibleTrigger as-child>
-                                <Button variant="ghost" size="sm" class="h-6 w-6 p-0">
-                                    <ChevronDown class="h-4 w-4 transition-transform duration-200" :class="{ 'rotate-180': isCategoryCollapsibleOpen }" />
-                                </Button>
+                                <div class="flex items-center justify-between cursor-pointer py-1.5 hover:bg-muted/50 px-2 rounded-md">
+                                    <span class="font-semibold text-sm">{{ parent.name }}</span>
+                                    <ChevronDown class="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/cat:rotate-180" />
+                                </div>
                             </CollapsibleTrigger>
-                        </div>
-                        <CollapsibleContent class="space-y-3">
-                            <div class="space-y-3">
-                                <div v-for="cat in categories.slice(0, 5)" :key="cat.id" class="flex items-center space-x-2">
-                                    <Checkbox :id="'cat_' + cat.id" :checked="selectedCategories.includes(String(cat.id))" @update:checked="toggleCategory(cat.id)" />
-                                    <label :for="'cat_' + cat.id" class="text-sm font-medium leading-none cursor-pointer">
-                                        {{ cat.name }}
+                            <CollapsibleContent class="space-y-2 pl-4 py-1.5">
+                                <div v-for="child in parent.children" :key="child.id" class="flex items-center space-x-2">
+                                    <Checkbox :id="'cat_' + child.id" :checked="selectedCategories.includes(String(child.id))" @update:checked="toggleCategory(child.id)" />
+                                    <label :for="'cat_' + child.id" class="text-sm font-medium leading-none cursor-pointer text-muted-foreground hover:text-foreground">
+                                        {{ child.name }}
                                     </label>
                                 </div>
-                            </div>
-                            
-                            <!-- Modal Lihat Semua Kategori -->
-                            <Dialog v-if="categories.length > 5">
-                                <DialogTrigger as-child>
-                                    <button class="text-sm font-semibold text-primary mt-3 hover:underline text-left w-full">
-                                        Lihat Semua
-                                    </button>
-                                </DialogTrigger>
-                                <DialogContent class="sm:max-w-[425px]">
-                                    <DialogHeader>
-                                        <DialogTitle>Kategori</DialogTitle>
-                                    </DialogHeader>
-                                    <div class="py-4">
-                                        <div class="relative mb-4">
-                                            <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                            <Input v-model="searchCategory" type="text" placeholder="Cari Kategori..." class="pl-9" />
-                                        </div>
-                                        <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                                            <div v-for="cat in filteredCategories" :key="cat.id" class="flex items-center space-x-2">
-                                                <Checkbox :id="'modal_cat_' + cat.id" :checked="selectedCategories.includes(String(cat.id))" @update:checked="toggleCategory(cat.id)" />
-                                                <label :for="'modal_cat_' + cat.id" class="text-sm font-medium leading-none cursor-pointer">
-                                                    {{ cat.name }}
+                                <div v-if="parent.children.length === 0" class="text-xs text-muted-foreground italic">
+                                    Tidak ada sub-kategori
+                                </div>
+                            </CollapsibleContent>
+                        </Collapsible>
+                    </div>
+                    
+                    <!-- Modal Lihat Semua Kategori -->
+                    <Dialog v-if="categories.length > 5">
+                        <DialogTrigger as-child>
+                            <button class="text-sm font-semibold text-primary mt-3 hover:underline px-2 text-left w-full">
+                                Lihat Semua
+                            </button>
+                        </DialogTrigger>
+                        <DialogContent class="sm:max-w-[700px]">
+                            <DialogHeader>
+                                <DialogTitle>Semua Kategori</DialogTitle>
+                            </DialogHeader>
+                            <div class="py-4">
+                                <div class="relative mb-6">
+                                    <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input v-model="searchCategory" type="text" placeholder="Cari Kategori..." class="pl-9" />
+                                </div>
+                                
+                                <!-- 2-Column Grid for Categories -->
+                                <div class="grid grid-cols-2 gap-x-8 gap-y-6 max-h-[500px] overflow-y-auto pr-2">
+                                    <div v-for="parent in filteredCategories" :key="parent.id">
+                                        <h5 class="font-bold text-foreground mb-3 text-sm">{{ parent.name }}</h5>
+                                        <div class="space-y-2.5">
+                                            <div v-for="child in parent.children" :key="child.id" class="flex items-center space-x-2">
+                                                <Checkbox :id="'modal_cat_' + child.id" :checked="selectedCategories.includes(String(child.id))" @update:checked="toggleCategory(child.id)" />
+                                                <label :for="'modal_cat_' + child.id" class="text-sm font-medium leading-none cursor-pointer text-muted-foreground hover:text-foreground">
+                                                    {{ child.name }}
                                                 </label>
                                             </div>
-                                            <div v-if="filteredCategories.length === 0" class="text-sm text-muted-foreground text-center py-4">
-                                                Kategori tidak ditemukan.
+                                            <div v-if="parent.children.length === 0" class="text-xs text-muted-foreground italic">
+                                                Tidak ada sub-kategori
                                             </div>
                                         </div>
                                     </div>
-                                </DialogContent>
-                            </Dialog>
-                        </CollapsibleContent>
-                    </Collapsible>
+                                    <div v-if="filteredCategories.length === 0" class="col-span-2 text-sm text-muted-foreground text-center py-8">
+                                        Kategori tidak ditemukan.
+                                    </div>
+                                </div>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </aside>
 

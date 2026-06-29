@@ -34,10 +34,43 @@ class CatalogController extends Controller
         $hasFilters = $search || $categorySlug || $sort || $request->has('price_min') || $request->has('price_max') || $request->has('in_stock');
 
         if ($hasFilters) {
+            $products = $this->catalog->index($search, $category, $sort);
+            
+            // Get relevant category IDs if there's a search query and products exist
+            $relevantCategoryIds = collect();
+            if ($search && $products->total() > 0) {
+                $relevantCategoryIds = \App\Models\Product::query()
+                    ->where('is_active', true)
+                    ->where('name', 'like', "%{$search}%")
+                    ->distinct()
+                    ->pluck('category_id');
+            }
+
+            $categoriesTree = $this->categories->tree()->map(function ($c) use ($relevantCategoryIds) {
+                $children = $c->children->map(fn ($child) => ['id' => $child->id, 'name' => $child->name, 'slug' => $child->slug]);
+                
+                // If we are filtering by relevant categories, only include children that are relevant
+                if ($relevantCategoryIds->isNotEmpty()) {
+                    $children = $children->filter(fn ($child) => $relevantCategoryIds->contains($child['id']))->values();
+                }
+
+                return [
+                    'id' => $c->id, 
+                    'name' => $c->name, 
+                    'slug' => $c->slug,
+                    'children' => $children,
+                ];
+            });
+
+            // If filtering, remove parents that have no relevant children
+            if ($relevantCategoryIds->isNotEmpty()) {
+                $categoriesTree = $categoriesTree->filter(fn ($c) => $c['children']->count() > 0)->values();
+            }
+
             return Inertia::render('catalog/Search', [
-                'products' => $this->catalog->index($search, $category, $sort),
+                'products' => $products,
                 'filters' => $request->only(['q', 'category', 'sort', 'price_min', 'price_max', 'in_stock']),
-                'categories' => $this->categories->tree()->map(fn ($c) => ['id' => $c->id, 'name' => $c->name, 'slug' => $c->slug]),
+                'categories' => $categoriesTree,
             ]);
         }
 
