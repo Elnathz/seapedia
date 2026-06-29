@@ -56,7 +56,7 @@ function storeInitials(name: string): string {
                         <h2 class="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
                             Toko Populer
                         </h2>
-                        <p class="text-sm text-muted-foreground">Dari penjual aktif di kampus</p>
+                        <p class="text-sm text-muted-foreground">Dari penjual aktif dan terpercaya</p>
                     </div>
                 </div>
                 <Button as-child variant="ghost" size="sm" class="gap-1 text-primary hover:text-primary">

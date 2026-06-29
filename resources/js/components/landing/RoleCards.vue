@@ -38,7 +38,7 @@ const roles = [
         key: 'buyer',
         icon: ShoppingBag,
         title: 'Pembeli',
-        tagline: 'Belanja produk dari toko kampus',
+        tagline: 'Belanja produk dengan mudah dan aman',
         gradient: 'from-blue-500 to-blue-600',
         lightBg: 'bg-blue-50',
         iconColor: 'text-blue-500',
@@ -101,7 +101,7 @@ const roles = [
                 </h2>
                 <div class="mx-auto mt-3 h-1 w-20 rounded-full bg-gradient-to-r from-primary to-brand" />
                 <p class="mx-auto mt-4 max-w-xl text-muted-foreground">
-                    Daftar sekali, langsung bisa belanja, buka toko, atau jadi kurir kampus.
+                    Daftar sekali, langsung bisa belanja, buka toko, atau jadi mitra kurir.
                     Ganti peran kapan saja. Saldo tetap satu.
                 </p>
             </div>

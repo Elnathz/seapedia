@@ -79,7 +79,7 @@ onUnmounted(() => observer?.disconnect());
                         Belanja per Kategori
                     </h2>
                     <p class="mt-1.5 text-sm text-muted-foreground sm:text-base">
-                        Temukan produk kampus sesuai kebutuhanmu.
+                        Temukan berbagai produk sesuai kebutuhanmu.
                     </p>
                 </div>
                 <Link

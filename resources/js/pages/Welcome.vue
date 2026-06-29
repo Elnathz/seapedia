@@ -46,7 +46,7 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Marketplace Kampus" />
+    <Head title="SEAPEDIA Marketplace" />
     <HeroSection />
     <RoleCards id="roles" />
     <TrustBand />

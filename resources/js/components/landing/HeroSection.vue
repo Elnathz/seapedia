@@ -89,7 +89,7 @@ cancelAnimationFrame(rafId);
                         class="inline-flex w-fit items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm"
                     >
                         <span class="size-1.5 rounded-full bg-white/80"></span>
-                        Platform Marketplace Kampus
+                        Platform Marketplace Terlengkap
                     </div>
 
                     <!-- Headline -->
@@ -145,7 +145,7 @@ cancelAnimationFrame(rafId);
                         <span class="hidden text-white/30 sm:block">·</span>
                         <span class="flex items-center gap-1.5">
                             <Truck class="size-4 text-white/80" />
-                            Kurir kampus
+                            Kurir internal
                         </span>
                     </div>
                 </div>

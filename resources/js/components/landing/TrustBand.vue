@@ -14,8 +14,8 @@ const items = [
     },
     {
         icon: Truck,
-        title: 'Kurir Kampus',
-        desc: 'Pengiriman dilakukan oleh mahasiswa kurir terverifikasi di lingkungan kampusmu.',
+        title: 'Kurir Internal',
+        desc: 'Pengiriman dilakukan oleh kurir terverifikasi untuk menjamin keamanan barangmu.',
     },
 ] as const;
 </script>
