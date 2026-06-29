@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { AlertTriangle } from '@lucide/vue';
+import { AlertTriangle, Clock } from '@lucide/vue';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { router } from '@inertiajs/vue3';
+import AdminClockController from '@/actions/App/Http/Controllers/Web/Admin/ClockController';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/AppLayout.vue';
 
@@ -29,20 +32,48 @@ defineProps<{
 function formatPrice(price: number) {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(price);
 }
+
+const isAdvancing = ref(false);
+
+function advanceTime(days: number) {
+    isAdvancing.value = true;
+    router.post(
+        AdminClockController.advance.url(),
+        { days },
+        {
+            preserveScroll: true,
+            onFinish: () => (isAdvancing.value = false),
+        }
+    );
+}
 </script>
 
 <template>
     <AppLayout>
         <div class="p-6">
-            <div class="mb-6 flex items-center gap-3">
-                <div class="flex size-10 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
-                    <AlertTriangle class="size-5" />
+            <div class="mb-6 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="flex size-10 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
+                        <AlertTriangle class="size-5" />
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">Overdue</h1>
+                        <p class="text-sm text-muted-foreground">
+                            <span class="font-medium text-destructive">{{ eligibleCount }}</span> pesanan menunggu auto-refund
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="text-xl font-bold">Overdue</h1>
-                    <p class="text-sm text-muted-foreground">
-                        <span class="font-medium text-destructive">{{ eligibleCount }}</span> pesanan menunggu auto-refund
-                    </p>
+                
+                <!-- Time Machine / Advance Clock -->
+                <div class="flex items-center gap-2">
+                    <Button variant="outline" size="sm" @click="advanceTime(1)" :disabled="isAdvancing">
+                        <Clock class="size-4 mr-2" />
+                        +1 Hari
+                    </Button>
+                    <Button variant="outline" size="sm" @click="advanceTime(3)" :disabled="isAdvancing">
+                        <Clock class="size-4 mr-2" />
+                        +3 Hari
+                    </Button>
                 </div>
             </div>
 
