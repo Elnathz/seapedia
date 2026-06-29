@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import BuyerOrderController from '@/actions/App/Http/Controllers/Web/BuyerOrderController';
 import Heading from '@/components/Heading.vue';
@@ -30,6 +30,8 @@ interface OrderItemData {
     price_snapshot: number;
     quantity: number;
     line_subtotal: number;
+    product?: { slug: string; images?: { image_path: string }[] };
+    variant?: { name: string };
 }
 
 interface HistoryEntry {
@@ -83,15 +85,17 @@ const { t, locale } = useI18n();
     <Head :title="order.code" />
 
     <div class="flex flex-col gap-6">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <Heading
                 variant="small"
                 :title="order.code"
                 :description="formatDateTime(order.created_sim_at, locale)"
             />
-            <Badge :variant="orderStatusBadgeVariant(order.status)">
-                {{ orderStatusLabel(order.status) }}
-            </Badge>
+            <div class="shrink-0">
+                <Badge :variant="orderStatusBadgeVariant(order.status)" class="text-sm px-3 py-1">
+                    {{ orderStatusLabel(order.status) }}
+                </Badge>
+            </div>
         </div>
 
         <div class="grid min-w-0 gap-6 lg:grid-cols-3">
@@ -101,6 +105,10 @@ const { t, locale } = useI18n();
                         <h3 class="font-medium">
                             {{ t('order.shippingTitle') }}
                         </h3>
+                        <p class="text-sm mb-2">
+                            <span class="text-muted-foreground">Toko:</span>
+                            <Link :href="`/stores/${order.store.slug}`" class="font-medium text-primary hover:underline ml-1">{{ order.store.name }}</Link>
+                        </p>
                         <p class="text-sm">
                             <span class="text-muted-foreground"
                                 >{{ t('order.recipientLabel') }}:</span
@@ -182,9 +190,24 @@ const { t, locale } = useI18n();
                                     v-for="item in order.items"
                                     :key="item.id"
                                 >
-                                    <TableCell>{{
-                                        item.product_name_snapshot
-                                    }}</TableCell>
+                                    <TableCell>
+                                        <div class="flex items-center gap-3">
+                                            <Link v-if="item.product" :href="`/catalog/${item.product.slug}`" class="shrink-0 group">
+                                                <div class="size-12 overflow-hidden rounded border border-border">
+                                                    <img v-if="item.product.images?.length" :src="`/storage/${item.product.images[0].image_path}`" class="size-full object-cover transition-transform duration-300 group-hover:scale-110" />
+                                                    <div v-else class="size-full bg-muted flex items-center justify-center text-xs text-muted-foreground">No img</div>
+                                                </div>
+                                            </Link>
+                                            <div v-else class="shrink-0 size-12 overflow-hidden rounded border border-border bg-muted flex items-center justify-center text-xs text-muted-foreground">
+                                                No img
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <Link v-if="item.product" :href="`/catalog/${item.product.slug}`" class="font-medium hover:text-primary transition-colors">{{ item.product_name_snapshot }}</Link>
+                                                <span v-else class="font-medium">{{ item.product_name_snapshot }}</span>
+                                                <span v-if="item.variant" class="text-xs text-muted-foreground">{{ item.variant.name }}</span>
+                                            </div>
+                                        </div>
+                                    </TableCell>
                                     <TableCell
                                         class="text-right tabular-nums"
                                         >{{

@@ -29,6 +29,13 @@ interface OrderRow {
     grand_total: number;
     created_sim_at: string;
     store: { id: number; name: string; slug: string };
+    items: {
+        id: number;
+        product_name_snapshot: string;
+        product?: {
+            images?: { image_path: string }[];
+        };
+    }[];
 }
 
 interface PaginatedOrders {
@@ -39,7 +46,7 @@ interface PaginatedOrders {
     total: number;
 }
 
-const props = defineProps<{ orders: PaginatedOrders }>();
+const props = defineProps<{ orders: PaginatedOrders; currentStatus?: string }>();
 
 defineOptions({
     layout: {
@@ -54,8 +61,26 @@ const { t, locale } = useI18n();
 function goToPage(page: number) {
     router.get(
         BuyerOrderController.index.url(),
-        { page },
+        { page, status: props.currentStatus },
         { preserveState: true, preserveScroll: true, replace: true },
+    );
+}
+
+const statuses = [
+    { value: '', label: 'Semua' },
+    { value: 'menunggu_pembayaran', label: 'Belum Bayar' },
+    { value: 'sedang_dikemas', label: 'Dikemas' },
+    { value: 'menunggu_pengirim', label: 'Menunggu Kurir' },
+    { value: 'sedang_dikirim', label: 'Dikirim' },
+    { value: 'pesanan_selesai', label: 'Selesai' },
+    { value: 'dibatalkan', label: 'Batal' },
+];
+
+function filterStatus(status: string) {
+    router.get(
+        BuyerOrderController.index.url(),
+        { status },
+        { preserveState: true, preserveScroll: true },
     );
 }
 </script>
@@ -65,6 +90,23 @@ function goToPage(page: number) {
 
     <div class="flex flex-col gap-6">
         <Heading variant="small" :title="t('order.myOrdersTitle')" />
+
+        <!-- Tabs Filter -->
+        <div class="flex overflow-x-auto pb-2 scrollbar-hide gap-2 border-b border-border">
+            <button
+                v-for="s in statuses"
+                :key="s.value"
+                @click="filterStatus(s.value)"
+                class="whitespace-nowrap border-b-2 px-4 py-2 text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                :class="[
+                    (props.currentStatus || '') === s.value
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted',
+                ]"
+            >
+                {{ s.label }}
+            </button>
+        </div>
 
         <EmptyState
             v-if="props.orders.data.length === 0"
@@ -82,16 +124,20 @@ function goToPage(page: number) {
                     :key="order.id"
                     :href="BuyerOrderController.show.url(order.id)"
                 >
-                    <Card class="transition-colors hover:border-primary">
+                    <Card class="group relative overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-lg hover:border-primary/50 hover:-translate-y-1">
+                        <div class="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/0 to-primary/0 opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:from-primary/5 group-hover:to-transparent group-hover:opacity-100"></div>
                         <CardContent
-                            class="flex items-center justify-between gap-4 pt-6"
+                            class="flex items-center justify-between gap-4 pt-6 relative z-10"
                         >
-                            <div>
-                                <p class="font-medium">{{ order.code }}</p>
-                                <p class="text-sm text-muted-foreground">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <Package class="size-4 text-muted-foreground" />
+                                    <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{{ order.code }}</p>
+                                </div>
+                                <p class="text-base font-semibold text-foreground group-hover:text-primary transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]">
                                     {{ order.store.name }}
                                 </p>
-                                <p class="text-xs text-muted-foreground">
+                                <p class="text-xs text-muted-foreground flex items-center gap-1">
                                     {{
                                         formatDateTime(
                                             order.created_sim_at,
@@ -100,15 +146,28 @@ function goToPage(page: number) {
                                     }}
                                 </p>
                             </div>
-                            <div class="text-right">
+                            <div class="flex-1 min-w-0 px-4 hidden sm:block border-l border-border ml-4">
+                                <div v-if="order.items && order.items.length > 0" class="flex items-center gap-3">
+                                    <div class="size-10 shrink-0 overflow-hidden rounded bg-muted/50 border border-border flex items-center justify-center">
+                                        <img v-if="order.items[0].product?.images?.length" :src="`/storage/${order.items[0].product.images[0].image_path}`" class="size-full object-cover" />
+                                        <Package v-else class="size-4 text-muted-foreground/50" />
+                                    </div>
+                                    <div class="flex flex-col overflow-hidden">
+                                        <p class="text-sm font-medium text-foreground truncate">{{ order.items[0].product_name_snapshot }}</p>
+                                        <p v-if="order.items.length > 1" class="text-xs text-muted-foreground">+ {{ order.items.length - 1 }} produk lainnya</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-3 shrink-0 ml-auto">
                                 <Badge
                                     :variant="
                                         orderStatusBadgeVariant(order.status)
                                     "
+                                    class="shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
                                 >
                                     {{ orderStatusLabel(order.status) }}
                                 </Badge>
-                                <p class="mt-1 font-medium tabular-nums">
+                                <p class="font-bold tabular-nums text-primary text-lg">
                                     {{ formatIDR(order.grand_total) }}
                                 </p>
                             </div>

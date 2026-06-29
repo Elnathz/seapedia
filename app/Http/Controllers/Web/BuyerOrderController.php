@@ -14,8 +14,12 @@ class BuyerOrderController extends Controller
 
     public function index(Request $request): Response
     {
+        $status = $request->query('status');
+        $orderStatus = $status ? \App\Enums\OrderStatus::tryFrom($status) : null;
+
         return Inertia::render('buyer/orders/Index', [
-            'orders' => $this->orders->forBuyer($request->user()),
+            'orders' => $this->orders->forBuyer($request->user(), 10, $orderStatus),
+            'currentStatus' => $status,
         ]);
     }
 

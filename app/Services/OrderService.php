@@ -99,13 +99,18 @@ class OrderService
      * The buyer's own orders, newest first, eager-loaded for the history
      * list (no N+1).
      */
-    public function forBuyer(User $buyer, int $perPage = 10): LengthAwarePaginator
+    public function forBuyer(User $buyer, int $perPage = 10, ?OrderStatus $status = null): LengthAwarePaginator
     {
         return Order::query()
             ->where('buyer_id', $buyer->id)
-            ->with('store:id,name,slug')
+            ->when($status, fn ($q) => $q->where('status', $status))
+            ->with([
+                'store:id,name,slug',
+                'items' => fn ($q) => $q->select('id', 'order_id', 'product_id', 'product_name_snapshot')->with('product.images:id,product_id,image_path'),
+            ])
             ->latest()
-            ->paginate($perPage);
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     /**
@@ -116,7 +121,8 @@ class OrderService
     {
         return Order::query()
             ->with([
-                'items',
+                'items.product.images',
+                'items.variant',
                 'statusHistories' => fn ($query) => $query->oldest(),
                 'store:id,name,slug',
                 'delivery.driver:id,name',
@@ -127,13 +133,15 @@ class OrderService
     /**
      * A seller's incoming orders for their store, newest first.
      */
-    public function forSeller(Store $store, int $perPage = 10): LengthAwarePaginator
+    public function forSeller(Store $store, int $perPage = 10, ?OrderStatus $status = null): LengthAwarePaginator
     {
         return Order::query()
             ->where('store_id', $store->id)
+            ->when($status, fn ($q) => $q->where('status', $status))
             ->with('buyer:id,name')
             ->latest()
-            ->paginate($perPage);
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     /**

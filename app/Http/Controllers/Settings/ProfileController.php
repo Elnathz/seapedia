@@ -35,6 +35,10 @@ class ProfileController extends Controller
         if ($activeRole === 'buyer') {
             $wallet = Wallet::where('user_id', $user->id)->first();
             $props['wallet'] = $wallet ? ['balance' => $wallet->balance] : null;
+            $props['addresses'] = $user->addresses()
+                ->orderByDesc('is_default')
+                ->orderByDesc('id')
+                ->get();
         }
 
         if ($activeRole === 'seller') {
@@ -51,7 +55,7 @@ class ProfileController extends Controller
             $stats = DB::table('deliveries')
                 ->where('driver_id', $user->id)
                 ->whereNotNull('completed_at')
-                ->selectRaw('COUNT(*) as completed_jobs, COALESCE(SUM(fee), 0) as total_earnings')
+                ->selectRaw('COUNT(*) as completed_jobs, COALESCE(SUM(earning_amount), 0) as total_earnings')
                 ->first();
             $props['driver_stats'] = $stats ? [
                 'completed_jobs' => (int) $stats->completed_jobs,
