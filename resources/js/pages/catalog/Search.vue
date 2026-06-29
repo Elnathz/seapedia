@@ -8,7 +8,9 @@ import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -16,10 +18,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { index as catalogIndex, show as catalogShow } from '@/routes/catalog';
 import { formatIDR } from '@/lib/utils';
+import { index as catalogIndex, show as catalogShow } from '@/routes/catalog';
 
 
 interface Store {
@@ -77,18 +77,39 @@ watch(() => props.filters, (newFilters) => {
     priceMin.value = newFilters?.price_min || '';
     priceMax.value = newFilters?.price_max || '';
     selectedCategories.value = newFilters?.categories ? (Array.isArray(newFilters.categories) ? [...newFilters.categories] : [newFilters.categories]) : [];
-    if (newFilters?.sort) sortBy.value = newFilters.sort;
+
+    if (newFilters?.sort) {
+sortBy.value = newFilters.sort;
+}
 }, { deep: true });
 
 // ─── Apply Filters ───
 const applyFilters = () => {
     const params: any = {};
-    if (searchQuery.value) params.q = searchQuery.value;
-    if (inStock.value) params.in_stock = '1';
-    if (priceMin.value) params.price_min = priceMin.value;
-    if (priceMax.value) params.price_max = priceMax.value;
-    if (selectedCategories.value.length) params.categories = selectedCategories.value;
-    if (sortBy.value !== 'best_match') params.sort = sortBy.value;
+
+    if (searchQuery.value) {
+params.q = searchQuery.value;
+}
+
+    if (inStock.value) {
+params.in_stock = '1';
+}
+
+    if (priceMin.value) {
+params.price_min = priceMin.value;
+}
+
+    if (priceMax.value) {
+params.price_max = priceMax.value;
+}
+
+    if (selectedCategories.value.length) {
+params.categories = selectedCategories.value;
+}
+
+    if (sortBy.value !== 'best_match') {
+params.sort = sortBy.value;
+}
 
     router.get(catalogIndex.url(), params, { preserveState: true, preserveScroll: true });
 };
@@ -98,11 +119,13 @@ watch(sortBy, () => applyFilters());
 const toggleCategory = (id: string | number) => {
     const strId = String(id);
     const idx = selectedCategories.value.indexOf(strId);
+
     if (idx > -1) {
         selectedCategories.value.splice(idx, 1);
     } else {
         selectedCategories.value.push(strId);
     }
+
     applyFilters();
 };
 

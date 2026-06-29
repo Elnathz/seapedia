@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { router } from '@inertiajs/vue3';
 import { AlertTriangle, Clock } from '@lucide/vue';
+import AdminClockController from '@/actions/App/Http/Controllers/Web/Admin/ClockController';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { router } from '@inertiajs/vue3';
-import AdminClockController from '@/actions/App/Http/Controllers/Web/Admin/ClockController';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/AppLayout.vue';
 

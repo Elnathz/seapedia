@@ -24,7 +24,7 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Masuk | SEAPEDIA" />
+    <Head title="Masuk" />
 
     <div
         v-if="status"

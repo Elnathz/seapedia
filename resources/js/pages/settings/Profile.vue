@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import { Form, Head, usePage, router } from '@inertiajs/vue3';
+import { Shield, User, CreditCard, Store, Truck, AlertTriangle, Check } from '@lucide/vue';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
-import { Shield, User, CreditCard, Store, Truck, AlertTriangle, Check } from '@lucide/vue';
-import { useI18n } from 'vue-i18n';
-import { useAuthStore } from '@/stores/auth';
-import { useInitials } from '@/composables/useInitials';
-import { formatIDR } from '@/lib/utils';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
-import RequiredMark from '@/components/RequiredMark.vue';
 import AddressList from '@/components/profile/AddressList.vue';
+import RequiredMark from '@/components/RequiredMark.vue';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { useInitials } from '@/composables/useInitials';
+import { formatIDR } from '@/lib/utils';
 import { edit } from '@/routes/profile';
+import { useAuthStore } from '@/stores/auth';
 
 defineOptions({
     layout: {
@@ -43,12 +43,19 @@ const addresses = computed(() => page.props.addresses as any[] | undefined);
 
 const roles = computed(() => {
     const r: string[] = [];
-    if (user.value.is_admin) r.push('admin');
+
+    if (user.value.is_admin) {
+r.push('admin');
+}
+
     if (page.props.auth.roles) {
         (page.props.auth.roles as string[]).forEach((role: string) => {
-            if (!r.includes(role)) r.push(role);
+            if (!r.includes(role)) {
+r.push(role);
+}
         });
     }
+
     return r;
 });
 </script>

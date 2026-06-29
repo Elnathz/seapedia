@@ -116,7 +116,11 @@ const existingImages = computed(() => {
 
 function handleImageSelect(e: Event) {
     const files = (e.target as HTMLInputElement).files;
-    if (!files) return;
+
+    if (!files) {
+return;
+}
+
     newImagePreviews.value = Array.from(files).map(f => URL.createObjectURL(f));
 }
 </script>

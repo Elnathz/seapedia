@@ -21,10 +21,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { useInitials } from '@/composables/useInitials';
 import { formatIDR } from '@/lib/utils';
-import { index as catalogIndex } from '@/routes/catalog';
-import { index as cartIndex } from '@/routes/buyer/cart';
-import { show as storeShow } from '@/routes/stores';
 import { login } from '@/routes';
+import { index as cartIndex } from '@/routes/buyer/cart';
+import { index as catalogIndex } from '@/routes/catalog';
+import { show as storeShow } from '@/routes/stores';
 import { useAuthStore } from '@/stores/auth';
 
 interface ProductImage {
@@ -70,19 +70,25 @@ const auth = useAuthStore();
 // ─── Gallery State ───
 const generalImages = computed(() => {
     const imgs: {src: string, type: string}[] = [];
+
     if (props.product.image_path) {
         imgs.push({ src: `/storage/${props.product.image_path}`, type: 'general' });
     }
+
     if (props.product.images) {
         props.product.images
             .filter(img => !img.product_variant_id && img.image_path !== props.product.image_path)
             .forEach(img => imgs.push({ src: `/storage/${img.image_path}`, type: 'general' }));
     }
+
     return imgs;
 });
 
 const getVariantImages = (variant: ProductVariant | null) => {
-    if (!variant || !props.product.images) return [];
+    if (!variant || !props.product.images) {
+return [];
+}
+
     return props.product.images
         .filter(img => img.product_variant_id === variant.id)
         .map(img => ({ src: `/storage/${img.image_path}`, type: 'variant', variantId: variant.id }));
@@ -96,15 +102,20 @@ const selectedVariant = ref<ProductVariant | null>(
 );
 
 const selectVariant = (variant: ProductVariant) => {
-    if (variant.stock <= 0) return;
+    if (variant.stock <= 0) {
+return;
+}
+
     selectedVariant.value = variant;
 };
 
 const displayImages = computed(() => {
     const imgs = [...generalImages.value];
+
     if (selectedVariant.value) {
         imgs.push(...getVariantImages(selectedVariant.value));
     }
+
     return imgs.length > 0 ? imgs : [];
 });
 
@@ -113,11 +124,13 @@ const activeImage = computed(() => displayImages.value[activeImageIndex.value]?.
 
 watch(selectedVariant, () => {
     const firstVariantIdx = generalImages.value.length;
+
     if (displayImages.value.length > firstVariantIdx) {
         activeImageIndex.value = firstVariantIdx;
     } else {
         activeImageIndex.value = 0;
     }
+
     quantity.value = 1; // Reset quantity on variant change
 });
 
@@ -132,13 +145,21 @@ const currentStock = computed(() =>
 
 const variantGroups = computed(() => {
     const groups: Record<string, ProductVariant[]> = {};
-    if (!props.product.variants) return groups;
+
+    if (!props.product.variants) {
+return groups;
+}
 
     props.product.variants.forEach(v => {
         const type = v.variant_type || 'Pilihan';
-        if (!groups[type]) groups[type] = [];
+
+        if (!groups[type]) {
+groups[type] = [];
+}
+
         groups[type].push(v);
     });
+
     return groups;
 });
 
@@ -151,8 +172,11 @@ const conflictMessage = ref('');
 const buyingNow = ref(false);
 
 function addToCart(replace = false, redirect = false) {
-    if (redirect) buyingNow.value = true;
-    else adding.value = true;
+    if (redirect) {
+buyingNow.value = true;
+} else {
+adding.value = true;
+}
     
     quantityError.value = null;
 
@@ -176,6 +200,7 @@ function addToCart(replace = false, redirect = false) {
             },
             onSuccess: () => {
                 conflictOpen.value = false;
+
                 if (redirect) {
                     router.visit(cartIndex.url());
                 }

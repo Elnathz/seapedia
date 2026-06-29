@@ -2,6 +2,7 @@
 import { Head, router } from '@inertiajs/vue3';
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { toast } from 'vue-sonner';
 import DriverJobController from '@/actions/App/Http/Controllers/Web/DriverJobController';
 import Heading from '@/components/Heading.vue';
 import StatusTimeline from '@/components/StatusTimeline.vue';
@@ -89,7 +90,6 @@ const methodLabelKey: Record<DeliveryMethodKey, string> = {
     regular: 'checkout.regular',
 };
 
-import { toast } from 'vue-sonner';
 
 function confirmAction() {
     confirmOpen.value = false;
@@ -125,6 +125,7 @@ onMounted(() => {
         timer = setInterval(() => {
             const now = new Date().getTime();
             const diff = now - start;
+
             if (diff > 0) {
                 const h = Math.floor(diff / 3600000);
                 const m = Math.floor((diff % 3600000) / 60000);
@@ -136,7 +137,9 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-    if (timer) clearInterval(timer);
+    if (timer) {
+clearInterval(timer);
+}
 });
 </script>
 

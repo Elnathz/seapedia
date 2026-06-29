@@ -13,28 +13,36 @@ function go(i: number) {
     active.value = (i + props.slides.length) % props.slides.length;
 }
 
-onMounted(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-return;
+function pause() {
+    if (timer) {
+        clearInterval(timer);
+        timer = null;
+    }
 }
 
-    if (props.slides.length > 1) {
-timer = setInterval(() => go(active.value + 1), 5000);
+function resume() {
+    if (props.slides.length > 1 && !timer) {
+        timer = setInterval(() => go(active.value + 1), 5000);
+    }
 }
+
+onMounted(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+    }
+    resume();
 });
 
 onUnmounted(() => {
-    if (timer) {
-clearInterval(timer);
-}
+    pause();
 });
 </script>
 
 <template>
     <div
         class="relative overflow-hidden rounded-xl border border-border h-full min-h-0 min-w-0"
-        @mouseenter="timer && clearInterval(timer)"
-        @mouseleave="timer = props.slides.length > 1 ? setInterval(() => go(active + 1), 5000) : null"
+        @mouseenter="pause"
+        @mouseleave="resume"
     >
         <div
             class="flex transition-transform duration-500 ease-out h-full min-h-0 min-w-0 motion-reduce:transition-none"

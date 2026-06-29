@@ -52,8 +52,8 @@ defineProps<{
         </div>
 
         <!-- Right form panel -->
-        <div class="flex flex-1 flex-col items-center justify-center gap-6 p-6 md:p-10">
-            <div class="w-full max-w-sm">
+        <div class="flex flex-1 flex-col items-center justify-center gap-6 overflow-x-hidden p-6 md:p-10">
+            <div class="auth-form-shell w-full max-w-sm overflow-visible">
                 <div class="flex flex-col gap-8">
                     <!-- Mobile logo -->
                     <div class="flex flex-col items-center gap-4 lg:hidden">
@@ -91,6 +91,13 @@ defineProps<{
 @media (prefers-reduced-motion: reduce) {
     .auth-mark {
         animation: none !important;
+    }
+}
+
+/* Register step 2: use most of the right panel width for wider role cards */
+@media (min-width: 1024px) {
+    .auth-form-shell:has(.register-form-wide) {
+        max-width: min(46rem, calc(50vw - 3rem));
     }
 }
 </style>

@@ -4,7 +4,17 @@ import { Flame, Search, Zap, Tag, ShoppingCart, X, Menu } from '@lucide/vue';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Logo from '@/components/brand/Logo.vue';
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -13,16 +23,6 @@ import {
     NavigationMenuList,
     NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-} from '@/components/ui/avatar';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import {
     Sheet,
     SheetContent,
@@ -34,8 +34,8 @@ import UserInfo from '@/components/UserInfo.vue';
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useCategories } from '@/composables/useCategories';
 import { dashboard, home, login, register } from '@/routes';
-import { index as catalogIndex } from '@/routes/catalog';
 import { index as cartIndex } from '@/routes/buyer/cart';
+import { index as catalogIndex } from '@/routes/catalog';
 import { useAuthStore } from '@/stores/auth';
 
 const auth = useAuthStore();
@@ -62,7 +62,9 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-    if (promoTimer) clearInterval(promoTimer);
+    if (promoTimer) {
+clearInterval(promoTimer);
+}
 });
 
 const searchQuery = ref('');
@@ -86,7 +88,10 @@ function easeInOutCubic(t: number): number {
 function scrollToSection(e: Event, id: string) {
     e.preventDefault();
     const target = document.getElementById(id);
-    if (!target) return;
+
+    if (!target) {
+return;
+}
 
     const navbarOffset = 80;
     const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navbarOffset;
@@ -98,7 +103,10 @@ function scrollToSection(e: Event, id: string) {
     let start: number | null = null;
 
     function animation(currentTime: number) {
-        if (start === null) start = currentTime;
+        if (start === null) {
+start = currentTime;
+}
+
         const timeElapsed = currentTime - start;
         const progress = Math.min(timeElapsed / duration, 1);
         
@@ -250,7 +258,7 @@ function scrollToSection(e: Event, id: string) {
                         </Link>
                     </Button>
 
-                    <DropdownMenu>
+                    <DropdownMenu :modal="false">
                         <DropdownMenuTrigger as-child>
                             <Button variant="ghost" class="gap-2 px-2 py-1.5 focus-visible:ring-0">
                                 <UserInfo :user="user" class="hidden md:flex" />
