@@ -45,13 +45,13 @@ import { index as indexBuyerCart } from '@/routes/buyer/cart';
 import { index as indexBuyerOrders } from '@/routes/buyer/orders';
 import { index as indexBuyerReports } from '@/routes/buyer/reports';
 import { show as showBuyerWallet } from '@/routes/buyer/wallet';
+import { index as catalogIndex } from '@/routes/catalog';
 import { index as indexDriverJobs } from '@/routes/driver/jobs';
+import { edit as editProfile } from '@/routes/profile';
 import { index as indexSellerOrders } from '@/routes/seller/orders';
 import { index as indexSellerProducts } from '@/routes/seller/products';
 import { index as indexSellerReports } from '@/routes/seller/reports';
 import { show as showSellerStore } from '@/routes/seller/store';
-import { index as catalogIndex } from '@/routes/catalog';
-import { edit as editProfile } from '@/routes/profile';
 import { useAuthStore } from '@/stores/auth';
 import type { NavGroup } from '@/types';
 
@@ -81,22 +81,6 @@ const navGroups = computed<NavGroup[]>(() => {
 
     // 2. Group Role-Specific
     if (auth.activeRole === 'buyer') {
-        groups.push({
-            label: 'Belanja',
-            items: [
-                {
-                    title: 'Keranjang',
-                    href: indexBuyerCart.url(),
-                    icon: ShoppingCart,
-                },
-                {
-                    title: 'Daftar Alamat',
-                    href: indexBuyerAddresses.url(),
-                    icon: MapPin,
-                },
-            ]
-        });
-
         groups.push({
             label: 'Transaksi',
             items: [
