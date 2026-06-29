@@ -42,7 +42,7 @@ class ReportTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => $price, 'stock' => 10]);
         $address = Address::factory()->create(['user_id' => $buyer->id, 'is_default' => true]);
 
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
 
         return app(CheckoutService::class)->commit($buyer, $address, DeliveryMethod::Regular);
     }

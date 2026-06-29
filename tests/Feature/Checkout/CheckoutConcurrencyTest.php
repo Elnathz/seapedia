@@ -60,7 +60,7 @@ class CheckoutConcurrencyTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => 50_000, 'stock' => 1]);
         $buyer = $this->buyer();
         $address = Address::factory()->create(['user_id' => $buyer->id, 'is_default' => true]);
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
 
         config(['database.connections.lock_holder' => config('database.connections.mysql')]);
         $holder = DB::connection('lock_holder');
@@ -92,11 +92,11 @@ class CheckoutConcurrencyTest extends TestCase
 
         $buyerA = $this->buyer();
         $addressA = Address::factory()->create(['user_id' => $buyerA->id, 'is_default' => true]);
-        app(CartService::class)->addItem($buyerA, $product, 1);
+        app(CartService::class)->addItem($buyerA, $product, null, 1);
 
         $buyerB = $this->buyer();
         $addressB = Address::factory()->create(['user_id' => $buyerB->id, 'is_default' => true]);
-        app(CartService::class)->addItem($buyerB, $product, 1);
+        app(CartService::class)->addItem($buyerB, $product, null, 1);
 
         // Buyer A's checkout completes first and consumes the last unit.
         app(CheckoutService::class)->commit($buyerA, $addressA, DeliveryMethod::Regular);
@@ -125,7 +125,7 @@ class CheckoutConcurrencyTest extends TestCase
         ]);
         $buyer = $this->buyer();
         $address = Address::factory()->create(['user_id' => $buyer->id, 'is_default' => true]);
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
 
         config(['database.connections.lock_holder' => config('database.connections.mysql')]);
         $holder = DB::connection('lock_holder');
@@ -161,11 +161,11 @@ class CheckoutConcurrencyTest extends TestCase
 
         $buyerA = $this->buyer();
         $addressA = Address::factory()->create(['user_id' => $buyerA->id, 'is_default' => true]);
-        app(CartService::class)->addItem($buyerA, $product, 1);
+        app(CartService::class)->addItem($buyerA, $product, null, 1);
 
         $buyerB = $this->buyer();
         $addressB = Address::factory()->create(['user_id' => $buyerB->id, 'is_default' => true]);
-        app(CartService::class)->addItem($buyerB, $product, 1);
+        app(CartService::class)->addItem($buyerB, $product, null, 1);
 
         // Buyer A redeems the voucher's last use first.
         app(CheckoutService::class)->commit($buyerA, $addressA, DeliveryMethod::Regular, null, $voucher->code);

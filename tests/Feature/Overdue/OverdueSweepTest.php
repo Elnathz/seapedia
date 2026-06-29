@@ -55,7 +55,7 @@ class OverdueSweepTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => $price, 'stock' => 10]);
         $address = Address::factory()->create(['user_id' => $buyer->id, 'is_default' => true]);
 
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
 
         $order = app(CheckoutService::class)->commit($buyer, $address, DeliveryMethod::Regular, null, $voucherCode);
         $order->update(['sla_due_at' => now()->subDay()]);
@@ -121,7 +121,7 @@ class OverdueSweepTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => 50_000, 'stock' => 10]);
         $address = Address::factory()->create(['user_id' => $buyer->id, 'is_default' => true]);
 
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
         $order = app(CheckoutService::class)->commit($buyer, $address, DeliveryMethod::Regular);
 
         $result = app(OverdueService::class)->sweep();

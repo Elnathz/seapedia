@@ -53,7 +53,7 @@ class DiscountCheckoutTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => 100_000, 'stock' => 10]);
         $promo = Promo::factory()->expired()->create();
 
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
 
         $response = $this->checkout($buyer, ['promo_code' => $promo->code]);
 
@@ -68,7 +68,7 @@ class DiscountCheckoutTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => 100_000, 'stock' => 10]);
         $voucher = Voucher::factory()->expired()->create();
 
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
 
         $response = $this->checkout($buyer, ['voucher_code' => $voucher->code]);
 
@@ -83,7 +83,7 @@ class DiscountCheckoutTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => 100_000, 'stock' => 10]);
         $voucher = Voucher::factory()->state(['usage_limit' => 3])->usedUp()->create();
 
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
 
         $response = $this->checkout($buyer, ['voucher_code' => $voucher->code]);
 
@@ -98,7 +98,7 @@ class DiscountCheckoutTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => 10_000, 'stock' => 10]);
         $promo = Promo::factory()->create(['min_spend' => 50_000]);
 
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
 
         $response = $this->checkout($buyer, ['promo_code' => $promo->code]);
 
@@ -114,7 +114,7 @@ class DiscountCheckoutTest extends TestCase
         $promo = Promo::factory()->create(['type' => DiscountType::Percentage, 'value' => 10, 'max_discount' => null]);
         $voucher = Voucher::factory()->create(['type' => DiscountType::Fixed, 'value' => 5_000, 'max_discount' => null]);
 
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
 
         $response = $this->checkout($buyer, [
             'promo_code' => $promo->code,
@@ -144,7 +144,7 @@ class DiscountCheckoutTest extends TestCase
         $promo = Promo::factory()->create(['type' => DiscountType::Fixed, 'value' => 8_000, 'max_discount' => null]);
         $voucher = Voucher::factory()->create(['type' => DiscountType::Fixed, 'value' => 8_000, 'max_discount' => null]);
 
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
 
         $response = $this->checkout($buyer, [
             'promo_code' => $promo->code,

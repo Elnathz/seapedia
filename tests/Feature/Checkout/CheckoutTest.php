@@ -45,7 +45,7 @@ class CheckoutTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => 50_000, 'stock' => 10]);
         $address = Address::factory()->create(['user_id' => $buyer->id, 'is_default' => true]);
 
-        app(CartService::class)->addItem($buyer, $product, 2);
+        app(CartService::class)->addItem($buyer, $product, null, 2);
 
         $response = $this->actingAsBuyer($buyer)->post(route('buyer.checkout.store'), [
             'address_id' => $address->id,
@@ -81,7 +81,7 @@ class CheckoutTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => 10_000, 'stock' => 10]);
 
         // Snapshot is 10_000 at add-time; the seller then raises the price.
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
         $product->update(['price' => 15_000]);
 
         $preview = app(CheckoutService::class)->preview($buyer->refresh(), DeliveryMethod::Regular);
@@ -100,7 +100,7 @@ class CheckoutTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => 50_000, 'stock' => 10]);
         $address = Address::factory()->create(['user_id' => $buyer->id, 'is_default' => true]);
 
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
 
         $response = $this->actingAsBuyer($buyer)->post(route('buyer.checkout.store'), [
             'address_id' => $address->id,
@@ -123,7 +123,7 @@ class CheckoutTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => 50_000, 'stock' => 1]);
         $address = Address::factory()->create(['user_id' => $buyer->id, 'is_default' => true]);
 
-        app(CartService::class)->addItem($buyer, $product, 5);
+        app(CartService::class)->addItem($buyer, $product, null, 5);
 
         $response = $this->actingAsBuyer($buyer)->post(route('buyer.checkout.store'), [
             'address_id' => $address->id,
@@ -143,7 +143,7 @@ class CheckoutTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id]);
         $foreignAddress = Address::factory()->create(['user_id' => $otherBuyer->id]);
 
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
 
         $response = $this->actingAsBuyer($buyer)->post(route('buyer.checkout.store'), [
             'address_id' => $foreignAddress->id,

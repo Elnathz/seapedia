@@ -43,7 +43,7 @@ class DriverJobListAndDashboardTest extends TestCase
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => 50_000, 'stock' => 10]);
         $address = Address::factory()->create(['user_id' => $buyer->id, 'is_default' => true]);
 
-        app(CartService::class)->addItem($buyer, $product, 1);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
         $order = app(CheckoutService::class)->commit($buyer, $address, DeliveryMethod::Regular);
 
         $seller = $store->user;
