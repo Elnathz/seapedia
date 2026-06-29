@@ -112,6 +112,10 @@ class RoleService
 
             if (count($ownedRoles) === 1) {
                 $this->setActiveRoleInSession($request, $ownedRoles[0]);
+
+                if ($ownedRoles[0] === RoleName::Buyer) {
+                    return route('catalog.index', absolute: false);
+                }
             }
         }
 
