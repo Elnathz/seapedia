@@ -65,50 +65,35 @@ onUnmounted(() => observer?.disconnect());
 </script>
 
 <template>
-    <section
-        v-if="categories.length"
-        ref="sectionRef"
-        class="border-b border-border bg-gradient-to-b from-background to-secondary/20 py-14 sm:py-16"
-    >
+    <section v-if="categories.length" ref="sectionRef"
+        class="border-b border-border bg-gradient-to-b from-slate-50 to-white py-10 sm:py-12">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="mb-8 flex items-end justify-between gap-4">
+            <div class="mb-6 flex items-end justify-between gap-4">
                 <div>
-                    <h2
-                        class="text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
-                    >
-                        Belanja per Kategori
+                    <h2 class="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                        Kategori Pilihan
                     </h2>
-                    <p class="mt-1.5 text-sm text-muted-foreground sm:text-base">
+                    <p class="mt-1 text-sm text-muted-foreground sm:text-base">
                         Temukan berbagai produk sesuai kebutuhanmu.
                     </p>
                 </div>
-                <Link
-                    href="/catalog"
-                    class="hidden shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline sm:inline-flex"
-                >
+                <Link href="/catalog"
+                    class="hidden shrink-0 items-center gap-1 text-sm font-medium text-primary hover:underline sm:inline-flex">
                     Lihat semua
                     <ArrowRight class="size-4" />
                 </Link>
             </div>
 
             <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-                <Link
-                    v-for="(root, index) in categories"
-                    :key="root.id"
-                    :href="categoryUrl(root.slug)"
-                    class="category-card group flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-5 text-center transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-md"
-                    :class="{ visible: isVisible }"
-                    :style="{ animationDelay: `${index * 40}ms` }"
-                >
+                <Link v-for="(root, index) in categories" :key="root.id" :href="categoryUrl(root.slug)"
+                    class="category-card group flex flex-col items-center gap-2 rounded-2xl border border-border/50 bg-white p-4 text-center transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-md"
+                    :class="{ visible: isVisible }" :style="{ animationDelay: `${index * 40}ms` }">
                     <span
-                        class="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-brand/15 text-primary transition-transform duration-300 group-hover:scale-105"
-                    >
-                        <component :is="iconFor(root.icon)" class="size-6" />
+                        class="flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-brand/10 text-primary transition-transform duration-300 group-hover:scale-110">
+                        <component :is="iconFor(root.icon)" class="size-8" />
                     </span>
-                    <span class="min-w-0">
-                        <span
-                            class="block truncate text-sm font-semibold text-foreground"
-                        >
+                    <span class="min-w-0 mt-1">
+                        <span class="block truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                             {{ root.name }}
                         </span>
                         <span class="mt-0.5 block text-xs text-muted-foreground">
@@ -127,6 +112,7 @@ onUnmounted(() => observer?.disconnect());
         opacity: 0;
         transform: translateY(24px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

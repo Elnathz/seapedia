@@ -6,7 +6,9 @@ import HeroSection from '@/components/landing/HeroSection.vue';
 import PopularStores from '@/components/landing/PopularStores.vue';
 import ReviewsSection from '@/components/landing/ReviewsSection.vue';
 import RoleCards from '@/components/landing/RoleCards.vue';
-import TrustBand from '@/components/landing/TrustBand.vue';
+import WhyChooseSeapedia from '@/components/landing/WhyChooseSeapedia.vue';
+import WhatIsSeapedia from '@/components/landing/WhatIsSeapedia.vue';
+import Footer from '@/components/landing/Footer.vue';
 
 interface Store {
     id: number;
@@ -48,10 +50,12 @@ defineProps<{
 <template>
     <Head title="SEAPEDIA Marketplace" />
     <HeroSection />
+    <WhatIsSeapedia />
+    <WhyChooseSeapedia />
     <RoleCards id="roles" />
-    <TrustBand />
     <PopularStores id="stores" :stores="popularStores" />
     <CategoryGrid id="categories" />
     <FeaturedStrip id="featured" :products="featured" />
     <ReviewsSection id="reviews" :reviews="reviews" />
+    <Footer />
 </template>

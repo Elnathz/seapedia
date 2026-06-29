@@ -14,6 +14,7 @@ interface Review {
     rating: number;
     comment: string;
     created_at: string;
+    role?: string;
 }
 
 defineProps<{ reviews: Review[] }>();
@@ -40,11 +41,11 @@ const submit = () => {
             form.value = { reviewer_name: '', rating: 0, comment: '' };
         },
         onError: (e) => {
- errors.value = e; 
-},
+            errors.value = e;
+        },
         onFinish: () => {
- submitting.value = false; 
-},
+            submitting.value = false;
+        },
         preserveScroll: true,
     });
 };
@@ -76,23 +77,20 @@ const formatDate = (iso: string) => {
                     </div>
 
                     <div v-else class="grid gap-4 sm:grid-cols-2">
-                        <div
-                            v-for="review in reviews"
-                            :key="review.id"
-                            class="rounded-xl border border-border bg-card p-5"
-                        >
-                            <div class="flex items-center gap-1 mb-3">
-                                <Star
-                                    v-for="n in 5"
-                                    :key="n"
-                                    class="size-4"
-                                    :class="n <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'"
-                                />
+                        <div v-for="review in reviews" :key="review.id"
+                            class="rounded-2xl border border-border/50 bg-white p-6 shadow-sm">
+                            <div class="flex items-center gap-1 mb-4">
+                                <Star v-for="n in 5" :key="n" class="size-4"
+                                    :class="n <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'" />
                             </div>
                             <!-- Comment rendered as plain text — no v-html -->
-                            <p class="text-sm text-foreground line-clamp-3">{{ review.comment }}</p>
-                            <div class="mt-4 flex items-center justify-between">
-                                <p class="text-sm font-medium text-foreground">{{ review.reviewer_name }}</p>
+                            <p class="text-sm text-muted-foreground line-clamp-4 mb-6 leading-relaxed">{{ review.comment }}</p>
+                            
+                            <div class="mt-auto flex items-center justify-between border-t border-border/50 pt-4">
+                                <div>
+                                    <p class="text-sm font-semibold text-foreground">{{ review.reviewer_name }}</p>
+                                    <p class="text-xs font-medium text-primary mt-0.5">{{ review.role ?? 'Buyer' }}</p>
+                                </div>
                                 <p class="text-xs text-muted-foreground">{{ formatDate(review.created_at) }}</p>
                             </div>
                         </div>
@@ -105,43 +103,27 @@ const formatDate = (iso: string) => {
                         <h3 class="mb-4 font-semibold text-foreground">Tinggalkan ulasan</h3>
 
                         <!-- Success flash -->
-                        <div
-                            v-if="submitted"
-                            class="mb-4 rounded-lg bg-primary/10 px-4 py-3 text-sm text-primary"
-                        >
+                        <div v-if="submitted" class="mb-4 rounded-lg bg-primary/10 px-4 py-3 text-sm text-primary">
                             Ulasan berhasil dikirim, terima kasih!
                         </div>
 
                         <form class="space-y-4" @submit.prevent="submit">
                             <div class="space-y-1.5">
                                 <Label for="reviewer_name">Nama</Label>
-                                <Input
-                                    id="reviewer_name"
-                                    v-model="form.reviewer_name"
-                                    placeholder="Nama kamu"
-                                    autocomplete="name"
-                                    :disabled="submitting"
-                                />
-                                <p v-if="errors.reviewer_name" class="text-xs text-destructive">{{ errors.reviewer_name }}</p>
+                                <Input id="reviewer_name" v-model="form.reviewer_name" placeholder="Nama kamu"
+                                    autocomplete="name" :disabled="submitting" />
+                                <p v-if="errors.reviewer_name" class="text-xs text-destructive">{{ errors.reviewer_name
+                                    }}</p>
                             </div>
 
                             <div class="space-y-1.5">
                                 <Label>Rating</Label>
                                 <div class="flex gap-1">
-                                    <button
-                                        v-for="n in 5"
-                                        :key="n"
-                                        type="button"
-                                        :aria-label="`${n} bintang`"
-                                        class="transition-transform hover:scale-110"
-                                        @mouseenter="hovered = n"
-                                        @mouseleave="hovered = 0"
-                                        @click="form.rating = n"
-                                    >
-                                        <Star
-                                            class="size-7"
-                                            :class="n <= (hovered || form.rating) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'"
-                                        />
+                                    <button v-for="n in 5" :key="n" type="button" :aria-label="`${n} bintang`"
+                                        class="transition-transform hover:scale-110" @mouseenter="hovered = n"
+                                        @mouseleave="hovered = 0" @click="form.rating = n">
+                                        <Star class="size-7"
+                                            :class="n <= (hovered || form.rating) ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'" />
                                     </button>
                                 </div>
                                 <p v-if="errors.rating" class="text-xs text-destructive">{{ errors.rating }}</p>
@@ -149,13 +131,8 @@ const formatDate = (iso: string) => {
 
                             <div class="space-y-1.5">
                                 <Label for="comment">Komentar</Label>
-                                <Textarea
-                                    id="comment"
-                                    v-model="form.comment"
-                                    placeholder="Bagikan pengalamanmu..."
-                                    rows="4"
-                                    :disabled="submitting"
-                                />
+                                <Textarea id="comment" v-model="form.comment" placeholder="Bagikan pengalamanmu..."
+                                    rows="4" :disabled="submitting" />
                                 <p v-if="errors.comment" class="text-xs text-destructive">{{ errors.comment }}</p>
                             </div>
 

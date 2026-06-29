@@ -48,9 +48,8 @@ const user = computed(() => page.props.auth.user as import('@/types').User);
 
 // Promo bar — rotating messages
 const promoMessages = [
-    { icon: Flame, text: 'Gratis ongkir pesanan pertama kamu' },
-    { icon: Tag,   text: 'Diskon hingga 20% dengan kode promo' },
-    { icon: Zap,   text: 'Daftar sekarang dan langsung bisa belanja' },
+    { icon: Zap,   text: 'Satu akun. Belanja, jualan, dan antar tanpa registrasi ulang.' },
+    { icon: Flame, text: '🎉 Daftar sekarang dan nikmati pengalaman marketplace multi-role.' },
 ];
 const promoIndex = ref(0);
 let promoTimer: ReturnType<typeof setInterval> | null = null;
@@ -59,13 +58,35 @@ onMounted(() => {
     promoTimer = setInterval(() => {
         promoIndex.value = (promoIndex.value + 1) % promoMessages.length;
     }, 3500);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 });
 
 onUnmounted(() => {
     if (promoTimer) {
-clearInterval(promoTimer);
-}
+        clearInterval(promoTimer);
+    }
+    window.removeEventListener('scroll', handleScroll);
 });
+
+const isScrolled = ref(false);
+const activeSection = ref('hero');
+
+function handleScroll() {
+    isScrolled.value = window.scrollY > 20;
+    
+    if (isLandingPage.value) {
+        const sections = ['hero', 'about', 'stores', 'reviews'];
+        const scrollPosition = window.scrollY + 120; // Offset for navbar height
+        
+        for (const section of [...sections].reverse()) {
+            const el = document.getElementById(section);
+            if (el && el.offsetTop <= scrollPosition) {
+                activeSection.value = section;
+                break;
+            }
+        }
+    }
+}
 
 const searchQuery = ref('');
 
@@ -123,7 +144,7 @@ start = currentTime;
 
 <template>
     <!-- Animated Promo top-bar (desktop only) -->
-    <div class="promo-bar hidden border-b border-primary/20 bg-gradient-to-r from-primary via-brand to-primary py-1.5 text-center text-xs font-medium text-white sm:block overflow-hidden">
+    <div class="promo-bar hidden border-b border-[#21C8B9]/20 bg-[#21C8B9] py-1.5 text-center text-xs font-medium text-white sm:block overflow-hidden">
         <div class="relative mx-auto flex max-w-7xl items-center justify-center gap-2 px-4">
             <TransitionGroup
                 enter-active-class="transition-all duration-500 ease-out"
@@ -141,9 +162,36 @@ start = currentTime;
         </div>
     </div>
 
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur overflow-visible border-b border-border/40">
-        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:gap-3 sm:px-6 lg:gap-4 lg:px-8">
-            <div class="flex items-center gap-2 sm:gap-4">
+    <header :class="['sticky top-0 z-40 overflow-visible transition-all duration-300', isScrolled ? 'bg-white/90 backdrop-blur-xl border-b border-border/30 shadow-[0_2px_10px_rgba(0,0,0,0.03)]' : 'bg-white border-b border-transparent']">
+        <div class="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-8 lg:gap-10">
+                <!-- Mobile Landing Menu (Sheet) -->
+                <Sheet v-if="isLandingPage">
+                    <SheetTrigger as-child>
+                        <Button variant="ghost" size="icon" class="lg:hidden shrink-0">
+                            <Menu class="size-5" />
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" class="w-80">
+                        <SheetHeader>
+                            <SheetTitle class="text-left">Menu Utama</SheetTitle>
+                        </SheetHeader>
+                        <div class="mt-8 flex flex-col gap-6">
+                            <a href="#hero" @click="scrollToSection($event, 'hero')" class="text-lg font-semibold text-foreground hover:text-primary">Home</a>
+                            <a href="#about" @click="scrollToSection($event, 'about')" class="text-lg font-semibold text-foreground hover:text-primary">Cara Kerja</a>
+                            <a href="#stores" @click="scrollToSection($event, 'stores')" class="text-lg font-semibold text-foreground hover:text-primary">Marketplace</a>
+                            <a href="#reviews" @click="scrollToSection($event, 'reviews')" class="text-lg font-semibold text-foreground hover:text-primary">Review</a>
+                            
+                            <div v-if="!auth.isAuthenticated" class="border-t border-border pt-6 flex flex-col gap-3">
+                                <Link :href="login()" class="text-lg font-medium text-muted-foreground hover:text-primary">Login</Link>
+                                <Button as-child size="lg" class="w-full bg-primary font-bold text-white">
+                                    <Link :href="register()">Daftar Gratis</Link>
+                                </Button>
+                            </div>
+                        </div>
+                    </SheetContent>
+                </Sheet>
+
                 <!-- Mobile Category Menu (Sheet) -->
                 <Sheet v-if="categories.length && !isLandingPage">
                     <SheetTrigger as-child>
@@ -174,17 +222,19 @@ start = currentTime;
                 </Sheet>
 
                 <!-- Logo -->
-                <Link :href="isLandingPage ? home() : catalogUrl()" class="flex shrink-0 items-center">
-                    <Logo class="h-10 w-auto sm:h-12 lg:h-16" />
+                <a v-if="isLandingPage" href="#hero" @click="scrollToSection($event, 'hero')" class="flex shrink-0 items-center cursor-pointer">
+                    <Logo class="h-12 w-auto sm:h-10 lg:h-[70px]" />
+                </a>
+                <Link v-else :href="catalogUrl()" class="flex shrink-0 items-center">
+                    <Logo class="h-12 w-auto sm:h-10 lg:h-[60px]" />
                 </Link>
 
                 <!-- Landing Page Menu -->
-                <div v-if="isLandingPage" class="hidden lg:flex items-center gap-6">
-                    <a href="#roles" @click="scrollToSection($event, 'roles')" class="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Peran</a>
-                    <a href="#stores" @click="scrollToSection($event, 'stores')" class="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Toko Populer</a>
-                    <a href="#categories" @click="scrollToSection($event, 'categories')" class="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Kategori</a>
-                    <a href="#featured" @click="scrollToSection($event, 'featured')" class="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Produk Unggulan</a>
-                    <a href="#reviews" @click="scrollToSection($event, 'reviews')" class="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Ulasan</a>
+                <div v-if="isLandingPage" class="hidden lg:flex items-center gap-7">
+                    <a href="#hero" @click="scrollToSection($event, 'hero')" :class="['nav-link relative text-base font-semibold transition-colors hover:text-primary', activeSection === 'hero' ? 'text-primary' : 'text-muted-foreground']">Home</a>
+                    <a href="#about" @click="scrollToSection($event, 'about')" :class="['nav-link relative text-base font-semibold transition-colors hover:text-primary', activeSection === 'about' ? 'text-primary' : 'text-muted-foreground']">Cara Kerja</a>
+                    <a href="#stores" @click="scrollToSection($event, 'stores')" :class="['nav-link relative text-base font-semibold transition-colors hover:text-primary', activeSection === 'stores' ? 'text-primary' : 'text-muted-foreground']">Marketplace</a>
+                    <a href="#reviews" @click="scrollToSection($event, 'reviews')" :class="['nav-link relative text-base font-semibold transition-colors hover:text-primary', activeSection === 'reviews' ? 'text-primary' : 'text-muted-foreground']">Review</a>
                 </div>
 
                 <!-- Category mega-dropdown (lg+) -->
@@ -246,7 +296,7 @@ start = currentTime;
 
                 <!-- Authenticated state -->
                 <template v-if="auth.isAuthenticated">
-                    <Button v-if="isLandingPage" as-child variant="default" size="sm" class="hidden sm:inline-flex bg-primary font-semibold text-white shadow-sm transition-transform hover:scale-105 active:scale-95">
+                    <Button v-if="isLandingPage" as-child variant="default" class="hidden sm:inline-flex bg-primary font-semibold text-white shadow-sm transition-transform hover:scale-105 active:scale-95">
                         <Link :href="catalogUrl()">Mulai Belanja</Link>
                     </Button>
                     <Button v-if="auth.activeRole === 'buyer'" as-child variant="ghost" size="icon" class="relative hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground mr-1">
@@ -278,15 +328,14 @@ start = currentTime;
 
                 <!-- Guest CTAs -->
                 <template v-else>
-                    <Button v-if="isLandingPage" as-child variant="default" size="sm" class="hidden sm:inline-flex bg-primary font-semibold text-white shadow-sm transition-transform hover:scale-105 active:scale-95">
-                        <Link :href="catalogUrl()">Jelajahi Katalog</Link>
-                    </Button>
-                    <Button as-child variant="ghost" size="sm" class="hidden sm:inline-flex">
-                        <Link :href="login()">{{ t('nav.login') }}</Link>
-                    </Button>
-                    <Button as-child size="sm">
-                        <Link :href="register()">{{ t('nav.register') }}</Link>
-                    </Button>
+                    <div class="flex items-center gap-2">
+                        <Button as-child variant="ghost" class="hidden sm:inline-flex text-muted-foreground hover:text-primary hover:bg-transparent">
+                            <Link :href="login()">Login</Link>
+                        </Button>
+                        <Button as-child variant="default" class="bg-primary font-bold text-white shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95">
+                            <Link :href="register()">Daftar Gratis</Link>
+                        </Button>
+                    </div>
                 </template>
             </div>
         </div>
@@ -311,11 +360,11 @@ start = currentTime;
             >
                 <path
                     d="M0 0 L0 32 C240 48 480 8 720 32 C960 48 1200 8 1440 32 L1440 0 Z"
-                    class="fill-primary/10"
+                    class="fill-[#21C8B9]/10"
                 />
                 <path
                     d="M0 0 L0 24 C180 48 360 0 540 24 C720 48 900 0 1080 24 C1260 48 1440 0 1440 24 L1440 0 Z"
-                    class="fill-primary/20"
+                    class="fill-[#21C8B9]/20"
                 />
             </svg>
         </div>
@@ -360,5 +409,24 @@ start = currentTime;
         animation: wave-sway 10s ease-in-out infinite;
         will-change: transform;
     }
+}
+
+/* Nav Link Underline Slide Animation */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 50%;
+    background-color: hsl(var(--primary));
+    transition: all 0.3s cubic-bezier(0.05, 0.7, 0.1, 1);
+    transform: translateX(-50%);
+    opacity: 0;
+}
+.nav-link:hover::after,
+.nav-link.text-primary::after {
+    width: 100%;
+    opacity: 1;
 }
 </style>
