@@ -12,10 +12,7 @@ class AppReviewSeeder extends Seeder
      */
     public function run(): void
     {
-        if (AppReview::query()->exists()) {
-            return;
-        }
-
-        AppReview::factory()->count(6)->create();
+        \App\Models\AppReview::truncate();
+        \App\Models\AppReview::factory()->count(6)->create();
     }
 }

@@ -14,15 +14,15 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RoleSeeder::class);
         $this->call(SettingSeeder::class);
-        $this->call(AppReviewSeeder::class);
         $this->call(DemoUserSeeder::class);
-        $this->call(DeliverySeeder::class);
         $this->call(CategorySeeder::class);
         $this->call(BannerSeeder::class);
         $this->call(StoreProductSeeder::class);
         $this->call(DiscountSeeder::class);
         $this->call(BuyerDemoSeeder::class);
+        $this->call(DeliverySeeder::class);
         $this->call(OrderConditionSeeder::class);
+        $this->call(AppReviewSeeder::class);
 
         User::firstWhere('email', 'test@example.com') ?? User::factory()->create([
             'name' => 'Test User',

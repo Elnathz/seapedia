@@ -65,7 +65,7 @@ class OrderConditionSeeder extends Seeder
             return;
         }
 
-        $this->topupIfEmpty($buyer1, 500_000);
+        $this->ensureBalance($buyer1, 500_000);
 
         // Collect products as plain array to avoid Eloquent collection quirks.
         $products = ($seller1->store?->products ?? collect())->all();
@@ -118,7 +118,7 @@ class OrderConditionSeeder extends Seeder
             ->get();
 
         foreach ($availableJobs as $delivery) {
-            $this->topupIfEmpty($driver2, 50_000);
+            $this->ensureBalance($driver2, 50_000);
             $this->deliveries->take($delivery, $driver2);
             $delivery->refresh();
             $this->deliveries->complete($delivery, $driver2);
@@ -131,7 +131,7 @@ class OrderConditionSeeder extends Seeder
             ->first();
 
         if ($driver1Delivery) {
-            $this->topupIfEmpty($driver1, 50_000);
+            $this->ensureBalance($driver1, 50_000);
             $this->deliveries->take($driver1Delivery, $driver1);
             $driver1Delivery->refresh();
             $this->deliveries->complete($driver1Delivery, $driver1);
@@ -153,7 +153,7 @@ class OrderConditionSeeder extends Seeder
             ->first();
 
         if ($activeDelivery) {
-            $this->topupIfEmpty($driver1, 50_000);
+            $this->ensureBalance($driver1, 50_000);
             $this->deliveries->take($activeDelivery, $driver1);
         }
 
@@ -182,10 +182,10 @@ class OrderConditionSeeder extends Seeder
     /**
      * Helper: credit the wallet if it's currently empty (no ledger entry).
      */
-    private function topupIfEmpty(User $user, int $amount): void
+    private function ensureBalance(User $user, int $amount): void
     {
-        if ($user->wallet->balance <= 0) {
-            $this->topups->checkStatus($this->topups->create($user, $amount));
+        if ($user->wallet->balance < $amount) {
+            $this->topups->checkStatus($this->topups->create($user, $amount - $user->wallet->balance));
         }
     }
 }

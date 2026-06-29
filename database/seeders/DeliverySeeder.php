@@ -12,6 +12,7 @@ use Illuminate\Database\Seeder;
 class DeliverySeeder extends Seeder
 {
     public function __construct(
+        private readonly \App\Services\TopupService $topups,
         private readonly CartService $carts,
         private readonly CheckoutService $checkout,
         private readonly OrderService $orders,
@@ -30,8 +31,8 @@ class DeliverySeeder extends Seeder
      */
     public function run(): void
     {
-        $buyer = User::query()->where('username', 'buyer1')->first();
-        $seller = User::query()->where('username', 'seller1')->first();
+        $buyer = User::query()->where('email', 'buyer1@seapedia.test')->first();
+        $seller = User::query()->where('email', 'seller1@seapedia.test')->first();
         $address = $buyer?->addresses()->first();
         $product = $seller?->store?->products()->first();
 
@@ -39,11 +40,18 @@ class DeliverySeeder extends Seeder
             return;
         }
 
-        $this->carts->addItem($buyer, $product, 1);
+        if ($buyer->wallet->balance <= 0) {
+            $this->topups->checkStatus($this->topups->create($buyer, 500_000));
+        }
+
+        $this->carts->clear($buyer);
+        $this->carts->addItem($buyer, $product, null, 1);
         $takeableOrder = $this->checkout->commit($buyer, $address, DeliveryMethod::Regular);
         $this->orders->processBySeller($takeableOrder, $seller->id);
 
-        $this->carts->addItem($buyer, $product, 1);
+        $this->carts->clear($buyer);
+
+        $this->carts->addItem($buyer, $product, null, 1);
         $overdueOrder = $this->checkout->commit($buyer, $address, DeliveryMethod::Instant);
         $overdueOrder->update(['sla_due_at' => now()->subDay()]);
     }

@@ -18,9 +18,10 @@ class CategorySeeder extends Seeder
     private array $tree = [
         ['name' => 'Makanan', 'icon' => 'UtensilsCrossed', 'children' => ['Makanan Berat', 'Cemilan']],
         ['name' => 'Minuman', 'icon' => 'CupSoda', 'children' => ['Kopi', 'Teh', 'Jus']],
-        ['name' => 'Elektronik', 'icon' => 'Smartphone', 'children' => ['Aksesori HP', 'Audio']],
+        ['name' => 'Elektronik', 'icon' => 'Smartphone', 'children' => ['Handphone', 'Aksesori HP', 'Audio']],
         ['name' => 'Fashion', 'icon' => 'Shirt', 'children' => ['Pria', 'Wanita']],
-        ['name' => 'Kebutuhan Harian', 'icon' => 'ShoppingBasket', 'children' => ['Sembako', 'Perawatan']],
+        ['name' => 'Kebutuhan Harian', 'icon' => 'ShoppingBasket', 'children' => ['Sembako', 'Perawatan', 'Perkakas']],
+        ['name' => 'Hobi & Outdoor', 'icon' => 'Tent', 'children' => ['Alat Pancing', 'Outdoor']],
         ['name' => 'Lainnya', 'icon' => 'Package', 'children' => ['Umum']],
     ];
 
