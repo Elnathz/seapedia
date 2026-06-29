@@ -62,6 +62,7 @@ createInertiaApp({
         switch (true) {
             case name === 'Welcome':
                 return GuestLayout;
+            case name === 'Error':
             case name.startsWith('role/'):
                 return null;
             case name.startsWith('reviews/'):
