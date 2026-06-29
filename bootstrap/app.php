@@ -39,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $exceptions->respond(function (\Symfony\Component\HttpFoundation\Response $response, \Throwable $exception, Request $request) {
-            if (in_array($response->getStatusCode(), [403, 404, 500, 503]) && ! $request->is('api/*')) {
+            if (in_array($response->getStatusCode(), [403, 404, 500, 502, 503]) && ! $request->is('api/*')) {
                 return \Inertia\Inertia::render('Error', [
                     'status' => $response->getStatusCode(),
                 ])

@@ -40,6 +40,16 @@ const errorDetails = computed(() => {
                 border: 'border-red-500/20',
                 gradient: 'from-red-500/10 via-red-500/5 to-transparent'
             };
+        case 502:
+            return {
+                title: 'Gerbang Buruk (Bad Gateway)',
+                description: 'Server kami menerima respons yang tidak valid dari server hulu. Hal ini biasanya terjadi saat server sedang dimulai ulang. Silakan muat ulang halaman ini dalam beberapa saat.',
+                icon: ServerCrash,
+                color: 'text-purple-500',
+                bg: 'bg-purple-500/10',
+                border: 'border-purple-500/20',
+                gradient: 'from-purple-500/10 via-purple-500/5 to-transparent'
+            };
         case 503:
             return {
                 title: 'Layanan Tidak Tersedia',
