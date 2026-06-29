@@ -4,7 +4,6 @@ import { Flame, Search, Zap, Tag, ShoppingCart, X, Menu } from '@lucide/vue';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Logo from '@/components/brand/Logo.vue';
-import RoleBadge from '@/components/RoleBadge.vue';
 import { Button } from '@/components/ui/button';
 import {
     NavigationMenu,
@@ -242,8 +241,6 @@ function scrollToSection(e: Event, id: string) {
                     <Button v-if="isLandingPage" as-child variant="default" size="sm" class="hidden sm:inline-flex bg-primary font-semibold text-white shadow-sm transition-transform hover:scale-105 active:scale-95">
                         <Link :href="catalogUrl()">Mulai Belanja</Link>
                     </Button>
-                    <RoleBadge />
-                    
                     <Button v-if="auth.activeRole === 'buyer'" as-child variant="ghost" size="icon" class="relative hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground mr-1">
                         <Link :href="cartIndex.url()">
                             <ShoppingCart class="size-[22px]" />

@@ -12,6 +12,7 @@ import {
     Package,
     Receipt,
     ShoppingCart,
+    Settings,
     Store,
     Tags,
     Ticket,
@@ -50,112 +51,170 @@ import { index as indexSellerProducts } from '@/routes/seller/products';
 import { index as indexSellerReports } from '@/routes/seller/reports';
 import { show as showSellerStore } from '@/routes/seller/store';
 import { index as catalogIndex } from '@/routes/catalog';
+import { edit as editProfile } from '@/routes/profile';
 import { useAuthStore } from '@/stores/auth';
-import type { NavItem } from '@/types';
+import type { NavGroup } from '@/types';
 
 const auth = useAuthStore();
 const { t } = useI18n();
 
-const mainNavItems = computed<NavItem[]>(() => {
-    const items: NavItem[] = [
+const navGroups = computed<NavGroup[]>(() => {
+    const groups: NavGroup[] = [];
+
+    // 1. Group Main (Aksesible untuk semua role)
+    const mainItems = [
         {
             title: t('nav.dashboard'),
-            href: dashboard(),
+            href: dashboard.url(),
             icon: LayoutGrid,
         },
+        {
+            title: 'Katalog Produk',
+            href: catalogIndex.url(),
+            icon: Images,
+        }
     ];
+    groups.push({
+        label: 'Main',
+        items: mainItems,
+    });
 
-    if (auth.activeRole === 'seller') {
-        items.push(
-            {
-                title: t('nav.myStore'),
-                href: showSellerStore(),
-                icon: Store,
-            },
-            {
-                title: t('nav.products'),
-                href: indexSellerProducts(),
-                icon: Package,
-            },
-            {
-                title: t('nav.incomingOrders'),
-                href: indexSellerOrders(),
-                icon: Inbox,
-            },
-            {
-                title: t('nav.reports'),
-                href: indexSellerReports(),
-                icon: BarChart3,
-            },
-        );
+    // 2. Group Role-Specific
+    if (auth.activeRole === 'buyer') {
+        groups.push({
+            label: 'Belanja',
+            items: [
+                {
+                    title: 'Keranjang',
+                    href: indexBuyerCart.url(),
+                    icon: ShoppingCart,
+                },
+                {
+                    title: 'Daftar Alamat',
+                    href: indexBuyerAddresses.url(),
+                    icon: MapPin,
+                },
+            ]
+        });
+
+        groups.push({
+            label: 'Transaksi',
+            items: [
+                {
+                    title: t('nav.wallet'),
+                    href: showBuyerWallet.url(),
+                    icon: Wallet,
+                },
+                {
+                    title: t('nav.myOrders'),
+                    href: indexBuyerOrders.url(),
+                    icon: Receipt,
+                },
+                {
+                    title: t('nav.reports'),
+                    href: indexBuyerReports.url(),
+                    icon: BarChart3,
+                },
+            ]
+        });
     }
 
-    if (auth.activeRole === 'buyer') {
-        items.push(
-            {
-                title: t('nav.wallet'),
-                href: showBuyerWallet(),
-                icon: Wallet,
-            },
-            {
-                title: t('nav.addresses'),
-                href: indexBuyerAddresses(),
-                icon: MapPin,
-            },
-            {
-                title: t('nav.cart'),
-                href: indexBuyerCart(),
-                icon: ShoppingCart,
-            },
-            {
-                title: t('nav.myOrders'),
-                href: indexBuyerOrders(),
-                icon: Receipt,
-            },
-            {
-                title: t('nav.reports'),
-                href: indexBuyerReports(),
-                icon: BarChart3,
-            },
-        );
+    if (auth.activeRole === 'seller') {
+        groups.push({
+            label: 'Toko Saya',
+            items: [
+                {
+                    title: t('nav.myStore'),
+                    href: showSellerStore.url(),
+                    icon: Store,
+                },
+                {
+                    title: t('nav.products'),
+                    href: indexSellerProducts.url(),
+                    icon: Package,
+                },
+                {
+                    title: t('nav.incomingOrders'),
+                    href: indexSellerOrders.url(),
+                    icon: Inbox,
+                },
+                {
+                    title: t('nav.reports'),
+                    href: indexSellerReports.url(),
+                    icon: BarChart3,
+                },
+            ]
+        });
     }
 
     if (auth.activeRole === 'driver') {
-        items.push({
-            title: t('nav.driverJobs'),
-            href: indexDriverJobs(),
-            icon: Truck,
+        groups.push({
+            label: 'Layanan Kurir',
+            items: [
+                {
+                    title: t('nav.driverJobs'),
+                    href: indexDriverJobs.url(),
+                    icon: Truck,
+                },
+            ]
         });
     }
 
     if (auth.user?.is_admin) {
-        items.push(
-            { title: 'Pengguna', href: '/admin/users', icon: Users },
-            { title: 'Toko', href: '/admin/stores', icon: Store },
-            { title: 'Produk', href: '/admin/products', icon: Package },
-            { title: 'Pesanan', href: '/admin/orders', icon: Inbox },
-            { title: 'Pengiriman', href: '/admin/deliveries', icon: Truck },
-            { title: 'Overdue', href: '/admin/overdue', icon: AlertTriangle },
-            {
-                title: t('admin.manageCategoriesTitle'),
-                href: indexAdminCategories(),
-                icon: Tags,
-            },
-            {
-                title: t('admin.managePromosTitle'),
-                href: indexAdminPromos(),
-                icon: Ticket,
-            },
-            {
-                title: t('admin.manageVouchersTitle'),
-                href: indexAdminVouchers(),
-                icon: BadgePercent,
-            },
-            { title: 'Banner', href: '/admin/banners', icon: Images },
-        );
+        groups.push({
+            label: 'Data Utama (Admin)',
+            items: [
+                { title: 'Pengguna', href: '/admin/users', icon: Users },
+                { title: 'Toko', href: '/admin/stores', icon: Store },
+                { title: 'Produk', href: '/admin/products', icon: Package },
+                { title: 'Pesanan', href: '/admin/orders', icon: Inbox },
+                { title: 'Pengiriman', href: '/admin/deliveries', icon: Truck },
+            ]
+        });
+
+        groups.push({
+            label: 'Manajemen Promo (Admin)',
+            items: [
+                {
+                    title: t('admin.manageCategoriesTitle'),
+                    href: indexAdminCategories.url(),
+                    icon: Tags,
+                },
+                {
+                    title: t('admin.managePromosTitle'),
+                    href: indexAdminPromos.url(),
+                    icon: Ticket,
+                },
+                {
+                    title: t('admin.manageVouchersTitle'),
+                    href: indexAdminVouchers.url(),
+                    icon: BadgePercent,
+                },
+                { title: 'Banner', href: '/admin/banners', icon: Images },
+            ]
+        });
+
+        groups.push({
+            label: 'Alat Simulasi (Admin)',
+            items: [
+                { title: 'Overdue (Time Machine)', href: '/admin/overdue', icon: AlertTriangle },
+            ]
+        });
     }
 
-    return items;
+    // 3. Group Pengaturan
+    groups.push({
+        label: 'Pengaturan',
+        items: [
+            {
+                title: 'Profil & Settings',
+                href: editProfile.url(),
+                icon: Settings,
+            }
+        ]
+    });
+
+    return groups;
 });
 </script>
 
@@ -175,7 +234,7 @@ const mainNavItems = computed<NavItem[]>(() => {
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="mainNavItems" />
+            <NavMain :groups="navGroups" />
         </SidebarContent>
 
         <SidebarFooter>

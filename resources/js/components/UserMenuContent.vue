@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3';
-import { LogOut, Settings, LayoutDashboard, ShoppingBag } from '@lucide/vue';
+import { LogOut, Settings, LayoutDashboard, ShoppingBag, Repeat2 } from '@lucide/vue';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
@@ -11,11 +11,15 @@ import UserInfo from '@/components/UserInfo.vue';
 import { logout, dashboard } from '@/routes';
 import { index as buyerOrdersIndex } from '@/routes/buyer/orders';
 import { edit } from '@/routes/profile';
+import { select as selectRole } from '@/routes/role';
+import { useAuthStore } from '@/stores/auth';
 import type { User } from '@/types';
 
 type Props = {
     user: User;
 };
+
+const auth = useAuthStore();
 
 const handleLogout = () => {
     router.flushAll();
@@ -46,12 +50,21 @@ defineProps<Props>();
         </DropdownMenuItem>
         <DropdownMenuItem :as-child="true">
             <Link class="block w-full cursor-pointer" :href="edit()" prefetch>
-                <Settings class="mr-2 h-4 w-4" />
+                <Settings class="mr-2 inline h-4 w-4" />
                 Settings
             </Link>
         </DropdownMenuItem>
     </DropdownMenuGroup>
     <DropdownMenuSeparator />
+    <DropdownMenuGroup v-if="auth.roles.length > 1">
+        <DropdownMenuItem :as-child="true">
+            <Link class="block w-full cursor-pointer" :href="selectRole.url()">
+                <Repeat2 class="mr-2 inline h-4 w-4" />
+                Ganti Peran
+            </Link>
+        </DropdownMenuItem>
+    </DropdownMenuGroup>
+    <DropdownMenuSeparator v-if="auth.roles.length > 1" />
     <DropdownMenuItem :as-child="true">
         <Link
             class="block w-full cursor-pointer"
