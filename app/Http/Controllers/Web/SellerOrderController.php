@@ -25,8 +25,12 @@ class SellerOrderController extends Controller
             return to_route('seller.store.show');
         }
 
+        $status = $request->query('status');
+        $orderStatus = $status ? \App\Enums\OrderStatus::tryFrom($status) : null;
+
         return Inertia::render('seller/orders/Index', [
-            'orders' => $this->orders->forSeller($store),
+            'orders' => $this->orders->forSeller($store, 10, $orderStatus),
+            'currentStatus' => $status,
         ]);
     }
 

@@ -40,7 +40,7 @@ interface PaginatedOrders {
     total: number;
 }
 
-const props = defineProps<{ orders: PaginatedOrders }>();
+const props = defineProps<{ orders: PaginatedOrders; currentStatus?: string }>();
 
 defineOptions({
     layout: {
@@ -65,8 +65,26 @@ function processOrder(orderId: number) {
 function goToPage(page: number) {
     router.get(
         SellerOrderController.index.url(),
-        { page },
+        { page, status: props.currentStatus },
         { preserveState: true, preserveScroll: true, replace: true },
+    );
+}
+
+const statuses = [
+    { value: '', label: 'Semua' },
+    { value: 'menunggu_pembayaran', label: 'Belum Bayar' },
+    { value: 'sedang_dikemas', label: 'Perlu Diproses' },
+    { value: 'menunggu_pengirim', label: 'Menunggu Kurir' },
+    { value: 'sedang_dikirim', label: 'Dikirim' },
+    { value: 'pesanan_selesai', label: 'Selesai' },
+    { value: 'dibatalkan', label: 'Batal' },
+];
+
+function filterStatus(status: string) {
+    router.get(
+        SellerOrderController.index.url(),
+        { status },
+        { preserveState: true, preserveScroll: true },
     );
 }
 </script>
@@ -76,6 +94,24 @@ function goToPage(page: number) {
 
     <div class="flex flex-col gap-6">
         <Heading variant="small" :title="t('order.incomingOrdersTitle')" />
+
+        <!-- Tabs Filter -->
+        <div class="flex overflow-x-auto pb-2 scrollbar-hide gap-2 border-b border-border">
+            <button
+                v-for="s in statuses"
+                :key="s.value"
+                @click="filterStatus(s.value)"
+                class="whitespace-nowrap border-b-2 px-4 py-2 text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                :class="[
+                    (props.currentStatus || '') === s.value
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted',
+                ]"
+            >
+                {{ s.label }}
+                <Badge v-if="s.value === 'sedang_dikemas' && !props.currentStatus" variant="destructive" class="ml-1 text-[10px] px-1.5 py-0">!</Badge>
+            </button>
+        </div>
 
         <EmptyState
             v-if="props.orders.data.length === 0"
@@ -89,24 +125,24 @@ function goToPage(page: number) {
                 <Card
                     v-for="order in props.orders.data"
                     :key="order.id"
-                    class="transition-all duration-200 hover:border-primary hover:shadow-sm"
+                    class="group relative overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-lg hover:border-primary/50 hover:-translate-y-1"
                 >
-                    <CardContent class="flex items-center gap-4 pt-6">
+                    <div class="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/0 to-primary/0 opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:from-primary/5 group-hover:to-transparent group-hover:opacity-100"></div>
+                    <CardContent class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 relative z-10">
                         <Link
                             :href="SellerOrderController.show.url(order.id)"
-                            class="min-w-0 flex-1"
+                            class="min-w-0 flex-1 grid gap-1"
                         >
-                            <p class="font-medium">{{ order.code }}</p>
-                            <p class="text-sm text-muted-foreground">{{ order.buyer.name }}</p>
-                            <p class="mt-0.5 text-xs text-muted-foreground">
-                                {{ formatDateTime(order.created_sim_at, locale) }}
-                            </p>
+                            <div class="flex items-center gap-2">
+                                <p class="font-bold text-base text-foreground group-hover:text-primary transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]">{{ order.code }}</p>
+                            </div>
+                            <p class="text-sm text-muted-foreground">{{ order.buyer.name }} • <span class="text-xs">{{ formatDateTime(order.created_sim_at, locale) }}</span></p>
                         </Link>
-                        <div class="flex shrink-0 flex-col items-end gap-2">
-                            <Badge :variant="orderStatusBadgeVariant(order.status)">
+                        <div class="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 w-full sm:w-auto">
+                            <Badge :variant="orderStatusBadgeVariant(order.status)" class="shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105">
                                 {{ orderStatusLabel(order.status) }}
                             </Badge>
-                            <p class="text-sm font-medium tabular-nums">
+                            <p class="text-base font-bold text-primary tabular-nums">
                                 {{ formatIDR(order.grand_total) }}
                             </p>
                             <Button
