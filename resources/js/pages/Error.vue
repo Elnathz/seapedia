@@ -9,7 +9,7 @@ const props = defineProps<{
 }>();
 
 const errorDetails = computed(() => {
-    switch (props.status) {
+    switch (Number(props.status)) {
         case 403:
             return {
                 title: 'Akses Ditolak',

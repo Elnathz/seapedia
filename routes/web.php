@@ -135,4 +135,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
+// Temporary route for testing error pages
+Route::get('/tes-error/{code}', function ($code) {
+    abort((int) $code);
+});
+
 require __DIR__.'/settings.php';
