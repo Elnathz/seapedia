@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3';
-import { LogOut, Settings, LayoutDashboard, ShoppingBag, Repeat2 } from '@lucide/vue';
+import { LogOut, Settings, LayoutDashboard, ShoppingBag, Repeat2, Store, Truck } from '@lucide/vue';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
@@ -10,6 +10,8 @@ import {
 import UserInfo from '@/components/UserInfo.vue';
 import { logout, dashboard } from '@/routes';
 import { index as buyerOrdersIndex } from '@/routes/buyer/orders';
+import { show as sellerStoreShow } from '@/routes/seller/store';
+import { index as driverJobsIndex } from '@/routes/driver/jobs';
 import { edit } from '@/routes/profile';
 import { select as selectRole } from '@/routes/role';
 import { useAuthStore } from '@/stores/auth';
@@ -42,10 +44,22 @@ defineProps<Props>();
                 Dashboard
             </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem :as-child="true">
+        <DropdownMenuItem v-if="auth.activeRole === 'buyer'" :as-child="true">
             <Link class="block w-full cursor-pointer" :href="buyerOrdersIndex()" prefetch>
                 <ShoppingBag class="mr-2 h-4 w-4" />
                 Pesanan Saya
+            </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem v-if="auth.activeRole === 'seller'" :as-child="true">
+            <Link class="block w-full cursor-pointer" :href="sellerStoreShow()" prefetch>
+                <Store class="mr-2 h-4 w-4" />
+                Toko Saya
+            </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem v-if="auth.activeRole === 'driver'" :as-child="true">
+            <Link class="block w-full cursor-pointer" :href="driverJobsIndex()" prefetch>
+                <Truck class="mr-2 h-4 w-4" />
+                Layanan Kurir
             </Link>
         </DropdownMenuItem>
         <DropdownMenuItem :as-child="true">

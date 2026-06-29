@@ -82,6 +82,38 @@ const navGroups = computed<NavGroup[]>(() => {
     // 2. Group Role-Specific
     if (auth.activeRole === 'buyer') {
         groups.push({
+            label: 'Belanja',
+            items: [
+                {
+                    title: 'Keranjang',
+                    href: indexBuyerCart.url(),
+                    icon: ShoppingCart,
+                },
+                {
+                    title: 'Daftar Alamat',
+                    href: indexBuyerAddresses.url(),
+                    icon: MapPin,
+                },
+            ]
+        });
+
+        groups.push({
+            label: 'Belanja',
+            items: [
+                {
+                    title: 'Keranjang',
+                    href: indexBuyerCart.url(),
+                    icon: ShoppingCart,
+                },
+                {
+                    title: 'Daftar Alamat',
+                    href: indexBuyerAddresses.url(),
+                    icon: MapPin,
+                },
+            ]
+        });
+
+        groups.push({
             label: 'Transaksi',
             items: [
                 {
