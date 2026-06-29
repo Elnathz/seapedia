@@ -151,7 +151,7 @@ cancelAnimationFrame(rafId);
                 </div>
 
                 <!-- Right: single hero illustration with parallax -->
-                <div class="relative hidden lg:block">
+                <div class="relative hidden lg:block hero-img-container">
                     <div ref="parallaxEl" class="transition-none">
                         <img
                             src="/hero.svg"
@@ -166,7 +166,7 @@ cancelAnimationFrame(rafId);
         </div>
 
         <!-- Wave divider — transitions hero to white body -->
-        <div class="absolute bottom-0 left-0 right-0 -mb-px overflow-hidden" aria-hidden="true">
+        <div class="absolute bottom-0 -mb-px overflow-hidden w-[calc(100%+60px)] -left-[30px]" aria-hidden="true">
             <svg
                 viewBox="0 0 1440 56"
                 fill="none"
@@ -185,23 +185,13 @@ cancelAnimationFrame(rafId);
 </template>
 
 <style scoped>
-/* Rotating mark */
-@keyframes seapedia-spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
+/* Removed rotating mark animation per user request */
 
-.hero-mark {
-    animation: seapedia-spin 36s linear infinite;
-    transform-origin: center center;
-}
-
-/* Entrance fade-up for hero copy children */
+/* Entrance fade-up for hero copy children (Premium Dramatic Reveal) */
 @keyframes fade-up {
     from {
         opacity: 0;
-        transform: translateY(22px);
+        transform: translateY(40px);
     }
     to {
         opacity: 1;
@@ -209,20 +199,37 @@ cancelAnimationFrame(rafId);
     }
 }
 
+/* Applying MD3 Emphasized easing for a premium feel */
 .hero-copy > *:nth-child(1) {
-    animation: fade-up 0.65s ease-out both 0s;
+    animation: fade-up 0.8s cubic-bezier(0.05, 0.7, 0.1, 1) both 0s;
 }
 .hero-copy > *:nth-child(2) {
-    animation: fade-up 0.65s ease-out both 0.13s;
+    animation: fade-up 0.8s cubic-bezier(0.05, 0.7, 0.1, 1) both 0.1s;
 }
 .hero-copy > *:nth-child(3) {
-    animation: fade-up 0.65s ease-out both 0.26s;
+    animation: fade-up 0.8s cubic-bezier(0.05, 0.7, 0.1, 1) both 0.2s;
 }
 .hero-copy > *:nth-child(4) {
-    animation: fade-up 0.65s ease-out both 0.38s;
+    animation: fade-up 0.8s cubic-bezier(0.05, 0.7, 0.1, 1) both 0.3s;
 }
 
-/* Gentle wave motion */
+/* Hero image entrance (counter-motion, elegant float up) */
+@keyframes image-reveal {
+    from {
+        opacity: 0;
+        transform: translateY(60px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.hero-img-container {
+    animation: image-reveal 1.2s cubic-bezier(0.05, 0.7, 0.1, 1) both 0.2s;
+}
+
+/* Gentle wave motion (Ambient layer) */
 @keyframes wave-shift {
     0%,
     100% {
