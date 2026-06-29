@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
         $this->call(BuyerDemoSeeder::class);
         $this->call(OrderConditionSeeder::class);
 
-        User::factory()->create([
+        User::firstWhere('email', 'test@example.com') ?? User::factory()->create([
             'name' => 'Test User',
             'username' => 'testuser',
             'email' => 'test@example.com',
