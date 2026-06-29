@@ -35,7 +35,7 @@ class DemoUserSeeder extends Seeder
 
         $seller = $this->createDemoUser([
             'name' => $faker->name,
-            'username' => 'seller1',
+            'username' => $faker->userName,
             'email' => 'seller1@seapedia.test',
         ]);
         $this->roleService->assignRoles($seller, [RoleName::Seller->value]);
@@ -43,7 +43,7 @@ class DemoUserSeeder extends Seeder
         for ($i = 2; $i <= 7; $i++) {
             $s = $this->createDemoUser([
                 'name' => $faker->name,
-                'username' => "seller$i",
+                'username' => $faker->userName,
                 'email' => "seller$i@seapedia.test",
             ]);
             $this->roleService->assignRoles($s, [RoleName::Seller->value]);
@@ -51,7 +51,7 @@ class DemoUserSeeder extends Seeder
 
         $buyer = $this->createDemoUser([
             'name' => $faker->name,
-            'username' => 'buyer1',
+            'username' => $faker->userName,
             'email' => 'buyer1@seapedia.test',
         ]);
         $this->roleService->assignRoles($buyer, [RoleName::Buyer->value]);
@@ -59,7 +59,7 @@ class DemoUserSeeder extends Seeder
         for ($i = 2; $i <= 3; $i++) {
             $b = $this->createDemoUser([
                 'name' => $faker->name,
-                'username' => "buyer$i",
+                'username' => $faker->userName,
                 'email' => "buyer$i@seapedia.test",
             ]);
             $this->roleService->assignRoles($b, [RoleName::Buyer->value]);
@@ -67,21 +67,21 @@ class DemoUserSeeder extends Seeder
 
         $driver = $this->createDemoUser([
             'name' => $faker->name,
-            'username' => 'driver1',
+            'username' => $faker->userName,
             'email' => 'driver1@seapedia.test',
         ]);
         $this->roleService->assignRoles($driver, [RoleName::Driver->value]);
 
         $driver2 = $this->createDemoUser([
             'name' => $faker->name,
-            'username' => 'driver2',
+            'username' => $faker->userName,
             'email' => 'driver2@seapedia.test',
         ]);
         $this->roleService->assignRoles($driver2, [RoleName::Driver->value]);
 
         $multi = $this->createDemoUser([
             'name' => $faker->name,
-            'username' => 'multi1',
+            'username' => $faker->userName,
             'email' => 'multi1@seapedia.test',
         ]);
         $this->roleService->assignRoles($multi, [

@@ -31,7 +31,7 @@ class StoreProductSeeder extends Seeder
     {
         // seller1 + multi1 — 3 products each (called first, store doesn't exist yet).
         $this->seedStore(
-            username: 'seller1',
+            email: 'seller1@seapedia.test',
             storeName: 'Toko Berkah',
             description: 'Toko kelontong dan jasa cetak di lingkungan kampus.',
             products: [
@@ -42,7 +42,7 @@ class StoreProductSeeder extends Seeder
         );
 
         $this->seedStore(
-            username: 'multi1',
+            email: 'multi1@seapedia.test',
             storeName: 'Warung Mama Lia',
             description: 'Warung makan dan minuman, favorit anak kos sekitar kampus.',
             products: [
@@ -55,7 +55,7 @@ class StoreProductSeeder extends Seeder
         // Additional sellers — each gets 5-8 products across different categories.
         // Skip if store already exists (idempotent — called after seller1/multi1 above).
         $this->seedStore(
-            username: 'seller2',
+            email: 'seller2@seapedia.test',
             storeName: 'Kedai Kopi Nusantara',
             description: 'Berbagai varian kopi dari seluruh Indonesia, bisa biji atau sachet.',
             products: [
@@ -67,7 +67,7 @@ class StoreProductSeeder extends Seeder
         );
 
         $this->seedStore(
-            username: 'seller3',
+            email: 'seller3@seapedia.test',
             storeName: 'Gadget Zone',
             description: 'Aksesori HP dan gadget original untuk mahasiswa.',
             products: [
@@ -80,7 +80,7 @@ class StoreProductSeeder extends Seeder
         );
 
         $this->seedStore(
-            username: 'seller4',
+            email: 'seller4@seapedia.test',
             storeName: 'Dapur Mama Diah',
             description: 'Makanan rumahan segar, MasBro dan MasSis favorit.',
             products: [
@@ -94,7 +94,7 @@ class StoreProductSeeder extends Seeder
         );
 
         $this->seedStore(
-            username: 'seller5',
+            email: 'seller5@seapedia.test',
             storeName: 'Style House',
             description: 'Pakaian trendy dan affordable untuk mahasiswa.',
             products: [
@@ -108,7 +108,7 @@ class StoreProductSeeder extends Seeder
         );
 
         $this->seedStore(
-            username: 'seller6',
+            email: 'seller6@seapedia.test',
             storeName: 'Sembako Sejahtera',
             description: 'Sembako lengkap dengan harga grosir untuk mahasiswa dan warga.',
             products: [
@@ -121,7 +121,7 @@ class StoreProductSeeder extends Seeder
         );
 
         $this->seedStore(
-            username: 'seller7',
+            email: 'seller7@seapedia.test',
             storeName: 'Jasa Print & Fotokopi Campus',
             description: 'Layanan print, fotokopi, dan desain untuk kebutuhan kampus.',
             products: [
@@ -140,9 +140,9 @@ class StoreProductSeeder extends Seeder
     /**
      * @param  array<int, array{name: string, description: string, price: int, stock: int, category: string}>  $products
      */
-    private function seedStore(string $username, string $storeName, string $description, array $products): void
+    private function seedStore(string $email, string $storeName, string $description, array $products): void
     {
-        $user = User::query()->where('username', $username)->first();
+        $user = User::query()->where('email', $email)->first();
 
         if (! $user) {
             return;
