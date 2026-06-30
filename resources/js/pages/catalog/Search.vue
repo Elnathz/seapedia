@@ -34,7 +34,12 @@ import {
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { ChevronDown, Search } from '@lucide/vue';
-
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+} from '@/components/ui/sheet';
 interface Store {
     id: number;
     name: string;
@@ -340,5 +345,57 @@ const clearAllFilters = () => {
 
             </div>
         </div>
+
+        <!-- Mobile Filter Sheet -->
+        <Sheet :open="showMobileFilter" @update:open="showMobileFilter = $event">
+            <SheetContent side="bottom" class="h-[80vh] overflow-y-auto px-4 py-6 rounded-t-xl sm:max-w-none">
+                <SheetHeader class="mb-6">
+                    <SheetTitle>Filter Pencarian</SheetTitle>
+                </SheetHeader>
+                
+                <div class="space-y-8 pb-20">
+                    <!-- Rentang Harga -->
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-bold text-foreground">Rentang Harga (Rp)</h4>
+                        <div class="flex items-center gap-2">
+                            <Input v-model="priceMin" type="number" placeholder="Min" class="h-9" />
+                            <span class="text-muted-foreground">-</span>
+                            <Input v-model="priceMax" type="number" placeholder="Max" class="h-9" />
+                        </div>
+                    </div>
+
+                    <!-- Kategori -->
+                    <div v-if="categories && categories.length > 0" class="border-t border-border pt-4">
+                        <h4 class="text-sm font-bold text-foreground mb-3">Kategori</h4>
+                        <div class="space-y-1">
+                            <Collapsible v-for="parent in categories.slice(0, 5)" :key="'mobile_' + parent.id" class="w-full group/cat">
+                                <CollapsibleTrigger as-child>
+                                    <div class="flex items-center justify-between cursor-pointer py-1.5 hover:bg-muted/50 px-2 rounded-md">
+                                        <span class="font-semibold text-sm">{{ parent.name }}</span>
+                                        <ChevronDown class="h-4 w-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]/cat:rotate-180" />
+                                    </div>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent class="space-y-2 pl-4 py-1.5">
+                                    <div v-for="child in parent.children" :key="'mobile_' + child.id" class="flex items-center space-x-2">
+                                        <Checkbox :id="'mobile_cat_' + child.id" :checked="selectedCategories.includes(String(child.id))" @update:checked="toggleCategory(child.id)" />
+                                        <label :for="'mobile_cat_' + child.id" class="text-sm font-medium leading-none cursor-pointer text-muted-foreground hover:text-foreground">
+                                            {{ child.name }}
+                                        </label>
+                                    </div>
+                                    <div v-if="parent.children.length === 0" class="text-xs text-muted-foreground italic">
+                                        Tidak ada sub-kategori
+                                    </div>
+                                </CollapsibleContent>
+                            </Collapsible>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="absolute bottom-0 left-0 right-0 p-4 bg-background border-t border-border z-10 flex gap-3">
+                    <Button variant="outline" class="w-1/3" @click="clearAllFilters(); showMobileFilter = false">Reset</Button>
+                    <Button class="flex-1" @click="applyFilters(); showMobileFilter = false">Terapkan Filter</Button>
+                </div>
+            </SheetContent>
+        </Sheet>
     </div>
 </template>
