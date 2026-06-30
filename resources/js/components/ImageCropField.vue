@@ -44,11 +44,24 @@ return;
 
 function apply() {
     const result = (cropperRef.value as any)?.getResult?.();
-    const canvas = result?.canvas;
+    let canvas = result?.canvas;
 
     if (!canvas) {
-return;
-}
+        return;
+    }
+
+    const maxDimension = 1200;
+    if (canvas.width > maxDimension || canvas.height > maxDimension) {
+        const scale = Math.min(maxDimension / canvas.width, maxDimension / canvas.height);
+        const resizedCanvas = document.createElement('canvas');
+        resizedCanvas.width = canvas.width * scale;
+        resizedCanvas.height = canvas.height * scale;
+        const ctx = resizedCanvas.getContext('2d');
+        if (ctx) {
+            ctx.drawImage(canvas, 0, 0, resizedCanvas.width, resizedCanvas.height);
+            canvas = resizedCanvas;
+        }
+    }
 
     canvas.toBlob(
         (blob: Blob | null) => {

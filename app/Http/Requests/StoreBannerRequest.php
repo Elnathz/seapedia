@@ -56,8 +56,23 @@ class StoreBannerRequest extends FormRequest
     {
         return [
             'image.required' => 'Gambar banner wajib diunggah.',
+            'image.uploaded' => 'Gambar gagal diunggah. Pastikan ukuran file tidak melebihi batas server (Maks 2MB).',
             'image.max' => 'Ukuran gambar maksimal 2MB.',
             'sort_order.unique' => 'Urutan tersebut sudah digunakan untuk posisi ini.',
         ];
+    }
+
+    public function validationData()
+    {
+        $data = $this->all();
+
+        $file = $this->file('image');
+        // If the user didn't upload a file at all (error 4), remove it from validation
+        // so that the 'required' rule triggers properly instead of uploaded rule.
+        if (!$file || $file->getError() === \UPLOAD_ERR_NO_FILE) {
+            unset($data['image']);
+        }
+
+        return $data;
     }
 }

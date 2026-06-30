@@ -41,7 +41,7 @@ interface BannerRow {
     is_active: boolean;
 }
 
-defineProps<{ banners: BannerRow[] }>();
+const props = defineProps<{ banners: BannerRow[] }>();
 
 const page = usePage();
 const errors = computed(() => (page.props.errors as Record<string, string>) ?? {});
@@ -148,16 +148,24 @@ function performSearch() {
     searchLoading.value = true;
     dropdownOpen.value = true;
 
+    const currentType = ctaType.value;
+
     searchTimeout = setTimeout(async () => {
         try {
-            const response = await fetch(`/admin/banners/search-${ctaType.value}s?q=${encodeURIComponent(searchQuery.value)}`);
+            const endpoint = currentType === 'category' ? 'categories' : `${currentType}s`;
+            const response = await fetch(`/admin/banners/search-${endpoint}?q=${encodeURIComponent(searchQuery.value)}`);
             if (response.ok) {
-                searchResults.value = await response.json();
+                const data = await response.json();
+                if (ctaType.value === currentType) {
+                    searchResults.value = data;
+                }
             }
         } catch (err) {
             console.error('Error searching:', err);
         } finally {
-            searchLoading.value = false;
+            if (ctaType.value === currentType) {
+                searchLoading.value = false;
+            }
         }
     }, 300);
 }
@@ -166,15 +174,24 @@ async function openDropdown() {
     if (ctaType.value === 'custom') return;
     dropdownOpen.value = true;
     searchLoading.value = true;
+    
+    const currentType = ctaType.value;
+
     try {
-        const response = await fetch(`/admin/banners/search-${ctaType.value}s?q=${encodeURIComponent(searchQuery.value)}`);
+        const endpoint = currentType === 'category' ? 'categories' : `${currentType}s`;
+        const response = await fetch(`/admin/banners/search-${endpoint}?q=${encodeURIComponent(searchQuery.value)}`);
         if (response.ok) {
-            searchResults.value = await response.json();
+            const data = await response.json();
+            if (ctaType.value === currentType) {
+                searchResults.value = data;
+            }
         }
     } catch (err) {
         console.error('Error fetching list:', err);
     } finally {
-        searchLoading.value = false;
+        if (ctaType.value === currentType) {
+            searchLoading.value = false;
+        }
     }
 }
 
