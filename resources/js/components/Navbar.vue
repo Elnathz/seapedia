@@ -179,22 +179,23 @@ start = currentTime;
                             <Menu class="size-5" />
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" class="w-80">
-                        <SheetHeader>
-                            <SheetTitle class="text-left">Menu Utama</SheetTitle>
-                        </SheetHeader>
-                        <div class="mt-8 flex flex-col gap-6">
-                            <a href="#hero" @click="scrollToSection($event, 'hero')" class="text-lg font-semibold text-foreground hover:text-primary">Home</a>
-                            <a href="#about" @click="scrollToSection($event, 'about')" class="text-lg font-semibold text-foreground hover:text-primary">Cara Kerja</a>
-                            <a href="#stores" @click="scrollToSection($event, 'stores')" class="text-lg font-semibold text-foreground hover:text-primary">Marketplace</a>
-                            <a href="#reviews" @click="scrollToSection($event, 'reviews')" class="text-lg font-semibold text-foreground hover:text-primary">Review</a>
-                            
-                            <div v-if="!auth.isAuthenticated" class="border-t border-border pt-6 flex flex-col gap-3">
-                                <Link :href="login()" class="text-lg font-medium text-muted-foreground hover:text-primary">Login</Link>
-                                <Button as-child size="lg" class="w-full bg-primary font-bold text-white">
-                                    <Link :href="register()">Daftar Gratis</Link>
-                                </Button>
-                            </div>
+                    <SheetContent side="left" class="w-72 p-0 flex flex-col">
+                        <div class="px-5 py-5 border-b border-border bg-muted/10">
+                            <span class="font-bold text-lg text-foreground">Menu Utama</span>
+                        </div>
+                        <div class="flex-1 overflow-y-auto px-3 py-4 flex flex-col gap-1">
+                            <a href="#hero" @click="scrollToSection($event, 'hero')" class="block w-full rounded-md px-3 py-2.5 text-base font-medium text-foreground hover:bg-muted transition-colors">Home</a>
+                            <a href="#about" @click="scrollToSection($event, 'about')" class="block w-full rounded-md px-3 py-2.5 text-base font-medium text-foreground hover:bg-muted transition-colors">Cara Kerja</a>
+                            <a href="#stores" @click="scrollToSection($event, 'stores')" class="block w-full rounded-md px-3 py-2.5 text-base font-medium text-foreground hover:bg-muted transition-colors">Marketplace</a>
+                            <a href="#reviews" @click="scrollToSection($event, 'reviews')" class="block w-full rounded-md px-3 py-2.5 text-base font-medium text-foreground hover:bg-muted transition-colors">Review</a>
+                        </div>
+                        <div v-if="!auth.isAuthenticated" class="border-t border-border p-5 flex flex-col gap-3 bg-muted/10">
+                            <Button as-child variant="outline" class="w-full">
+                                <Link :href="login()">Login</Link>
+                            </Button>
+                            <Button as-child class="w-full bg-primary font-bold text-white shadow-md hover:scale-105 transition-transform">
+                                <Link :href="register()">Daftar Gratis</Link>
+                            </Button>
                         </div>
                     </SheetContent>
                 </Sheet>
@@ -261,11 +262,11 @@ start = currentTime;
                 <!-- Logo -->
                 <a v-if="isLandingPage" href="#hero" @click="scrollToSection($event, 'hero')" class="flex shrink-0 items-center cursor-pointer">
                     <Logo class="hidden md:block h-12 w-auto sm:h-10 lg:h-[70px]" />
-                    <img src="/favicon.svg" alt="Seapedia" class="block md:hidden h-8 w-auto" />
+                    <img src="/seapedia-logo.svg" alt="Seapedia" class="block md:hidden h-7 w-auto" />
                 </a>
                 <Link v-else :href="catalogUrl()" class="flex shrink-0 items-center">
                     <Logo class="hidden md:block h-12 w-auto sm:h-10 lg:h-[60px]" />
-                    <img src="/favicon.svg" alt="Seapedia" class="block md:hidden h-8 w-auto ml-1" />
+                    <img src="/seapedia-logo.svg" alt="Seapedia" class="block md:hidden h-7 w-auto ml-1" />
                 </Link>
 
                 <!-- Landing Page Menu -->
@@ -313,24 +314,29 @@ start = currentTime;
                 </NavigationMenu>
             </div>
 
-            <!-- Search bar -->
-            <form v-if="!isLandingPage" class="flex flex-1 md:mx-4 mx-2" @submit.prevent="searchCatalog">
+            <!-- Search bar (Desktop) -->
+            <form v-if="!isLandingPage" class="hidden md:flex flex-1 mx-4" @submit.prevent="searchCatalog">
                 <div class="flex w-full max-w-2xl overflow-hidden rounded-xl border border-border bg-muted/60 ring-1 ring-transparent transition-all focus-within:border-primary/40 focus-within:bg-white focus-within:ring-primary/20">
-                    <input v-model="searchQuery" type="search" placeholder="Cari produk..." class="w-full bg-transparent px-3 md:px-4 py-2 md:py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none" autocomplete="off" />
-                    <button type="submit" class="flex shrink-0 items-center justify-center gap-1.5 bg-transparent md:bg-primary px-3 md:px-4 text-sm font-medium text-muted-foreground md:text-white transition-colors hover:bg-muted/80 md:hover:bg-primary/90">
+                    <input v-model="searchQuery" type="search" placeholder="Cari produk..." class="w-full bg-transparent px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none" autocomplete="off" />
+                    <button type="submit" class="flex shrink-0 items-center justify-center gap-1.5 bg-primary px-4 text-sm font-medium text-white transition-colors hover:bg-primary/90">
                         <Search class="size-4" />
-                        <span class="hidden lg:inline">Cari</span>
+                        <span>Cari</span>
                     </button>
                 </div>
             </form>
 
             <div class="flex items-center gap-1 md:gap-2">
+                <!-- Mobile Search Toggle -->
+                <Button v-if="!isLandingPage" variant="ghost" size="icon" class="md:hidden text-muted-foreground" @click="showMobileSearch = !showMobileSearch">
+                    <Search class="size-5" />
+                </Button>
+                
                 <!-- Authenticated state -->
                 <template v-if="auth.isAuthenticated">
                     <Button v-if="isLandingPage" as-child variant="default" class="hidden sm:inline-flex bg-primary font-semibold text-white shadow-sm transition-transform hover:scale-105 active:scale-95">
                         <Link :href="catalogUrl()">Mulai Belanja</Link>
                     </Button>
-                    <Button v-if="auth.activeRole === 'buyer'" as-child variant="ghost" size="icon" class="relative hidden md:inline-flex hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground mr-1">
+                    <Button v-if="auth.activeRole === 'buyer'" as-child variant="ghost" size="icon" class="relative inline-flex hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground mr-1">
                         <Link :href="cartIndex.url()">
                             <ShoppingCart class="size-[22px]" />
                             <span v-if="auth.cartItemCount > 0" class="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-white shadow-sm ring-2 ring-white">
@@ -342,7 +348,11 @@ start = currentTime;
                     <DropdownMenu :modal="false">
                         <DropdownMenuTrigger as-child>
                             <Button variant="ghost" class="gap-2 px-1 md:px-2 py-1.5 focus-visible:ring-0">
-                                <UserInfo :user="user" class="hidden md:flex" />
+                                <div class="hidden md:flex items-center gap-2 text-left">
+                                    <div class="grid flex-1 text-sm leading-tight">
+                                        <span class="truncate font-medium">{{ user.name }}</span>
+                                    </div>
+                                </div>
                                 <Avatar v-if="user" class="h-8 w-8 overflow-hidden rounded-full border border-border/50">
                                     <AvatarImage v-if="user.avatar" :src="user.avatar" :alt="user.name" />
                                     <AvatarFallback class="bg-primary text-primary-foreground text-xs font-semibold">
@@ -388,6 +398,16 @@ start = currentTime;
                     class="fill-[#21C8B9]/20"
                 />
             </svg>
+        </div>
+
+        <!-- Mobile Search Dropdown -->
+        <div v-show="showMobileSearch && !isLandingPage" class="md:hidden border-t border-border/50 bg-white px-4 py-3 shadow-inner">
+            <form @submit.prevent="searchCatalog" class="flex w-full overflow-hidden rounded-xl border border-border bg-muted/60 ring-1 ring-transparent focus-within:border-primary/40 focus-within:bg-white focus-within:ring-primary/20">
+                <input v-model="searchQuery" type="search" placeholder="Cari produk..." class="w-full bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none" autocomplete="off" />
+                <button type="submit" class="flex shrink-0 items-center justify-center bg-primary px-3 text-white transition-colors hover:bg-primary/90">
+                    <Search class="size-4" />
+                </button>
+            </form>
         </div>
     </header>
 
