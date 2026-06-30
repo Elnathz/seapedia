@@ -110,6 +110,7 @@ const formRef = ref<InstanceType<typeof Form> | null>(null);
 const selectedRoles = ref<string[]>([]);
 const flippedCard = ref<string | null>(null);
 const reducedMotion = ref(false);
+const isValidatingStep1 = ref(false);
 
 const displayRoles = computed(() =>
     roleOrder.filter((role) => props.roles.includes(role)),
@@ -145,8 +146,31 @@ function nextStep() {
         }
     }
 
-    step.value = 2;
-    flippedCard.value = null;
+    if (formRef.value) {
+        isValidatingStep1.value = true;
+        // @ts-ignore
+        formRef.value.submit({
+            preserveScroll: true,
+            preserveState: true,
+            onError: (errors: Record<string, string>) => {
+                const step1Fields = ['name', 'username', 'email', 'phone', 'password', 'password_confirmation'];
+                const hasStep1Error = Object.keys(errors).some(field => step1Fields.includes(field));
+                
+                // If there are no errors in step 1 fields, it means the only error is 'roles' (because it's empty)
+                // We can safely proceed to step 2.
+                if (!hasStep1Error) {
+                    step.value = 2;
+                    flippedCard.value = null;
+                }
+            },
+            onFinish: () => {
+                isValidatingStep1.value = false;
+            }
+        });
+    } else {
+        step.value = 2;
+        flippedCard.value = null;
+    }
 }
 
 function prevStep() {
@@ -186,6 +210,11 @@ function isFlipped(role: string) {
 }
 
 function handleError(errors: Record<string, string>) {
+    // If we are currently just validating step 1, suppress the generic toasts
+    if (isValidatingStep1.value) {
+        return;
+    }
+
     const step1Fields = ['name', 'username', 'email', 'phone', 'password', 'password_confirmation'];
     const hasStep1Error = Object.keys(errors).some(field => step1Fields.includes(field));
     
