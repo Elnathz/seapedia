@@ -20,6 +20,7 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
+import { toast } from 'vue-sonner';
 
 const props = defineProps<{
     passwordRules: string;
@@ -183,6 +184,22 @@ function selectRoleFromBack(role: string, event: Event) {
 function isFlipped(role: string) {
     return flippedCard.value === role;
 }
+
+function handleError(errors: Record<string, string>) {
+    const step1Fields = ['name', 'username', 'email', 'phone', 'password', 'password_confirmation'];
+    const hasStep1Error = Object.keys(errors).some(field => step1Fields.includes(field));
+    
+    if (hasStep1Error && step.value === 2) {
+        step.value = 1;
+        toast.error('Gagal membuat akun', {
+            description: 'Periksa kembali data Anda pada langkah 1.',
+        });
+    } else if (Object.keys(errors).length > 0) {
+        toast.error('Gagal membuat akun', {
+            description: 'Pastikan Anda telah memilih peran dengan benar.',
+        });
+    }
+}
 </script>
 
 <template>
@@ -196,6 +213,7 @@ function isFlipped(role: string) {
             v-slot="{ errors, processing }"
             :class="['flex flex-col gap-6', step === 2 && 'register-form-wide']"
             ref="formRef"
+            @error="handleError"
         >
             <!-- Step 1 -->
             <div v-show="step === 1" class="grid gap-5">
