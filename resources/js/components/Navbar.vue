@@ -285,7 +285,7 @@ start = currentTime;
                                 Kategori
                             </NavigationMenuTrigger>
                             <NavigationMenuContent>
-                                <div class="grid w-[34rem] grid-cols-2 gap-x-6 gap-y-4 p-5">
+                                <div class="grid w-136 grid-cols-2 gap-x-6 gap-y-4 p-5">
                                     <div v-for="root in categories.slice(0, 6)" :key="root.id" class="min-w-0">
                                         <NavigationMenuLink as-child>
                                             <Link :href="catalogUrl(root.slug)" class="block truncate text-sm font-semibold text-foreground transition-colors hover:text-primary">
@@ -293,7 +293,7 @@ start = currentTime;
                                             </Link>
                                         </NavigationMenuLink>
                                         <ul class="mt-1.5 space-y-1">
-                                            <li v-for="child in root.children.slice(0, 4)" :key="child.id">
+                                            <li v-for="child in root.children?.slice(0, 4)" :key="child.id">
                                                 <NavigationMenuLink as-child>
                                                     <Link :href="catalogUrl(child.slug)" class="block truncate text-sm text-muted-foreground transition-colors hover:text-primary">
                                                         {{ child.name }}
@@ -387,7 +387,7 @@ start = currentTime;
                 viewBox="0 0 1440 48"
                 fill="none"
                 preserveAspectRatio="none"
-                class="navbar-wave absolute inset-0 h-full w-[120%] -left-[10%] drop-shadow-sm"
+                class="navbar-wave absolute inset-0 h-full w-[120%] left-[-10%] drop-shadow-sm"
             >
                 <path
                     d="M0 0 L0 32 C240 48 480 8 720 32 C960 48 1200 8 1440 32 L1440 0 Z"

@@ -731,7 +731,7 @@ Potongan crop-nya yang trendi menjadikannya pasangan sejati bagi celana high-wai
                 $data['image_path'] = $this->generatePlaceholderImage();
             }
 
-            $product = $this->products->createForStore($store, $data, null);
+            $product = $this->products->createForStore($store, $data);
             
             if ($seedImages) {
                 $this->attachImagesToProduct($product, $seedImages);

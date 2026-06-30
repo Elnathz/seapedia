@@ -129,7 +129,9 @@ onMounted(() => {
     fetchProvinces();
 });
 
-const onProvinceChange = async (name: string) => {
+const onProvinceChange = async (val: any) => {
+    const name = val as string;
+    if (!name) return;
     emit('update:province', name);
     emit('update:city', '');
     emit('update:district', '');
@@ -145,7 +147,9 @@ const onProvinceChange = async (name: string) => {
     }
 };
 
-const onCityChange = async (name: string) => {
+const onCityChange = async (val: any) => {
+    const name = val as string;
+    if (!name) return;
     emit('update:city', name);
     emit('update:district', '');
     emit('update:village', '');
@@ -159,7 +163,9 @@ const onCityChange = async (name: string) => {
     }
 };
 
-const onDistrictChange = async (name: string) => {
+const onDistrictChange = async (val: any) => {
+    const name = val as string;
+    if (!name) return;
     emit('update:district', name);
     emit('update:village', '');
     villages.value = [];
@@ -171,7 +177,9 @@ const onDistrictChange = async (name: string) => {
     }
 };
 
-const onVillageChange = (name: string) => {
+const onVillageChange = (val: any) => {
+    const name = val as string;
+    if (!name) return;
     emit('update:village', name);
 };
 </script>
