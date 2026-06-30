@@ -97,21 +97,6 @@ const navGroups = computed<NavGroup[]>(() => {
             ]
         });
 
-        groups.push({
-            label: 'Belanja',
-            items: [
-                {
-                    title: 'Keranjang',
-                    href: indexBuyerCart.url(),
-                    icon: ShoppingCart,
-                },
-                {
-                    title: 'Daftar Alamat',
-                    href: indexBuyerAddresses.url(),
-                    icon: MapPin,
-                },
-            ]
-        });
 
         groups.push({
             label: 'Transaksi',

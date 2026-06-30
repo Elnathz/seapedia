@@ -30,7 +30,7 @@ const items = computed<NavItem[]>(() => {
 
     if (role === 'buyer') {
         return [
-            { title: 'Beranda', href: home(), icon: Home },
+            { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
             { title: 'Katalog', href: catalogIndex(), icon: Search },
             { title: 'Keranjang', href: cartIndex(), icon: ShoppingCart },
             { title: 'Profil', href: editProfile(), icon: User },
