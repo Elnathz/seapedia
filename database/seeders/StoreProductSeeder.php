@@ -36,9 +36,9 @@ $this->seedStore(
     products: [
         [
             'name' => 'ESQA Bitty Balm Stick Blush',
-            'description' => 'Blush on stik dari ESQA dengan pigmentasi yang intens dan formula yang mudah diblend.
+            'description' => 'Blush on stik eksklusif dari ESQA dengan pigmentasi yang intens dan formula creamy yang sangat mudah diaplikasikan serta diratakan pada kulit wajah. Diperkaya dengan kandungan pelembap premium untuk menjaga tekstur kulit tetap halus dan terhidrasi sepanjang hari tanpa membuatnya terasa berminyak.
 
-Memberikan hasil akhir natural dan bercahaya sepanjang hari.',
+Produk ini memberikan hasil akhir yang natural, merona, dan bercahaya, memastikan wajahmu selalu terlihat segar alami dari pagi hingga malam hari. Kemasannya yang praktis, mungil, dan elegan menjadikannya produk wajib di dalam tas makeup Anda, sangat cocok dibawa bepergian untuk kebutuhan touch-up kilat kapan pun diperlukan.',
             'price' => 69700,
             'stock' => 10,
             'category' => 'makeup-blush',
@@ -49,9 +49,9 @@ Memberikan hasil akhir natural dan bercahaya sepanjang hari.',
         ],
         [
             'name' => 'Maybelline Instant Age Rewind Eraser',
-            'description' => 'Concealer ikonik dari Maybelline, berfungsi untuk menyamarkan lingkaran hitam dan garis halus.
+            'description' => 'Concealer ikonik dari Maybelline yang sangat digemari, dirancang khusus untuk menyamarkan lingkaran hitam di bawah mata, kemerahan, serta garis halus dengan coverage yang luar biasa. Formulanya ringan dan tidak mudah creasing, menjadikannya andalan untuk tampilan wajah yang mulus dan bebas noda.
 
-Memiliki aplikator cushion yang mempermudah pengaplikasian.',
+Keunggulan utama concealer ini terletak pada aplikator cushion-nya yang inovatif, yang tidak hanya mempermudah pengaplikasian tetapi juga memberikan sensasi lembut pada kulit. Anda dapat menggunakannya sebagai concealer, highlighter, atau bahkan untuk contouring ringan, menjadikannya produk serbaguna untuk rutinitas makeup harian Anda.',
             'price' => 100215,
             'stock' => 15,
             'category' => 'makeup-concealer',
@@ -62,9 +62,9 @@ Memiliki aplikator cushion yang mempermudah pengaplikasian.',
         ],
         [
             'name' => 'Skintific Cover All Perfect Air Cushion',
-            'description' => 'Cushion full coverage dari Skintific. Menutupi noda hitam dan bekas jerawat dengan sempurna.
+            'description' => 'Cushion full coverage unggulan dari Skintific yang diformulasikan dengan teknologi inovatif untuk menutupi noda hitam, bekas jerawat, dan kemerahan dengan sempurna hanya dalam satu kali tepukan. Teksturnya yang ringan membuat kulit dapat bernapas, memberikan kenyamanan maksimal meskipun digunakan berlapis-lapis.
 
-Hasil akhir matte dan tahan lama, cocok untuk kulit berminyak.',
+Hasil akhirnya matte yang natural dan tahan lama, diformulasikan khusus untuk mengontrol sebum sehingga sangat cocok untuk pemilik kulit berminyak atau kombinasi. Selain itu, cushion ini juga diperkaya dengan kandungan skincare aktif yang turut merawat dan melindungi skin barrier Anda dari paparan polusi dan radikal bebas.',
             'price' => 128900,
             'stock' => 20,
             'category' => 'makeup-cushion',
@@ -75,9 +75,9 @@ Hasil akhir matte dan tahan lama, cocok untuk kulit berminyak.',
         ],
         [
             'name' => 'Barenbliss Lily Makes Luminous Glow Tint',
-            'description' => 'Liptint dengan finish glowing natural dari Barenbliss.
+            'description' => 'Liptint revolusioner dari Barenbliss yang menawarkan hasil akhir glowing natural, menciptakan ilusi bibir yang lebih bervolume, sehat, dan merona. Teksturnya yang ringan seperti air tidak akan terasa lengket, memberikan kenyamanan luar biasa bahkan jika digunakan seharian penuh.
 
-Memberikan warna yang cerah dan melembapkan bibir Anda sepanjang hari.',
+Diperkaya dengan perpaduan ekstrak bunga lili dan bahan pelembap alami, liptint ini memberikan hidrasi intensif, mencegah bibir pecah-pecah sekaligus mempertahankan warna yang cerah dan mempesona. Warnanya yang buildable memungkinkan Anda mengatur intensitas warna dari natural look hingga bold sesuai dengan mood dan gaya riasan Anda.',
             'price' => 65400,
             'stock' => 30,
             'category' => 'makeup-lip',
@@ -88,9 +88,9 @@ Memberikan warna yang cerah dan melembapkan bibir Anda sepanjang hari.',
         ],
         [
             'name' => 'Make Over Silky Smooth Translucent Powder',
-            'description' => 'Bedak tabur translucent dari Make Over. Mengontrol minyak berlebih dan menyamarkan pori-pori.
+            'description' => 'Bedak tabur translucent legendaris dari Make Over yang dirancang khusus untuk mengontrol produksi minyak berlebih di wajah, menjaga riasan Anda tetap segar dan tidak mengkilap selama berjam-jam. Partikel bedaknya yang sangat halus mampu menyamarkan pori-pori dan garis halus, menciptakan efek blur yang sempurna layaknya filter kamera.
 
-Hasil akhir matte dan halus, tahan lama tanpa membuat kulit kering.',
+Memberikan hasil akhir matte yang lembut, transparan, dan sangat menyatu dengan warna kulit asli Anda tanpa meninggalkan white cast atau mengubah warna foundation dasar. Formulanya yang ringan dan tidak menyumbat pori memastikan kulit tetap nyaman, tidak terasa kering, dan bebas kilap sepanjang hari.',
             'price' => 131700,
             'stock' => 25,
             'category' => 'makeup-powder',
@@ -109,9 +109,9 @@ $this->seedStore(
     products: [
         [
             'name' => 'Maybelline Instant Age Rewind Eraser',
-            'description' => 'Concealer ikonik dari Maybelline dengan packaging original.
+            'description' => 'Concealer ikonik dari Maybelline yang sangat digemari, dirancang khusus untuk menyamarkan lingkaran hitam di bawah mata, kemerahan, serta garis halus dengan coverage yang luar biasa. Formulanya ringan dan tidak mudah creasing, menjadikannya andalan untuk tampilan wajah yang mulus dan bebas noda.
 
-Cocok untuk mencerahkan area bawah mata dan menutupi ketidaksempurnaan wajah.',
+Keunggulan utama concealer ini terletak pada aplikator cushion-nya yang inovatif, yang tidak hanya mempermudah pengaplikasian tetapi juga memberikan sensasi lembut pada kulit. Anda dapat menggunakannya sebagai concealer, highlighter, atau bahkan untuk contouring ringan, menjadikannya produk serbaguna untuk rutinitas makeup harian Anda.',
             'price' => 115000,
             'stock' => 12,
             'category' => 'makeup-concealer',
@@ -122,9 +122,9 @@ Cocok untuk mencerahkan area bawah mata dan menutupi ketidaksempurnaan wajah.',
         ],
         [
             'name' => 'Skintific Cover All Perfect Air Cushion',
-            'description' => 'Skintific Cover All Perfect Air Cushion.
+            'description' => 'Cushion full coverage unggulan dari Skintific yang diformulasikan dengan teknologi inovatif untuk menutupi noda hitam, bekas jerawat, dan kemerahan dengan sempurna hanya dalam satu kali tepukan. Teksturnya yang ringan membuat kulit dapat bernapas, memberikan kenyamanan maksimal meskipun digunakan berlapis-lapis.
 
-Cushion dengan coverage tinggi dan tahan lama. Praktis digunakan sehari-hari untuk hasil yang flawless.',
+Hasil akhirnya matte yang natural dan tahan lama, diformulasikan khusus untuk mengontrol sebum sehingga sangat cocok untuk pemilik kulit berminyak atau kombinasi. Selain itu, cushion ini juga diperkaya dengan kandungan skincare aktif yang turut merawat dan melindungi skin barrier Anda dari paparan polusi dan radikal bebas.',
             'price' => 135000,
             'stock' => 18,
             'category' => 'makeup-cushion',
@@ -135,9 +135,9 @@ Cushion dengan coverage tinggi dan tahan lama. Praktis digunakan sehari-hari unt
         ],
         [
             'name' => 'Make Over Silky Smooth Translucent Powder',
-            'description' => 'Make Over Silky Smooth Translucent Powder.
+            'description' => 'Bedak tabur translucent legendaris dari Make Over yang dirancang khusus untuk mengontrol produksi minyak berlebih di wajah, menjaga riasan Anda tetap segar dan tidak mengkilap selama berjam-jam. Partikel bedaknya yang sangat halus mampu menyamarkan pori-pori dan garis halus, menciptakan efek blur yang sempurna layaknya filter kamera.
 
-Memberikan hasil akhir matte yang halus. Sempurna untuk mengeset makeup agar lebih tahan lama.',
+Memberikan hasil akhir matte yang lembut, transparan, dan sangat menyatu dengan warna kulit asli Anda tanpa meninggalkan white cast atau mengubah warna foundation dasar. Formulanya yang ringan dan tidak menyumbat pori memastikan kulit tetap nyaman, tidak terasa kering, dan bebas kilap sepanjang hari.',
             'price' => 136700,
             'stock' => 22,
             'category' => 'makeup-powder',
@@ -156,9 +156,9 @@ $this->seedStore(
     products: [
         [
             'name' => 'Merida Road Bike Reacto 5000',
-            'description' => 'Sepeda balap Merida Reacto 5000. Didesain untuk aerodinamika maksimal dan kecepatan tinggi.
+            'description' => 'Sepeda balap kelas atas Merida Reacto 5000 yang diciptakan khusus untuk para pecinta kecepatan dan performa maksimal di jalan raya. Didesain dengan geometri aerodinamis yang canggih, sepeda ini mampu membelah angin dengan efisiensi tinggi, mengurangi hambatan secara signifikan sehingga Anda dapat melaju lebih kencang dengan upaya yang lebih efisien.
 
-Material frame carbon ringan, cocok untuk kompetisi dan latihan jarak jauh.',
+Dibangun menggunakan material frame full carbon yang sangat ringan namun memiliki tingkat kekakuan (stiffness) yang luar biasa, memberikan responsivitas seketika pada setiap kayuhan pedal. Sepeda ini adalah pilihan sempurna bagi Anda yang ingin mendominasi lintasan balap, kompetisi serius, maupun untuk sesi latihan jarak jauh yang menuntut performa puncak.',
             'price' => 27499500,
             'stock' => 2,
             'category' => 'sepeda-road',
@@ -169,9 +169,9 @@ Material frame carbon ringan, cocok untuk kompetisi dan latihan jarak jauh.',
         ],
         [
             'name' => 'Polygon Bend R2 Gravel Urban',
-            'description' => 'Sepeda gravel Polygon Bend R2. Nyaman digunakan di jalan raya maupun medan semi-offroad.
+            'description' => 'Sepeda gravel serbaguna Polygon Bend R2 yang dirancang untuk menaklukkan berbagai medan, mulai dari mulusnya aspal jalan raya hingga kasarnya jalur semi-offroad dan bebatuan ringan. Geometrinya difokuskan pada kenyamanan pengendara (endurance geometry), memungkinkan Anda bersepeda berjam-jam tanpa merasa kelelahan yang berlebihan di area punggung dan bahu.
 
-Cocok untuk touring, commuting, dan petualangan di berbagai medan.',
+Dilengkapi dengan ban tapak lebar yang menyerap getaran dan memberikan traksi maksimal di medan licin maupun berpasir. Sepeda ini sangat cocok untuk aktivitas touring jarak jauh, bike packing, commuting harian, hingga sekadar petualangan akhir pekan mengeksplorasi rute-rute baru di pinggiran kota.',
             'price' => 5500000,
             'stock' => 5,
             'category' => 'sepeda-urban',
@@ -182,9 +182,9 @@ Cocok untuk touring, commuting, dan petualangan di berbagai medan.',
         ],
         [
             'name' => 'Sepeda Thrill Oust 1.0 27.5"',
-            'description' => 'Sepeda gunung Thrill Oust 1.0 ukuran 27.5 inci. Sangat tangguh untuk melibas medan off-road sedang.
+            'description' => 'Sepeda gunung (MTB) Thrill Oust 1.0 dengan ukuran roda 27.5 inci yang menawarkan keseimbangan sempurna antara kelincahan bermanuver dan kemampuan melibas rintangan. Suspensinya dirancang tangguh untuk meredam guncangan di medan off-road tingkat sedang, memberikan kenyamanan maksimal saat melewati bebatuan dan jalanan bergelombang.
 
-Tersedia dalam beberapa varian warna yang menarik.',
+Frame-nya terbuat dari material alloy yang kokoh namun cukup ringan untuk bermanuver lincah di jalur trail, dipadukan dengan sistem pengereman cakram yang responsif untuk keamanan optimal di segala kondisi cuaca. Hadir dalam berbagai varian warna yang sporty dan dinamis, menjadikannya pilihan favorit bagi penggemar petualangan alam terbuka.',
             'price' => 4449000,
             'stock' => 8,
             'category' => 'sepeda-mtb',
@@ -200,9 +200,9 @@ Tersedia dalam beberapa varian warna yang menarik.',
         ],
         [
             'name' => 'Polygon Indonesia Bisa',
-            'description' => 'Sepeda gunung Polygon Indonesia Bisa.
+            'description' => 'Sepeda gunung edisi spesial Polygon Indonesia Bisa yang merepresentasikan semangat juang dan kualitas produk karya anak bangsa. Dirancang dengan suspensi empuk dan travel yang mumpuni, sepeda ini sangat handal untuk menaklukkan jalur trail yang menantang, medan enduro, hingga jalanan berbatu dengan penuh percaya diri.
 
-Memiliki suspensi yang empuk, cocok untuk menghadapi jalur trail dan enduro dengan percaya diri.',
+Material framenya yang solid dirancang untuk daya tahan jangka panjang, memastikan performa yang konsisten meskipun sering digunakan di medan ekstrem. Ergonomi stang dan sadelnya juga telah disesuaikan dengan postur tubuh pesepeda Asia, menjamin kenyamanan ekstra saat menanjak curam maupun saat turunan cepat.',
             'price' => 3750000,
             'stock' => 4,
             'category' => 'sepeda-mtb',
@@ -221,9 +221,9 @@ $this->seedStore(
     products: [
         [
             'name' => 'Panasonic Lumix FZ80D',
-            'description' => 'Kamera digital Panasonic Lumix FZ80D dengan zoom optik tinggi.
+            'description' => 'Kamera digital prosumer Panasonic Lumix FZ80D yang luar biasa, mengandalkan fitur zoom optik super tinggi yang memungkinkan Anda menangkap objek jarak jauh dengan detail yang mencengangkan. Lensa ultra-wide hingga super-telephotonya menjadikan kamera ini senjata andalan untuk fotografi satwa liar, dokumentasi olahraga, hingga mengabadikan momen berharga saat traveling.
 
-Sangat ideal untuk fotografi satwa liar, olahraga, dan traveling berkat lensa yang fleksibel.',
+Selain kemampuan fotonya yang brilian, kamera ini juga mendukung perekaman video beresolusi 4K yang tajam dan mulus, ideal untuk vlogging maupun pembuatan konten sinematik. Desain bodinya yang ergonomis ala DSLR memberikan grip yang mantap, sementara fitur stabilisasi gambarnya memastikan hasil foto tetap tajam meskipun Anda memotret tanpa bantuan tripod.',
             'price' => 6999000,
             'stock' => 3,
             'category' => 'kamera',
@@ -234,9 +234,9 @@ Sangat ideal untuk fotografi satwa liar, olahraga, dan traveling berkat lensa ya
         ],
         [
             'name' => 'SteelSeries Apex Pro TKL Wireless Gen 3',
-            'description' => 'Keyboard gaming wireless tenkeyless dari SteelSeries.
+            'description' => 'Keyboard gaming wireless tenkeyless (TKL) revolusioner dari SteelSeries yang mendefinisikan ulang kecepatan dan presisi. Dilengkapi dengan switch mekanikal OmniPoint 2.0 generasi terbaru yang memungkinkan Anda menyesuaikan tingkat aktuasi pada setiap tombol secara individual, mulai dari sentuhan paling ringan untuk kecepatan maksimal hingga tekanan dalam untuk akurasi mengetik.
 
-Dilengkapi dengan switch OmniPoint 2.0 yang dapat disesuaikan tingkat aktuasinya untuk performa maksimal.',
+Konektivitas nirkabelnya yang bebas lag menjamin respons seketika tanpa gangguan kabel, menciptakan setup meja yang bersih dan minimalis. Dengan rangka aluminium aircraft-grade yang sangat kokoh, layar OLED pintar untuk notifikasi sistem, dan pencahayaan RGB per-tombol yang memukau, keyboard ini adalah investasi wajib bagi para gamer profesional dan enthusiast sejati.',
             'price' => 3299000,
             'stock' => 6,
             'category' => 'keyboard',
@@ -247,9 +247,9 @@ Dilengkapi dengan switch OmniPoint 2.0 yang dapat disesuaikan tingkat aktuasinya
         ],
         [
             'name' => 'iPhone 17 (Black)',
-            'description' => 'Smartphone terbaru dari Apple dengan chipset tercanggih.
+            'description' => 'Smartphone flagship terbaru dari Apple yang membawa standar inovasi ke level yang lebih tinggi. Ditenagai oleh chipset Apple generasi paling mutakhir, perangkat ini menawarkan performa komputasi luar biasa yang mampu melibas segala aplikasi berat, rendering video 4K, hingga game dengan grafis AAA tanpa hambatan sedikit pun.
 
-Desain elegan dengan layar Super Retina XDR yang cerah dan sistem kamera mutakhir.',
+Desainnya tetap mempertahankan siluet elegan khas Apple dengan material kaca dan aluminium premium yang kokoh, dibalut dalam warna Black yang klasik dan misterius. Layar Super Retina XDR-nya menampilkan warna yang sangat akurat, kontras tak terhingga, dan kecerahan puncak yang menakjubkan, memberikan pengalaman visual paling imersif baik di dalam ruangan maupun di bawah terik matahari.',
             'price' => 17000000,
             'stock' => 10,
             'category' => 'smartphone',
@@ -260,9 +260,9 @@ Desain elegan dengan layar Super Retina XDR yang cerah dan sistem kamera mutakhi
         ],
         [
             'name' => 'iPhone 17 (White)',
-            'description' => 'Apple iPhone 17 dengan varian warna White.
+            'description' => 'Apple iPhone 17 varian warna White yang tampil sangat bersih, minimalis, dan memancarkan aura kemewahan yang tak lekang oleh waktu. Smartphone ini tidak hanya unggul dalam segi desain, tetapi juga membawa sistem kamera ganda yang telah ditingkatkan secara signifikan untuk menghasilkan foto low-light yang jernih dan video sinematik dengan stabilisasi kelas pro.
 
-Memberikan kesan mewah dan bersih, dengan performa tinggi yang tak tertandingi.',
+Performa tinggi yang tak tertandingi di kelasnya didukung oleh efisiensi daya baterai yang luar biasa, memastikan Anda tetap terhubung, produktif, dan terhibur sepanjang hari penuh hanya dalam satu kali pengisian daya. Ekosistem iOS yang mulus dan fitur privasi tingkat lanjut menjadikan iPhone 17 perangkat pintar yang aman dan menyenangkan untuk digunakan sehari-hari.',
             'price' => 17499000,
             'stock' => 8,
             'category' => 'smartphone',
@@ -281,9 +281,9 @@ $this->seedStore(
     products: [
         [
             'name' => 'iPhone 17 Pro Max',
-            'description' => 'Seri flagship dari Apple iPhone 17 Pro Max.
+            'description' => 'Seri flagship tertinggi dan paling bergengsi dari Apple, iPhone 17 Pro Max. Hadir dengan layar OLED berukuran masif yang menawarkan pengalaman visual paling imersif, mendukung refresh rate tinggi ProMotion untuk pergerakan antarmuka yang sangat mulus, responsif, dan memanjakan mata Anda.
 
-Layar besar yang imersif, material titanium premium, dan daya tahan baterai terbaik.',
+Dibingkai dengan material titanium aerospace-grade yang tidak hanya memberikan tampilan ultra-premium, tetapi juga membuatnya lebih ringan dan jauh lebih tangguh terhadap goresan maupun benturan. Sistem kamera Pro-nya menawarkan rentang zoom optik terpanjang yang pernah ada di iPhone, kemampuan merekam video ProRes profesional, serta daya tahan baterai paling awet yang menjadikannya perangkat pamungkas bagi para profesional, kreator konten, dan tech enthusiast.',
             'price' => 25000000,
             'stock' => 15,
             'category' => 'smartphone',
@@ -301,9 +301,9 @@ Layar besar yang imersif, material titanium premium, dan daya tahan baterai terb
         ],
         [
             'name' => 'Gantungan HP Inisial Liontin',
-            'description' => 'Aksesoris gantungan HP lucu dengan inisial liontin.
+            'description' => 'Aksesoris gantungan HP super lucu dan estetis yang dilengkapi dengan inisial liontin elegan, memberikan sentuhan personalisasi unik pada ponsel kesayangan Anda. Desainnya yang manis dengan manik-manik berkualitas membuatnya tidak hanya sekadar aksesoris, tetapi juga fashion statement yang menarik perhatian.
 
-Bisa juga digunakan sebagai gantungan kunci atau flashdisk.',
+Selain digunakan untuk mempercantik smartphone, gantungan ini sangat multifungsi dan kokoh, sehingga bisa juga Anda fungsikan sebagai gantungan kunci mobil, penghias tas punggung, maupun penanda flashdisk agar tidak mudah hilang. Cocok dijadikan hadiah berkesan untuk sahabat atau orang terkasih pada momen-momen spesial.',
             'price' => 4500,
             'stock' => 100,
             'category' => 'aksesoris-hp',
@@ -314,9 +314,9 @@ Bisa juga digunakan sebagai gantungan kunci atau flashdisk.',
         ],
         [
             'name' => 'Gantungan Tali HP Motif Branded Lanyard',
-            'description' => 'Lanyard tali HP motif branded universal.
+            'description' => 'Lanyard tali HP bergaya premium dengan motif branded universal yang memancarkan kesan mewah dan stylish saat dikalungkan. Material talinya ditenun dari bahan nilon berkualitas tinggi yang sangat lembut di kulit leher, tidak membuat gatal, dan tidak mudah berserabut meskipun digunakan setiap hari.
 
-Sangat berguna agar HP tidak mudah jatuh dan praktis dibawa kemana-mana.',
+Sangat praktis dan fungsional untuk menjaga smartphone Anda agar tidak mudah jatuh atau hilang saat berada di keramaian, konser, maupun saat traveling. Dilengkapi dengan ring holder yang kuat dan pengait metal anti-karat, menjamin keamanan perangkat Anda sekaligus memberikan kemudahan akses saat ingin memotret dengan cepat.',
             'price' => 6110,
             'stock' => 80,
             'category' => 'aksesoris-hp',
@@ -327,9 +327,9 @@ Sangat berguna agar HP tidak mudah jatuh dan praktis dibawa kemana-mana.',
         ],
         [
             'name' => 'Gantungan HP Aesthetic Girl Lonceng',
-            'description' => 'Gantungan HP, tas, atau kunci dengan lonceng yang aesthetic.
+            'description' => 'Gantungan HP dengan desain ala Korea yang sangat aesthetic, menampilkan figur seri \'girl\' dipadukan dengan lonceng kecil yang akan bergemerincing manis setiap kali Anda bergerak. Detail pembuatannya sangat rapi dengan pemilihan warna-warna pastel yang menenangkan dan menggemaskan.
 
-Sangat cocok untuk kado atau pemakaian pribadi yang menggemaskan.',
+Ukurannya yang pas tidak akan membuat smartphone Anda terasa berat, namun cukup menonjol untuk memberikan aksen lucu. Sangat direkomendasikan untuk koleksi pribadi remaja putri maupun sebagai kado ulang tahun yang unik, bisa digantungkan pada pouch kosmetik, tas sekolah, hingga kunci kamar Anda.',
             'price' => 7999,
             'stock' => 60,
             'category' => 'aksesoris-hp',
@@ -340,9 +340,9 @@ Sangat cocok untuk kado atau pemakaian pribadi yang menggemaskan.',
         ],
         [
             'name' => 'Holder HP Motor Universal GUB',
-            'description' => 'Bracket holder HP GPS GUB untuk motor.
+            'description' => 'Bracket holder HP GUB premium yang dirancang khusus untuk memenuhi mobilitas tinggi para pengendara motor, baik untuk kegiatan touring jarak jauh maupun para pekerja ojek online. Terbuat dari material aluminium alloy CNC yang sangat solid, anti-karat, dan tidak akan patah meskipun terkena guncangan hebat di jalanan berlubang.
 
-Kuat dan aman untuk dipasang pada stang motor, cocok untuk perjalanan jauh dan kurir.',
+Desain clamp-nya dilengkapi dengan bantalan silikon tebal yang akan mencengkeram smartphone Anda dengan sangat kuat dari empat sisi, memastikan HP tidak akan terlepas tanpa menggores bodinya. Model universal ini kompatibel dengan hampir semua ukuran smartphone modern dan dapat dipasang dengan mudah pada berbagai jenis stang motor bebek, matic, hingga sport.',
             'price' => 68310,
             'stock' => 40,
             'category' => 'aksesoris-hp',
@@ -361,9 +361,9 @@ $this->seedStore(
     products: [
         [
             'name' => 'Sania Beras Premium 5 Kg',
-            'description' => 'Beras Sania Premium kualitas terbaik. Butiran beras utuh, putih bersih, dan pulen saat dimasak.
+            'description' => 'Beras Sania Premium kualitas ekspor yang diproses menggunakan teknologi modern untuk menghasilkan butiran beras utuh yang putih bersih, bebas dari kerikil maupun gabah. Aroma alaminya yang segar menandakan beras ini baru digiling dan diproses tanpa menggunakan bahan pemutih atau pengawet kimia berbahaya.
 
-Cocok untuk konsumsi harian keluarga Anda.',
+Saat dimasak, beras ini menghasilkan tekstur nasi yang sangat pulen, tidak mudah basi, dan tidak lengket berlebihan, menjadikannya kanvas sempurna untuk berbagai lauk pauk Nusantara. Kemasan 5 Kg ini adalah pilihan paling ideal untuk memenuhi kebutuhan konsumsi harian keluarga Anda, menjamin hidangan yang nikmat di setiap suapan.',
             'price' => 85000,
             'stock' => 50,
             'category' => 'beras',
@@ -374,9 +374,9 @@ Cocok untuk konsumsi harian keluarga Anda.',
         ],
         [
             'name' => 'Beras BMW Pandan Wangi 5 KG',
-            'description' => 'Beras BMW Pandan Wangi. Harum alami dan pulen, sangat menggugah selera makan.
+            'description' => 'Beras spesial BMW Pandan Wangi asli yang terkenal dengan aroma daun pandan alami yang sangat khas dan menggugah selera bahkan sejak saat beras baru mulai ditanak. Kualitas berasnya terjamin putih bersih, terbebas dari hama kutu, dan dijamin 100% tanpa menggunakan esens buatan maupun pewangi sintetis.
 
-Bebas pemutih dan pengawet, aman dikonsumsi.',
+Tekstur nasinya yang pulen sempurna dan sedikit lengket membuatnya sangat cocok disajikan hangat-hangat bersama lauk sederhana sekalipun. Sangat aman dan sehat untuk dikonsumsi setiap hari oleh anak-anak maupun orang dewasa, memberikan pengalaman makan malam keluarga yang lebih istimewa.',
             'price' => 62500,
             'stock' => 45,
             'category' => 'beras',
@@ -387,9 +387,9 @@ Bebas pemutih dan pengawet, aman dikonsumsi.',
         ],
         [
             'name' => 'Beras Sunrise 10 KG',
-            'description' => 'Beras Sunrise ukuran besar 10 KG. Lebih hemat untuk keluarga besar.
+            'description' => 'Beras Sunrise ukuran ekonomis 10 KG yang dirancang untuk keluarga besar, bisnis katering skala kecil, maupun untuk keperluan donasi yang membutuhkan kuantitas banyak tanpa mengorbankan kualitas. Berasnya berukuran seragam, putih bersih, dan telah melewati proses penyaringan ketat untuk meminimalisir persentase beras patah (broken rice).
 
-Beras putih bersih, pulen, dan cocok untuk berbagai olahan nasi.',
+Nasi yang dihasilkan memiliki tingkat kepulenan sedang yang pas, tidak terlalu lembek, sehingga sangat cocok untuk diolah menjadi berbagai menu seperti nasi goreng, nasi uduk, maupun nasi kuning. Pilihan cerdas bagi Anda yang mencari beras dengan value for money terbaik untuk kebutuhan konsumsi jangka panjang.',
             'price' => 120000,
             'stock' => 30,
             'category' => 'beras',
@@ -400,9 +400,9 @@ Beras putih bersih, pulen, dan cocok untuk berbagai olahan nasi.',
         ],
         [
             'name' => 'Indomie Mix Rasa 1 Dus (40 pcs)',
-            'description' => 'Indomie campur rasa dalam 1 kardus isi 40 pcs.
+            'description' => 'Paket komplit Indomie Mix Rasa dalam 1 kardus besar berisi 40 bungkus yang menawarkan petualangan rasa tak terbatas. Di dalamnya terdapat campuran berbagai varian rasa favorit yang dipilih secara acak, mulai dari rasa kuah yang menyegarkan hingga mie goreng yang gurih menggoda, memberikan kejutan nikmat di setiap bungkusnya.
 
-Pilihan praktis untuk Anda yang suka berbagai rasa dari Indomie kesayangan.',
+Pilihan paling praktis bagi Anda, keluarga, atau anak kos yang mudah bosan dengan satu rasa saja. Dengan paket mix ini, Anda selalu memiliki variasi menu mie instan yang siap menemani momen begadang mengerjakan tugas, bersantai di akhir pekan, atau sebagai penyelamat lapar di tengah malam hujan.',
             'price' => 150000,
             'stock' => 20,
             'category' => 'mie-instan',
@@ -413,9 +413,9 @@ Pilihan praktis untuk Anda yang suka berbagai rasa dari Indomie kesayangan.',
         ],
         [
             'name' => 'Indomie Goreng 1 Karton 40 pcs',
-            'description' => 'Mie Goreng legendaris dari Indomie. 1 kardus isi 40 bungkus.
+            'description' => 'Mie Goreng instan legendaris dari Indomie yang kepopulerannya telah diakui tak hanya di Indonesia, tetapi juga di kancah internasional. 1 kardus berisi 40 bungkus, menawarkan kenikmatan rasa original yang memadukan bumbu gurih, minyak bawang yang wangi, saus cabai pedas manis, dan kecap manis kental yang tak tertandingi.
 
-Rasa original yang tak tertandingi dan disukai seluruh masyarakat.',
+Tekstur mienya yang kenyal dan pas berpadu sempurna dengan taburan bawang goreng renyah, menciptakan harmoni rasa yang selalu bikin rindu. Membeli dalam kemasan karton adalah solusi paling cerdas dan hemat untuk stok bulanan rumah tangga, bekal darurat, maupun hidangan cepat saji saat teman-teman berkunjung.',
             'price' => 150000,
             'stock' => 25,
             'category' => 'mie-instan',
@@ -426,9 +426,9 @@ Rasa original yang tak tertandingi dan disukai seluruh masyarakat.',
         ],
         [
             'name' => 'Indomie Soto Mie 1 Kardus 40 pcs',
-            'description' => 'Indomie kuah rasa Soto Mie, sangat nikmat disantap saat hujan.
+            'description' => 'Varian mie kuah terfavorit dari Indomie, rasa Soto Mie yang sangat otentik dan menyegarkan. Kemasan 1 kardus isi 40 bungkus ini siap menghangatkan suasana, dengan perpaduan kaldu soto yang kaya rempah, aroma jeruk nipis yang khas, dan tekstur mie yang lembut namun tidak mudah lembek.
 
-1 kardus isi 40 bungkus untuk persediaan harian.',
+Sensasi hangat dan gurihnya menjadikannya comfort food sejati, sangat nikmat disantap saat cuaca sedang hujan, cuaca dingin, atau saat Anda sedang kurang enak badan. Dilengkapi dengan serbuk koya yang gurih, semangkuk Indomie Soto Mie panas adalah jaminan mood booster yang praktis untuk persediaan harian Anda.',
             'price' => 146000,
             'stock' => 18,
             'category' => 'mie-instan',
@@ -439,9 +439,9 @@ Rasa original yang tak tertandingi dan disukai seluruh masyarakat.',
         ],
         [
             'name' => 'Ransum TNI Set Darurat',
-            'description' => 'Paket Ransum TNI Darurat. Praktis dan memiliki nilai gizi tinggi.
+            'description' => 'Paket Ransum Makanan Darurat standar militer (TNI) yang dirancang khusus untuk bertahan dalam kondisi paling ekstrem sekalipun. Ransum ini diproses menggunakan teknologi sterilisasi tingkat tinggi sehingga dapat disimpan dalam jangka waktu yang sangat lama tanpa memerlukan pendingin, namun tetap aman dan higienis untuk dikonsumsi.
 
-Cocok untuk kegiatan survival, hiking, atau persediaan dalam keadaan darurat.',
+Setiap paketnya mengandung asupan kalori dan nutrisi makro yang padat, dirancang untuk memulihkan energi dengan cepat setelah aktivitas fisik berat. Selain menjadi perlengkapan wajib bagi pecinta kegiatan outdoor, survival, dan pendakian gunung, ransum ini juga merupakan elemen krusial untuk disimpan di rumah sebagai persiapan mitigasi bencana alam atau keadaan darurat.',
             'price' => 58500,
             'stock' => 40,
             'category' => 'makanan-berat',
@@ -452,9 +452,9 @@ Cocok untuk kegiatan survival, hiking, atau persediaan dalam keadaan darurat.',
         ],
         [
             'name' => 'Kopi Luwak White Koffie 9 Sachet',
-            'description' => 'Kopi Luwak White Koffie, nikmat dan ramah di lambung.
+            'description' => 'Kopi instan Luwak White Koffie yang pelopor kopi putih di Indonesia, terkenal dengan cita rasanya yang sangat creamy, manis yang pas, dan aroma kopi yang menggoda tanpa meninggalkan rasa asam. Melalui proses pemanggangan khusus, kopi ini diklaim lebih ramah dan aman bagi lambung, cocok untuk Anda yang sensitif terhadap kopi hitam biasa.
 
-1 renceng isi 9 sachet, siap diseduh kapan saja.',
+Kemasan praktis 1 renceng berisi 9 sachet ini sangat mudah diseduh, baik menggunakan air panas untuk kehangatan pagi maupun disajikan dingin dengan es batu untuk menyegarkan siang hari Anda. Solusi ngopi nikmat yang ekonomis untuk menemani aktivitas bekerja atau bersantai di rumah.',
             'price' => 20210,
             'stock' => 60,
             'category' => 'kopi',
@@ -465,9 +465,9 @@ Cocok untuk kegiatan survival, hiking, atau persediaan dalam keadaan darurat.',
         ],
         [
             'name' => 'Kopi Arabika Gayo Super Premium 200g',
-            'description' => 'Biji/Bubuk Kopi Arabika Gayo Super Premium dari AZA Coffee and Roastery.
+            'description' => 'Kopi Arabika Gayo Super Premium persembahan AZA Coffee and Roastery, dipanen langsung dari dataran tinggi Gayo, Aceh, yang tersohor akan kualitas biji kopinya di mata dunia. Biji kopi ini diseleksi dengan sangat ketat (Grade 1) dan di-roasting oleh roaster berpengalaman untuk mengeluarkan potensi rasa terbaiknya secara maksimal.
 
-Aroma kuat dan cita rasa khas Aceh Gayo yang otentik.',
+Menawarkan profil rasa yang sangat kompleks dengan body yang tebal, aroma rempah yang eksotis, tingkat keasaman (acidity) yang rendah, serta hint rasa cokelat dan karamel yang membekas lama di lidah (long aftertaste). Tersedia dalam bentuk biji utuh maupun bubuk, kopi ini adalah mahakarya bagi para penikmat kopi sejati yang menghargai cita rasa otentik.',
             'price' => 81960,
             'stock' => 35,
             'category' => 'kopi',
@@ -482,9 +482,9 @@ Aroma kuat dan cita rasa khas Aceh Gayo yang otentik.',
         ],
         [
             'name' => 'Kopi Tubruk Gadjah Asli 138 Gr',
-            'description' => 'Kopi Tubruk Gadjah. Cita rasa kopi hitam pekat khas warung kopi Nusantara.
+            'description' => 'Kopi Tubruk Gadjah Asli yang membawa Anda kembali bernostalgia pada cita rasa kopi hitam pekat ala warung kopi tradisional Nusantara yang legendaris. Dibuat dari perpaduan biji kopi robusta pilihan yang digiling halus, menghasilkan aroma kopi tubruk yang tajam, kuat, dan langsung membangkitkan semangat sejak hirupan pertama.
 
-Kemasan ekonomis yang mudah disajikan.',
+Rasanya yang bold dan otentik sangat pas dinikmati tanpa gula bagi para purist, atau ditambahkan susu kental manis untuk sensasi ngopi yang lebih santai. Kemasan pouch ekonomis 138 gram ini dirancang untuk menjaga kesegaran bubuk kopi, memudahkan Anda menyajikan secangkir kopi hitam mantap kapan pun Anda inginkan.',
             'price' => 18700,
             'stock' => 55,
             'category' => 'kopi',
@@ -495,9 +495,9 @@ Kemasan ekonomis yang mudah disajikan.',
         ],
         [
             'name' => 'Nescafé Classic Bag 90g',
-            'description' => 'Nescafe Classic Instan 90 gram. Kopi hitam murni tanpa ampas.
+            'description' => 'Nescafé Classic Instan dalam kemasan pouch 90 gram, menyajikan 100% kopi murni tanpa campuran ampas yang diekstrak secara sempurna untuk mempertahankan aroma kuat khas Nescafe. Teknologi pengolahannya memastikan bubuk kopi ini sangat mudah larut secara instan, bahkan ketika diseduh langsung menggunakan air dingin tanpa menggumpal.
 
-Mudah larut bahkan dengan air dingin.',
+Fleksibilitasnya menjadikannya bahan dasar yang sempurna untuk berbagai kreasi minuman kopi ala kafe, seperti dalgona coffee, es kopi susu gula aren, maupun sekadar secangkir kopi hitam murni untuk memulai hari. Kemasan zip-lock-nya sangat praktis untuk menjaga aroma kopi tetap kuat meskipun sudah dibuka berulang kali.',
             'price' => 51000,
             'stock' => 45,
             'category' => 'kopi',
@@ -516,9 +516,9 @@ $this->seedStore(
     products: [
         [
             'name' => 'Deli Household Tool Set 112 Pcs',
-            'description' => 'Set perkakas rumah tangga lengkap dari Deli, terdiri dari 112 buah alat multifungsi.
+            'description' => 'Set perkakas rumah tangga ultra-komplit dari merek ternama Deli, menghadirkan koleksi 112 buah alat multifungsi berkualitas tinggi dalam satu genggaman. Set ini mencakup berbagai jenis tang, palu, obeng presisi, kunci inggris, meteran, hingga set mata bor dan baut, semuanya terbuat dari baja karbon kokoh yang anti-karat dan tahan lama.
 
-Semua yang Anda butuhkan untuk perbaikan di rumah tersedia dalam satu koper praktis.',
+Seluruh perkakas tersimpan rapi dalam sebuah koper penyimpanan (hard case) yang didesain ergonomis, memastikan setiap alat memiliki slot khususnya sendiri agar tidak berserakan dan mudah ditemukan saat dibutuhkan. Set ini adalah investasi seumur hidup yang wajib dimiliki setiap rumah untuk menangani segala jenis perbaikan, perakitan furnitur, maupun proyek DIY Anda.',
             'price' => 1805000,
             'stock' => 10,
             'category' => 'perkakas',
@@ -529,9 +529,9 @@ Semua yang Anda butuhkan untuk perbaikan di rumah tersedia dalam satu koper prak
         ],
         [
             'name' => 'Tekiro Mechanic Tools Set SC-MT0626',
-            'description' => 'Set alat mekanik dari Tekiro SC-MT0626. Kualitas industri yang tangguh.
+            'description' => 'Set alat mekanik profesional SC-MT0626 persembahan Tekiro yang reputasinya tak perlu diragukan lagi di dunia otomotif dan industri. Dibuat menggunakan material Chrome Vanadium (Cr-V) berkualitas tinggi yang terkenal akan kekuatannya yang luar biasa terhadap torsi tinggi, tidak mudah slek, dan tahan karat untuk penggunaan puluhan tahun.
 
-Sangat ideal untuk bengkel maupun mekanik rumahan.',
+Set ini berisikan kunci pas, kunci ring, soket, dan tuas rachet dengan tingkat presisi yang sangat akurat, meminimalisir risiko rusaknya kepala baut kendaraan Anda. Dikemas dalam box besi yang solid dan kokoh, set alat ini sangat ideal untuk menjadi andalan di bengkel profesional maupun untuk mekanik rumahan yang hobi mengoprek mesin.',
             'price' => 1050000,
             'stock' => 8,
             'category' => 'perkakas',
@@ -542,9 +542,9 @@ Sangat ideal untuk bengkel maupun mekanik rumahan.',
         ],
         [
             'name' => 'Tactix Set 26 Pcs Perkakas Rumah Tangga',
-            'description' => 'Set alat pertukangan Tactix 26 Pcs.
+            'description' => 'Set perkakas esensial 26 Pcs dari Tactix yang dirancang dengan mengedepankan kepraktisan dan mobilitas untuk kebutuhan perbaikan ringan sehari-hari. Desain setiap gagang perkakasnya sangat ergonomis, dilapisi karet anti-slip yang nyaman digenggam, sehingga meminimalisir kelelahan tangan saat digunakan untuk waktu yang lama.
 
-Ringkas, praktis, dan esensial untuk kebutuhan perbaikan ringan.',
+Set ringkas ini berisi peralatan paling umum yang sering dibutuhkan di rumah, seperti tang potong, obeng plus minus, cutter, dan pita ukur. Sangat cocok ditempatkan di dalam laci meja kerja, di dalam bagasi mobil, atau sebagai perlengkapan pertukangan pertama bagi Anda yang baru pindah ke apartemen atau rumah baru.',
             'price' => 723900,
             'stock' => 12,
             'category' => 'perkakas',
@@ -555,9 +555,9 @@ Ringkas, praktis, dan esensial untuk kebutuhan perbaikan ringan.',
         ],
         [
             'name' => 'Tenda Camping Dome Waterproof',
-            'description' => 'Tenda camping model dome yang anti air (waterproof).
+            'description' => 'Tenda camping model dome modern yang dirancang khusus untuk menghadapi kondisi cuaca outdoor yang tidak menentu, dilengkapi dengan material lapisan luar yang 100% waterproof (anti air). Konstruksi rangkanya menggunakan fiberglass elastis namun kokoh, dirancang aerodinamis agar mampu menahan hembusan angin kencang di dataran tinggi maupun area pantai.
 
-Kapasitas 3-4 orang, mudah dirakit dan kuat menahan angin kencang.',
+Memiliki kapasitas yang luas dan nyaman untuk menampung 3 hingga 4 orang dewasa berserta perlengkapannya, menjadikannya pilihan tepat untuk camping keluarga. Proses perakitannya sangat intuitif dan cepat, hanya memakan waktu beberapa menit, serta dapat dilipat kembali menjadi bentuk yang sangat ringkas sehingga mudah diselipkan ke dalam carrier atau bagasi motor.',
             'price' => 250000,
             'stock' => 25,
             'category' => 'outdoor',
@@ -568,9 +568,9 @@ Kapasitas 3-4 orang, mudah dirakit dan kuat menahan angin kencang.',
         ],
         [
             'name' => 'Kantong Plastik Vakum Pakaian',
-            'description' => 'Kantong plastik vakum untuk mengompres pakaian.
+            'description' => 'Solusi penyimpanan revolusioner berupa kantong plastik vakum transparan yang ekstra tebal, elastis, dan tidak mudah bocor atau robek. Alat ini bekerja dengan cara mengeluarkan udara dari dalam kantong menggunakan pompa vakum manual atau vacuum cleaner, mengompres volume pakaian tebal, selimut, maupun bed cover hingga 80% lebih kecil dari ukuran aslinya.
 
-Sangat berguna untuk menghemat ruang koper saat traveling atau penyimpanan di lemari.',
+Sangat krusial untuk menghemat ruang penyimpanan di dalam koper saat Anda bersiap untuk traveling jarak jauh, terutama di musim dingin. Selain menghemat tempat, kantong ini juga melindungi pakaian kesayangan Anda dari kelembapan, debu, jamur, serta serangga saat disimpan dalam jangka waktu yang lama di dalam lemari.',
             'price' => 15000,
             'stock' => 100,
             'category' => 'rumah-tangga',
@@ -581,9 +581,9 @@ Sangat berguna untuk menghemat ruang koper saat traveling atau penyimpanan di le
         ],
         [
             'name' => 'Pelapis Kabel Insulasi Tahan Panas',
-            'description' => 'Pelapis kabel insulasi yang aman dan tahan panas ekstrim.
+            'description' => 'Pelapis atau selongsong kabel insulasi (heat shrink tube) premium yang sangat krusial untuk menjaga keamanan instalasi kelistrikan. Terbuat dari material poliolefin yang mampu menyusut ketat mengikuti bentuk kabel saat dipanaskan, memberikan perlindungan maksimal yang kedap air (waterproof) dan tahan terhadap panas mesin yang ekstrem.
 
-Mencegah korsleting listrik dan menjaga keamanan instalasi kabel Anda.',
+Penggunaan pelapis ini efektif mencegah bahaya korsleting listrik akibat kabel terkelupas, percikan api, atau paparan kelembapan di area mesin maupun kelistrikan rumah tangga. Sangat mudah diaplikasikan hanya bermodalkan heat gun atau korek api, memberikan hasil sambungan kabel yang jauh lebih rapi, profesional, dan aman dibandingkan lakban hitam biasa.',
             'price' => 25000,
             'stock' => 80,
             'category' => 'perkakas',
@@ -594,9 +594,9 @@ Mencegah korsleting listrik dan menjaga keamanan instalasi kabel Anda.',
         ],
         [
             'name' => 'Reel Pancing Spinning Premium',
-            'description' => 'Reel pancing model spinning berkualitas premium.
+            'description' => 'Reel pancing model spinning kelas premium yang dirancang untuk memberikan pengalaman memancing yang presisi dan tak terlupakan, baik di air tawar maupun air laut (saltwater resistant). Dilengkapi dengan sistem bearing berbahan stainless steel yang menghasilkan putaran super halus tanpa suara (silent retrieve), memudahkan Anda mendeteksi gigitan ikan sekecil apa pun.
 
-Putaran halus, drag kuat, sangat handal untuk menaklukkan ikan besar.',
+Sistem drag-nya sangat kuat dan dapat disesuaikan dengan sangat presisi, memberikan kontrol penuh kepada pemancing saat harus berduel menaklukkan perlawanan ikan-ikan berukuran monster. Spool berbahan aluminium alloy-nya yang ringan namun kokoh memungkinkan lontaran senar yang lebih jauh dan akurat, mengurangi risiko senar kusut saat dilempar.',
             'price' => 120000,
             'stock' => 30,
             'category' => 'olahraga',
@@ -607,9 +607,9 @@ Putaran halus, drag kuat, sangat handal untuk menaklukkan ikan besar.',
         ],
         [
             'name' => 'Action Figure Iron Man Mark 85 4 inci',
-            'description' => 'Action figure Iron Man Mark 85 skala 4 inci dari Top Gear ZD.
+            'description' => 'Action figure Iron Man Mark 85 skala 4 inci yang diproduksi secara teliti oleh Top Gear ZD, menampilkan armor ikonis Tony Stark dari pertempuran terakhirnya yang epik. Figur ini menonjolkan tingkat detail pahatan yang sangat tinggi, menangkap setiap lekukan mekanis dan panel armor dengan presisi luar biasa yang jarang ditemukan pada skala sekecil ini.
 
-Detail rapi dan cat metalik yang memukau. Wajib dimiliki para kolektor Marvel.',
+Diwarnai menggunakan teknik pengecatan metalik premium, cat merah dan emasnya berkilau elegan layaknya logam asli di bawah sorotan lampu. Dilengkapi dengan berbagai titik artikulasi (sendi) yang fleksibel, figur ini dapat diposekan dalam berbagai gaya aksi dinamis, menjadikannya koleksi wajib yang akan memperindah lemari pajangan para penggemar berat Marvel Cinematic Universe.',
             'price' => 59900,
             'stock' => 45,
             'category' => 'action-figure',
@@ -628,9 +628,9 @@ $this->seedStore(
     products: [
         [
             'name' => 'Kaos Viral Gaji Bercanda Kerja Serius',
-            'description' => 'Kaos plesetan viral yang nyaman dipakai sehari-hari.
+            'description' => 'Kaos parodi kekinian dengan kutipan viral \'Gaji Bercanda Kerja Serius\' yang sukses mencuri perhatian dan menjadi perbincangan hangat di media sosial. Terbuat dari material kain katun combed premium 30s yang terkenal akan kelembutannya, kemampuannya menyerap keringat dengan sangat baik, dan memberikan sensasi adem saat menyentuh kulit meskipun dipakai di cuaca panas.
 
-Bahan katun adem, menyerap keringat, cocok untuk bersantai maupun nongkrong bareng teman.',
+Desain sablonnya dicetak menggunakan tinta berkualitas tinggi yang lentur, warna tidak mudah pudar, dan tidak akan pecah-pecah meskipun dicuci berkali-kali menggunakan mesin cuci. Dengan potongan unisex yang pas di badan, kaos ini adalah pilihan outfit kasual yang sempurna untuk bersantai di akhir pekan, nongkrong santai di kafe, atau sekadar menyuarakan isi hati para pekerja dengan cara yang humoris.',
             'price' => 99000,
             'stock' => 40,
             'category' => 'kaos',
@@ -647,9 +647,9 @@ Bahan katun adem, menyerap keringat, cocok untuk bersantai maupun nongkrong bare
         ],
         [
             'name' => 'Gerald Baju Kaos Fire',
-            'description' => 'Baju kaos atasan pria Gerald model Fire.
+            'description' => 'Atasan pria kasual model t-shirt lengan pendek dari koleksi \'Fire\' oleh Gerald, menawarkan gaya streetwear modern yang simpel namun berkarakter kuat. Potongannya yang regular fit memberikan kenyamanan ruang gerak yang leluasa tanpa terlihat kedodoran, sangat menyanjung berbagai tipe postur tubuh pria.
 
-Desain kasual dan stylish, pas untuk OOTD harianmu.',
+Desain grafis \'Fire\' yang dicetak secara eksklusif memberikan aksen maskulin dan energik, menjadikannya pilihan outfit yang sangat serbaguna untuk dipadupadankan. Cukup kombinasikan dengan celana jeans favorit, jaket denim, dan sepatu sneakers andalan Anda untuk menciptakan OOTD harian yang stylish, effortlessly cool, dan siap menemani rutinitas urban Anda.',
             'price' => 48000,
             'stock' => 30,
             'category' => 'kaos',
@@ -660,9 +660,9 @@ Desain kasual dan stylish, pas untuk OOTD harianmu.',
         ],
         [
             'name' => 'Jagata Coco Top Wanita Cream',
-            'description' => 'Atasan wanita Coco Top dari Jagata warna cream.
+            'description' => 'Baju atasan wanita elegan Coco Top dari brand Jagata, hadir dalam balutan warna cream pastel yang sangat lembut, kalem, dan memancarkan aura feminin yang kuat. Didesain dengan potongan modern dan aksen jahitan yang rapi, atasan ini memberikan siluet tubuh yang chic, anggun, dan berkelas bagi pemakainya.
 
-Terlihat chic dan anggun. Cocok dipadukan dengan berbagai celana maupun rok panjang.',
+Material kainnya jatuh dengan indah, tidak mudah kusut, dan tidak menerawang, memberikan rasa percaya diri ekstra sepanjang hari. Warnanya yang netral membuatnya sangat mudah dipadupadankan (mix and match) dengan berbagai jenis bawahan, mulai dari celana kulot panjang untuk tampilan ngantor yang profesional, hingga rok plisket untuk gaya kasual yang manis saat berjalan-jalan di akhir pekan.',
             'price' => 189000,
             'stock' => 25,
             'category' => 'pakaian-wanita',
@@ -673,9 +673,9 @@ Terlihat chic dan anggun. Cocok dipadukan dengan berbagai celana maupun rok panj
         ],
         [
             'name' => 'T-Shirt Smile Love Crop Top',
-            'description' => 'Crop top kekinian model serut bertuliskan Smile Love.
+            'description' => 'T-shirt wanita bermodel crop top kekinian yang menggemaskan, dihiasi dengan tipografi grafis \'Smile Love\' yang ceria dan menyebarkan aura positif. Ciri khas utama dari atasan ini adalah detail serut (drawstring) di bagian samping atau depan yang dapat Anda sesuaikan sendiri tarikannya, memberikan sentuhan tekstur unik dan mempertegas siluet tubuh yang proporsional.
 
-Tampil manis dan trendy untuk hangout akhir pekan.',
+Potongan crop-nya yang trendi menjadikannya pasangan sejati bagi celana high-waist, kulot, atau rok mini, menciptakan ilusi kaki yang lebih jenjang. Sangat nyaman dikenakan dan merupakan pilihan outfit paling manis untuk hangout akhir pekan bersama sahabat, pergi ke konser, atau untuk sesi foto OOTD estetik di luar ruangan.',
             'price' => 39450,
             'stock' => 45,
             'category' => 'pakaian-wanita',
