@@ -60,7 +60,12 @@ class DashboardService
             ],
             RoleName::Buyer, null => [
                 'component' => 'dashboard/Buyer',
-                'props' => ['balance' => $balance, 'activeOrders' => $this->activeOrderCount($user)],
+                'props' => [
+                    'balance' => $balance, 
+                    'activeOrdersCount' => $this->activeOrderCount($user),
+                    'completedOrdersCount' => $this->completedOrderCount($user),
+                    'recentActiveOrders' => $this->recentActiveOrders($user, 3),
+                ],
             ],
         };
     }
@@ -73,5 +78,23 @@ class DashboardService
     private function activeOrderCount(User $user): int
     {
         return $user->orders()->whereNotIn('status', self::FINAL_ORDER_STATUSES)->count();
+    }
+
+    private function completedOrderCount(User $user): int
+    {
+        return $user->orders()->where('status', OrderStatus::PesananSelesai->value)->count();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\Order>
+     */
+    private function recentActiveOrders(User $user, int $limit)
+    {
+        return $user->orders()
+            ->with(['store', 'items.product'])
+            ->whereNotIn('status', self::FINAL_ORDER_STATUSES)
+            ->latest()
+            ->take($limit)
+            ->get();
     }
 }
