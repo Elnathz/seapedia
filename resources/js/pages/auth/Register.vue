@@ -368,7 +368,7 @@ function isFlipped(role: string) {
                                 >
                                     <!-- Front -->
                                     <div
-                                        class="role-face-front absolute inset-0 flex min-w-0 flex-col overflow-hidden rounded-2xl border bg-card shadow-sm [backface-visibility:hidden]"
+                                        class="role-face-front absolute inset-0 flex min-w-0 flex-col rounded-2xl border bg-card shadow-sm [backface-visibility:hidden] [-webkit-backface-visibility:hidden] [transform:translate3d(0,0,0)] [-webkit-transform:translate3d(0,0,0)]"
                                         :class="[
                                             isSelected(role)
                                                 ? ['ring-2', roleConfig[role as RoleKey]?.borderSelected ?? 'border-primary ring-primary/20']
@@ -376,17 +376,19 @@ function isFlipped(role: string) {
                                             isFlipped(role) ? 'pointer-events-none' : ''
                                         ]"
                                     >
-                                        <!-- Ambient glow -->
-                                        <div
-                                            class="pointer-events-none absolute -right-10 -top-10 size-36 rounded-full bg-gradient-to-br opacity-[0.18] blur-2xl"
-                                            :class="roleConfig[role as RoleKey]?.gradient"
-                                            aria-hidden="true"
-                                        />
-                                        <div
-                                            class="pointer-events-none absolute -bottom-12 -left-8 size-28 rounded-full bg-gradient-to-br opacity-10 blur-2xl"
-                                            :class="roleConfig[role as RoleKey]?.gradient"
-                                            aria-hidden="true"
-                                        />
+                                        <!-- Ambient glow wrapper -->
+                                        <div class="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+                                            <div
+                                                class="absolute -right-10 -top-10 size-36 rounded-full bg-gradient-to-br opacity-[0.18] blur-2xl"
+                                                :class="roleConfig[role as RoleKey]?.gradient"
+                                                aria-hidden="true"
+                                            />
+                                            <div
+                                                class="absolute -bottom-12 -left-8 size-28 rounded-full bg-gradient-to-br opacity-10 blur-2xl"
+                                                :class="roleConfig[role as RoleKey]?.gradient"
+                                                aria-hidden="true"
+                                            />
+                                        </div>
 
                                         <!-- Selection indicator -->
                                         <span
@@ -477,11 +479,11 @@ function isFlipped(role: string) {
 
                                     <!-- Back -->
                                     <div
-                                        class="role-face-back absolute inset-0 flex min-w-0 flex-col overflow-hidden rounded-2xl border-2 border-primary/30 bg-card p-4 shadow-md [backface-visibility:hidden]"
+                                        class="role-face-back absolute inset-0 flex min-w-0 flex-col rounded-2xl border-2 border-primary/30 bg-card p-4 shadow-md [backface-visibility:hidden] [-webkit-backface-visibility:hidden]"
                                         :class="[
                                             reducedMotion
                                                 ? ''
-                                                : '[transform:rotateY(180deg)]',
+                                                : '[transform:rotateY(180deg)_translate3d(0,0,0)] [-webkit-transform:rotateY(180deg)_translate3d(0,0,0)]',
                                             !isFlipped(role) ? 'pointer-events-none' : ''
                                         ]"
                                     >
