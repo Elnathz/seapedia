@@ -41,7 +41,7 @@ defineProps<{
                     Satu akun.<br />Tiga peran.
                 </p>
                 <p class="text-lg text-white/80">
-                    Belanja, jualan, antar — satu saldo untuk semuanya.
+                    Belanja, jualan, antar dalam satu saldo untuk semuanya.
                 </p>
             </div>
 
