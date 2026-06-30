@@ -25,7 +25,7 @@ class BannerSeeder extends Seeder
                 'title' => 'Polygon Indonesia Bisa',
                 'badge_label' => 'Eksklusif',
                 'cta_label' => 'Lihat Sepeda',
-                'cta_url' => '/catalog/polygon-siskiu-n5',
+                'cta_url' => '/catalog/polygon-indonesia-bisa',
                 'placement' => 'main',
                 'image_path' => 'images/banner/utama/sepeda-polygon-indonesia-bisa.png',
                 'sort_order' => 1,

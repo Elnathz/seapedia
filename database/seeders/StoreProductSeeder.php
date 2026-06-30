@@ -199,8 +199,8 @@ Tersedia dalam beberapa varian warna yang menarik.',
             ],
         ],
         [
-            'name' => 'Polygon Siskiu N5',
-            'description' => 'Sepeda gunung Polygon Siskiu N5.
+            'name' => 'Polygon Indonesia Bisa',
+            'description' => 'Sepeda gunung Polygon Indonesia Bisa.
 
 Memiliki suspensi yang empuk, cocok untuk menghadapi jalur trail dan enduro dengan percaya diri.',
             'price' => 3750000,
