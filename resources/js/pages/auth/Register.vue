@@ -54,7 +54,7 @@ const roleConfig: Record<
     buyer: {
         icon: ShoppingBag,
         label: 'Pembeli',
-        tagline: 'Belanja produk dari toko kampus',
+        tagline: 'Belanja produk dari toko',
         gradient: 'from-blue-500 to-blue-600',
         lightBg: 'bg-blue-500/10',
         iconColor: 'text-blue-500',
@@ -78,7 +78,7 @@ const roleConfig: Record<
         borderSelected: 'border-primary ring-primary/20',
         highlights: ['Toko & katalog sendiri', 'Proses pesanan masuk'],
         features: [
-            'Buat toko dengan nama unik di kampus',
+            'Buat toko dengan nama unik',
             'Kelola katalog produk, harga & stok',
             'Terima pesanan masuk dari pembeli',
             'Proses order hingga siap diantar kurir',
@@ -244,7 +244,7 @@ function isFlipped(role: string) {
                         :tabindex="3"
                         autocomplete="email"
                         name="email"
-                        placeholder="email@kampus.ac.id"
+                        placeholder="email@gmail.com"
                     />
                     <InputError :message="errors.email" />
                 </div>
@@ -337,7 +337,7 @@ function isFlipped(role: string) {
                             Pilih peran
                         </h3>
                         <p class="mt-0.5 text-xs text-muted-foreground">
-                            Geser untuk lihat semua peran. Pilih satu atau lebih — bisa diubah nanti.
+                            Geser untuk lihat semua peran. Pilih satu atau lebih, bisa diubah nanti.
                         </p>
                     </div>
                 </div>
