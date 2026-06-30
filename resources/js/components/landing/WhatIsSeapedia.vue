@@ -31,7 +31,7 @@ import { CheckCircle2 } from '@lucide/vue';
 
                 <!-- Section Header -->
                 <h2 class="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl md:text-5xl leading-tight">
-                    Satu Ekosistem.<br class="hidden sm:block" />
+                    Satu Ekosistem. <br class="hidden sm:block" />
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-brand">Tanpa Batasan Peran.</span>
                 </h2>
                 
