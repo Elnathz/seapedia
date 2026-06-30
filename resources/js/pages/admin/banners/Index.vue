@@ -54,7 +54,7 @@ const processing = ref(false);
 const formPlacement = ref<'main' | 'side_top' | 'side_bottom'>('main');
 const formActive = ref(true);
 
-const aspectRatio = computed(() => formPlacement.value === 'side_top' ? 5 / 4 : 5 / 2);
+const aspectRatio = computed(() => 5 / 2);
 const initialImageUrl = computed(() =>
     editing.value ? bannerSrc(editing.value.image_path) : null,
 );

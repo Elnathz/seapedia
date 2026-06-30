@@ -55,8 +55,8 @@ class StoreBannerRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             if ($this->placement === 'side_top') {
-                if (\App\Models\Banner::where('placement', 'side_top')->count() >= 2) {
-                    $validator->errors()->add('placement', 'Maksimal 2 banner untuk posisi Samping Atas.');
+                if (\App\Models\Banner::where('placement', 'side_top')->count() >= 1) {
+                    $validator->errors()->add('placement', 'Maksimal 1 banner untuk posisi Samping Atas.');
                 }
             } elseif ($this->placement === 'side_bottom') {
                 if (\App\Models\Banner::where('placement', 'side_bottom')->count() >= 1) {

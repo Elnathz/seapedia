@@ -57,8 +57,8 @@ class UpdateBannerRequest extends FormRequest
             $currentId = $this->route('banner') ? $this->route('banner')->id : 0;
             if ($this->placement === 'side_top') {
                 $count = \App\Models\Banner::where('placement', 'side_top')->where('id', '!=', $currentId)->count();
-                if ($count >= 2) {
-                    $validator->errors()->add('placement', 'Maksimal 2 banner untuk posisi Samping Atas.');
+                if ($count >= 1) {
+                    $validator->errors()->add('placement', 'Maksimal 1 banner untuk posisi Samping Atas.');
                 }
             } elseif ($this->placement === 'side_bottom') {
                 $count = \App\Models\Banner::where('placement', 'side_bottom')->where('id', '!=', $currentId)->count();
