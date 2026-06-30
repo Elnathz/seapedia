@@ -134,7 +134,7 @@ const resetFilters = () => {
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
                     
                     <!-- Sidebar: Form & Filters -->
-                    <div class="lg:col-span-4 space-y-8 sticky top-24">
+                    <div class="lg:col-span-4 space-y-8 lg:sticky lg:top-24">
                         
                         <!-- Submit Review Card -->
                         <div class="rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-sm">
