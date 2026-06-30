@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreBannerRequest extends FormRequest
 {
@@ -38,7 +39,13 @@ class StoreBannerRequest extends FormRequest
                     }
                 }
             ],
-            'sort_order' => ['nullable', 'integer', 'min:0', 'max:1000'],
+            'sort_order' => [
+                'required',
+                'integer',
+                'min:0',
+                'max:1000',
+                Rule::unique('banners')->where('placement', $this->placement)
+            ],
             'is_active' => ['sometimes', 'boolean'],
             'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
@@ -50,6 +57,7 @@ class StoreBannerRequest extends FormRequest
         return [
             'image.required' => 'Gambar banner wajib diunggah.',
             'image.max' => 'Ukuran gambar maksimal 2MB.',
+            'sort_order.unique' => 'Urutan tersebut sudah digunakan untuk posisi ini.',
         ];
     }
 }

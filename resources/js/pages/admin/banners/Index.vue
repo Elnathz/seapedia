@@ -59,6 +59,25 @@ const initialImageUrl = computed(() =>
     editing.value ? bannerSrc(editing.value.image_path) : null,
 );
 
+const recommendedSortOrder = computed(() => {
+    const matchingBanners = props.banners.filter(
+        (b) => b.placement === formPlacement.value
+    );
+    if (matchingBanners.length === 0) return 0;
+    const maxOrder = Math.max(...matchingBanners.map((b) => b.sort_order));
+    return maxOrder + 1;
+});
+
+const formSortOrder = ref(0);
+
+watch([formPlacement, editing], () => {
+    if (editing.value) {
+        formSortOrder.value = editing.value.sort_order;
+    } else {
+        formSortOrder.value = recommendedSortOrder.value;
+    }
+}, { immediate: true });
+
 // Autocomplete CTA URL Logic
 const ctaType = ref<'category' | 'product' | 'store' | 'custom'>('custom');
 const ctaUrlValue = ref('');
@@ -378,15 +397,19 @@ function confirmDelete() {
                         <InputError :message="errors.badge_label" />
                     </div>
                     <div class="grid gap-2">
-                        <Label for="sort_order">Urutan</Label>
+                        <Label for="sort_order">Urutan <span class="text-destructive">*</span></Label>
                         <Input
                             id="sort_order"
                             name="sort_order"
                             type="number"
                             min="0"
                             max="1000"
-                            :default-value="editing?.sort_order ?? 0"
+                            v-model="formSortOrder"
+                            required
                         />
+                        <p class="text-xs text-muted-foreground">
+                            Rekomendasi berikutnya: <strong>{{ recommendedSortOrder }}</strong>
+                        </p>
                         <InputError :message="errors.sort_order" />
                     </div>
                 </div>

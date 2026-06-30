@@ -105,7 +105,7 @@ fileInput.value.files = dt.files;
                     ref="cropperRef"
                     :src="cropSrc"
                     :stencil-props="{ aspectRatio }"
-                    class="h-72 bg-muted"
+                    class="h-72 w-full max-w-full overflow-hidden bg-muted"
                 />
                 <DialogFooter>
                     <Button type="button" @click="apply">{{ t('product.cropApply') }}</Button>

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateBannerRequest extends FormRequest
 {
@@ -38,7 +39,13 @@ class UpdateBannerRequest extends FormRequest
                     }
                 }
             ],
-            'sort_order' => ['nullable', 'integer', 'min:0', 'max:1000'],
+            'sort_order' => [
+                'required',
+                'integer',
+                'min:0',
+                'max:1000',
+                Rule::unique('banners')->where('placement', $this->placement)->ignore($this->route('banner'))
+            ],
             'is_active' => ['sometimes', 'boolean'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
@@ -49,6 +56,7 @@ class UpdateBannerRequest extends FormRequest
     {
         return [
             'image.max' => 'Ukuran gambar maksimal 2MB.',
+            'sort_order.unique' => 'Urutan tersebut sudah digunakan untuk posisi ini.',
         ];
     }
 }

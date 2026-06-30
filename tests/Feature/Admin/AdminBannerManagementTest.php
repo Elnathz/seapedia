@@ -93,8 +93,27 @@ class AdminBannerManagementTest extends TestCase
         $response = $this->actingAs($admin)->post(route('admin.banners.store'), [
             'placement' => 'main',
             'title' => 'Tanpa Gambar',
+            'sort_order' => 1,
         ]);
 
         $response->assertSessionHasErrors('image');
+    }
+
+    public function test_duplicate_sort_order_on_same_placement_is_rejected(): void
+    {
+        Storage::fake('public');
+        $admin = User::factory()->create(['is_admin' => true]);
+        Banner::factory()->create(['placement' => 'main', 'sort_order' => 1]);
+
+        $image = UploadedFile::fake()->image('banner.jpg', 800, 320);
+
+        $response = $this->actingAs($admin)->post(route('admin.banners.store'), [
+            'placement' => 'main',
+            'title' => 'Flash Sale Kedua',
+            'sort_order' => 1, // Duplicate sort_order on same placement 'main'
+            'image' => $image,
+        ]);
+
+        $response->assertSessionHasErrors('sort_order');
     }
 }
