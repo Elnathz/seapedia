@@ -46,13 +46,32 @@ class DeliverySeeder extends Seeder
 
         $this->carts->clear($buyer);
         $this->carts->addItem($buyer, $product, null, 1);
-        $takeableOrder = $this->checkout->commit($buyer, $address, DeliveryMethod::Regular);
-        $this->orders->processBySeller($takeableOrder, $seller->id);
+        $takeableOrder1 = $this->checkout->commit($buyer, $address, DeliveryMethod::Regular);
+        $this->orders->processBySeller($takeableOrder1, $seller->id);
 
         $this->carts->clear($buyer);
-
         $this->carts->addItem($buyer, $product, null, 1);
-        $overdueOrder = $this->checkout->commit($buyer, $address, DeliveryMethod::Instant);
-        $overdueOrder->update(['sla_due_at' => now()->subDay()]);
+        $takeableOrder2 = $this->checkout->commit($buyer, $address, DeliveryMethod::Regular);
+        $this->orders->processBySeller($takeableOrder2, $seller->id);
+
+        $this->carts->clear($buyer);
+        $this->carts->addItem($buyer, $product, null, 1);
+        $takeableOrder3 = $this->checkout->commit($buyer, $address, DeliveryMethod::Regular);
+        $this->orders->processBySeller($takeableOrder3, $seller->id);
+
+        $this->carts->clear($buyer);
+        $this->carts->addItem($buyer, $product, null, 1);
+        $overdueOrder1 = $this->checkout->commit($buyer, $address, DeliveryMethod::Instant);
+        $overdueOrder1->update(['sla_due_at' => now()->subDay()]);
+
+        $this->carts->clear($buyer);
+        $this->carts->addItem($buyer, $product, null, 1);
+        $overdueOrder2 = $this->checkout->commit($buyer, $address, DeliveryMethod::Instant);
+        $overdueOrder2->update(['sla_due_at' => now()->subDay()]);
+
+        $this->carts->clear($buyer);
+        $this->carts->addItem($buyer, $product, null, 1);
+        $overdueOrder3 = $this->checkout->commit($buyer, $address, DeliveryMethod::Instant);
+        $overdueOrder3->update(['sla_due_at' => now()->subDay()]);
     }
 }

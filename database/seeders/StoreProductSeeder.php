@@ -40,7 +40,7 @@ $this->seedStore(
 
 Produk ini memberikan hasil akhir yang natural, merona, dan bercahaya, memastikan wajahmu selalu terlihat segar alami dari pagi hingga malam hari. Kemasannya yang praktis, mungil, dan elegan menjadikannya produk wajib di dalam tas makeup Anda, sangat cocok dibawa bepergian untuk kebutuhan touch-up kilat kapan pun diperlukan.',
             'price' => 69700,
-            'stock' => 10,
+            'stock' => 30,
             'category' => 'makeup-blush',
             'seed_images' => [
                 ['source' => 'images/product/makeup/blushon/ESQA Bitty Balm Stick Blush 69,700k.jpeg']
@@ -251,7 +251,7 @@ Konektivitas nirkabelnya yang bebas lag menjamin respons seketika tanpa gangguan
 
 Desainnya tetap mempertahankan siluet elegan khas Apple dengan material kaca dan aluminium premium yang kokoh, dibalut dalam warna Black yang klasik dan misterius. Layar Super Retina XDR-nya menampilkan warna yang sangat akurat, kontras tak terhingga, dan kecerahan puncak yang menakjubkan, memberikan pengalaman visual paling imersif baik di dalam ruangan maupun di bawah terik matahari.',
             'price' => 17000000,
-            'stock' => 10,
+            'stock' => 5,
             'category' => 'smartphone',
             'seed_images' => [
                 ['source' => 'images/product/ip17/ipon17blackutama.webp']
@@ -264,7 +264,7 @@ Desainnya tetap mempertahankan siluet elegan khas Apple dengan material kaca dan
 
 Performa tinggi yang tak tertandingi di kelasnya didukung oleh efisiensi daya baterai yang luar biasa, memastikan Anda tetap terhubung, produktif, dan terhibur sepanjang hari penuh hanya dalam satu kali pengisian daya. Ekosistem iOS yang mulus dan fitur privasi tingkat lanjut menjadikan iPhone 17 perangkat pintar yang aman dan menyenangkan untuk digunakan sehari-hari.',
             'price' => 17499000,
-            'stock' => 8,
+            'stock' => 2,
             'category' => 'smartphone',
             'seed_images' => [
                 ['source' => 'images/product/ip17/ipon17whiteutama.webp']
@@ -443,7 +443,7 @@ Sensasi hangat dan gurihnya menjadikannya comfort food sejati, sangat nikmat dis
 
 Setiap paketnya mengandung asupan kalori dan nutrisi makro yang padat, dirancang untuk memulihkan energi dengan cepat setelah aktivitas fisik berat. Selain menjadi perlengkapan wajib bagi pecinta kegiatan outdoor, survival, dan pendakian gunung, ransum ini juga merupakan elemen krusial untuk disimpan di rumah sebagai persiapan mitigasi bencana alam atau keadaan darurat.',
             'price' => 58500,
-            'stock' => 40,
+            'stock' => 0,
             'category' => 'makanan-berat',
             'seed_images' => [
                 ['source' => 'images/product/Makanan/ransumtni.jpeg']
@@ -469,7 +469,7 @@ Kemasan praktis 1 renceng berisi 9 sachet ini sangat mudah diseduh, baik menggun
 
 Menawarkan profil rasa yang sangat kompleks dengan body yang tebal, aroma rempah yang eksotis, tingkat keasaman (acidity) yang rendah, serta hint rasa cokelat dan karamel yang membekas lama di lidah (long aftertaste). Tersedia dalam bentuk biji utuh maupun bubuk, kopi ini adalah mahakarya bagi para penikmat kopi sejati yang menghargai cita rasa otentik.',
             'price' => 81960,
-            'stock' => 35,
+            'stock' => 0,
             'category' => 'kopi',
             'seed_images' => [
                 ['source' => 'images/product/Minuman/Kopi Arabika Gayo Super Premium Grade 200g-Biji, Bubuk-AZA Coffee and Roastery Rp 81,960.webp']
@@ -486,7 +486,7 @@ Menawarkan profil rasa yang sangat kompleks dengan body yang tebal, aroma rempah
 
 Rasanya yang bold dan otentik sangat pas dinikmati tanpa gula bagi para purist, atau ditambahkan susu kental manis untuk sensasi ngopi yang lebih santai. Kemasan pouch ekonomis 138 gram ini dirancang untuk menjaga kesegaran bubuk kopi, memudahkan Anda menyajikan secangkir kopi hitam mantap kapan pun Anda inginkan.',
             'price' => 18700,
-            'stock' => 55,
+            'stock' => 2,
             'category' => 'kopi',
             'seed_images' => [
                 ['source' => 'images/product/Minuman/Kopi Tubruk Gadjah Asli 138 Gr Rp 18,700.webp']
@@ -499,7 +499,7 @@ Rasanya yang bold dan otentik sangat pas dinikmati tanpa gula bagi para purist, 
 
 Fleksibilitasnya menjadikannya bahan dasar yang sempurna untuk berbagai kreasi minuman kopi ala kafe, seperti dalgona coffee, es kopi susu gula aren, maupun sekadar secangkir kopi hitam murni untuk memulai hari. Kemasan zip-lock-nya sangat praktis untuk menjaga aroma kopi tetap kuat meskipun sudah dibuka berulang kali.',
             'price' => 51000,
-            'stock' => 45,
+            'stock' => 3,
             'category' => 'kopi',
             'seed_images' => [
                 ['source' => 'images/product/Minuman/Nescafe Kopi Instan Classic Bag 90g 1pc Rp 51,000.webp']
@@ -520,7 +520,7 @@ $this->seedStore(
 
 Seluruh perkakas tersimpan rapi dalam sebuah koper penyimpanan (hard case) yang didesain ergonomis, memastikan setiap alat memiliki slot khususnya sendiri agar tidak berserakan dan mudah ditemukan saat dibutuhkan. Set ini adalah investasi seumur hidup yang wajib dimiliki setiap rumah untuk menangani segala jenis perbaikan, perakitan furnitur, maupun proyek DIY Anda.',
             'price' => 1805000,
-            'stock' => 10,
+            'stock' => 0,
             'category' => 'perkakas',
             'seed_images' => [
                 ['source' => 'images/product/Perkakas/Deli Household Tool Kits, Set Perkakas Rumah 112 Pcs Multifungsi Berkualitas Tinggi Dl5965 Rp 1,805,000.webp']

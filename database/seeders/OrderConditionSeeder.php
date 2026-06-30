@@ -84,9 +84,19 @@ class OrderConditionSeeder extends Seeder
         $this->carts->addItem($buyer1, $p0, 2);
         $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
 
+        // Sedang dikemas ke-2
+        $this->carts->clear($buyer1);
+        $this->carts->addItem($buyer1, $p1, 1);
+        $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
+
+        // Sedang dikemas ke-3
+        $this->carts->clear($buyer1);
+        $this->carts->addItem($buyer1, $p2, 1);
+        $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
+
         // ----------------------------------------------------------------
         // 2. Menunggu Pengirim — seller processed, driver hasn't taken.
-        //    Leave 2 of these as Available so "take job" is demoable.
+        //    Leave some of these as Available so "take job" is demoable.
         // ----------------------------------------------------------------
         // Order A: p0 × 1.
         $this->carts->clear($buyer1);
@@ -100,11 +110,17 @@ class OrderConditionSeeder extends Seeder
         $orderB = $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
         $this->orders->processBySeller($orderB, $seller1->id);
 
-        // Order C: p2 × 1 (driver1 will complete this).
+        // Order C: p2 × 1.
         $this->carts->clear($buyer1);
         $this->carts->addItem($buyer1, $p2, 1);
         $orderC = $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
         $this->orders->processBySeller($orderC, $seller1->id);
+
+        // Order D: p0 × 1 (driver1 will complete this).
+        $this->carts->clear($buyer1);
+        $this->carts->addItem($buyer1, $p0, 1);
+        $orderD = $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
+        $this->orders->processBySeller($orderD, $seller1->id);
 
         // ----------------------------------------------------------------
         // 4. Pesanan Selesai — driver2's 2 completed jobs + driver1's 2.
@@ -124,9 +140,9 @@ class OrderConditionSeeder extends Seeder
             $this->deliveries->complete($delivery, $driver2);
         }
 
-        // Driver1: complete order C (their first completed job).
+        // Driver1: complete order D (their first completed job).
         $driver1Delivery = Delivery::query()
-            ->where('order_id', $orderC->id)
+            ->where('order_id', $orderD->id)
             ->where('status', DeliveryStatus::Available)
             ->first();
 
@@ -138,23 +154,57 @@ class OrderConditionSeeder extends Seeder
         }
 
         // ----------------------------------------------------------------
-        // 3. Sedang Dikirim — driver1's active job.
-        //    Any stale Taken job for driver1 was completed above, so the
-        //    "one active job" constraint allows a fresh take() now.
+        // 3. Sedang Dikirim — active jobs.
         // ----------------------------------------------------------------
+        // Active 1: driver1
         $this->carts->clear($buyer1);
         $this->carts->addItem($buyer1, $p0, 1);
-        $activeOrder = $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
-        $this->orders->processBySeller($activeOrder, $seller1->id);
+        $activeOrder1 = $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
+        $this->orders->processBySeller($activeOrder1, $seller1->id);
 
-        $activeDelivery = Delivery::query()
-            ->where('order_id', $activeOrder->id)
+        $activeDelivery1 = Delivery::query()
+            ->where('order_id', $activeOrder1->id)
             ->where('status', DeliveryStatus::Available)
             ->first();
 
-        if ($activeDelivery) {
+        if ($activeDelivery1) {
             $this->ensureBalance($driver1, 50_000);
-            $this->deliveries->take($activeDelivery, $driver1);
+            $this->deliveries->take($activeDelivery1, $driver1);
+        }
+
+        // Active 2: driver2
+        $this->carts->clear($buyer1);
+        $this->carts->addItem($buyer1, $p1, 1);
+        $activeOrder2 = $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
+        $this->orders->processBySeller($activeOrder2, $seller1->id);
+
+        $activeDelivery2 = Delivery::query()
+            ->where('order_id', $activeOrder2->id)
+            ->where('status', DeliveryStatus::Available)
+            ->first();
+
+        if ($activeDelivery2) {
+            $this->ensureBalance($driver2, 50_000);
+            $this->deliveries->take($activeDelivery2, $driver2);
+        }
+
+        // Active 3: multi1 (if acts as driver)
+        $multi1 = User::query()->where('username', 'multi1')->first();
+        if ($multi1) {
+            $this->carts->clear($buyer1);
+            $this->carts->addItem($buyer1, $p2, 1);
+            $activeOrder3 = $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
+            $this->orders->processBySeller($activeOrder3, $seller1->id);
+
+            $activeDelivery3 = Delivery::query()
+                ->where('order_id', $activeOrder3->id)
+                ->where('status', DeliveryStatus::Available)
+                ->first();
+
+            if ($activeDelivery3) {
+                $this->ensureBalance($multi1, 50_000);
+                $this->deliveries->take($activeDelivery3, $multi1);
+            }
         }
 
         // ----------------------------------------------------------------
@@ -162,8 +212,18 @@ class OrderConditionSeeder extends Seeder
         // ----------------------------------------------------------------
         $this->carts->clear($buyer1);
         $this->carts->addItem($buyer1, $p0, 1);
-        $overdueOrder = $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
-        $overdueOrder->update(['sla_due_at' => now()->subDay()]);
+        $overdueOrder1 = $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
+        $overdueOrder1->update(['sla_due_at' => now()->subDay()]);
+
+        $this->carts->clear($buyer1);
+        $this->carts->addItem($buyer1, $p1, 1);
+        $overdueOrder2 = $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
+        $overdueOrder2->update(['sla_due_at' => now()->subDay()]);
+
+        $this->carts->clear($buyer1);
+        $this->carts->addItem($buyer1, $p2, 1);
+        $overdueOrder3 = $this->checkout->commit($buyer1, $address1, DeliveryMethod::Regular);
+        $overdueOrder3->update(['sla_due_at' => now()->subDay()]);
     }
 
     /**
