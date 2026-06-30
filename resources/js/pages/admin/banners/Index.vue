@@ -277,6 +277,7 @@ function submitForm(e: Event) {
     fd.set('is_active', formActive.value ? '1' : '0');
     fd.set('placement', formPlacement.value);
     fd.set('cta_url', ctaUrlValue.value);
+    fd.set('sort_order', formSortOrderStr.value);
 
     processing.value = true;
 

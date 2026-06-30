@@ -38,7 +38,7 @@ class BuyerDemoSeeder extends Seeder
         // buyer1: full checkout with discount codes.
         $buyer1 = User::query()->where('email', 'buyer1@seapedia.test')->first();
         if ($buyer1) {
-            $this->ensureBalance($buyer1, 500_000);
+            $this->ensureBalance($buyer1, 5_000_000);
             $address = $this->seedAddressIfMissing($buyer1, 'Buyer One', '081234567890', 'Jl. Kampus No. 1, Semarang');
             $this->seedSampleOrder($buyer1, $address);
         }

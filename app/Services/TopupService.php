@@ -9,8 +9,13 @@ use App\Models\User;
 use App\Services\Payment\PaymentGateway;
 use Illuminate\Support\Str;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+
 class TopupService
 {
+    public const int MAX_BALANCE = 1_000_000_000;
+    
     public function __construct(private readonly PaymentGateway $gateway) {}
 
     /**
@@ -19,18 +24,29 @@ class TopupService
      */
     public function create(User $user, int $amount): Topup
     {
-        $topup = Topup::create([
-            'wallet_id' => $user->wallet->id,
-            'amount' => $amount,
-            'status' => TopupStatus::Pending,
-            'gateway' => PaymentGatewayType::from(config('payment.gateway')),
-            'gateway_reference' => (string) Str::uuid(),
-        ]);
+        return DB::transaction(function () use ($user, $amount) {
+            $wallet = \App\Models\Wallet::query()->lockForUpdate()->findOrFail($user->wallet->id);
 
-        $this->gateway->createTopup($topup);
+            if ($wallet->balance + $amount > self::MAX_BALANCE) {
+                throw ValidationException::withMessages([
+                    'amount' => ['Saldo maksimal dompet adalah Rp 1.000.000.000.'],
+                ]);
+            }
 
-        return $topup->refresh();
+            $topup = Topup::create([
+                'wallet_id' => $wallet->id,
+                'amount' => $amount,
+                'status' => TopupStatus::Pending,
+                'gateway' => PaymentGatewayType::from(config('payment.gateway')),
+                'gateway_reference' => (string) Str::uuid(),
+            ]);
+
+            $this->gateway->createTopup($topup);
+
+            return $topup;
+        });
     }
+
 
     /**
      * Poll the gateway for the current state, resolving (and crediting)

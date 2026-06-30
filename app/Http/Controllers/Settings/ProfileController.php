@@ -91,8 +91,40 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
+        $hasActiveOrders = \App\Models\Order::where('buyer_id', $user->id)
+            ->whereIn('status', [
+                \App\Enums\OrderStatus::BelumDibayar,
+                \App\Enums\OrderStatus::SedangDikemas,
+                \App\Enums\OrderStatus::MenungguPengirim,
+                \App\Enums\OrderStatus::SedangDikirim,
+            ])
+            ->exists();
+
+        $hasActiveSellerOrders = $user->store ? \App\Models\Order::where('store_id', $user->store->id)
+            ->whereIn('status', [
+                \App\Enums\OrderStatus::SedangDikemas,
+                \App\Enums\OrderStatus::MenungguPengirim,
+                \App\Enums\OrderStatus::SedangDikirim,
+            ])
+            ->exists() : false;
+
+        $hasActiveDelivery = \App\Models\Delivery::where('driver_id', $user->id)
+            ->whereIn('status', [\App\Enums\DeliveryStatus::Available, \App\Enums\DeliveryStatus::Taken])
+            ->exists();
+
+        if ($hasActiveOrders || $hasActiveSellerOrders || $hasActiveDelivery) {
+            return back()->withErrors([
+                'password' => 'Tidak dapat menghapus akun karena masih ada pesanan atau pengiriman aktif.'
+            ]);
+        }
+
         Auth::logout();
 
+        $user->update([
+            'name' => 'Pengguna Dihapus',
+            'email' => \Illuminate\Support\Str::uuid() . '@deleted.seapedia.test',
+        ]);
+        
         $user->delete();
 
         $request->session()->invalidate();

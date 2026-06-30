@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { AlertTriangle, Clock } from '@lucide/vue';
 import AdminClockController from '@/actions/App/Http/Controllers/Web/Admin/ClockController';

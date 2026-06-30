@@ -49,4 +49,31 @@ class SellerStoreController extends Controller
 
         return to_route('seller.store.show');
     }
+
+    public function destroy(Store $store): RedirectResponse
+    {
+        $this->authorize('delete', $store);
+
+        $hasActiveOrders = \App\Models\Order::where('store_id', $store->id)
+            ->whereIn('status', [
+                \App\Enums\OrderStatus::SedangDikemas,
+                \App\Enums\OrderStatus::MenungguPengirim,
+                \App\Enums\OrderStatus::SedangDikirim,
+            ])
+            ->exists();
+
+        if ($hasActiveOrders) {
+            return back()->withErrors([
+                'store' => 'Tidak dapat menghapus toko saat masih ada pesanan aktif. Tunggu hingga semua pesanan selesai atau di-refund.'
+            ]);
+        }
+
+        $store->delete();
+        
+        \Illuminate\Support\Facades\Auth::user()->roles()->detach(
+            \App\Models\Role::where('name', 'seller')->first()
+        );
+
+        return redirect()->route('dashboard');
+    }
 }

@@ -5,6 +5,7 @@ import StoreController from './StoreController'
 import AppReviewController from './AppReviewController'
 import DashboardController from './DashboardController'
 import RoleController from './RoleController'
+import Profile from './Profile'
 import SellerStoreController from './SellerStoreController'
 import SellerProductController from './SellerProductController'
 import SellerOrderController from './SellerOrderController'
@@ -25,6 +26,7 @@ StoreController: Object.assign(StoreController, StoreController),
 AppReviewController: Object.assign(AppReviewController, AppReviewController),
 DashboardController: Object.assign(DashboardController, DashboardController),
 RoleController: Object.assign(RoleController, RoleController),
+Profile: Object.assign(Profile, Profile),
 SellerStoreController: Object.assign(SellerStoreController, SellerStoreController),
 SellerProductController: Object.assign(SellerProductController, SellerProductController),
 SellerOrderController: Object.assign(SellerOrderController, SellerOrderController),

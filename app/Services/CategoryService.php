@@ -61,6 +61,25 @@ class CategoryService
     }
 
     /**
+     * Flat list of all active categories (root + children combined),
+     * ordered by the number of active products descending. Used for the
+     * "Kategori Populer" section on the catalog homepage so child categories
+     * with many products can surface alongside root categories.
+     *
+     * @return Collection<int, Category>
+     */
+    public function popularFlat(int $limit = 6): Collection
+    {
+        return Category::query()
+            ->active()
+            ->withCount(['products' => fn ($q) => $q->where('is_active', true)])
+            ->having('products_count', '>', 0)
+            ->orderByDesc('products_count')
+            ->limit($limit)
+            ->get(['id', 'name', 'slug', 'parent_id']);
+    }
+
+    /**
      * Full tree (active and inactive) for the admin management table.
      *
      * @return Collection<int, Category>

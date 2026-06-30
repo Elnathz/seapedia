@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import ProductCard from '@/components/ProductCard.vue';
 import {
     Dialog,
     DialogContent,
@@ -61,7 +62,10 @@ interface Product {
     images?: ProductImage[];
 }
 
-const props = defineProps<{ product: Product }>();
+const props = defineProps<{ 
+    product: Product;
+    relatedProducts?: Product[];
+}>();
 
 const { getInitials } = useInitials();
 const { t } = useI18n();
@@ -409,6 +413,18 @@ function confirmClearAndAdd() {
                     </p>
                 </div>
 
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <div v-if="relatedProducts && relatedProducts.length > 0" class="mt-16 max-w-6xl mx-auto px-4 md:px-8">
+            <h2 class="text-2xl font-bold text-foreground mb-6">Produk Terkait</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <ProductCard
+                    v-for="relProduct in relatedProducts"
+                    :key="relProduct.id"
+                    :product="relProduct"
+                />
             </div>
         </div>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, useRemember } from '@inertiajs/vue3';
 import { ChevronRight, Search } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -68,7 +68,7 @@ const props = defineProps<{
 }>();
 
 const query = ref(props.search ?? '');
-const sortValue = ref(props.sort ?? 'newest');
+const sortValue = ref(props.sort ?? 'random');
 const loading = ref(false);
 const { t } = useI18n();
 const { categories } = useCategories();
@@ -83,7 +83,7 @@ const activeParentSlug = computed(
         null,
 );
 
-const allProducts = ref<Product[]>([...props.products.data]);
+const allProducts = useRemember<Product[]>([...props.products.data], 'catalog-products');
 let isLoadMore = false;
 
 watch(() => props.products.data, (newData) => {
@@ -128,6 +128,10 @@ function loadMore() {
     }
 }
 
+function resetToPageOne() {
+    goToPage(1);
+}
+
 function buildParams(input: {
     category?: string;
     q?: string | null;
@@ -137,20 +141,20 @@ function buildParams(input: {
     const params: Record<string, string | number> = {};
 
     if (input.q) {
-params.q = input.q;
-}
+        params.q = input.q;
+    }
 
     if (input.category) {
-params.category = input.category;
-}
+        params.category = input.category;
+    }
 
-    if (input.sort && input.sort !== 'newest') {
-params.sort = input.sort;
-}
+    if (input.sort && input.sort !== 'random') {
+        params.sort = input.sort;
+    }
 
     if (input.page) {
-params.page = input.page;
-}
+        params.page = input.page;
+    }
 
     return params;
 }
@@ -330,6 +334,7 @@ function visit(params: Record<string, string | number>) {
                         <SelectValue placeholder="Urutkan" />
                     </SelectTrigger>
                     <SelectContent>
+                        <SelectItem value="random">Acak</SelectItem>
                         <SelectItem value="newest">Terbaru</SelectItem>
                         <SelectItem value="price_asc">Harga Terendah</SelectItem>
                         <SelectItem value="price_desc">Harga Tertinggi</SelectItem>
@@ -389,6 +394,12 @@ function visit(params: Record<string, string | number>) {
                 <Button variant="outline" size="lg" :disabled="loading" @click="loadMore" class="w-full max-w-sm rounded-full">
                     <Spinner v-if="loading" class="mr-2 size-4" />
                     Tampilkan Lebih Banyak
+                </Button>
+            </div>
+            <div v-else-if="allProducts.length < products.total" class="mt-10 flex justify-center">
+                <Button variant="outline" size="lg" :disabled="loading" @click="resetToPageOne" class="w-full max-w-sm rounded-full">
+                    <Spinner v-if="loading" class="mr-2 size-4" />
+                    Muat Ulang Semua Produk
                 </Button>
             </div>
             <div v-else class="mt-10 text-center text-sm text-muted-foreground">

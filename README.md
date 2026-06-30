@@ -98,6 +98,7 @@ SEAPEDIA implements several robust security measures to protect the platform and
   - Policies (e.g., `ProductPolicy`, `OrderPolicy`, `DeliveryPolicy`) strictly enforce ownership and role scopes.
   - Middlewares (`is_admin`, `active_role`) restrict access to role-specific dashboard routes and endpoints.
   - Sensitive operations (checkout, wallet debits) run entirely within `DB::transaction()` with `lockForUpdate()` to prevent race conditions (e.g., double refunds, double job claims).
+- **Account Deletion & Anonymization**: When users delete their account, their PII (Personally Identifiable Information) such as Name and Email are anonymized to comply with data privacy standards, and the account is soft-deleted to maintain database integrity for historical transactions. Additionally, per-role removal is guarded (e.g. drivers cannot resign if they have active deliveries).
 
 ## Formatting and Testing
 

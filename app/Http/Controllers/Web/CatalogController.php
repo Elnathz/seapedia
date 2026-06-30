@@ -28,13 +28,22 @@ class CatalogController extends Controller
     {
         $search = $request->string('q')->value() ?: null;
         $categorySlug = $request->string('category')->value() ?: null;
-        $sort = in_array($request->string('sort')->value(), ['price_asc', 'price_desc']) ? $request->string('sort')->value() : null;
+        $sort = in_array($request->string('sort')->value(), ['price_asc', 'price_desc', 'newest', 'random']) ? $request->string('sort')->value() : null;
         $category = $categorySlug ? $this->categories->findActiveBySlug($categorySlug) : null;
 
-        $hasFilters = $search || $categorySlug || $sort || $request->has('price_min') || $request->has('price_max') || $request->has('in_stock');
+        // "random" is the default for Index, so if only random is present, we don't treat it as a filter
+        $isSortFilter = $sort && $sort !== 'random';
+        $hasFilters = $search || $categorySlug || $isSortFilter || $request->has('price_min') || $request->has('price_max') || $request->has('in_stock');
+
+        if (!$request->has('page') || $request->integer('page') === 1) {
+            $seed = random_int(1, 999999);
+            session()->put('catalog_seed', $seed);
+        } else {
+            $seed = session('catalog_seed', random_int(1, 999999));
+        }
 
         if ($hasFilters) {
-            $products = $this->catalog->index($search, $category, $sort);
+            $products = $this->catalog->index($search, $category, $sort, 12, $seed);
             
             // Get relevant category IDs if there's a search query and products exist
             $relevantCategoryIds = collect();
@@ -75,11 +84,18 @@ class CatalogController extends Controller
             ]);
         }
 
+        if (!$request->has('page') || $request->integer('page') === 1) {
+            $seed = random_int(1, 999999);
+            session()->put('catalog_seed', $seed);
+        } else {
+            $seed = session('catalog_seed', random_int(1, 999999));
+        }
+
         return Inertia::render('catalog/Index', [
-            'products' => $this->catalog->index(null, null, null),
+            'products' => $this->catalog->index(null, null, $sort ?: 'random', 12, $seed),
             'banners' => $this->banners->forStorefront(),
             'personalizedProducts' => $this->catalog->personalized($request->user()),
-            'popularCategories' => $this->categories->tree()->map(fn ($c) => ['id' => $c->id, 'name' => $c->name, 'slug' => $c->slug])->take(6),
+            'popularCategories' => $this->categories->popularFlat(6),
         ]);
     }
 
@@ -98,7 +114,20 @@ class CatalogController extends Controller
                 'category_id' => $found->category_id,
             ]);
         }
+        
+        $relatedProducts = \App\Models\Product::query()
+            ->with(['store', 'category'])
+            ->where('is_active', true)
+            ->whereHas('store', fn($q) => $q->where('is_active', true))
+            ->where('category_id', $found->category_id)
+            ->where('id', '!=', $found->id)
+            ->inRandomOrder()
+            ->take(6)
+            ->get();
 
-        return Inertia::render('catalog/Show', ['product' => $found]);
+        return Inertia::render('catalog/Show', [
+            'product' => $found,
+            'relatedProducts' => $relatedProducts
+        ]);
     }
 }

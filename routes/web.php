@@ -48,11 +48,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('role/select', [RoleController::class, 'create'])->name('role.select');
     Route::post('role/select', [RoleController::class, 'store'])->name('role.store');
+    Route::delete('role/{role}', [\App\Http\Controllers\Web\Profile\RoleDeleteController::class, 'destroy'])->name('role.destroy');
 
     Route::middleware('active_role:seller')->prefix('seller')->name('seller.')->group(function () {
         Route::get('store', [SellerStoreController::class, 'show'])->name('store.show');
         Route::post('store', [SellerStoreController::class, 'store'])->name('store.store');
         Route::put('store/{store}', [SellerStoreController::class, 'update'])->name('store.update');
+        Route::delete('store/{store}', [SellerStoreController::class, 'destroy'])->name('store.destroy');
 
         Route::get('products', [SellerProductController::class, 'index'])->name('products.index');
         Route::get('products/create', [SellerProductController::class, 'create'])->name('products.create');

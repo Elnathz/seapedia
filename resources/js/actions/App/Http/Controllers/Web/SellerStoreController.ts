@@ -221,6 +221,95 @@ update.put = (args: { store: number | { id: number } } | [store: number | { id: 
         })
     
     update.form = updateForm
-const SellerStoreController = { show, store, update }
+/**
+* @see \App\Http\Controllers\Web\SellerStoreController::destroy
+ * @see app/Http/Controllers/Web/SellerStoreController.php:53
+ * @route '/seller/store/{store}'
+ */
+export const destroy = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy.url(args, options),
+    method: 'delete',
+})
+
+destroy.definition = {
+    methods: ["delete"],
+    url: '/seller/store/{store}',
+} satisfies RouteDefinition<["delete"]>
+
+/**
+* @see \App\Http\Controllers\Web\SellerStoreController::destroy
+ * @see app/Http/Controllers/Web/SellerStoreController.php:53
+ * @route '/seller/store/{store}'
+ */
+destroy.url = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { store: args }
+    }
+
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { store: args.id }
+        }
+    
+    if (Array.isArray(args)) {
+        args = {
+                    store: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        store: typeof args.store === 'object'
+                ? args.store.id
+                : args.store,
+                }
+
+    return destroy.definition.url
+            .replace('{store}', parsedArgs.store.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Web\SellerStoreController::destroy
+ * @see app/Http/Controllers/Web/SellerStoreController.php:53
+ * @route '/seller/store/{store}'
+ */
+destroy.delete = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+    url: destroy.url(args, options),
+    method: 'delete',
+})
+
+    /**
+* @see \App\Http\Controllers\Web\SellerStoreController::destroy
+ * @see app/Http/Controllers/Web/SellerStoreController.php:53
+ * @route '/seller/store/{store}'
+ */
+    const destroyForm = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: destroy.url(args, {
+                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                        _method: 'DELETE',
+                        ...(options?.query ?? options?.mergeQuery ?? {}),
+                    }
+                }),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Web\SellerStoreController::destroy
+ * @see app/Http/Controllers/Web/SellerStoreController.php:53
+ * @route '/seller/store/{store}'
+ */
+        destroyForm.delete = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: destroy.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'DELETE',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'post',
+        })
+    
+    destroy.form = destroyForm
+const SellerStoreController = { show, store, update, destroy }
 
 export default SellerStoreController

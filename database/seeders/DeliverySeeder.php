@@ -40,7 +40,7 @@ class DeliverySeeder extends Seeder
             return;
         }
 
-        if ($buyer->wallet->balance <= 0) {
+        if ($buyer->wallet->balance < 500_000) {
             $this->topups->checkStatus($this->topups->create($buyer, 500_000));
         }
 

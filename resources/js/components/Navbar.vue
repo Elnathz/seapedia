@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, router, usePage } from '@inertiajs/vue3';
-import { Flame, Search, Zap, Tag, ShoppingCart, X, Menu } from '@lucide/vue';
+import { Flame, Search, Zap, Tag, ShoppingCart, X, Menu, ChevronRight, ChevronLeft } from '@lucide/vue';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Logo from '@/components/brand/Logo.vue';
@@ -101,7 +101,7 @@ function catalogUrl(slug?: string) {
 
 
 const showMobileSearch = ref(false);
-
+const activeMobileParent = ref<any>(null);
 function easeInOutCubic(t: number): number {
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
@@ -199,34 +199,63 @@ start = currentTime;
                             <Menu class="size-5" />
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" class="w-80">
-                        <SheetHeader>
-                            <SheetTitle class="text-left">Kategori</SheetTitle>
-                        </SheetHeader>
-                        <div class="mt-6 flex flex-col gap-4">
-                            <div v-for="root in categories" :key="root.id">
-                                <Link :href="catalogUrl(root.slug)" class="block font-semibold text-foreground hover:text-primary">
-                                    {{ root.name }}
-                                </Link>
-                                <div class="mt-2 flex flex-col gap-2 pl-4 border-l border-border">
-                                    <Link v-for="child in root.children" :key="child.id" :href="catalogUrl(child.slug)" class="text-sm text-muted-foreground hover:text-primary">
-                                        {{ child.name }}
-                                    </Link>
-                                </div>
+                    <SheetContent side="left" class="w-80 p-0 flex flex-col gap-0">
+                        <template v-if="!activeMobileParent">
+                            <div class="px-5 py-4 border-b border-border font-bold text-lg">
+                                Kategori
                             </div>
-                            <Link :href="catalogUrl()" class="font-medium text-primary hover:underline mt-2">
-                                {{ t('nav.allCategories') }}
-                            </Link>
-                        </div>
+                            <div class="flex-1 overflow-y-auto">
+                                <button
+                                    v-for="root in categories"
+                                    :key="root.id"
+                                    class="w-full flex items-center justify-between px-5 py-3.5 border-b border-border hover:bg-muted/50 transition-colors text-left text-sm font-medium"
+                                    @click="activeMobileParent = root"
+                                >
+                                    <span>{{ root.name }}</span>
+                                    <ChevronRight class="size-4 text-muted-foreground" />
+                                </button>
+                                <Link :href="catalogUrl()" class="w-full flex items-center px-5 py-3.5 border-b border-border hover:bg-muted/50 transition-colors text-left text-sm font-medium text-primary">
+                                    {{ t('nav.allCategories') }}
+                                </Link>
+                            </div>
+                        </template>
+
+                        <template v-else>
+                            <div class="flex items-center gap-2 px-2 py-2 border-b border-border font-bold text-base">
+                                <Button variant="ghost" size="icon" @click="activeMobileParent = null" class="shrink-0 size-10">
+                                    <ChevronLeft class="size-5" />
+                                </Button>
+                                <span class="truncate">{{ activeMobileParent.name }}</span>
+                            </div>
+                            <div class="flex-1 overflow-y-auto">
+                                <Link
+                                    :href="catalogUrl(activeMobileParent.slug)"
+                                    class="w-full flex items-center px-5 py-3.5 border-b border-border hover:bg-muted/50 transition-colors text-left text-sm"
+                                >
+                                    Semua Produk di {{ activeMobileParent.name }}
+                                </Link>
+                                <Link
+                                    v-for="child in activeMobileParent.children"
+                                    :key="child.id"
+                                    :href="catalogUrl(child.slug)"
+                                    class="w-full flex items-center justify-between px-5 py-3.5 border-b border-border hover:bg-muted/50 transition-colors text-left text-sm"
+                                >
+                                    <span>{{ child.name }}</span>
+                                    <ChevronRight class="size-4 text-muted-foreground" />
+                                </Link>
+                            </div>
+                        </template>
                     </SheetContent>
                 </Sheet>
 
                 <!-- Logo -->
                 <a v-if="isLandingPage" href="#hero" @click="scrollToSection($event, 'hero')" class="flex shrink-0 items-center cursor-pointer">
-                    <Logo class="h-12 w-auto sm:h-10 lg:h-[70px]" />
+                    <Logo class="hidden md:block h-12 w-auto sm:h-10 lg:h-[70px]" />
+                    <img src="/favicon.svg" alt="Seapedia" class="block md:hidden h-8 w-auto" />
                 </a>
                 <Link v-else :href="catalogUrl()" class="flex shrink-0 items-center">
-                    <Logo class="h-12 w-auto sm:h-10 lg:h-[60px]" />
+                    <Logo class="hidden md:block h-12 w-auto sm:h-10 lg:h-[60px]" />
+                    <img src="/favicon.svg" alt="Seapedia" class="block md:hidden h-8 w-auto ml-1" />
                 </Link>
 
                 <!-- Landing Page Menu -->
@@ -276,30 +305,24 @@ start = currentTime;
                 </NavigationMenu>
             </div>
 
-            <!-- Search bar (desktop) -->
-            <form v-if="!isLandingPage" class="hidden flex-1 md:flex" @submit.prevent="searchCatalog">
+            <!-- Search bar -->
+            <form v-if="!isLandingPage" class="flex flex-1 md:mx-4 mx-2" @submit.prevent="searchCatalog">
                 <div class="flex w-full max-w-2xl overflow-hidden rounded-xl border border-border bg-muted/60 ring-1 ring-transparent transition-all focus-within:border-primary/40 focus-within:bg-white focus-within:ring-primary/20">
-                    <input v-model="searchQuery" type="search" placeholder="Cari produk, toko, atau kategori..." class="w-full bg-transparent px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none" autocomplete="off" />
-                    <button type="submit" class="flex shrink-0 items-center gap-1.5 bg-primary px-4 text-sm font-medium text-white transition-colors hover:bg-primary/90">
+                    <input v-model="searchQuery" type="search" placeholder="Cari produk..." class="w-full bg-transparent px-3 md:px-4 py-2 md:py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none" autocomplete="off" />
+                    <button type="submit" class="flex shrink-0 items-center justify-center gap-1.5 bg-transparent md:bg-primary px-3 md:px-4 text-sm font-medium text-muted-foreground md:text-white transition-colors hover:bg-muted/80 md:hover:bg-primary/90">
                         <Search class="size-4" />
                         <span class="hidden lg:inline">Cari</span>
                     </button>
                 </div>
             </form>
 
-            <div class="flex items-center gap-2">
-                <!-- Mobile search toggle -->
-                <Button v-if="!isLandingPage" variant="ghost" size="icon" class="md:hidden" @click="showMobileSearch = !showMobileSearch">
-                    <X v-if="showMobileSearch" class="size-5" />
-                    <Search v-else class="size-5" />
-                </Button>
-
+            <div class="flex items-center gap-1 md:gap-2">
                 <!-- Authenticated state -->
                 <template v-if="auth.isAuthenticated">
                     <Button v-if="isLandingPage" as-child variant="default" class="hidden sm:inline-flex bg-primary font-semibold text-white shadow-sm transition-transform hover:scale-105 active:scale-95">
                         <Link :href="catalogUrl()">Mulai Belanja</Link>
                     </Button>
-                    <Button v-if="auth.activeRole === 'buyer'" as-child variant="ghost" size="icon" class="relative hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground mr-1">
+                    <Button v-if="auth.activeRole === 'buyer'" as-child variant="ghost" size="icon" class="relative hidden md:inline-flex hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground mr-1">
                         <Link :href="cartIndex.url()">
                             <ShoppingCart class="size-[22px]" />
                             <span v-if="auth.cartItemCount > 0" class="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-white shadow-sm ring-2 ring-white">
@@ -310,11 +333,11 @@ start = currentTime;
 
                     <DropdownMenu :modal="false">
                         <DropdownMenuTrigger as-child>
-                            <Button variant="ghost" class="gap-2 px-2 py-1.5 focus-visible:ring-0">
+                            <Button variant="ghost" class="gap-2 px-1 md:px-2 py-1.5 focus-visible:ring-0">
                                 <UserInfo :user="user" class="hidden md:flex" />
-                                <Avatar v-if="user" class="h-8 w-8 md:hidden overflow-hidden rounded-lg">
+                                <Avatar v-if="user" class="h-8 w-8 overflow-hidden rounded-full border border-border/50">
                                     <AvatarImage v-if="user.avatar" :src="user.avatar" :alt="user.name" />
-                                    <AvatarFallback class="rounded-lg bg-primary text-primary-foreground text-xs font-semibold">
+                                    <AvatarFallback class="bg-primary text-primary-foreground text-xs font-semibold">
                                         {{ user.name.substring(0, 2).toUpperCase() }}
                                     </AvatarFallback>
                                 </Avatar>
@@ -332,22 +355,12 @@ start = currentTime;
                         <Button as-child variant="ghost" class="hidden sm:inline-flex text-muted-foreground hover:text-primary hover:bg-transparent">
                             <Link :href="login()">Login</Link>
                         </Button>
-                        <Button as-child variant="default" class="bg-primary font-bold text-white shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95">
-                            <Link :href="register()">Daftar Gratis</Link>
+                        <Button as-child variant="default" class="bg-primary font-bold text-white shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 text-xs px-3 h-8 md:text-sm md:h-10 md:px-4">
+                            <Link :href="register()">Daftar</Link>
                         </Button>
                     </div>
                 </template>
             </div>
-        </div>
-
-        <!-- Mobile Search Dropdown -->
-        <div v-if="showMobileSearch && !isLandingPage" class="border-t border-border p-3 md:hidden">
-            <form @submit.prevent="searchCatalog" class="flex w-full overflow-hidden rounded-lg border border-border bg-muted/60">
-                <input v-model="searchQuery" type="search" placeholder="Cari produk..." class="w-full bg-transparent px-3 py-2 text-sm text-foreground focus:outline-none" autocomplete="off" />
-                <button type="submit" class="bg-primary px-3 text-white">
-                    <Search class="size-4" />
-                </button>
-            </form>
         </div>
 
         <!-- SVG Wave — flat top attaches to navbar, wavy bottom hangs down -->

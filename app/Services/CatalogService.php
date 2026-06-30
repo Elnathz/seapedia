@@ -20,7 +20,7 @@ class CatalogService
      * loaded with only its public columns so the payload never exposes
      * internal fields (owner `user_id`, timestamps) to the client.
      */
-    public function index(?string $search = null, ?Category $category = null, ?string $sort = null, int $perPage = 12): LengthAwarePaginator
+    public function index(?string $search = null, ?Category $category = null, ?string $sort = null, int $perPage = 12, ?int $seed = null): LengthAwarePaginator
     {
         $categoryIds = $category ? $this->categories->descendantIds($category) : null;
 
@@ -34,6 +34,8 @@ class CatalogService
         match ($sort) {
             'price_asc' => $query->orderBy('price'),
             'price_desc' => $query->orderByDesc('price'),
+            'newest' => $query->latest(),
+            'random' => $seed ? $query->inRandomOrder($seed) : $query->inRandomOrder(),
             default => $query->latest(),
         };
 
