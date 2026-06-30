@@ -262,7 +262,7 @@ function handleError(errors: Record<string, string>) {
                         name="name"
                         placeholder="Nama lengkap kamu"
                     />
-                    <InputError :message="errors.name" />
+                    <InputError :message="errors.name || $page.props.errors.name" />
                 </div>
 
                 <div class="grid gap-2">
@@ -280,7 +280,7 @@ function handleError(errors: Record<string, string>) {
                         name="username"
                         placeholder="username_kamu"
                     />
-                    <InputError :message="errors.username" />
+                    <InputError :message="errors.username || $page.props.errors.username" />
                 </div>
 
                 <div class="grid gap-2">
@@ -295,7 +295,7 @@ function handleError(errors: Record<string, string>) {
                         name="email"
                         placeholder="email@gmail.com"
                     />
-                    <InputError :message="errors.email" />
+                    <InputError :message="errors.email || $page.props.errors.email" />
                 </div>
 
                 <div class="grid gap-2">
@@ -312,7 +312,7 @@ function handleError(errors: Record<string, string>) {
                         placeholder="08xxxxxxxxxx atau +62xxxxxxxxxx"
                     />
                     <p class="text-[11px] text-muted-foreground mt-0.5">Format penulisannya: 08... atau +62...</p>
-                    <InputError :message="errors.phone" />
+                    <InputError :message="errors.phone || $page.props.errors.phone" />
                 </div>
 
                 <div class="grid gap-2">
@@ -327,7 +327,7 @@ function handleError(errors: Record<string, string>) {
                         placeholder="Min. 8 karakter"
                         :passwordrules="passwordRules"
                     />
-                    <InputError :message="errors.password" />
+                    <InputError :message="errors.password || $page.props.errors.password" />
                 </div>
 
                 <div class="grid gap-2">
@@ -342,7 +342,7 @@ function handleError(errors: Record<string, string>) {
                         placeholder="Ulangi kata sandi"
                         :passwordrules="passwordRules"
                     />
-                    <InputError :message="errors.password_confirmation" />
+                    <InputError :message="errors.password_confirmation || $page.props.errors.password_confirmation" />
                 </div>
 
                 <Button
