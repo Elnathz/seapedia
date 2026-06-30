@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Web\CatalogController::show
- * @see app/Http/Controllers/Web/CatalogController.php:85
+ * @see app/Http/Controllers/Web/CatalogController.php:86
  * @route '/catalog/{product}'
  */
 export const show = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\CatalogController::show
- * @see app/Http/Controllers/Web/CatalogController.php:85
+ * @see app/Http/Controllers/Web/CatalogController.php:86
  * @route '/catalog/{product}'
  */
 show.url = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -122,7 +122,7 @@ show.url = (args: { product: string | number } | [product: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\Web\CatalogController::show
- * @see app/Http/Controllers/Web/CatalogController.php:85
+ * @see app/Http/Controllers/Web/CatalogController.php:86
  * @route '/catalog/{product}'
  */
 show.get = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -131,7 +131,7 @@ show.get = (args: { product: string | number } | [product: string | number ] | s
 })
 /**
 * @see \App\Http\Controllers\Web\CatalogController::show
- * @see app/Http/Controllers/Web/CatalogController.php:85
+ * @see app/Http/Controllers/Web/CatalogController.php:86
  * @route '/catalog/{product}'
  */
 show.head = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -141,7 +141,7 @@ show.head = (args: { product: string | number } | [product: string | number ] | 
 
     /**
 * @see \App\Http\Controllers\Web\CatalogController::show
- * @see app/Http/Controllers/Web/CatalogController.php:85
+ * @see app/Http/Controllers/Web/CatalogController.php:86
  * @route '/catalog/{product}'
  */
     const showForm = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -151,7 +151,7 @@ show.head = (args: { product: string | number } | [product: string | number ] | 
 
             /**
 * @see \App\Http\Controllers\Web\CatalogController::show
- * @see app/Http/Controllers/Web/CatalogController.php:85
+ * @see app/Http/Controllers/Web/CatalogController.php:86
  * @route '/catalog/{product}'
  */
         showForm.get = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -160,7 +160,7 @@ show.head = (args: { product: string | number } | [product: string | number ] | 
         })
             /**
 * @see \App\Http\Controllers\Web\CatalogController::show
- * @see app/Http/Controllers/Web/CatalogController.php:85
+ * @see app/Http/Controllers/Web/CatalogController.php:86
  * @route '/catalog/{product}'
  */
         showForm.head = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

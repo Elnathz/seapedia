@@ -20,7 +20,24 @@ class UpdateBannerRequest extends FormRequest
             'subtitle' => ['nullable', 'string', 'max:200'],
             'badge_label' => ['nullable', 'string', 'max:40'],
             'cta_label' => ['nullable', 'string', 'max:40'],
-            'cta_url' => ['nullable', 'string', 'max:200'],
+            'cta_url' => [
+                'nullable',
+                'string',
+                'max:200',
+                function ($attribute, $value, $fail) {
+                    if ($value !== null && $value !== '') {
+                        if (str_starts_with($value, '/')) {
+                            if (!preg_match('/^\/(catalog|stores)($|[\/?#])/', $value)) {
+                                $fail('Tautan internal harus diawali dengan /catalog atau /stores.');
+                            }
+                        } else {
+                            if (!preg_match('/^https?:\/\//', $value)) {
+                                $fail('Tautan eksternal wajib diawali dengan http:// atau https://');
+                            }
+                        }
+                    }
+                }
+            ],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:1000'],
             'is_active' => ['sometimes', 'boolean'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],

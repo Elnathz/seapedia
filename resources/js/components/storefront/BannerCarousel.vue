@@ -59,10 +59,6 @@ onUnmounted(() => {
                     :alt="slide.title"
                     class="h-full w-full object-cover lg:aspect-auto aspect-[5/2]"
                 />
-                <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-6">
-                    <p class="text-xl font-bold text-white">{{ slide.title }}</p>
-                    <p v-if="slide.cta_label" class="mt-1 text-sm text-white/80">{{ slide.cta_label }}</p>
-                </div>
             </Link>
         </div>
 

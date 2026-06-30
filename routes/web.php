@@ -128,6 +128,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('overdue', [AdminOverdueController::class, 'index'])->name('overdue.index');
 
         // Banners
+        Route::get('banners/search-categories', [AdminBannerController::class, 'searchCategories'])->name('banners.search-categories');
+        Route::get('banners/search-products', [AdminBannerController::class, 'searchProducts'])->name('banners.search-products');
+        Route::get('banners/search-stores', [AdminBannerController::class, 'searchStores'])->name('banners.search-stores');
+
         Route::get('banners', [AdminBannerController::class, 'index'])->name('banners.index');
         Route::post('banners', [AdminBannerController::class, 'store'])->name('banners.store');
         Route::put('banners/{banner}', [AdminBannerController::class, 'update'])->name('banners.update');
