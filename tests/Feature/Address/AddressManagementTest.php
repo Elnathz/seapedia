@@ -35,8 +35,11 @@ class AddressManagementTest extends TestCase
 
         $this->actingAsBuyer($buyer)->post(route('buyer.addresses.store'), [
             'recipient_name' => 'Budi',
-            'phone' => '081234567890',
-            'full_address' => 'Jl. Merdeka No. 1',
+            'phone'          => '081234567890',
+            'province'       => 'DKI Jakarta',
+            'city'           => 'Jakarta Selatan',
+            'postal_code'    => '12345',
+            'full_address'   => 'Jl. Merdeka No. 1',
         ]);
 
         $address = Address::query()->where('user_id', $buyer->id)->first();
@@ -65,8 +68,11 @@ class AddressManagementTest extends TestCase
 
         $response = $this->actingAsBuyer($other)->put(route('buyer.addresses.update', $address), [
             'recipient_name' => 'Hacker',
-            'phone' => '080000000000',
-            'full_address' => 'Somewhere else',
+            'phone'          => '080000000000',
+            'province'       => 'DKI Jakarta',
+            'city'           => 'Jakarta Pusat',
+            'postal_code'    => '10000',
+            'full_address'   => 'Somewhere else',
         ]);
 
         $response->assertForbidden();

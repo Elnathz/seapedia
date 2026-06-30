@@ -41,7 +41,7 @@ class RoleSelectionTest extends TestCase
             'password' => 'password',
         ]);
 
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('catalog.index', absolute: false));
         $this->assertSame(RoleName::Buyer->value, session('active_role'));
     }
 }

@@ -68,9 +68,10 @@ class CatalogController extends Controller
             }
 
             return Inertia::render('catalog/Search', [
-                'products' => $products,
-                'filters' => $request->only(['q', 'category', 'sort', 'price_min', 'price_max', 'in_stock']),
-                'categories' => $categoriesTree,
+                'products'       => $products,
+                'filters'        => $request->only(['q', 'category', 'sort', 'price_min', 'price_max', 'in_stock']),
+                'categories'     => $categoriesTree,
+                'activeCategory' => $category,
             ]);
         }
 

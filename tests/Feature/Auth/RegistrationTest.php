@@ -42,7 +42,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('catalog.index', absolute: false));
 
         $user = User::whereEmail('test@example.com')->first();
         $this->assertSame('testuser', $user->username);
