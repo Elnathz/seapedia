@@ -21,6 +21,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
 import { toast } from 'vue-sonner';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps<{
     passwordRules: string;
@@ -144,12 +145,13 @@ function nextStep() {
         if (!nativeForm.reportValidity()) {
             return;
         }
-    }
 
-    if (formRef.value) {
         isValidatingStep1.value = true;
-        // @ts-ignore
-        formRef.value.submit({
+        
+        const formData = new FormData(nativeForm);
+        formData.delete('roles[]');
+
+        router.post(store.url(), Object.fromEntries(formData), {
             preserveScroll: true,
             preserveState: true,
             onError: (errors: Record<string, string>) => {
