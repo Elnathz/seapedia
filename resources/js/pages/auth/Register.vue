@@ -327,6 +327,7 @@ function handleError(errors: Record<string, string>) {
                         placeholder="Min. 8 karakter"
                         :passwordrules="passwordRules"
                     />
+                    <p class="text-[11px] text-muted-foreground mt-0.5">Wajib mengandung minimal 8 karakter, huruf besar-kecil, angka, dan simbol.</p>
                     <InputError :message="errors.password || $page.props.errors.password" />
                 </div>
 
