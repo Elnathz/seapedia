@@ -7,6 +7,7 @@ import BuyerAddressController from '@/actions/App/Http/Controllers/Web/BuyerAddr
 import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import RegionCascader from '@/components/RegionCascader.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -31,6 +32,11 @@ interface AddressData {
     phone: string;
     full_address: string;
     is_default: boolean;
+    province?: string;
+    city?: string;
+    district?: string;
+    village?: string;
+    postal_code?: string;
 }
 
 defineProps<{
@@ -54,13 +60,26 @@ const formBinding = computed(() =>
         : BuyerAddressController.store.form(),
 );
 
+const formProvince = ref('');
+const formCity = ref('');
+const formDistrict = ref('');
+const formVillage = ref('');
+
 function openCreate() {
     editing.value = null;
+    formProvince.value = '';
+    formCity.value = '';
+    formDistrict.value = '';
+    formVillage.value = '';
     formOpen.value = true;
 }
 
 function openEdit(address: AddressData) {
     editing.value = address;
+    formProvince.value = address.province ?? '';
+    formCity.value = address.city ?? '';
+    formDistrict.value = address.district ?? '';
+    formVillage.value = address.village ?? '';
     formOpen.value = true;
 }
 </script>
@@ -95,12 +114,16 @@ function openEdit(address: AddressData) {
                             {{ t('address.defaultBadge') }}
                         </Badge>
                     </div>
-                    <p class="text-sm text-muted-foreground">
-                        {{ address.phone }}
-                    </p>
-                    <p class="text-sm text-muted-foreground">
-                        {{ address.full_address }}
-                    </p>
+                    <div class="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                        <span class="font-semibold">{{ address.phone }}</span>
+                    </div>
+                    <div class="text-sm text-muted-foreground mt-1 space-y-1">
+                        <p class="leading-relaxed">{{ address.full_address }}</p>
+                        <p v-if="address.province" class="text-xs">
+                            {{ [address.village, address.district, address.city, address.province].filter(Boolean).join(', ') }}
+                            <span v-if="address.postal_code" class="font-medium"> - {{ address.postal_code }}</span>
+                        </p>
+                    </div>
 
                     <div class="mt-3 flex flex-wrap gap-2">
                         <Form
@@ -253,6 +276,26 @@ function openEdit(address: AddressData) {
                             :placeholder="t('address.fullAddressPlaceholder')"
                         />
                         <InputError :message="errors.full_address" />
+                    </div>
+
+                    <RegionCascader 
+                        v-model:province="formProvince"
+                        v-model:city="formCity"
+                        v-model:district="formDistrict"
+                        v-model:village="formVillage"
+                        :errors="errors"
+                    />
+
+                    <div class="grid gap-2">
+                        <Label for="postal_code">Kode Pos</Label>
+                        <Input
+                            id="postal_code"
+                            name="postal_code"
+                            :default-value="editing?.postal_code ?? ''"
+                            required
+                            maxlength="20"
+                        />
+                        <InputError :message="errors.postal_code" />
                     </div>
 
                     <DialogFooter class="gap-2">

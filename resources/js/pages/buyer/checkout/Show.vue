@@ -41,6 +41,11 @@ interface AddressData {
     phone: string;
     full_address: string;
     is_default: boolean;
+    province?: string;
+    city?: string;
+    district?: string;
+    village?: string;
+    postal_code?: string;
 }
 
 interface AppliedDiscount {
@@ -261,6 +266,7 @@ function confirmCheckout() {
                                     :value="address.id"
                                 >
                                     {{ address.recipient_name }},
+                                    {{ [address.district, address.city, address.province].filter(Boolean).join(', ') }},
                                     {{ address.full_address }}
                                 </SelectItem>
                             </SelectContent>

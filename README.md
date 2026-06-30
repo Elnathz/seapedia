@@ -109,3 +109,12 @@ To run tests and code formatters:
 ./vendor/bin/sail npm run lint
 ./vendor/bin/sail npm run format
 ```
+
+## Engineering Decisions
+
+### Region Selector (Address Management)
+We opted to use the public EMSIFA API (https://www.emsifa.com/api-wilayah-indonesia/) for retrieving Indonesia's Province, Regency, District, and Village data dynamically instead of seeding ~80,000+ regions into our local database. 
+This decision was made to:
+- Avoid excessively long database seeding times during judging/evaluation (using php artisan migrate --seed).
+- Keep the database schema clean and lightweight, optimizing for core e-commerce transactions rather than static data storage.
+- Enhance the user experience with cascading dropdowns that fetch region data asynchronously.
