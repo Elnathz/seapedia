@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class AddressService
 {
     /**
-     * @param  array{recipient_name: string, phone: string, full_address: string, is_default?: bool}  $data
+     * @param  array{recipient_name: string, phone: string, full_address: string, province?: string, city?: string, district?: string, village?: string, postal_code?: string, is_default?: bool}  $data
      */
     public function createForUser(User $user, array $data): Address
     {
@@ -27,13 +27,18 @@ class AddressService
                 'recipient_name' => $data['recipient_name'],
                 'phone' => $data['phone'],
                 'full_address' => $data['full_address'],
+                'province' => $data['province'] ?? null,
+                'city' => $data['city'] ?? null,
+                'district' => $data['district'] ?? null,
+                'village' => $data['village'] ?? null,
+                'postal_code' => $data['postal_code'] ?? null,
                 'is_default' => $isDefault,
             ]);
         });
     }
 
     /**
-     * @param  array{recipient_name: string, phone: string, full_address: string, is_default?: bool}  $data
+     * @param  array{recipient_name: string, phone: string, full_address: string, province?: string, city?: string, district?: string, village?: string, postal_code?: string, is_default?: bool}  $data
      */
     public function update(Address $address, array $data): Address
     {
@@ -48,6 +53,11 @@ class AddressService
                 'recipient_name' => $data['recipient_name'],
                 'phone' => $data['phone'],
                 'full_address' => $data['full_address'],
+                'province' => $data['province'] ?? $address->province,
+                'city' => $data['city'] ?? $address->city,
+                'district' => $data['district'] ?? $address->district,
+                'village' => $data['village'] ?? $address->village,
+                'postal_code' => $data['postal_code'] ?? $address->postal_code,
                 'is_default' => $isDefault,
             ]);
 
