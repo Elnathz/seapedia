@@ -262,7 +262,7 @@ start = currentTime;
                 <!-- Logo -->
                 <a v-if="isLandingPage" href="#hero" @click="scrollToSection($event, 'hero')" class="flex shrink-0 items-center cursor-pointer">
                     <Logo class="hidden md:block h-12 w-auto sm:h-10 lg:h-[70px]" />
-                    <img src="/seapedia-logo.svg" alt="Seapedia" class="block md:hidden h-7 w-auto" />
+                    <img src="/favicon.svg" alt="Seapedia" class="block md:hidden h-8 w-auto ml-1" />
                 </a>
                 <Link v-else :href="catalogUrl()" class="flex shrink-0 items-center">
                     <Logo class="hidden md:block h-12 w-auto sm:h-10 lg:h-[60px]" />
