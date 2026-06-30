@@ -173,11 +173,11 @@ function visit(params: Record<string, string | number>) {
     <div class="w-full">
         <div v-if="banners.main.length || banners.side.length" class="mx-auto max-w-7xl">
             <!-- Desktop: carousel (2/3) | 2 side banners (1/3) -->
-            <div class="hidden gap-3 lg:grid lg:grid-cols-3 px-4 py-6 sm:px-6 h-[420px]">
-                <div class="col-span-2 h-full min-h-0 min-w-0">
+            <div class="hidden gap-3 lg:grid lg:grid-cols-3 px-4 py-6 sm:px-6">
+                <div class="col-span-2 min-h-0 min-w-0 aspect-[5/2]">
                     <BannerCarousel v-if="banners.main.length" :slides="banners.main" class="h-full w-full" />
                 </div>
-                <div class="flex flex-col gap-3 h-full overflow-hidden min-h-0 min-w-0">
+                <div class="flex flex-col gap-3 overflow-hidden min-h-0 min-w-0">
                     <BannerImage v-for="b in banners.side.slice(0, 2)" :key="b.id" :banner="b" class="flex-1 h-1/2 object-cover min-h-0" />
                 </div>
             </div>

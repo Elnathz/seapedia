@@ -54,7 +54,7 @@ const processing = ref(false);
 const formPlacement = ref<'main' | 'side'>('main');
 const formActive = ref(true);
 
-const aspectRatio = computed(() => (formPlacement.value === 'main' ? 5 / 2 : 3 / 2));
+const aspectRatio = computed(() => 5 / 2); // Both main and side are 5:2 mathematically in a 2/3 - 1/3 grid
 const initialImageUrl = computed(() =>
     editing.value ? bannerSrc(editing.value.image_path) : null,
 );

@@ -45,8 +45,29 @@ class UpdateProductRequest extends FormRequest
             'category_id.required' => 'Pilih kategori produk.',
             'category_id.exists' => 'Kategori yang dipilih tidak valid.',
             'price.min' => 'Harga minimal Rp100.',
+            'images.*.uploaded' => 'Gambar gagal diunggah. Pastikan ukuran file tidak melebihi batas server (Maks 2MB).',
             'images.*.max' => 'Ukuran gambar maksimal 2MB.',
             'variants.*.price.min' => 'Harga varian minimal Rp100.',
         ];
+    }
+
+    public function validationData()
+    {
+        $data = $this->all();
+
+        if (isset($data['images']) && is_array($data['images'])) {
+            foreach ($data['images'] as $key => $file) {
+                if ($file instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
+                    if ($file->getError() === \UPLOAD_ERR_NO_FILE) {
+                        unset($data['images'][$key]);
+                    }
+                }
+            }
+            if (empty($data['images'])) {
+                unset($data['images']);
+            }
+        }
+
+        return $data;
     }
 }
