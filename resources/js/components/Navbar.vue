@@ -16,6 +16,12 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import {
     NavigationMenu,
     NavigationMenuContent,
     NavigationMenuItem,
@@ -41,6 +47,7 @@ import { useAuthStore } from '@/stores/auth';
 const auth = useAuthStore();
 const { t } = useI18n();
 const { categories } = useCategories();
+const showAllCategoriesModal = ref(false);
 
 const page = usePage();
 const isLandingPage = computed(() => page.component === 'Welcome');
@@ -206,7 +213,7 @@ start = currentTime;
                             </div>
                             <div class="flex-1 overflow-y-auto">
                                 <button
-                                    v-for="root in categories"
+                                    v-for="root in categories.slice(0, 6)"
                                     :key="root.id"
                                     class="w-full flex items-center justify-between px-5 py-3.5 border-b border-border hover:bg-muted/50 transition-colors text-left text-sm font-medium"
                                     @click="activeMobileParent = root"
@@ -214,9 +221,12 @@ start = currentTime;
                                     <span>{{ root.name }}</span>
                                     <ChevronRight class="size-4 text-muted-foreground" />
                                 </button>
-                                <Link :href="catalogUrl()" class="w-full flex items-center px-5 py-3.5 border-b border-border hover:bg-muted/50 transition-colors text-left text-sm font-medium text-primary">
+                                <button 
+                                    @click="showAllCategoriesModal = true" 
+                                    class="w-full flex items-center px-5 py-3.5 border-b border-border hover:bg-muted/50 transition-colors text-left text-sm font-medium text-primary"
+                                >
                                     {{ t('nav.allCategories') }}
-                                </Link>
+                                </button>
                             </div>
                         </template>
 
@@ -270,19 +280,19 @@ start = currentTime;
                 <NavigationMenu v-else-if="categories.length" class="hidden shrink-0 lg:flex">
                     <NavigationMenuList>
                         <NavigationMenuItem>
-                            <NavigationMenuTrigger class="bg-transparent">
+                            <NavigationMenuTrigger class="bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary font-semibold data-[state=open]:bg-primary/20 data-[state=open]:text-primary">
                                 Kategori
                             </NavigationMenuTrigger>
                             <NavigationMenuContent>
                                 <div class="grid w-[34rem] grid-cols-2 gap-x-6 gap-y-4 p-5">
-                                    <div v-for="root in categories" :key="root.id" class="min-w-0">
+                                    <div v-for="root in categories.slice(0, 6)" :key="root.id" class="min-w-0">
                                         <NavigationMenuLink as-child>
                                             <Link :href="catalogUrl(root.slug)" class="block truncate text-sm font-semibold text-foreground transition-colors hover:text-primary">
                                                 {{ root.name }}
                                             </Link>
                                         </NavigationMenuLink>
                                         <ul class="mt-1.5 space-y-1">
-                                            <li v-for="child in root.children" :key="child.id">
+                                            <li v-for="child in root.children.slice(0, 4)" :key="child.id">
                                                 <NavigationMenuLink as-child>
                                                     <Link :href="catalogUrl(child.slug)" class="block truncate text-sm text-muted-foreground transition-colors hover:text-primary">
                                                         {{ child.name }}
@@ -292,12 +302,10 @@ start = currentTime;
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="border-t border-border px-5 py-3">
-                                    <NavigationMenuLink as-child>
-                                        <Link :href="catalogUrl()" class="text-sm font-medium text-primary hover:underline">
-                                            {{ t('nav.allCategories') }}
-                                        </Link>
-                                    </NavigationMenuLink>
+                                <div class="border-t border-border bg-muted/20 px-5 py-3">
+                                    <button type="button" @click.prevent="showAllCategoriesModal = true" class="text-sm font-medium text-primary hover:underline w-full text-left">
+                                        Tampilkan Semua Kategori &rarr;
+                                    </button>
                                 </div>
                             </NavigationMenuContent>
                         </NavigationMenuItem>
@@ -383,6 +391,34 @@ start = currentTime;
         </div>
     </header>
 
+    <Dialog :open="showAllCategoriesModal" @update:open="showAllCategoriesModal = $event">
+        <DialogContent class="max-w-4xl max-h-[85vh] overflow-y-auto p-6 sm:p-10" aria-describedby="dialog-description">
+            <DialogHeader>
+                <DialogTitle class="text-2xl font-bold mb-4">Semua Kategori</DialogTitle>
+                <DialogDescription id="dialog-description" class="sr-only">
+                    Daftar semua kategori yang tersedia di Seapedia
+                </DialogDescription>
+            </DialogHeader>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 mt-2">
+                <div v-for="root in categories" :key="root.id" class="flex flex-col gap-2">
+                    <Link :href="catalogUrl(root.slug)" @click="showAllCategoriesModal = false" class="text-lg font-bold text-foreground hover:text-primary transition-colors">
+                        {{ root.name }}
+                    </Link>
+                    <div class="flex flex-col gap-1.5 mt-2">
+                        <Link
+                            v-for="child in root.children"
+                            :key="child.id"
+                            :href="catalogUrl(child.slug)"
+                            @click="showAllCategoriesModal = false"
+                            class="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                        >
+                            {{ child.name }}
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <style scoped>

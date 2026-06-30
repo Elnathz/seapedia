@@ -48,7 +48,7 @@ Memberikan hasil akhir natural dan bercahaya sepanjang hari.',
             'has_variants' => false,
         ],
         [
-            'name' => 'Maybelline Instant Age Rewind Eraser (Toko A)',
+            'name' => 'Maybelline Instant Age Rewind Eraser',
             'description' => 'Concealer ikonik dari Maybelline, berfungsi untuk menyamarkan lingkaran hitam dan garis halus.
 
 Memiliki aplikator cushion yang mempermudah pengaplikasian.',
@@ -61,7 +61,7 @@ Memiliki aplikator cushion yang mempermudah pengaplikasian.',
             'has_variants' => false,
         ],
         [
-            'name' => 'Skintific Cover All Perfect Air Cushion (Toko A)',
+            'name' => 'Skintific Cover All Perfect Air Cushion',
             'description' => 'Cushion full coverage dari Skintific. Menutupi noda hitam dan bekas jerawat dengan sempurna.
 
 Hasil akhir matte dan tahan lama, cocok untuk kulit berminyak.',
@@ -87,7 +87,7 @@ Memberikan warna yang cerah dan melembapkan bibir Anda sepanjang hari.',
             'has_variants' => false,
         ],
         [
-            'name' => 'Make Over Silky Smooth Translucent Powder (Toko A)',
+            'name' => 'Make Over Silky Smooth Translucent Powder',
             'description' => 'Bedak tabur translucent dari Make Over. Mengontrol minyak berlebih dan menyamarkan pori-pori.
 
 Hasil akhir matte dan halus, tahan lama tanpa membuat kulit kering.',
@@ -108,7 +108,7 @@ $this->seedStore(
     description: 'Produk Kecantikan Original',
     products: [
         [
-            'name' => 'Maybelline Instant Age Rewind Eraser (Toko B)',
+            'name' => 'Maybelline Instant Age Rewind Eraser',
             'description' => 'Concealer ikonik dari Maybelline dengan packaging original.
 
 Cocok untuk mencerahkan area bawah mata dan menutupi ketidaksempurnaan wajah.',
@@ -121,7 +121,7 @@ Cocok untuk mencerahkan area bawah mata dan menutupi ketidaksempurnaan wajah.',
             'has_variants' => false,
         ],
         [
-            'name' => 'Skintific Cover All Perfect Air Cushion (Toko B)',
+            'name' => 'Skintific Cover All Perfect Air Cushion',
             'description' => 'Skintific Cover All Perfect Air Cushion.
 
 Cushion dengan coverage tinggi dan tahan lama. Praktis digunakan sehari-hari untuk hasil yang flawless.',
@@ -134,7 +134,7 @@ Cushion dengan coverage tinggi dan tahan lama. Praktis digunakan sehari-hari unt
             'has_variants' => false,
         ],
         [
-            'name' => 'Make Over Silky Smooth Translucent Powder (Toko B)',
+            'name' => 'Make Over Silky Smooth Translucent Powder',
             'description' => 'Make Over Silky Smooth Translucent Powder.
 
 Memberikan hasil akhir matte yang halus. Sempurna untuk mengeset makeup agar lebih tahan lama.',
