@@ -171,7 +171,7 @@ start = currentTime;
 
     <header :class="['sticky top-0 z-40 overflow-visible transition-all duration-300', isScrolled ? 'bg-white/90 backdrop-blur-xl border-b border-border/30 shadow-[0_2px_10px_rgba(0,0,0,0.03)]' : 'bg-white border-b border-transparent']">
         <div class="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center gap-8 lg:gap-10">
+            <div class="flex items-center gap-4 lg:gap-10">
                 <!-- Mobile Landing Menu (Sheet) -->
                 <Sheet v-if="isLandingPage">
                     <SheetTrigger as-child>
