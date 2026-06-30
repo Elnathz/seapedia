@@ -16,7 +16,7 @@ class UpdateBannerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'placement' => ['required', 'in:main,side'],
+            'placement' => ['required', 'in:main,side_top,side_bottom'],
             'title' => ['required', 'string', 'max:120'],
             'subtitle' => ['nullable', 'string', 'max:200'],
             'badge_label' => ['nullable', 'string', 'max:40'],
@@ -49,6 +49,24 @@ class UpdateBannerRequest extends FormRequest
             'is_active' => ['sometimes', 'boolean'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $currentId = $this->route('banner') ? $this->route('banner')->id : 0;
+            if ($this->placement === 'side_top') {
+                $count = \App\Models\Banner::where('placement', 'side_top')->where('id', '!=', $currentId)->count();
+                if ($count >= 2) {
+                    $validator->errors()->add('placement', 'Maksimal 2 banner untuk posisi Samping Atas.');
+                }
+            } elseif ($this->placement === 'side_bottom') {
+                $count = \App\Models\Banner::where('placement', 'side_bottom')->where('id', '!=', $currentId)->count();
+                if ($count >= 1) {
+                    $validator->errors()->add('placement', 'Maksimal 1 banner untuk posisi Samping Bawah.');
+                }
+            }
+        });
     }
 
     /** @return array<string, string> */

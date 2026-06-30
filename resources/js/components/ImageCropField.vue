@@ -28,8 +28,8 @@ function onPick(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
 
     if (!file) {
-return;
-}
+        return;
+    }
 
     if (file.size > props.maxBytes) {
         toast.error(t('product.imageTooLarge'));
@@ -66,16 +66,16 @@ function apply() {
     canvas.toBlob(
         (blob: Blob | null) => {
             if (!blob) {
-return;
-}
+                return;
+            }
 
             const cropped = new File([blob], 'image.jpg', { type: 'image/jpeg' });
             const dt = new DataTransfer();
             dt.items.add(cropped);
 
             if (fileInput.value) {
-fileInput.value.files = dt.files;
-}
+                fileInput.value.files = dt.files;
+            }
 
             previewUrl.value = URL.createObjectURL(cropped);
             cropOpen.value = false;
@@ -91,35 +91,22 @@ fileInput.value.files = dt.files;
         <!-- Hidden file input that Inertia <Form> will submit -->
         <input ref="fileInput" type="file" :name="name" class="hidden" />
 
-        <label class="inline-flex w-fit cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-muted">
+        <label
+            class="inline-flex w-fit cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-muted">
             {{ t('product.cropChoose') }}
-            <input
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
-                class="hidden"
-                @change="onPick"
-            />
+            <input type="file" accept="image/png,image/jpeg,image/webp" class="hidden" @change="onPick" />
         </label>
 
-        <img
-            v-if="previewUrl"
-            :src="previewUrl"
-            alt=""
-            class="mt-1 size-32 rounded-md border border-border object-cover"
-        />
+        <img v-if="previewUrl" :src="previewUrl" alt=""
+            class="mt-1 size-32 rounded-md border border-border object-cover" />
 
         <Dialog v-model:open="cropOpen">
             <DialogContent class="max-w-lg">
                 <DialogHeader>
                     <DialogTitle>{{ t('product.cropChoose') }}</DialogTitle>
                 </DialogHeader>
-                <Cropper
-                    v-if="cropSrc"
-                    ref="cropperRef"
-                    :src="cropSrc"
-                    :stencil-props="{ aspectRatio }"
-                    class="h-72 w-full max-w-full overflow-hidden bg-muted"
-                />
+                <Cropper v-if="cropSrc" ref="cropperRef" :src="cropSrc" :stencil-props="{ aspectRatio }"
+                    class="h-72 w-full max-w-full overflow-hidden bg-muted" />
                 <DialogFooter>
                     <Button type="button" @click="apply">{{ t('product.cropApply') }}</Button>
                 </DialogFooter>

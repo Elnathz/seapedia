@@ -57,7 +57,7 @@ onUnmounted(() => {
                 <img
                     :src="bannerSrc(slide.image_path)"
                     :alt="slide.title"
-                    class="h-full w-full object-cover lg:aspect-auto aspect-[5/2]"
+                    class="h-full w-full object-cover"
                 />
             </Link>
         </div>

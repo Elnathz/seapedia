@@ -30,7 +30,7 @@ import { bannerSrc } from '@/types/banner';
 
 interface BannerRow {
     id: number;
-    placement: 'main' | 'side';
+    placement: 'main' | 'side_top' | 'side_bottom';
     image_path: string;
     title: string;
     subtitle: string | null;
@@ -51,10 +51,10 @@ const editing = ref<BannerRow | null>(null);
 const deleteTarget = ref<BannerRow | null>(null);
 const processing = ref(false);
 
-const formPlacement = ref<'main' | 'side'>('main');
+const formPlacement = ref<'main' | 'side_top' | 'side_bottom'>('main');
 const formActive = ref(true);
 
-const aspectRatio = computed(() => 5 / 2); // Both main and side are 5:2 mathematically in a 2/3 - 1/3 grid
+const aspectRatio = computed(() => formPlacement.value === 'side_top' ? 5 / 4 : 5 / 2);
 const initialImageUrl = computed(() =>
     editing.value ? bannerSrc(editing.value.image_path) : null,
 );
@@ -379,8 +379,9 @@ function confirmDelete() {
                             <SelectValue placeholder="Pilih posisi" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="main">Utama (rasio 5:2)</SelectItem>
-                            <SelectItem value="side">Samping (rasio 3:2)</SelectItem>
+                            <SelectItem value="main">Banner Utama</SelectItem>
+                            <SelectItem value="side_top">Banner Samping (Atas - Maks 2)</SelectItem>
+                            <SelectItem value="side_bottom">Banner Samping (Bawah - Maks 1)</SelectItem>
                         </SelectContent>
                     </Select>
                     <InputError :message="errors.placement" />

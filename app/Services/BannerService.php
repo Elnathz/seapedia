@@ -18,15 +18,25 @@ class BannerService
     }
 
     /** @return Collection<int, Banner> */
-    public function sideActive(): Collection
+    public function sideTopActive(): Collection
     {
-        return Banner::query()->active()->where('placement', 'side')->orderBy('sort_order')->limit(4)->get();
+        return Banner::query()->active()->where('placement', 'side_top')->orderBy('sort_order')->limit(2)->get();
     }
 
-    /** @return array{main: Collection<int, Banner>, side: Collection<int, Banner>} */
+    /** @return Collection<int, Banner> */
+    public function sideBottomActive(): Collection
+    {
+        return Banner::query()->active()->where('placement', 'side_bottom')->orderBy('sort_order')->limit(1)->get();
+    }
+
+    /** @return array{main: Collection<int, Banner>, side_top: Collection<int, Banner>, side_bottom: Collection<int, Banner>} */
     public function forStorefront(): array
     {
-        return ['main' => $this->mainActive(), 'side' => $this->sideActive()];
+        return [
+            'main' => $this->mainActive(),
+            'side_top' => $this->sideTopActive(),
+            'side_bottom' => $this->sideBottomActive()
+        ];
     }
 
     /** @return Collection<int, Banner> */
