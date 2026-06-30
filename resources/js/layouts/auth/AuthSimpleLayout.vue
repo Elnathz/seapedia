@@ -47,7 +47,7 @@ defineProps<{
 
             <!-- Footer -->
             <p class="relative z-10 text-sm text-white/60">
-                &copy; {{ new Date().getFullYear() }} SEAPEDIA · Marketplace Kampus
+                &copy; {{ new Date().getFullYear() }} SEAPEDIA · Marketplace
             </p>
         </div>
 
