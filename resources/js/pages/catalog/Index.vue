@@ -169,22 +169,37 @@ function visit(params: Record<string, string | number>) {
 <template>
     <Head :title="t('catalog.title')" />
 
-    <!-- Banner block (Full Width) -->
+    <!-- Banner block -->
     <div class="w-full">
-        <div v-if="banners.main.length || banners.side_top.length || banners.side_bottom.length" class="mx-auto max-w-[1600px]">
+        <div v-if="banners.main.length || banners.side_top.length || banners.side_bottom.length" class="mx-auto max-w-7xl">
             <!-- Desktop: carousel (2/3) | side banners (1/3) -->
             <div class="hidden lg:block px-4 py-6 sm:px-6 w-full">
-                <div class="grid grid-cols-3 gap-3 w-full" style="aspect-ratio: 3.7/1;">
+                <div class="grid grid-cols-3 gap-3 w-full" style="aspect-ratio: 3.75/1;">
+                    <!-- kiri -->
                     <div class="col-span-2 h-full min-h-0 min-w-0">
-                        <BannerCarousel v-if="banners.main.length" :slides="banners.main" class="h-full w-full" />
+                        <BannerCarousel
+                            v-if="banners.main.length"
+                            :slides="banners.main"
+                            class="h-full w-full"
+                        />
                     </div>
-                    <div class="flex flex-col gap-3 h-full overflow-hidden min-h-0 min-w-0">
-                        <div v-if="banners.side_top.length" class="flex-1 min-h-0 min-w-0">
-                            <BannerImage :banner="banners.side_top[0]" class="h-full min-h-0" />
+                    <!-- kanan -->
+                    <div class="grid grid-rows-2 gap-3 h-full min-h-0 min-w-0">
+                        <!-- row pertama -->
+                        <div class="grid grid-cols-2 gap-3 min-h-0 min-w-0">
+                            <BannerImage
+                                v-for="b in banners.side_top.slice(0, 2)"
+                                :key="b.id"
+                                :banner="b"
+                                class="h-full min-h-0"
+                            />
                         </div>
-                        <div v-if="banners.side_bottom.length" class="flex-1 min-h-0 min-w-0">
-                            <BannerImage :banner="banners.side_bottom[0]" class="h-full min-h-0" />
-                        </div>
+                        <!-- row kedua -->
+                        <BannerImage
+                            v-if="banners.side_bottom[0]"
+                            :banner="banners.side_bottom[0]"
+                            class="h-full min-h-0"
+                        />
                     </div>
                 </div>
             </div>
@@ -193,10 +208,12 @@ function visit(params: Record<string, string | number>) {
                 <div v-if="banners.main.length" class="w-full aspect-[5/2]">
                     <BannerCarousel :slides="banners.main" />
                 </div>
-                <div v-if="banners.side_top.length" class="w-full aspect-[5/2]">
-                    <BannerImage :banner="banners.side_top[0]" />
+                <div v-if="banners.side_top.length > 0" class="grid grid-cols-2 gap-3">
+                    <div v-for="b in banners.side_top.slice(0, 2)" :key="b.id" class="w-full aspect-[5/4]">
+                        <BannerImage :banner="b" />
+                    </div>
                 </div>
-                <div v-if="banners.side_bottom.length" class="w-full aspect-[5/2]">
+                <div v-if="banners.side_bottom.length > 0" class="w-full aspect-[5/2]">
                     <BannerImage :banner="banners.side_bottom[0]" />
                 </div>
             </div>
@@ -218,8 +235,6 @@ function visit(params: Record<string, string | number>) {
     </div>
 
     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-        
-        <!-- Kategori Populer -->
         <div v-if="popularCategories && popularCategories.length > 0 && !activeCategory && !query" class="mb-10">
             <h2 class="text-xl font-bold mb-4">Kategori Populer</h2>
             <div class="flex gap-3 overflow-x-auto pb-2">

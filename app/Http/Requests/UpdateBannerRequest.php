@@ -44,7 +44,6 @@ class UpdateBannerRequest extends FormRequest
                 'integer',
                 'min:0',
                 'max:1000',
-                Rule::unique('banners')->where('placement', $this->placement)->ignore($this->route('banner'))
             ],
             'is_active' => ['sometimes', 'boolean'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
@@ -53,20 +52,8 @@ class UpdateBannerRequest extends FormRequest
 
     public function withValidator($validator)
     {
-        $validator->after(function ($validator) {
-            $currentId = $this->route('banner') ? $this->route('banner')->id : 0;
-            if ($this->placement === 'side_top') {
-                $count = \App\Models\Banner::where('placement', 'side_top')->where('id', '!=', $currentId)->count();
-                if ($count >= 1) {
-                    $validator->errors()->add('placement', 'Maksimal 1 banner untuk posisi Samping Atas.');
-                }
-            } elseif ($this->placement === 'side_bottom') {
-                $count = \App\Models\Banner::where('placement', 'side_bottom')->where('id', '!=', $currentId)->count();
-                if ($count >= 1) {
-                    $validator->errors()->add('placement', 'Maksimal 1 banner untuk posisi Samping Bawah.');
-                }
-            }
-        });
+        // Maksimal banner sekarang dibatasi secara presisi oleh UI dropdown
+        // dan jika ada pergantian urutan, sistem akan mereplace banner lama.
     }
 
     /** @return array<string, string> */

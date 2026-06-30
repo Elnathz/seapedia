@@ -44,7 +44,6 @@ class StoreBannerRequest extends FormRequest
                 'integer',
                 'min:0',
                 'max:1000',
-                Rule::unique('banners')->where('placement', $this->placement)
             ],
             'is_active' => ['sometimes', 'boolean'],
             'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
@@ -53,17 +52,8 @@ class StoreBannerRequest extends FormRequest
 
     public function withValidator($validator)
     {
-        $validator->after(function ($validator) {
-            if ($this->placement === 'side_top') {
-                if (\App\Models\Banner::where('placement', 'side_top')->count() >= 1) {
-                    $validator->errors()->add('placement', 'Maksimal 1 banner untuk posisi Samping Atas.');
-                }
-            } elseif ($this->placement === 'side_bottom') {
-                if (\App\Models\Banner::where('placement', 'side_bottom')->count() >= 1) {
-                    $validator->errors()->add('placement', 'Maksimal 1 banner untuk posisi Samping Bawah.');
-                }
-            }
-        });
+        // Maksimal banner sekarang dibatasi secara presisi oleh UI dropdown
+        // dan jika ada pergantian urutan, sistem akan mereplace banner lama.
     }
 
     /** @return array<string, string> */

@@ -54,27 +54,55 @@ const processing = ref(false);
 const formPlacement = ref<'main' | 'side_top' | 'side_bottom'>('main');
 const formActive = ref(true);
 
-const aspectRatio = computed(() => 5 / 2);
+const aspectRatio = computed(() => formPlacement.value === 'side_top' ? 5 / 4 : 5 / 2);
+const helperText = computed(() => formPlacement.value === 'side_top' ? 'Gunakan gambar rasio 5:4 (misal: 500x400 px) agar tidak terpotong.' : 'Gunakan gambar rasio 5:2 (misal: 1000x400 px) agar tidak terpotong.');
 const initialImageUrl = computed(() =>
     editing.value ? bannerSrc(editing.value.image_path) : null,
 );
 
-const recommendedSortOrder = computed(() => {
+const formSortOrder = ref(0);
+const formSortOrderStr = computed({
+    get: () => formSortOrder.value.toString(),
+    set: (v) => { formSortOrder.value = parseInt(v, 10); }
+});
+
+const sortOrderOptions = computed(() => {
     const matchingBanners = props.banners.filter(
         (b) => b.placement === formPlacement.value
     );
-    if (matchingBanners.length === 0) return 0;
-    const maxOrder = Math.max(...matchingBanners.map((b) => b.sort_order));
-    return maxOrder + 1;
-});
+    // Jika sedang edit, kecualikan banner yang sedang diedit dari daftar "terisi"
+    const takenOrders = matchingBanners
+        .filter(b => b.id !== editing.value?.id)
+        .map(b => b.sort_order);
 
-const formSortOrder = ref(0);
+    const options = [];
+    let max = 0;
+    
+    if (formPlacement.value === 'side_top') max = 2; // slots 0, 1
+    else if (formPlacement.value === 'side_bottom') max = 1; // slot 0
+    else {
+        // Untuk main banner, biarkan pilih hingga angka terbesar + 2
+        max = matchingBanners.length === 0 ? 1 : Math.max(...matchingBanners.map((b) => b.sort_order)) + 2;
+    }
+
+    for (let i = 0; i < max; i++) {
+        const isTaken = takenOrders.includes(i);
+        options.push({
+            value: i,
+            label: isTaken ? `Urutan ${i} (Ganti yang sudah ada)` : `Urutan ${i} (Tersedia)`,
+            isTaken
+        });
+    }
+    return options;
+});
 
 watch([formPlacement, editing], () => {
     if (editing.value) {
         formSortOrder.value = editing.value.sort_order;
     } else {
-        formSortOrder.value = recommendedSortOrder.value;
+        // Cari urutan pertama yang kosong
+        const firstAvailable = sortOrderOptions.value.find(o => !o.isTaken);
+        formSortOrder.value = firstAvailable ? firstAvailable.value : 0;
     }
 }, { immediate: true });
 
@@ -237,6 +265,13 @@ function closeForm() {
 }
 
 function submitForm(e: Event) {
+    const isTaken = sortOrderOptions.value.find(o => o.value === formSortOrder.value)?.isTaken;
+    if (isTaken) {
+        if (!confirm('Banner di urutan ini sudah ada! Menyimpan form ini akan otomatis menghapus banner lama dan menggantikannya dengan yang baru. Anda yakin ingin melanjutkan?')) {
+            return;
+        }
+    }
+
     const el = e.currentTarget as HTMLFormElement;
     const fd = new FormData(el);
     fd.set('is_active', formActive.value ? '1' : '0');
@@ -320,7 +355,9 @@ function confirmDelete() {
                         </td>
                         <td class="px-4 py-3">
                             <Badge :variant="banner.placement === 'main' ? 'default' : 'secondary'">
-                                {{ banner.placement === 'main' ? 'Utama' : 'Samping' }}
+                                <template v-if="banner.placement === 'main'">Utama</template>
+                                <template v-else-if="banner.placement === 'side_top'">Samping Atas</template>
+                                <template v-else>Samping Bawah</template>
                             </Badge>
                         </td>
                         <td class="px-4 py-3 font-medium">{{ banner.title }}</td>
@@ -416,17 +453,18 @@ function confirmDelete() {
                     </div>
                     <div class="grid gap-2">
                         <Label for="sort_order">Urutan <span class="text-destructive">*</span></Label>
-                        <Input
-                            id="sort_order"
-                            name="sort_order"
-                            type="number"
-                            min="0"
-                            max="1000"
-                            v-model="formSortOrder"
-                            required
-                        />
-                        <p class="text-xs text-muted-foreground">
-                            Rekomendasi berikutnya: <strong>{{ recommendedSortOrder }}</strong>
+                        <Select v-model="formSortOrderStr">
+                            <SelectTrigger>
+                                <SelectValue placeholder="Pilih urutan" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem v-for="opt in sortOrderOptions" :key="opt.value" :value="opt.value.toString()">
+                                    {{ opt.label }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <p v-if="sortOrderOptions.find(o => o.value === formSortOrder)?.isTaken" class="text-[0.8rem] font-medium text-destructive mt-1">
+                            Peringatan: Banner lama di urutan ini akan terhapus dan digantikan!
                         </p>
                         <InputError :message="errors.sort_order" />
                     </div>
@@ -530,6 +568,9 @@ function confirmDelete() {
                         <span v-if="!editing" class="text-destructive">*</span>
                         <span v-else class="text-xs text-muted-foreground">(kosongkan untuk tidak mengubah)</span>
                     </Label>
+                    <p class="text-[0.8rem] text-muted-foreground mb-1">
+                        {{ helperText }}
+                    </p>
                     <ImageCropField
                         :key="editing?.id ?? 'new'"
                         :aspect-ratio="aspectRatio"

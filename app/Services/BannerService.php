@@ -48,6 +48,12 @@ class BannerService
     /** @param array<string, mixed> $data */
     public function create(array $data, ?UploadedFile $image): Banner
     {
+        // Replace behavior: jika urutan ini sudah terisi untuk posisi yang sama, hapus yang lama
+        $existing = Banner::where('placement', $data['placement'])->where('sort_order', $data['sort_order'])->first();
+        if ($existing) {
+            $this->delete($existing);
+        }
+
         $data['image_path'] = $image
             ? $image->store(self::IMAGE_DIRECTORY, 'public')
             : ($data['image_path'] ?? '');
@@ -58,6 +64,15 @@ class BannerService
     /** @param array<string, mixed> $data */
     public function update(Banner $banner, array $data, ?UploadedFile $image): Banner
     {
+        // Replace behavior: jika urutan ini sudah terisi untuk posisi yang sama (oleh banner lain), hapus yang lama
+        $existing = Banner::where('placement', $data['placement'])
+            ->where('sort_order', $data['sort_order'])
+            ->where('id', '!=', $banner->id)
+            ->first();
+        if ($existing) {
+            $this->delete($existing);
+        }
+
         if ($image) {
             $old = $banner->image_path;
             $data['image_path'] = $image->store(self::IMAGE_DIRECTORY, 'public');
