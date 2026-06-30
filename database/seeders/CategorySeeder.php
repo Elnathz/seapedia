@@ -16,12 +16,14 @@ class CategorySeeder extends Seeder
      * @var array<int, array{name: string, icon: string, children: array<int, string>}>
      */
     private array $tree = [
-        ['name' => 'Makanan', 'icon' => 'UtensilsCrossed', 'children' => ['Makanan Berat', 'Cemilan']],
+        ['name' => 'Makanan', 'icon' => 'UtensilsCrossed', 'children' => ['Makanan Berat', 'Cemilan', 'Mie Instan']],
         ['name' => 'Minuman', 'icon' => 'CupSoda', 'children' => ['Kopi', 'Teh', 'Jus']],
-        ['name' => 'Elektronik', 'icon' => 'Smartphone', 'children' => ['Handphone', 'Aksesori HP', 'Audio']],
-        ['name' => 'Fashion', 'icon' => 'Shirt', 'children' => ['Pria', 'Wanita']],
-        ['name' => 'Kebutuhan Harian', 'icon' => 'ShoppingBasket', 'children' => ['Sembako', 'Perawatan', 'Perkakas']],
-        ['name' => 'Hobi & Outdoor', 'icon' => 'Tent', 'children' => ['Alat Pancing', 'Outdoor']],
+        ['name' => 'Elektronik', 'icon' => 'Smartphone', 'children' => ['Handphone', 'Aksesoris HP', 'Audio', 'Kamera', 'Keyboard', 'Smartphone']],
+        ['name' => 'Fashion', 'icon' => 'Shirt', 'children' => ['Pria', 'Wanita', 'Kaos', 'Pakaian Wanita']],
+        ['name' => 'Kecantikan', 'icon' => 'Sparkles', 'children' => ['Makeup Blush', 'Makeup Concealer', 'Makeup Cushion', 'Makeup Lip', 'Makeup Powder']],
+        ['name' => 'Kebutuhan Harian', 'icon' => 'ShoppingBasket', 'children' => ['Sembako', 'Beras', 'Perawatan', 'Perkakas', 'Rumah Tangga']],
+        ['name' => 'Hobi & Outdoor', 'icon' => 'Tent', 'children' => ['Alat Pancing', 'Outdoor', 'Olahraga', 'Action Figure']],
+        ['name' => 'Sepeda', 'icon' => 'Bike', 'children' => ['Sepeda Road', 'Sepeda Urban', 'Sepeda MTB']],
         ['name' => 'Lainnya', 'icon' => 'Package', 'children' => ['Umum']],
     ];
 

@@ -5,6 +5,7 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import EmptyState from '@/components/EmptyState.vue';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
+import ProductCard from '@/components/ProductCard.vue';
 import BannerCarousel from '@/components/storefront/BannerCarousel.vue';
 import BannerImage from '@/components/storefront/BannerImage.vue';
 import { Badge } from '@/components/ui/badge';
@@ -258,27 +259,11 @@ function visit(params: Record<string, string | number>) {
         <div v-if="personalizedProducts && personalizedProducts.length > 0 && !activeCategory && !query" class="mb-10">
             <h2 class="text-xl font-bold mb-4">Pilihan Untukmu</h2>
             <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-                <Link
+                <ProductCard
                     v-for="product in personalizedProducts"
                     :key="product.id"
-                    :href="catalogShow.url(product.slug)"
-                    class="group block h-full"
-                >
-                    <Card class="h-full cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-md p-0 gap-0 flex flex-col">
-                        <div class="relative aspect-square w-full overflow-hidden border-b border-border bg-muted/30">
-                            <img v-if="product.image_path" :src="`/storage/${product.image_path}`" :alt="product.name" loading="lazy" class="size-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                            <PlaceholderPattern v-else />
-                            <Badge v-if="product.stock === 0" variant="destructive" class="absolute top-2 right-2 text-[10px] px-1.5 py-0 h-5">Habis</Badge>
-                        </div>
-                        <CardContent class="flex flex-col gap-1 p-3 flex-1">
-                            <h2 class="line-clamp-2 leading-tight text-[13px] font-medium">{{ product.name }}</h2>
-                            <p class="mt-0.5 font-bold text-foreground text-sm tabular-nums">{{ formatIDR(product.price) }}</p>
-                            <div class="mt-auto pt-1.5 flex items-center gap-1.5">
-                                <span class="text-[11px] text-muted-foreground line-clamp-1">{{ product.store.name }}</span>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </Link>
+                    :product="product"
+                />
             </div>
         </div>
 
@@ -366,27 +351,11 @@ function visit(params: Record<string, string | number>) {
 
         <template v-else>
             <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-                <Link
+                <ProductCard
                     v-for="product in allProducts"
                     :key="product.id"
-                    :href="catalogShow.url(product.slug)"
-                    class="group block h-full"
-                >
-                    <Card class="h-full cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-md p-0 gap-0 flex flex-col">
-                        <div class="relative aspect-square w-full overflow-hidden border-b border-border bg-muted/30">
-                            <img v-if="product.image_path" :src="`/storage/${product.image_path}`" :alt="product.name" loading="lazy" class="size-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                            <PlaceholderPattern v-else />
-                            <Badge v-if="product.stock === 0" variant="destructive" class="absolute top-2 right-2 text-[10px] px-1.5 py-0 h-5">Habis</Badge>
-                        </div>
-                        <CardContent class="flex flex-col gap-1 p-3 flex-1">
-                            <h2 class="line-clamp-2 leading-tight text-[13px] font-medium">{{ product.name }}</h2>
-                            <p class="mt-0.5 font-bold text-foreground text-sm tabular-nums">{{ formatIDR(product.price) }}</p>
-                            <div class="mt-auto pt-1.5 flex items-center gap-1.5">
-                                <span class="text-[11px] text-muted-foreground line-clamp-1">{{ product.store.name }}</span>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </Link>
+                    :product="product"
+                />
             </div>
 
             <!-- Tampilkan Lebih Banyak -->

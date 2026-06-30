@@ -13,4 +13,4 @@
 - [x] T5: Level 7 security audit (v-html, RBAC, session, SQLi/XSS)
 - [x] T6: Product seeder overhaul (real photo products ~45 items)
 - [x] T7: Related products section on catalog/Show.vue
-- [ ] COMMIT: all tasks
+- [x] COMMIT: all tasks
