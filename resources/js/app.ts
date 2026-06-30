@@ -10,7 +10,7 @@ import GuestLayout from '@/layouts/GuestLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'SEAPEDIA';
 
 /**
  * Read the server-resolved locale straight out of the embedded initial-page
