@@ -44,7 +44,9 @@ interface BannerRow {
 const props = defineProps<{ banners: BannerRow[] }>();
 
 const page = usePage();
-const errors = computed(() => (page.props.errors as Record<string, string>) ?? {});
+const errors = computed(
+    () => (page.props.errors as Record<string, string>) ?? {},
+);
 
 const formOpen = ref(false);
 const editing = ref<BannerRow | null>(null);
@@ -54,8 +56,14 @@ const processing = ref(false);
 const formPlacement = ref<'main' | 'side_top' | 'side_bottom'>('main');
 const formActive = ref(true);
 
-const aspectRatio = computed(() => formPlacement.value === 'side_top' ? 5 / 4 : 5 / 2);
-const helperText = computed(() => formPlacement.value === 'side_top' ? 'Gunakan gambar rasio 5:4 (misal: 500x400 px) agar tidak terpotong.' : 'Gunakan gambar rasio 5:2 (misal: 1000x400 px) agar tidak terpotong.');
+const aspectRatio = computed(() =>
+    formPlacement.value === 'side_top' ? 5 / 4 : 5 / 2,
+);
+const helperText = computed(() =>
+    formPlacement.value === 'side_top'
+        ? 'Gunakan gambar rasio 5:4 (misal: 500x400 px) agar tidak terpotong.'
+        : 'Gunakan gambar rasio 5:2 (misal: 1000x400 px) agar tidak terpotong.',
+);
 const initialImageUrl = computed(() =>
     editing.value ? bannerSrc(editing.value.image_path) : null,
 );
@@ -63,48 +71,64 @@ const initialImageUrl = computed(() =>
 const formSortOrder = ref(0);
 const formSortOrderStr = computed({
     get: () => formSortOrder.value.toString(),
-    set: (v) => { formSortOrder.value = parseInt(v, 10); }
+    set: (v) => {
+        formSortOrder.value = parseInt(v, 10);
+    },
 });
 
 const sortOrderOptions = computed(() => {
     const matchingBanners = props.banners.filter(
-        (b) => b.placement === formPlacement.value
+        (b) => b.placement === formPlacement.value,
     );
     // Jika sedang edit, kecualikan banner yang sedang diedit dari daftar "terisi"
     const takenOrders = matchingBanners
-        .filter(b => b.id !== editing.value?.id)
-        .map(b => b.sort_order);
+        .filter((b) => b.id !== editing.value?.id)
+        .map((b) => b.sort_order);
 
     const options = [];
     let max = 0;
-    
-    if (formPlacement.value === 'side_top') max = 2; // slots 0, 1
-    else if (formPlacement.value === 'side_bottom') max = 1; // slot 0
-    else {
+
+    if (formPlacement.value === 'side_top') {
+        max = 2; // slots 0, 1
+    } else if (formPlacement.value === 'side_bottom') {
+        max = 1; // slot 0
+    } else {
         // Untuk main banner, biarkan pilih hingga angka terbesar + 2
-        max = matchingBanners.length === 0 ? 1 : Math.max(...matchingBanners.map((b) => b.sort_order)) + 2;
+        max =
+            matchingBanners.length === 0
+                ? 1
+                : Math.max(...matchingBanners.map((b) => b.sort_order)) + 2;
     }
 
     for (let i = 0; i < max; i++) {
         const isTaken = takenOrders.includes(i);
         options.push({
             value: i,
-            label: isTaken ? `Urutan ${i} (Ganti yang sudah ada)` : `Urutan ${i} (Tersedia)`,
-            isTaken
+            label: isTaken
+                ? `Urutan ${i} (Ganti yang sudah ada)`
+                : `Urutan ${i} (Tersedia)`,
+            isTaken,
         });
     }
+
     return options;
 });
 
-watch([formPlacement, editing], () => {
-    if (editing.value) {
-        formSortOrder.value = editing.value.sort_order;
-    } else {
-        // Cari urutan pertama yang kosong
-        const firstAvailable = sortOrderOptions.value.find(o => !o.isTaken);
-        formSortOrder.value = firstAvailable ? firstAvailable.value : 0;
-    }
-}, { immediate: true });
+watch(
+    [formPlacement, editing],
+    () => {
+        if (editing.value) {
+            formSortOrder.value = editing.value.sort_order;
+        } else {
+            // Cari urutan pertama yang kosong
+            const firstAvailable = sortOrderOptions.value.find(
+                (o) => !o.isTaken,
+            );
+            formSortOrder.value = firstAvailable ? firstAvailable.value : 0;
+        }
+    },
+    { immediate: true },
+);
 
 // Autocomplete CTA URL Logic
 const ctaType = ref<'category' | 'product' | 'store' | 'custom'>('custom');
@@ -125,6 +149,7 @@ function initializeCtaUrl(banner: BannerRow | null) {
     if (!banner || !banner.cta_url) {
         ctaType.value = 'custom';
         ctaUrlValue.value = '';
+
         return;
     }
 
@@ -156,13 +181,16 @@ watch(ctaType, () => {
     searchResults.value = [];
     selectedItem.value = null;
     dropdownOpen.value = false;
+
     if (ctaType.value !== 'custom') {
         ctaUrlValue.value = '';
     }
 });
 
 function performSearch() {
-    if (ctaType.value === 'custom') return;
+    if (ctaType.value === 'custom') {
+        return;
+    }
 
     if (searchTimeout) {
         clearTimeout(searchTimeout);
@@ -170,6 +198,7 @@ function performSearch() {
 
     if (!searchQuery.value) {
         searchResults.value = [];
+
         return;
     }
 
@@ -180,10 +209,15 @@ function performSearch() {
 
     searchTimeout = setTimeout(async () => {
         try {
-            const endpoint = currentType === 'category' ? 'categories' : `${currentType}s`;
-            const response = await fetch(`/admin/banners/search-${endpoint}?q=${encodeURIComponent(searchQuery.value)}`);
+            const endpoint =
+                currentType === 'category' ? 'categories' : `${currentType}s`;
+            const response = await fetch(
+                `/admin/banners/search-${endpoint}?q=${encodeURIComponent(searchQuery.value)}`,
+            );
+
             if (response.ok) {
                 const data = await response.json();
+
                 if (ctaType.value === currentType) {
                     searchResults.value = data;
                 }
@@ -199,17 +233,25 @@ function performSearch() {
 }
 
 async function openDropdown() {
-    if (ctaType.value === 'custom') return;
+    if (ctaType.value === 'custom') {
+        return;
+    }
+
     dropdownOpen.value = true;
     searchLoading.value = true;
-    
+
     const currentType = ctaType.value;
 
     try {
-        const endpoint = currentType === 'category' ? 'categories' : `${currentType}s`;
-        const response = await fetch(`/admin/banners/search-${endpoint}?q=${encodeURIComponent(searchQuery.value)}`);
+        const endpoint =
+            currentType === 'category' ? 'categories' : `${currentType}s`;
+        const response = await fetch(
+            `/admin/banners/search-${endpoint}?q=${encodeURIComponent(searchQuery.value)}`,
+        );
+
         if (response.ok) {
             const data = await response.json();
+
             if (ctaType.value === currentType) {
                 searchResults.value = data;
             }
@@ -265,9 +307,16 @@ function closeForm() {
 }
 
 function submitForm(e: Event) {
-    const isTaken = sortOrderOptions.value.find(o => o.value === formSortOrder.value)?.isTaken;
+    const isTaken = sortOrderOptions.value.find(
+        (o) => o.value === formSortOrder.value,
+    )?.isTaken;
+
     if (isTaken) {
-        if (!confirm('Banner di urutan ini sudah ada! Menyimpan form ini akan otomatis menghapus banner lama dan menggantikannya dengan yang baru. Anda yakin ingin melanjutkan?')) {
+        if (
+            !confirm(
+                'Banner di urutan ini sudah ada! Menyimpan form ini akan otomatis menghapus banner lama dan menggantikannya dengan yang baru. Anda yakin ingin melanjutkan?',
+            )
+        ) {
             return;
         }
     }
@@ -331,7 +380,9 @@ function confirmDelete() {
 
         <div v-else class="overflow-hidden rounded-lg border border-border">
             <table class="w-full text-sm">
-                <thead class="bg-muted/50 text-xs uppercase tracking-wide text-muted-foreground">
+                <thead
+                    class="bg-muted/50 text-xs tracking-wide text-muted-foreground uppercase"
+                >
                     <tr>
                         <th class="px-4 py-3 text-left">Gambar</th>
                         <th class="px-4 py-3 text-left">Posisi</th>
@@ -355,16 +406,35 @@ function confirmDelete() {
                             />
                         </td>
                         <td class="px-4 py-3">
-                            <Badge :variant="banner.placement === 'main' ? 'default' : 'secondary'">
-                                <template v-if="banner.placement === 'main'">Utama</template>
-                                <template v-else-if="banner.placement === 'side_top'">Samping Atas</template>
+                            <Badge
+                                :variant="
+                                    banner.placement === 'main'
+                                        ? 'default'
+                                        : 'secondary'
+                                "
+                            >
+                                <template v-if="banner.placement === 'main'"
+                                    >Utama</template
+                                >
+                                <template
+                                    v-else-if="banner.placement === 'side_top'"
+                                    >Samping Atas</template
+                                >
                                 <template v-else>Samping Bawah</template>
                             </Badge>
                         </td>
-                        <td class="px-4 py-3 font-medium">{{ banner.title }}</td>
-                        <td class="px-4 py-3 text-center tabular-nums">{{ banner.sort_order }}</td>
+                        <td class="px-4 py-3 font-medium">
+                            {{ banner.title }}
+                        </td>
+                        <td class="px-4 py-3 text-center tabular-nums">
+                            {{ banner.sort_order }}
+                        </td>
                         <td class="px-4 py-3 text-center">
-                            <Badge :variant="banner.is_active ? 'default' : 'outline'">
+                            <Badge
+                                :variant="
+                                    banner.is_active ? 'default' : 'outline'
+                                "
+                            >
                                 {{ banner.is_active ? 'Aktif' : 'Nonaktif' }}
                             </Badge>
                         </td>
@@ -397,7 +467,7 @@ function confirmDelete() {
 
     <!-- Create / Edit Dialog -->
     <Dialog v-model:open="formOpen">
-        <DialogContent class="max-w-2xl overflow-y-auto max-h-[90vh]">
+        <DialogContent class="max-h-[90vh] max-w-2xl overflow-y-auto">
             <DialogHeader>
                 <DialogTitle>
                     {{ editing ? 'Edit Banner' : 'Tambah Banner' }}
@@ -411,15 +481,21 @@ function confirmDelete() {
             >
                 <!-- Placement -->
                 <div class="grid gap-2">
-                    <Label>Posisi <span class="text-destructive">*</span></Label>
+                    <Label
+                        >Posisi <span class="text-destructive">*</span></Label
+                    >
                     <Select v-model="formPlacement">
                         <SelectTrigger class="w-48">
                             <SelectValue placeholder="Pilih posisi" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="main">Banner Utama</SelectItem>
-                            <SelectItem value="side_top">Banner Samping (Atas - Maks 2)</SelectItem>
-                            <SelectItem value="side_bottom">Banner Samping (Bawah - Maks 1)</SelectItem>
+                            <SelectItem value="side_top"
+                                >Banner Samping (Atas - Maks 2)</SelectItem
+                            >
+                            <SelectItem value="side_bottom"
+                                >Banner Samping (Bawah - Maks 1)</SelectItem
+                            >
                         </SelectContent>
                     </Select>
                     <InputError :message="errors.placement" />
@@ -427,7 +503,9 @@ function confirmDelete() {
 
                 <!-- Title -->
                 <div class="grid gap-2">
-                    <Label for="title">Judul <span class="text-destructive">*</span></Label>
+                    <Label for="title"
+                        >Judul <span class="text-destructive">*</span></Label
+                    >
                     <Input
                         id="title"
                         name="title"
@@ -453,28 +531,47 @@ function confirmDelete() {
                         <InputError :message="errors.badge_label" />
                     </div>
                     <div class="grid gap-2">
-                        <Label for="sort_order">Urutan <span class="text-destructive">*</span></Label>
+                        <Label for="sort_order"
+                            >Urutan
+                            <span class="text-destructive">*</span></Label
+                        >
                         <Select v-model="formSortOrderStr">
                             <SelectTrigger>
                                 <SelectValue placeholder="Pilih urutan" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem v-for="opt in sortOrderOptions" :key="opt.value" :value="opt.value.toString()">
+                                <SelectItem
+                                    v-for="opt in sortOrderOptions"
+                                    :key="opt.value"
+                                    :value="opt.value.toString()"
+                                >
                                     {{ opt.label }}
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                        <p v-if="sortOrderOptions.find(o => o.value === formSortOrder)?.isTaken" class="text-[0.8rem] font-medium text-destructive mt-1">
-                            Peringatan: Banner lama di urutan ini akan terhapus dan digantikan!
+                        <p
+                            v-if="
+                                sortOrderOptions.find(
+                                    (o) => o.value === formSortOrder,
+                                )?.isTaken
+                            "
+                            class="mt-1 text-[0.8rem] font-medium text-destructive"
+                        >
+                            Peringatan: Banner lama di urutan ini akan terhapus
+                            dan digantikan!
                         </p>
                         <InputError :message="errors.sort_order" />
                     </div>
                 </div>
 
                 <!-- CTA Tautan Settings Box -->
-                <div class="grid gap-4 border border-border/80 rounded-xl p-4 bg-muted/20">
-                    <h4 class="text-sm font-semibold text-foreground/90">Konfigurasi Tautan Banner</h4>
-                    
+                <div
+                    class="grid gap-4 rounded-xl border border-border/80 bg-muted/20 p-4"
+                >
+                    <h4 class="text-sm font-semibold text-foreground/90">
+                        Konfigurasi Tautan Banner
+                    </h4>
+
                     <div class="grid grid-cols-2 gap-4">
                         <div class="grid gap-2">
                             <Label>Tipe Tujuan Tautan</Label>
@@ -483,19 +580,39 @@ function confirmDelete() {
                                     <SelectValue placeholder="Pilih tipe" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="category">Kategori</SelectItem>
-                                    <SelectItem value="product">Produk</SelectItem>
+                                    <SelectItem value="category"
+                                        >Kategori</SelectItem
+                                    >
+                                    <SelectItem value="product"
+                                        >Produk</SelectItem
+                                    >
                                     <SelectItem value="store">Toko</SelectItem>
-                                    <SelectItem value="custom">Link Kustom</SelectItem>
+                                    <SelectItem value="custom"
+                                        >Link Kustom</SelectItem
+                                    >
                                 </SelectContent>
                             </Select>
                         </div>
 
                         <!-- Autocomplete Search for Category/Product/Store -->
-                        <div v-if="ctaType !== 'custom'" class="grid gap-2 relative">
-                            <Label>Pencarian {{ ctaType === 'category' ? 'Kategori' : ctaType === 'product' ? 'Produk' : 'Toko' }}</Label>
+                        <div
+                            v-if="ctaType !== 'custom'"
+                            class="relative grid gap-2"
+                        >
+                            <Label
+                                >Pencarian
+                                {{
+                                    ctaType === 'category'
+                                        ? 'Kategori'
+                                        : ctaType === 'product'
+                                          ? 'Produk'
+                                          : 'Toko'
+                                }}</Label
+                            >
                             <div class="relative">
-                                <Search class="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+                                <Search
+                                    class="absolute top-2.5 left-2.5 size-4 text-muted-foreground"
+                                />
                                 <Input
                                     v-model="searchQuery"
                                     class="pl-9"
@@ -504,25 +621,40 @@ function confirmDelete() {
                                     @focus="openDropdown"
                                     @focusout="onFocusOut"
                                 />
-                                <Loader2 v-if="searchLoading" class="absolute right-2.5 top-2.5 size-4 animate-spin text-muted-foreground" />
+                                <Loader2
+                                    v-if="searchLoading"
+                                    class="absolute top-2.5 right-2.5 size-4 animate-spin text-muted-foreground"
+                                />
                             </div>
 
                             <!-- Dropdown Options overlay -->
-                            <div 
-                                v-if="dropdownOpen && (searchResults.length > 0 || searchLoading)" 
-                                class="absolute top-[calc(100%+4px)] left-0 right-0 z-50 rounded-md border bg-popover text-popover-foreground shadow-md outline-none max-h-60 overflow-y-auto"
+                            <div
+                                v-if="
+                                    dropdownOpen &&
+                                    (searchResults.length > 0 || searchLoading)
+                                "
+                                class="absolute top-[calc(100%+4px)] right-0 left-0 z-50 max-h-60 overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md outline-none"
                             >
-                                <div v-if="searchLoading && searchResults.length === 0" class="p-3 text-xs text-muted-foreground text-center">
+                                <div
+                                    v-if="
+                                        searchLoading &&
+                                        searchResults.length === 0
+                                    "
+                                    class="p-3 text-center text-xs text-muted-foreground"
+                                >
                                     Mencari...
                                 </div>
-                                <div v-else-if="searchResults.length === 0" class="p-3 text-xs text-muted-foreground text-center">
+                                <div
+                                    v-else-if="searchResults.length === 0"
+                                    class="p-3 text-center text-xs text-muted-foreground"
+                                >
                                     Tidak ditemukan hasil.
                                 </div>
                                 <button
                                     v-for="item in searchResults"
                                     :key="item.id"
                                     type="button"
-                                    class="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 px-3 text-sm outline-none hover:bg-accent hover:text-accent-foreground text-left"
+                                    class="relative flex w-full cursor-default items-center rounded-sm px-3 py-1.5 text-left text-sm outline-none select-none hover:bg-accent hover:text-accent-foreground"
                                     @mousedown="selectItem(item)"
                                 >
                                     {{ item.name }}
@@ -546,8 +678,13 @@ function confirmDelete() {
 
                     <!-- Computed URL Preview -->
                     <div class="text-xs text-muted-foreground">
-                        <span class="font-medium text-foreground">Hasil URL Banners:</span> 
-                        <code class="ml-1 bg-muted px-1.5 py-0.5 rounded border text-[11px] select-all">{{ ctaUrlValue || '(Kosong/Belum diset)' }}</code>
+                        <span class="font-medium text-foreground"
+                            >Hasil URL Banners:</span
+                        >
+                        <code
+                            class="ml-1 rounded border bg-muted px-1.5 py-0.5 text-[11px] select-all"
+                            >{{ ctaUrlValue || '(Kosong/Belum diset)' }}</code
+                        >
                     </div>
                     <InputError :message="errors.cta_url" />
                 </div>
@@ -567,9 +704,11 @@ function confirmDelete() {
                     <Label>
                         Gambar
                         <span v-if="!editing" class="text-destructive">*</span>
-                        <span v-else class="text-xs text-muted-foreground">(kosongkan untuk tidak mengubah)</span>
+                        <span v-else class="text-xs text-muted-foreground"
+                            >(kosongkan untuk tidak mengubah)</span
+                        >
                     </Label>
-                    <p class="text-[0.8rem] text-muted-foreground mb-1">
+                    <p class="mb-1 text-[0.8rem] text-muted-foreground">
                         {{ helperText }}
                     </p>
                     <ImageCropField
@@ -594,17 +733,25 @@ function confirmDelete() {
     </Dialog>
 
     <!-- Delete Confirmation Dialog -->
-    <Dialog :open="!!deleteTarget" @update:open="(v) => !v && (deleteTarget = null)">
+    <Dialog
+        :open="!!deleteTarget"
+        @update:open="(v) => !v && (deleteTarget = null)"
+    >
         <DialogContent class="max-w-sm">
             <DialogHeader>
                 <DialogTitle>Hapus banner?</DialogTitle>
             </DialogHeader>
             <p class="text-sm text-muted-foreground">
-                Banner "<strong>{{ deleteTarget?.title }}</strong>" akan dihapus permanen.
+                Banner "<strong>{{ deleteTarget?.title }}</strong
+                >" akan dihapus permanen.
             </p>
             <DialogFooter>
-                <Button variant="outline" @click="deleteTarget = null">Batal</Button>
-                <Button variant="destructive" @click="confirmDelete">Hapus</Button>
+                <Button variant="outline" @click="deleteTarget = null"
+                    >Batal</Button
+                >
+                <Button variant="destructive" @click="confirmDelete"
+                    >Hapus</Button
+                >
             </DialogFooter>
         </DialogContent>
     </Dialog>

@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { ArrowRight, ShieldCheck, ReceiptText, Truck } from '@lucide/vue';
+import { ArrowRight } from '@lucide/vue';
 import { onMounted, onUnmounted, ref } from 'vue';
-import Logo from '@/components/brand/Logo.vue';
 import { Button } from '@/components/ui/button';
 import { register } from '@/routes';
-import { index as catalogIndex } from '@/routes/catalog';
 
 const parallaxEl = ref<HTMLElement | null>(null);
 let rafId: number | null = null;
@@ -58,34 +56,48 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <section id="hero" class="relative overflow-hidden bg-gradient-to-b from-[#0A7180] to-[#085b66]">
+    <section
+        id="hero"
+        class="relative overflow-hidden bg-gradient-to-b from-[#0A7180] to-[#085b66]"
+    >
         <!-- Hero content -->
-        <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-8">
-            <div class="grid min-h-[calc(100svh-7rem)] grid-cols-1 items-center gap-8 py-16 lg:grid-cols-2 lg:gap-12 lg:py-20">
+        <div class="relative z-10 mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
+            <div
+                class="grid min-h-[calc(100svh-7rem)] grid-cols-1 items-center gap-8 py-16 lg:grid-cols-2 lg:gap-12 lg:py-20"
+            >
                 <!-- Left: copy + CTAs -->
                 <div class="hero-copy flex flex-col gap-6 lg:gap-8">
                     <!-- Headline -->
                     <div class="space-y-4">
-                        <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl leading-[1.1]">
+                        <h1
+                            class="text-4xl leading-[1.1] font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
+                        >
                             Satu akun.<br />
-                            <span class="text-teal-300">
-                                Tiga peran.
-                            </span>
+                            <span class="text-teal-300"> Tiga peran. </span>
                         </h1>
-                        <p class="max-w-lg text-lg text-white/90 sm:text-xl leading-relaxed font-medium">
-                            Beli, jual, dan antar pesanan cukup dengan satu akun terintegrasi. Tanpa ribet ganti aplikasi.
+                        <p
+                            class="max-w-lg text-lg leading-relaxed font-medium text-white/90 sm:text-xl"
+                        >
+                            Beli, jual, dan antar pesanan cukup dengan satu akun
+                            terintegrasi. Tanpa ribet ganti aplikasi.
                         </p>
                     </div>
 
                     <!-- CTAs -->
-                    <div class="flex flex-wrap gap-4 mt-2">
-                        <Button as-child size="lg" class="bg-white text-[#0A7180] font-bold shadow-lg hover:bg-teal-50 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 px-8">
-                            <Link :href="register()">
-                                Daftar Gratis
-                            </Link>
+                    <div class="mt-2 flex flex-wrap gap-4">
+                        <Button
+                            as-child
+                            size="lg"
+                            class="bg-white px-8 font-bold text-[#0A7180] shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 hover:bg-teal-50 hover:shadow-xl"
+                        >
+                            <Link :href="register()"> Daftar Gratis </Link>
                         </Button>
-                        <Button as-child size="lg" variant="outline"
-                            class="gap-2 border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 px-6">
+                        <Button
+                            as-child
+                            size="lg"
+                            variant="outline"
+                            class="gap-2 border-white/20 bg-transparent px-6 text-white transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 hover:bg-white/10 hover:text-white"
+                        >
                             <Link href="/catalog">
                                 Jelajahi Katalog
                                 <ArrowRight class="size-4" />
@@ -94,18 +106,29 @@ onUnmounted(() => {
                     </div>
 
                     <!-- Micro-trust / Social Proof -->
-                    <div class="flex flex-wrap items-center gap-x-6 gap-y-3 mt-4 text-sm font-medium text-white/70">
-                        <span class="flex items-center gap-1.5 transition-colors hover:text-white">
-                            <span class="text-yellow-400 tracking-widest text-xs">★★★★★</span>
+                    <div
+                        class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm font-medium text-white/70"
+                    >
+                        <span
+                            class="flex items-center gap-1.5 transition-colors hover:text-white"
+                        >
+                            <span
+                                class="text-xs tracking-widest text-yellow-400"
+                                >★★★★★</span
+                            >
                             <span class="ml-1">Trusted Marketplace</span>
                         </span>
                         <span class="hidden text-white/20 sm:block">|</span>
-                        <span class="flex items-center gap-1.5 transition-colors hover:text-white">
+                        <span
+                            class="flex items-center gap-1.5 transition-colors hover:text-white"
+                        >
                             <span class="font-bold text-white">1000+</span>
                             Products
                         </span>
                         <span class="hidden text-white/20 sm:block">|</span>
-                        <span class="flex items-center gap-1.5 transition-colors hover:text-white">
+                        <span
+                            class="flex items-center gap-1.5 transition-colors hover:text-white"
+                        >
                             <span class="font-bold text-white">500+</span>
                             Verified Stores
                         </span>
@@ -113,10 +136,19 @@ onUnmounted(() => {
                 </div>
 
                 <!-- Right: single hero illustration with parallax -->
-                <div class="relative hidden lg:block hero-img-container">
+                <div class="hero-img-container relative hidden lg:block">
                     <div ref="parallaxEl" class="transition-none">
-                        <img src="/hero.svg" alt="SEAPEDIA Marketplace" class="h-auto w-full object-contain filter drop-shadow-2xl"
-                            loading="eager" onerror="this.parentElement.classList.add('hero-img-placeholder')" />
+                        <img
+                            src="/hero.svg"
+                            alt="SEAPEDIA Marketplace"
+                            class="h-auto w-full object-contain drop-shadow-2xl filter"
+                            loading="eager"
+                            onerror="
+                                this.parentElement.classList.add(
+                                    'hero-img-placeholder',
+                                )
+                            "
+                        />
                     </div>
                 </div>
             </div>
@@ -124,9 +156,20 @@ onUnmounted(() => {
 
         <!-- Wave divider — gracefully transitions hero to white body without horizontal overflow -->
         <!-- Added -mb-px to remove the sub-pixel 1px gap rendering issue causing the thin line beneath the wave -->
-        <div class="absolute bottom-0 -mb-px w-full overflow-hidden leading-none z-20 pointer-events-none" aria-hidden="true">
-            <svg viewBox="0 0 1440 56" fill="none" preserveAspectRatio="none" class="w-full h-10 sm:h-12 lg:h-16">
-                <path d="M0 28 C240 56 480 0 720 28 C960 56 1200 0 1440 28 L1440 56 L0 56 Z" fill="white" />
+        <div
+            class="pointer-events-none absolute bottom-0 z-20 -mb-px w-full overflow-hidden leading-none"
+            aria-hidden="true"
+        >
+            <svg
+                viewBox="0 0 1440 56"
+                fill="none"
+                preserveAspectRatio="none"
+                class="h-10 w-full sm:h-12 lg:h-16"
+            >
+                <path
+                    d="M0 28 C240 56 480 0 720 28 C960 56 1200 0 1440 28 L1440 56 L0 56 Z"
+                    fill="white"
+                />
             </svg>
         </div>
     </section>
@@ -147,19 +190,19 @@ onUnmounted(() => {
 }
 
 /* Applying MD3 Emphasized easing for a premium feel */
-.hero-copy>*:nth-child(1) {
+.hero-copy > *:nth-child(1) {
     animation: fade-up 0.8s cubic-bezier(0.05, 0.7, 0.1, 1) both 0s;
 }
 
-.hero-copy>*:nth-child(2) {
+.hero-copy > *:nth-child(2) {
     animation: fade-up 0.8s cubic-bezier(0.05, 0.7, 0.1, 1) both 0.1s;
 }
 
-.hero-copy>*:nth-child(3) {
+.hero-copy > *:nth-child(3) {
     animation: fade-up 0.8s cubic-bezier(0.05, 0.7, 0.1, 1) both 0.2s;
 }
 
-.hero-copy>*:nth-child(4) {
+.hero-copy > *:nth-child(4) {
     animation: fade-up 0.8s cubic-bezier(0.05, 0.7, 0.1, 1) both 0.3s;
 }
 
@@ -190,7 +233,7 @@ onUnmounted(() => {
 
 /* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-    .hero-copy>* {
+    .hero-copy > * {
         animation: none !important;
         opacity: 1 !important;
         transform: none !important;

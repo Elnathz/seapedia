@@ -2,8 +2,8 @@
 import { Link } from '@inertiajs/vue3';
 import { ChevronLeft, ChevronRight } from '@lucide/vue';
 import { onMounted, onUnmounted, ref } from 'vue';
-import { bannerSrc  } from '@/types/banner';
-import type {BannerNode} from '@/types/banner';
+import { bannerSrc } from '@/types/banner';
+import type { BannerNode } from '@/types/banner';
 
 const props = defineProps<{ slides: BannerNode[] }>();
 const active = ref(0);
@@ -30,6 +30,7 @@ onMounted(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         return;
     }
+
     resume();
 });
 
@@ -40,19 +41,19 @@ onUnmounted(() => {
 
 <template>
     <div
-        class="relative overflow-hidden rounded-xl border border-border h-full min-h-0 min-w-0"
+        class="relative h-full min-h-0 min-w-0 overflow-hidden rounded-xl border border-border"
         @mouseenter="pause"
         @mouseleave="resume"
     >
         <div
-            class="flex transition-transform duration-500 ease-out h-full min-h-0 min-w-0 motion-reduce:transition-none"
+            class="flex h-full min-h-0 min-w-0 transition-transform duration-500 ease-out motion-reduce:transition-none"
             :style="{ transform: `translateX(-${active * 100}%)` }"
         >
             <Link
                 v-for="slide in slides"
                 :key="slide.id"
                 :href="slide.cta_url ?? '/catalog'"
-                class="block w-full h-full shrink-0 relative"
+                class="relative block h-full w-full shrink-0"
             >
                 <img
                     :src="bannerSrc(slide.image_path)"
@@ -79,7 +80,9 @@ onUnmounted(() => {
             >
                 <ChevronRight class="size-4" />
             </button>
-            <div class="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5">
+            <div
+                class="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5"
+            >
                 <button
                     v-for="(s, i) in slides"
                     :key="s.id"

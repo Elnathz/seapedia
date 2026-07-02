@@ -352,7 +352,8 @@ export default {
         categoryIconLabel: 'Ikon',
         categoryProductsCount: '{count} produk',
         categoriesEmptyTitle: 'Belum ada kategori',
-        categoriesEmptyDescription: 'Tambahkan kategori pertama untuk mengelompokkan produk.',
+        categoriesEmptyDescription:
+            'Tambahkan kategori pertama untuk mengelompokkan produk.',
         deleteCategoryConfirmTitle: 'Hapus kategori "{name}"?',
         deleteCategoryConfirmDescription:
             'Kategori hanya bisa dihapus jika tidak punya produk atau sub-kategori.',

@@ -72,7 +72,7 @@ const navGroups = computed<NavGroup[]>(() => {
             title: 'Katalog Produk',
             href: catalogIndex.url(),
             icon: Images,
-        }
+        },
     ];
     groups.push({
         label: 'Main',
@@ -94,9 +94,8 @@ const navGroups = computed<NavGroup[]>(() => {
                     href: indexBuyerAddresses.url(),
                     icon: MapPin,
                 },
-            ]
+            ],
         });
-
 
         groups.push({
             label: 'Transaksi',
@@ -116,7 +115,7 @@ const navGroups = computed<NavGroup[]>(() => {
                     href: indexBuyerReports.url(),
                     icon: BarChart3,
                 },
-            ]
+            ],
         });
     }
 
@@ -144,7 +143,7 @@ const navGroups = computed<NavGroup[]>(() => {
                     href: indexSellerReports.url(),
                     icon: BarChart3,
                 },
-            ]
+            ],
         });
     }
 
@@ -157,7 +156,7 @@ const navGroups = computed<NavGroup[]>(() => {
                     href: indexDriverJobs.url(),
                     icon: Truck,
                 },
-            ]
+            ],
         });
     }
 
@@ -170,7 +169,7 @@ const navGroups = computed<NavGroup[]>(() => {
                 { title: 'Produk', href: '/admin/products', icon: Package },
                 { title: 'Pesanan', href: '/admin/orders', icon: Inbox },
                 { title: 'Pengiriman', href: '/admin/deliveries', icon: Truck },
-            ]
+            ],
         });
 
         groups.push({
@@ -192,14 +191,18 @@ const navGroups = computed<NavGroup[]>(() => {
                     icon: BadgePercent,
                 },
                 { title: 'Banner', href: '/admin/banners', icon: Images },
-            ]
+            ],
         });
 
         groups.push({
             label: 'Alat Simulasi (Admin)',
             items: [
-                { title: 'Overdue (Time Machine)', href: '/admin/overdue', icon: AlertTriangle },
-            ]
+                {
+                    title: 'Overdue (Time Machine)',
+                    href: '/admin/overdue',
+                    icon: AlertTriangle,
+                },
+            ],
         });
     }
 
@@ -211,8 +214,8 @@ const navGroups = computed<NavGroup[]>(() => {
                 title: 'Profil & Settings',
                 href: editProfile.url(),
                 icon: Settings,
-            }
-        ]
+            },
+        ],
     });
 
     return groups;
@@ -240,15 +243,32 @@ const navGroups = computed<NavGroup[]>(() => {
 
         <SidebarFooter>
             <!-- Admin: Preview Halaman Publik -->
-            <div v-if="auth.user?.is_admin" class="mx-3 mb-3 flex flex-col gap-2 rounded-xl border border-border bg-muted/50 p-3">
-                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Lihat Halaman</p>
-                <Button as-child variant="outline" size="sm" class="w-full justify-between text-xs">
+            <div
+                v-if="auth.user?.is_admin"
+                class="mx-3 mb-3 flex flex-col gap-2 rounded-xl border border-border bg-muted/50 p-3"
+            >
+                <p
+                    class="text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+                >
+                    Lihat Halaman
+                </p>
+                <Button
+                    as-child
+                    variant="outline"
+                    size="sm"
+                    class="w-full justify-between text-xs"
+                >
                     <Link :href="catalogIndex.url()" target="_blank">
                         Halaman Toko
                         <ExternalLink class="size-3" />
                     </Link>
                 </Button>
-                <Button as-child variant="outline" size="sm" class="w-full justify-between text-xs">
+                <Button
+                    as-child
+                    variant="outline"
+                    size="sm"
+                    class="w-full justify-between text-xs"
+                >
                     <Link :href="catalogIndex.url()" target="_blank">
                         Katalog Produk
                         <ExternalLink class="size-3" />

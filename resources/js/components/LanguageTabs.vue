@@ -17,7 +17,7 @@ const tabs = [
             :class="[
                 'flex items-center rounded-md px-3.5 py-1.5 text-sm transition-colors',
                 locale === value
-                    ? 'bg-background shadow-xs text-foreground'
+                    ? 'bg-background text-foreground shadow-xs'
                     : 'text-muted-foreground hover:bg-muted/80 hover:text-foreground',
             ]"
             @click="setLocale(value)"

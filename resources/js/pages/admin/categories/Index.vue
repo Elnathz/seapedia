@@ -113,7 +113,9 @@ function openCreate() {
 
 function openEdit(category: CategoryRow) {
     editing.value = category;
-    parentValue.value = category.parent_id ? String(category.parent_id) : 'none';
+    parentValue.value = category.parent_id
+        ? String(category.parent_id)
+        : 'none';
     iconValue.value = category.icon ?? 'Package';
     dialogOpen.value = true;
 }
@@ -124,7 +126,10 @@ function openEdit(category: CategoryRow) {
 
     <div class="flex flex-col gap-6">
         <div class="flex items-center justify-between">
-            <Heading variant="small" :title="t('admin.manageCategoriesTitle')" />
+            <Heading
+                variant="small"
+                :title="t('admin.manageCategoriesTitle')"
+            />
             <Button @click="openCreate">
                 <Plus class="size-4" />
                 {{ t('admin.addCategory') }}
@@ -345,7 +350,9 @@ function openEdit(category: CategoryRow) {
         >
             <DialogContent v-if="deleteTarget">
                 <Form
-                    v-bind="AdminCategoryController.destroy.form(deleteTarget.slug)"
+                    v-bind="
+                        AdminCategoryController.destroy.form(deleteTarget.slug)
+                    "
                     :options="{ preserveScroll: true }"
                     @success="deleteTarget = null"
                     v-slot="{ processing }"

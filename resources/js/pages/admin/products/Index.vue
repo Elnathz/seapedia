@@ -4,7 +4,14 @@ import { Package } from '@lucide/vue';
 import { ref, watch } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 interface Product {
@@ -33,11 +40,19 @@ const props = defineProps<{
 const search = ref(props.filters.q ?? '');
 
 watch(search, (val) => {
-    router.get('/admin/products', { q: val }, { preserveState: true, replace: true });
+    router.get(
+        '/admin/products',
+        { q: val },
+        { preserveState: true, replace: true },
+    );
 });
 
 function formatPrice(price: number) {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(price);
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        maximumFractionDigits: 0,
+    }).format(price);
 }
 </script>
 
@@ -45,17 +60,25 @@ function formatPrice(price: number) {
     <AppLayout>
         <div class="p-6">
             <div class="mb-6 flex items-center gap-3">
-                <div class="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <div
+                    class="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary"
+                >
                     <Package class="size-5" />
                 </div>
                 <div>
                     <h1 class="text-xl font-bold">Produk</h1>
-                    <p class="text-sm text-muted-foreground">Total {{ products.total }} produk</p>
+                    <p class="text-sm text-muted-foreground">
+                        Total {{ products.total }} produk
+                    </p>
                 </div>
             </div>
 
             <div class="mb-4">
-                <Input v-model="search" placeholder="Cari nama produk..." class="max-w-xs" />
+                <Input
+                    v-model="search"
+                    placeholder="Cari nama produk..."
+                    class="max-w-xs"
+                />
             </div>
 
             <div class="overflow-x-auto rounded-lg border border-border">
@@ -73,18 +96,44 @@ function formatPrice(price: number) {
                     </TableHeader>
                     <TableBody>
                         <TableRow v-if="products.data.length === 0">
-                            <TableCell colspan="7" class="py-8 text-center text-muted-foreground">Tidak ada produk ditemukan.</TableCell>
+                            <TableCell
+                                colspan="7"
+                                class="py-8 text-center text-muted-foreground"
+                                >Tidak ada produk ditemukan.</TableCell
+                            >
                         </TableRow>
-                        <TableRow v-for="product in products.data" :key="product.id">
-                            <TableCell class="font-mono text-xs">{{ product.id }}</TableCell>
-                            <TableCell class="max-w-[180px] truncate font-medium">{{ product.name }}</TableCell>
-                            <TableCell class="text-sm text-muted-foreground">{{ product.store?.name ?? '-' }}</TableCell>
-                            <TableCell class="text-xs text-muted-foreground">{{ product.category?.name ?? '-' }}</TableCell>
-                            <TableCell class="text-sm">{{ formatPrice(product.price) }}</TableCell>
+                        <TableRow
+                            v-for="product in products.data"
+                            :key="product.id"
+                        >
+                            <TableCell class="font-mono text-xs">{{
+                                product.id
+                            }}</TableCell>
+                            <TableCell
+                                class="max-w-[180px] truncate font-medium"
+                                >{{ product.name }}</TableCell
+                            >
+                            <TableCell class="text-sm text-muted-foreground">{{
+                                product.store?.name ?? '-'
+                            }}</TableCell>
+                            <TableCell class="text-xs text-muted-foreground">{{
+                                product.category?.name ?? '-'
+                            }}</TableCell>
+                            <TableCell class="text-sm">{{
+                                formatPrice(product.price)
+                            }}</TableCell>
                             <TableCell>{{ product.stock }}</TableCell>
                             <TableCell>
-                                <Badge :variant="product.is_active ? 'default' : 'secondary'">
-                                    {{ product.is_active ? 'Aktif' : 'Nonaktif' }}
+                                <Badge
+                                    :variant="
+                                        product.is_active
+                                            ? 'default'
+                                            : 'secondary'
+                                    "
+                                >
+                                    {{
+                                        product.is_active ? 'Aktif' : 'Nonaktif'
+                                    }}
                                 </Badge>
                             </TableCell>
                         </TableRow>
@@ -98,11 +147,19 @@ function formatPrice(price: number) {
                         v-if="link.url"
                         type="button"
                         class="rounded border px-3 py-1 text-sm"
-                        :class="link.active ? 'border-primary bg-primary text-white' : 'border-border hover:bg-muted'"
+                        :class="
+                            link.active
+                                ? 'border-primary bg-primary text-white'
+                                : 'border-border hover:bg-muted'
+                        "
                         @click="router.get(link.url)"
                         v-html="link.label"
                     />
-                    <span v-else class="rounded border border-border px-3 py-1 text-sm opacity-40" v-html="link.label" />
+                    <span
+                        v-else
+                        class="rounded border border-border px-3 py-1 text-sm opacity-40"
+                        v-html="link.label"
+                    />
                 </template>
             </div>
         </div>

@@ -85,14 +85,19 @@ const { t, locale } = useI18n();
     <Head :title="order.code" />
 
     <div class="flex flex-col gap-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div
+            class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
+        >
             <Heading
                 variant="small"
                 :title="order.code"
                 :description="formatDateTime(order.created_sim_at, locale)"
             />
             <div class="shrink-0">
-                <Badge :variant="orderStatusBadgeVariant(order.status)" class="text-sm px-3 py-1">
+                <Badge
+                    :variant="orderStatusBadgeVariant(order.status)"
+                    class="px-3 py-1 text-sm"
+                >
                     {{ orderStatusLabel(order.status) }}
                 </Badge>
             </div>
@@ -105,9 +110,13 @@ const { t, locale } = useI18n();
                         <h3 class="font-medium">
                             {{ t('order.shippingTitle') }}
                         </h3>
-                        <p class="text-sm mb-2">
+                        <p class="mb-2 text-sm">
                             <span class="text-muted-foreground">Toko:</span>
-                            <Link :href="`/stores/${order.store.slug}`" class="font-medium text-primary hover:underline ml-1">{{ order.store.name }}</Link>
+                            <Link
+                                :href="`/stores/${order.store.slug}`"
+                                class="ml-1 font-medium text-primary hover:underline"
+                                >{{ order.store.name }}</Link
+                            >
                         </p>
                         <p class="text-sm">
                             <span class="text-muted-foreground"
@@ -192,19 +201,59 @@ const { t, locale } = useI18n();
                                 >
                                     <TableCell>
                                         <div class="flex items-center gap-3">
-                                            <Link v-if="item.product" :href="`/catalog/${item.product.slug}`" class="shrink-0 group">
-                                                <div class="size-12 overflow-hidden rounded border border-border">
-                                                    <img v-if="item.product.images?.length" :src="`/storage/${item.product.images[0].image_path}`" class="size-full object-cover transition-transform duration-300 group-hover:scale-110" />
-                                                    <div v-else class="size-full bg-muted flex items-center justify-center text-xs text-muted-foreground">No img</div>
+                                            <Link
+                                                v-if="item.product"
+                                                :href="`/catalog/${item.product.slug}`"
+                                                class="group shrink-0"
+                                            >
+                                                <div
+                                                    class="size-12 overflow-hidden rounded border border-border"
+                                                >
+                                                    <img
+                                                        v-if="
+                                                            item.product.images
+                                                                ?.length
+                                                        "
+                                                        :src="`/storage/${item.product.images[0].image_path}`"
+                                                        class="size-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                                    />
+                                                    <div
+                                                        v-else
+                                                        class="flex size-full items-center justify-center bg-muted text-xs text-muted-foreground"
+                                                    >
+                                                        No img
+                                                    </div>
                                                 </div>
                                             </Link>
-                                            <div v-else class="shrink-0 size-12 overflow-hidden rounded border border-border bg-muted flex items-center justify-center text-xs text-muted-foreground">
+                                            <div
+                                                v-else
+                                                class="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded border border-border bg-muted text-xs text-muted-foreground"
+                                            >
                                                 No img
                                             </div>
                                             <div class="flex flex-col">
-                                                <Link v-if="item.product" :href="`/catalog/${item.product.slug}`" class="font-medium hover:text-primary transition-colors">{{ item.product_name_snapshot }}</Link>
-                                                <span v-else class="font-medium">{{ item.product_name_snapshot }}</span>
-                                                <span v-if="item.variant" class="text-xs text-muted-foreground">{{ item.variant.name }}</span>
+                                                <Link
+                                                    v-if="item.product"
+                                                    :href="`/catalog/${item.product.slug}`"
+                                                    class="font-medium transition-colors hover:text-primary"
+                                                    >{{
+                                                        item.product_name_snapshot
+                                                    }}</Link
+                                                >
+                                                <span
+                                                    v-else
+                                                    class="font-medium"
+                                                    >{{
+                                                        item.product_name_snapshot
+                                                    }}</span
+                                                >
+                                                <span
+                                                    v-if="item.variant"
+                                                    class="text-xs text-muted-foreground"
+                                                    >{{
+                                                        item.variant.name
+                                                    }}</span
+                                                >
                                             </div>
                                         </div>
                                     </TableCell>

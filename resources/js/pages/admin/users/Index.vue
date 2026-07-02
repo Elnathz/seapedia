@@ -4,7 +4,14 @@ import { Users } from '@lucide/vue';
 import { ref, watch } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 interface Role {
@@ -39,7 +46,11 @@ const props = defineProps<{
 const search = ref(props.filters.q ?? '');
 
 watch(search, (val) => {
-    router.get('/admin/users', { q: val }, { preserveState: true, replace: true });
+    router.get(
+        '/admin/users',
+        { q: val },
+        { preserveState: true, replace: true },
+    );
 });
 </script>
 
@@ -47,17 +58,25 @@ watch(search, (val) => {
     <AppLayout>
         <div class="p-6">
             <div class="mb-6 flex items-center gap-3">
-                <div class="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <div
+                    class="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary"
+                >
                     <Users class="size-5" />
                 </div>
                 <div>
                     <h1 class="text-xl font-bold">Pengguna</h1>
-                    <p class="text-sm text-muted-foreground">Total {{ users.total }} pengguna</p>
+                    <p class="text-sm text-muted-foreground">
+                        Total {{ users.total }} pengguna
+                    </p>
                 </div>
             </div>
 
             <div class="mb-4">
-                <Input v-model="search" placeholder="Cari nama atau email..." class="max-w-xs" />
+                <Input
+                    v-model="search"
+                    placeholder="Cari nama atau email..."
+                    class="max-w-xs"
+                />
             </div>
 
             <div class="overflow-x-auto rounded-lg border border-border">
@@ -73,21 +92,41 @@ watch(search, (val) => {
                     </TableHeader>
                     <TableBody>
                         <TableRow v-if="users.data.length === 0">
-                            <TableCell colspan="5" class="py-8 text-center text-muted-foreground">
+                            <TableCell
+                                colspan="5"
+                                class="py-8 text-center text-muted-foreground"
+                            >
                                 Tidak ada pengguna ditemukan.
                             </TableCell>
                         </TableRow>
                         <TableRow v-for="user in users.data" :key="user.id">
-                            <TableCell class="font-mono text-xs">{{ user.id }}</TableCell>
-                            <TableCell class="font-medium">{{ user.name }}</TableCell>
-                            <TableCell class="text-sm text-muted-foreground">{{ user.email }}</TableCell>
+                            <TableCell class="font-mono text-xs">{{
+                                user.id
+                            }}</TableCell>
+                            <TableCell class="font-medium">{{
+                                user.name
+                            }}</TableCell>
+                            <TableCell class="text-sm text-muted-foreground">{{
+                                user.email
+                            }}</TableCell>
                             <TableCell>
                                 <div class="flex flex-wrap gap-1">
-                                    <Badge v-if="user.is_admin" variant="destructive">admin</Badge>
-                                    <Badge v-for="role in user.roles" :key="role.id" variant="secondary">{{ role.name }}</Badge>
+                                    <Badge
+                                        v-if="user.is_admin"
+                                        variant="destructive"
+                                        >admin</Badge
+                                    >
+                                    <Badge
+                                        v-for="role in user.roles"
+                                        :key="role.id"
+                                        variant="secondary"
+                                        >{{ role.name }}</Badge
+                                    >
                                 </div>
                             </TableCell>
-                            <TableCell class="text-xs text-muted-foreground">{{ user.created_at?.slice(0, 10) }}</TableCell>
+                            <TableCell class="text-xs text-muted-foreground">{{
+                                user.created_at?.slice(0, 10)
+                            }}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
@@ -100,11 +139,19 @@ watch(search, (val) => {
                         v-if="link.url"
                         type="button"
                         class="rounded border px-3 py-1 text-sm"
-                        :class="link.active ? 'border-primary bg-primary text-white' : 'border-border hover:bg-muted'"
+                        :class="
+                            link.active
+                                ? 'border-primary bg-primary text-white'
+                                : 'border-border hover:bg-muted'
+                        "
                         @click="router.get(link.url)"
                         v-html="link.label"
                     />
-                    <span v-else class="rounded border border-border px-3 py-1 text-sm opacity-40" v-html="link.label" />
+                    <span
+                        v-else
+                        class="rounded border border-border px-3 py-1 text-sm opacity-40"
+                        v-html="link.label"
+                    />
                 </template>
             </div>
         </div>

@@ -49,4 +49,3 @@ export function getGradientClass(name: string): string {
 export function useInitials(): UseInitialsReturn {
     return { getInitials, getGradientClass };
 }
-

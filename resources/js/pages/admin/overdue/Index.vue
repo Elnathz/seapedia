@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { AlertTriangle, Clock } from '@lucide/vue';
+import { ref } from 'vue';
 import AdminClockController from '@/actions/App/Http/Controllers/Web/Admin/ClockController';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 interface Order {
@@ -31,7 +38,11 @@ defineProps<{
 }>();
 
 function formatPrice(price: number) {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(price);
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        maximumFractionDigits: 0,
+    }).format(price);
 }
 
 const isAdvancing = ref(false);
@@ -44,7 +55,7 @@ function advanceTime(days: number) {
         {
             preserveScroll: true,
             onFinish: () => (isAdvancing.value = false),
-        }
+        },
     );
 }
 </script>
@@ -54,25 +65,40 @@ function advanceTime(days: number) {
         <div class="p-6">
             <div class="mb-6 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="flex size-10 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
+                    <div
+                        class="flex size-10 items-center justify-center rounded-lg bg-destructive/10 text-destructive"
+                    >
                         <AlertTriangle class="size-5" />
                     </div>
                     <div>
                         <h1 class="text-xl font-bold">Overdue</h1>
                         <p class="text-sm text-muted-foreground">
-                            <span class="font-medium text-destructive">{{ eligibleCount }}</span> pesanan menunggu auto-refund
+                            <span class="font-medium text-destructive">{{
+                                eligibleCount
+                            }}</span>
+                            pesanan menunggu auto-refund
                         </p>
                     </div>
                 </div>
-                
+
                 <!-- Time Machine / Advance Clock -->
                 <div class="flex items-center gap-2">
-                    <Button variant="outline" size="sm" @click="advanceTime(1)" :disabled="isAdvancing">
-                        <Clock class="size-4 mr-2" />
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        @click="advanceTime(1)"
+                        :disabled="isAdvancing"
+                    >
+                        <Clock class="mr-2 size-4" />
                         +1 Hari
                     </Button>
-                    <Button variant="outline" size="sm" @click="advanceTime(3)" :disabled="isAdvancing">
-                        <Clock class="size-4 mr-2" />
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        @click="advanceTime(3)"
+                        :disabled="isAdvancing"
+                    >
+                        <Clock class="mr-2 size-4" />
                         +3 Hari
                     </Button>
                 </div>
@@ -92,17 +118,33 @@ function advanceTime(days: number) {
                     </TableHeader>
                     <TableBody>
                         <TableRow v-if="orders.data.length === 0">
-                            <TableCell colspan="6" class="py-8 text-center text-muted-foreground">Tidak ada pesanan overdue.</TableCell>
+                            <TableCell
+                                colspan="6"
+                                class="py-8 text-center text-muted-foreground"
+                                >Tidak ada pesanan overdue.</TableCell
+                            >
                         </TableRow>
                         <TableRow v-for="order in orders.data" :key="order.id">
-                            <TableCell class="font-mono text-xs">#{{ order.id }}</TableCell>
-                            <TableCell class="text-sm">{{ order.buyer?.name ?? '-' }}</TableCell>
-                            <TableCell class="text-sm text-muted-foreground">{{ order.store?.name ?? '-' }}</TableCell>
+                            <TableCell class="font-mono text-xs"
+                                >#{{ order.id }}</TableCell
+                            >
+                            <TableCell class="text-sm">{{
+                                order.buyer?.name ?? '-'
+                            }}</TableCell>
+                            <TableCell class="text-sm text-muted-foreground">{{
+                                order.store?.name ?? '-'
+                            }}</TableCell>
                             <TableCell>
-                                <Badge variant="destructive">{{ order.status.replace(/_/g, ' ') }}</Badge>
+                                <Badge variant="destructive">{{
+                                    order.status.replace(/_/g, ' ')
+                                }}</Badge>
                             </TableCell>
-                            <TableCell class="text-sm">{{ formatPrice(order.grand_total) }}</TableCell>
-                            <TableCell class="text-xs text-muted-foreground">{{ order.sla_due_at?.slice(0, 16) ?? '-' }}</TableCell>
+                            <TableCell class="text-sm">{{
+                                formatPrice(order.grand_total)
+                            }}</TableCell>
+                            <TableCell class="text-xs text-muted-foreground">{{
+                                order.sla_due_at?.slice(0, 16) ?? '-'
+                            }}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>

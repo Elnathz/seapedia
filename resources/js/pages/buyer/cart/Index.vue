@@ -122,7 +122,10 @@ function clearAll() {
                 >
                     <CardContent class="flex gap-3 pt-6 sm:gap-4">
                         <img
-                            v-if="item.variant?.image_path || item.product.image_path"
+                            v-if="
+                                item.variant?.image_path ||
+                                item.product.image_path
+                            "
                             :src="`/storage/${item.variant?.image_path || item.product.image_path}`"
                             :alt="item.product.name"
                             class="size-16 shrink-0 rounded-lg border border-border object-cover sm:size-20"
@@ -137,7 +140,9 @@ function clearAll() {
                         <div class="flex min-w-0 flex-1 flex-col gap-2">
                             <div class="flex items-start justify-between gap-2">
                                 <div class="min-w-0">
-                                    <p class="line-clamp-2 font-medium leading-snug">
+                                    <p
+                                        class="line-clamp-2 leading-snug font-medium"
+                                    >
                                         {{ item.product.name }}
                                     </p>
                                     <span
@@ -146,16 +151,24 @@ function clearAll() {
                                     >
                                         {{ item.variant.name }}
                                     </span>
-                                    <p class="mt-0.5 text-sm text-muted-foreground tabular-nums">
+                                    <p
+                                        class="mt-0.5 text-sm text-muted-foreground tabular-nums"
+                                    >
                                         {{ formatIDR(item.price_snapshot) }}
                                     </p>
                                     <p
-                                        v-if="item.quantity > (item.variant?.stock ?? item.product.stock)"
+                                        v-if="
+                                            item.quantity >
+                                            (item.variant?.stock ??
+                                                item.product.stock)
+                                        "
                                         class="mt-1 text-xs text-amber-600"
                                     >
                                         {{
                                             t('cart.stockWarning', {
-                                                stock: item.variant?.stock ?? item.product.stock,
+                                                stock:
+                                                    item.variant?.stock ??
+                                                    item.product.stock,
                                             })
                                         }}
                                     </p>
@@ -164,17 +177,21 @@ function clearAll() {
                                 <Button
                                     size="icon"
                                     variant="ghost"
-                                    class="-mr-2 -mt-1 size-8 shrink-0 text-muted-foreground transition-colors hover:text-destructive"
+                                    class="-mt-1 -mr-2 size-8 shrink-0 text-muted-foreground transition-colors hover:text-destructive"
                                     @click="removeItem(item)"
                                 >
                                     <Trash2 class="size-4" />
                                     <span class="sr-only">{{
-                                        t('cart.remove', { name: item.product.name })
+                                        t('cart.remove', {
+                                            name: item.product.name,
+                                        })
                                     }}</span>
                                 </Button>
                             </div>
 
-                            <div class="mt-auto flex items-center justify-between gap-2">
+                            <div
+                                class="mt-auto flex items-center justify-between gap-2"
+                            >
                                 <div
                                     class="inline-flex items-center rounded-full border border-border bg-muted/40 p-0.5"
                                 >
@@ -187,9 +204,10 @@ function clearAll() {
                                     >
                                         <Minus class="size-3.5" />
                                     </Button>
-                                    <span class="w-8 text-center text-sm font-medium tabular-nums">{{
-                                        item.quantity
-                                    }}</span>
+                                    <span
+                                        class="w-8 text-center text-sm font-medium tabular-nums"
+                                        >{{ item.quantity }}</span
+                                    >
                                     <Button
                                         size="icon"
                                         variant="ghost"
@@ -200,8 +218,14 @@ function clearAll() {
                                     </Button>
                                 </div>
 
-                                <p class="font-semibold tabular-nums text-foreground">
-                                    {{ formatIDR(item.price_snapshot * item.quantity) }}
+                                <p
+                                    class="font-semibold text-foreground tabular-nums"
+                                >
+                                    {{
+                                        formatIDR(
+                                            item.price_snapshot * item.quantity,
+                                        )
+                                    }}
                                 </p>
                             </div>
                         </div>
@@ -221,7 +245,9 @@ function clearAll() {
                             <span class="text-sm text-muted-foreground">
                                 {{ t('cart.subtotal') }}
                             </span>
-                            <span class="text-xl font-bold tabular-nums text-primary">
+                            <span
+                                class="text-xl font-bold text-primary tabular-nums"
+                            >
                                 {{ formatIDR(subtotal) }}
                             </span>
                         </div>

@@ -350,7 +350,8 @@ export default {
         categoryIconLabel: 'Icon',
         categoryProductsCount: '{count} products',
         categoriesEmptyTitle: 'No categories yet',
-        categoriesEmptyDescription: 'Add your first category to group products.',
+        categoriesEmptyDescription:
+            'Add your first category to group products.',
         deleteCategoryConfirmTitle: 'Delete category "{name}"?',
         deleteCategoryConfirmDescription:
             'A category can only be deleted when it has no products or subcategories.',

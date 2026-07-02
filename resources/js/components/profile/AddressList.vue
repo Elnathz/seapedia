@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form } from '@inertiajs/vue3';
 import { MapPin, Pencil, Plus, Star, Trash2 } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -23,7 +23,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { index as indexAddresses } from '@/routes/buyer/addresses';
 
 interface AddressData {
     id: number;
@@ -63,7 +62,6 @@ function openEdit(address: AddressData) {
 </script>
 
 <template>
-
     <div class="flex flex-col gap-6">
         <div class="flex items-center justify-between">
             <Heading variant="small" :title="t('address.title')" />
@@ -95,10 +93,15 @@ function openEdit(address: AddressData) {
                         {{ address.phone }}
                     </p>
                     <p class="text-sm text-muted-foreground">
-                        {{ address.full_address }}<br/>
+                        {{ address.full_address }}<br />
                         <template v-if="address.city || address.province">
-                            {{ address.city }}<template v-if="address.province">, {{ address.province }}</template>
-                            <template v-if="address.postal_code"> {{ address.postal_code }}</template>
+                            {{ address.city
+                            }}<template v-if="address.province"
+                                >, {{ address.province }}</template
+                            >
+                            <template v-if="address.postal_code">
+                                {{ address.postal_code }}</template
+                            >
                         </template>
                     </p>
 

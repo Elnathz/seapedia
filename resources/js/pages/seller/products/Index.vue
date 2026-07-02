@@ -120,7 +120,7 @@ const { t } = useI18n();
                     >
                         {{ product.name }}
                     </h3>
-                    <p class="font-semibold tabular-nums text-primary">
+                    <p class="font-semibold text-primary tabular-nums">
                         {{ formatIDR(product.price) }}
                     </p>
                     <p

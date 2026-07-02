@@ -17,7 +17,7 @@ defineProps<{
         >
             <!-- Decorative rotating mark -->
             <div
-                class="auth-mark pointer-events-none absolute -right-16 -top-16 h-[420px] w-[420px] opacity-[0.1]"
+                class="auth-mark pointer-events-none absolute -top-16 -right-16 h-[420px] w-[420px] opacity-[0.1]"
                 aria-hidden="true"
             >
                 <Logo variant="mark" class="h-full w-full" />
@@ -37,7 +37,7 @@ defineProps<{
 
             <!-- Brand copy -->
             <div class="relative z-10 space-y-4">
-                <p class="text-4xl font-bold leading-tight xl:text-5xl">
+                <p class="text-4xl leading-tight font-bold xl:text-5xl">
                     Satu akun.<br />Tiga peran.
                 </p>
                 <p class="text-lg text-white/80">
@@ -52,7 +52,9 @@ defineProps<{
         </div>
 
         <!-- Right form panel -->
-        <div class="flex flex-1 flex-col items-center justify-center gap-6 overflow-x-hidden p-6 md:p-10">
+        <div
+            class="flex flex-1 flex-col items-center justify-center gap-6 overflow-x-hidden p-6 md:p-10"
+        >
             <div class="auth-form-shell w-full max-w-sm overflow-visible">
                 <div class="flex flex-col gap-8">
                     <!-- Mobile logo -->
@@ -63,10 +65,14 @@ defineProps<{
                     </div>
 
                     <div class="space-y-1.5">
-                        <h1 class="text-2xl font-semibold tracking-tight text-foreground">
+                        <h1
+                            class="text-2xl font-semibold tracking-tight text-foreground"
+                        >
                             {{ title }}
                         </h1>
-                        <p class="text-sm text-muted-foreground">{{ description }}</p>
+                        <p class="text-sm text-muted-foreground">
+                            {{ description }}
+                        </p>
                     </div>
 
                     <slot />

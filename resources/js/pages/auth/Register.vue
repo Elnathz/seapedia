@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import {
     ShoppingBag,
     Store,
@@ -11,6 +12,7 @@ import {
     X,
 } from '@lucide/vue';
 import { computed, onMounted, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -20,8 +22,6 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
-import { toast } from 'vue-sonner';
-import { router } from '@inertiajs/vue3';
 
 const props = defineProps<{
     passwordRules: string;
@@ -118,7 +118,9 @@ const displayRoles = computed(() =>
 );
 
 onMounted(() => {
-    reducedMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    reducedMotion.value = window.matchMedia(
+        '(prefers-reduced-motion: reduce)',
+    ).matches;
 });
 
 function nextStep() {
@@ -131,23 +133,29 @@ function nextStep() {
               : document.querySelector('form');
 
     if (nativeForm) {
-        const passwordInput = nativeForm.querySelector('input[name="password"]') as HTMLInputElement;
-        const confirmInput = nativeForm.querySelector('input[name="password_confirmation"]') as HTMLInputElement;
-        
+        const passwordInput = nativeForm.querySelector(
+            'input[name="password"]',
+        ) as HTMLInputElement;
+        const confirmInput = nativeForm.querySelector(
+            'input[name="password_confirmation"]',
+        ) as HTMLInputElement;
+
         if (passwordInput && confirmInput) {
             if (passwordInput.value !== confirmInput.value) {
-                confirmInput.setCustomValidity('Kata sandi dan konfirmasi kata sandi tidak cocok.');
+                confirmInput.setCustomValidity(
+                    'Kata sandi dan konfirmasi kata sandi tidak cocok.',
+                );
             } else {
                 confirmInput.setCustomValidity('');
             }
         }
-        
+
         if (!nativeForm.reportValidity()) {
             return;
         }
 
         isValidatingStep1.value = true;
-        
+
         const formData = new FormData(nativeForm);
         formData.delete('roles[]');
 
@@ -155,9 +163,18 @@ function nextStep() {
             preserveScroll: true,
             preserveState: true,
             onError: (errors: Record<string, string>) => {
-                const step1Fields = ['name', 'username', 'email', 'phone', 'password', 'password_confirmation'];
-                const hasStep1Error = Object.keys(errors).some(field => step1Fields.includes(field));
-                
+                const step1Fields = [
+                    'name',
+                    'username',
+                    'email',
+                    'phone',
+                    'password',
+                    'password_confirmation',
+                ];
+                const hasStep1Error = Object.keys(errors).some((field) =>
+                    step1Fields.includes(field),
+                );
+
                 // If there are no errors in step 1 fields, it means the only error is 'roles' (because it's empty)
                 // We can safely proceed to step 2.
                 if (!hasStep1Error) {
@@ -167,7 +184,7 @@ function nextStep() {
             },
             onFinish: () => {
                 isValidatingStep1.value = false;
-            }
+            },
         });
     } else {
         step.value = 2;
@@ -217,9 +234,18 @@ function handleError(errors: Record<string, string>) {
         return;
     }
 
-    const step1Fields = ['name', 'username', 'email', 'phone', 'password', 'password_confirmation'];
-    const hasStep1Error = Object.keys(errors).some(field => step1Fields.includes(field));
-    
+    const step1Fields = [
+        'name',
+        'username',
+        'email',
+        'phone',
+        'password',
+        'password_confirmation',
+    ];
+    const hasStep1Error = Object.keys(errors).some((field) =>
+        step1Fields.includes(field),
+    );
+
     if (hasStep1Error && step.value === 2) {
         step.value = 1;
         toast.error('Gagal membuat akun', {
@@ -262,7 +288,9 @@ function handleError(errors: Record<string, string>) {
                         name="name"
                         placeholder="Nama lengkap kamu"
                     />
-                    <InputError :message="errors.name || $page.props.errors.name" />
+                    <InputError
+                        :message="errors.name || $page.props.errors.name"
+                    />
                 </div>
 
                 <div class="grid gap-2">
@@ -280,7 +308,11 @@ function handleError(errors: Record<string, string>) {
                         name="username"
                         placeholder="username_kamu"
                     />
-                    <InputError :message="errors.username || $page.props.errors.username" />
+                    <InputError
+                        :message="
+                            errors.username || $page.props.errors.username
+                        "
+                    />
                 </div>
 
                 <div class="grid gap-2">
@@ -295,7 +327,9 @@ function handleError(errors: Record<string, string>) {
                         name="email"
                         placeholder="email@gmail.com"
                     />
-                    <InputError :message="errors.email || $page.props.errors.email" />
+                    <InputError
+                        :message="errors.email || $page.props.errors.email"
+                    />
                 </div>
 
                 <div class="grid gap-2">
@@ -311,8 +345,12 @@ function handleError(errors: Record<string, string>) {
                         name="phone"
                         placeholder="08xxxxxxxxxx atau +62xxxxxxxxxx"
                     />
-                    <p class="text-[11px] text-muted-foreground mt-0.5">Format penulisannya: 08... atau +62...</p>
-                    <InputError :message="errors.phone || $page.props.errors.phone" />
+                    <p class="mt-0.5 text-[11px] text-muted-foreground">
+                        Format penulisannya: 08... atau +62...
+                    </p>
+                    <InputError
+                        :message="errors.phone || $page.props.errors.phone"
+                    />
                 </div>
 
                 <div class="grid gap-2">
@@ -327,12 +365,21 @@ function handleError(errors: Record<string, string>) {
                         placeholder="Min. 8 karakter"
                         :passwordrules="passwordRules"
                     />
-                    <p class="text-[11px] text-muted-foreground mt-0.5">Wajib mengandung minimal 8 karakter, huruf besar-kecil, angka, dan simbol.</p>
-                    <InputError :message="errors.password || $page.props.errors.password" />
+                    <p class="mt-0.5 text-[11px] text-muted-foreground">
+                        Wajib mengandung minimal 8 karakter, huruf besar-kecil,
+                        angka, dan simbol.
+                    </p>
+                    <InputError
+                        :message="
+                            errors.password || $page.props.errors.password
+                        "
+                    />
                 </div>
 
                 <div class="grid gap-2">
-                    <Label for="password_confirmation">Konfirmasi kata sandi</Label>
+                    <Label for="password_confirmation"
+                        >Konfirmasi kata sandi</Label
+                    >
                     <PasswordInput
                         id="password_confirmation"
                         required
@@ -343,7 +390,12 @@ function handleError(errors: Record<string, string>) {
                         placeholder="Ulangi kata sandi"
                         :passwordrules="passwordRules"
                     />
-                    <InputError :message="errors.password_confirmation || $page.props.errors.password_confirmation" />
+                    <InputError
+                        :message="
+                            errors.password_confirmation ||
+                            $page.props.errors.password_confirmation
+                        "
+                    />
                 </div>
 
                 <Button
@@ -362,7 +414,8 @@ function handleError(errors: Record<string, string>) {
                         :href="login()"
                         class="underline underline-offset-4"
                         :tabindex="8"
-                    >Masuk</TextLink>
+                        >Masuk</TextLink
+                    >
                 </div>
             </div>
 
@@ -383,18 +436,21 @@ function handleError(errors: Record<string, string>) {
                         <ArrowLeft class="size-4" />
                     </Button>
                     <div>
-                        <h3 class="text-lg font-semibold leading-tight text-foreground">
+                        <h3
+                            class="text-lg leading-tight font-semibold text-foreground"
+                        >
                             Pilih peran
                         </h3>
                         <p class="mt-0.5 text-xs text-muted-foreground">
-                            Geser untuk lihat semua peran. Pilih satu atau lebih, bisa diubah nanti.
+                            Geser untuk lihat semua peran. Pilih satu atau
+                            lebih, bisa diubah nanti.
                         </p>
                     </div>
                 </div>
 
                 <div class="role-rail w-full min-w-0">
                     <div
-                        class="role-rail-track -mx-0.5 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto overscroll-x-contain px-0.5 pb-2 pt-1 [-ms-overflow-style:none] [scrollbar-width:thin]"
+                        class="role-rail-track -mx-0.5 flex snap-x snap-mandatory [scrollbar-width:thin] items-stretch gap-4 overflow-x-auto overscroll-x-contain px-0.5 pt-1 pb-2 [-ms-overflow-style:none]"
                         role="list"
                         aria-label="Pilihan peran SEAPEDIA"
                     >
@@ -403,46 +459,68 @@ function handleError(errors: Record<string, string>) {
                             :key="role"
                             class="role-card-shell h-[420px] w-[14.75rem] shrink-0 snap-start sm:w-[15.25rem]"
                             :class="{ 'role-card-enter': !reducedMotion }"
-                            :style="reducedMotion ? undefined : { animationDelay: `${index * 80}ms` }"
+                            :style="
+                                reducedMotion
+                                    ? undefined
+                                    : { animationDelay: `${index * 80}ms` }
+                            "
                             role="listitem"
                         >
                             <div
                                 class="relative h-full w-full [perspective:1000px]"
                             >
                                 <div
-                                    class="role-flip-inner absolute inset-0 transition-transform duration-500 [transform-style:preserve-3d] ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:duration-0"
+                                    class="role-flip-inner absolute inset-0 transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] [transform-style:preserve-3d] motion-reduce:duration-0"
                                     :class="{
-                                        'is-flipped': isFlipped(role) && !reducedMotion,
-                                        'is-flipped-reduced': isFlipped(role) && reducedMotion,
+                                        'is-flipped':
+                                            isFlipped(role) && !reducedMotion,
+                                        'is-flipped-reduced':
+                                            isFlipped(role) && reducedMotion,
                                     }"
                                 >
                                     <!-- Front -->
                                     <div
-                                        class="role-face-front absolute inset-0 flex min-w-0 flex-col rounded-2xl border bg-card shadow-sm [backface-visibility:hidden] [-webkit-backface-visibility:hidden] [transform:translate3d(0,0,0)] [-webkit-transform:translate3d(0,0,0)]"
+                                        class="role-face-front absolute inset-0 flex min-w-0 [transform:translate3d(0,0,0)] flex-col rounded-2xl border bg-card shadow-sm [-webkit-backface-visibility:hidden] [-webkit-transform:translate3d(0,0,0)] [backface-visibility:hidden]"
                                         :class="[
                                             isSelected(role)
-                                                ? ['ring-2', roleConfig[role as RoleKey]?.borderSelected ?? 'border-primary ring-primary/20']
+                                                ? [
+                                                      'ring-2',
+                                                      roleConfig[
+                                                          role as RoleKey
+                                                      ]?.borderSelected ??
+                                                          'border-primary ring-primary/20',
+                                                  ]
                                                 : 'border-border hover:border-primary/30 hover:shadow-md',
-                                            isFlipped(role) ? 'pointer-events-none' : ''
+                                            isFlipped(role)
+                                                ? 'pointer-events-none'
+                                                : '',
                                         ]"
                                     >
                                         <!-- Ambient glow wrapper -->
-                                        <div class="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+                                        <div
+                                            class="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl"
+                                        >
                                             <div
-                                                class="absolute -right-10 -top-10 size-36 rounded-full bg-gradient-to-br opacity-[0.18] blur-2xl"
-                                                :class="roleConfig[role as RoleKey]?.gradient"
+                                                class="absolute -top-10 -right-10 size-36 rounded-full bg-gradient-to-br opacity-[0.18] blur-2xl"
+                                                :class="
+                                                    roleConfig[role as RoleKey]
+                                                        ?.gradient
+                                                "
                                                 aria-hidden="true"
                                             />
                                             <div
                                                 class="absolute -bottom-12 -left-8 size-28 rounded-full bg-gradient-to-br opacity-10 blur-2xl"
-                                                :class="roleConfig[role as RoleKey]?.gradient"
+                                                :class="
+                                                    roleConfig[role as RoleKey]
+                                                        ?.gradient
+                                                "
                                                 aria-hidden="true"
                                             />
                                         </div>
 
                                         <!-- Selection indicator -->
                                         <span
-                                            class="absolute right-3 top-3 z-10 flex size-6 items-center justify-center rounded-full border transition-colors"
+                                            class="absolute top-3 right-3 z-10 flex size-6 items-center justify-center rounded-full border transition-colors"
                                             :class="
                                                 isSelected(role)
                                                     ? 'border-primary bg-primary text-primary-foreground shadow-sm'
@@ -465,35 +543,70 @@ function handleError(errors: Record<string, string>) {
                                             >
                                                 <div
                                                     class="flex size-[4.5rem] items-center justify-center rounded-2xl bg-gradient-to-br shadow-lg ring-4 ring-background"
-                                                    :class="roleConfig[role as RoleKey]?.gradient"
+                                                    :class="
+                                                        roleConfig[
+                                                            role as RoleKey
+                                                        ]?.gradient
+                                                    "
                                                 >
                                                     <component
-                                                        :is="roleConfig[role as RoleKey]?.icon ?? ShoppingBag"
+                                                        :is="
+                                                            roleConfig[
+                                                                role as RoleKey
+                                                            ]?.icon ??
+                                                            ShoppingBag
+                                                        "
                                                         class="size-9 text-white"
                                                     />
                                                 </div>
 
                                                 <div class="mt-4 min-w-0">
-                                                    <span class="text-lg font-bold tracking-tight text-foreground">
-                                                        {{ roleConfig[role as RoleKey]?.label ?? role }}
+                                                    <span
+                                                        class="text-lg font-bold tracking-tight text-foreground"
+                                                    >
+                                                        {{
+                                                            roleConfig[
+                                                                role as RoleKey
+                                                            ]?.label ?? role
+                                                        }}
                                                     </span>
-                                                    <p class="mt-1.5 text-sm leading-snug text-muted-foreground">
-                                                        {{ roleConfig[role as RoleKey]?.tagline ?? '' }}
+                                                    <p
+                                                        class="mt-1.5 text-sm leading-snug text-muted-foreground"
+                                                    >
+                                                        {{
+                                                            roleConfig[
+                                                                role as RoleKey
+                                                            ]?.tagline ?? ''
+                                                        }}
                                                     </p>
                                                 </div>
 
-                                                <ul class="mt-4 w-full space-y-1.5">
+                                                <ul
+                                                    class="mt-4 w-full space-y-1.5"
+                                                >
                                                     <li
-                                                        v-for="highlight in roleConfig[role as RoleKey]?.highlights ?? []"
+                                                        v-for="highlight in roleConfig[
+                                                            role as RoleKey
+                                                        ]?.highlights ?? []"
                                                         :key="highlight"
                                                         class="flex items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-[11px] leading-snug text-muted-foreground"
-                                                        :class="roleConfig[role as RoleKey]?.lightBg"
+                                                        :class="
+                                                            roleConfig[
+                                                                role as RoleKey
+                                                            ]?.lightBg
+                                                        "
                                                     >
                                                         <Check
                                                             class="size-3 shrink-0"
-                                                            :class="roleConfig[role as RoleKey]?.iconColor"
+                                                            :class="
+                                                                roleConfig[
+                                                                    role as RoleKey
+                                                                ]?.iconColor
+                                                            "
                                                         />
-                                                        <span>{{ highlight }}</span>
+                                                        <span>{{
+                                                            highlight
+                                                        }}</span>
                                                     </li>
                                                 </ul>
 
@@ -517,47 +630,70 @@ function handleError(errors: Record<string, string>) {
                                         <div class="relative z-10 px-4 pb-4">
                                             <button
                                                 type="button"
-                                                class="flex w-full min-w-0 items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/50 px-2 py-2 text-[11px] font-medium leading-snug text-foreground transition-colors hover:border-primary/30 hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                                                class="flex w-full min-w-0 items-center justify-center gap-1.5 rounded-xl border border-border bg-muted/50 px-2 py-2 text-[11px] leading-snug font-medium text-foreground transition-colors hover:border-primary/30 hover:bg-muted/80 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none"
                                                 :aria-expanded="isFlipped(role)"
-                                                @click="showDetail(role, $event)"
+                                                @click="
+                                                    showDetail(role, $event)
+                                                "
                                             >
-                                                <Info class="size-3.5 shrink-0 text-muted-foreground" />
-                                                <span class="text-center">Lihat fitur peran</span>
+                                                <Info
+                                                    class="size-3.5 shrink-0 text-muted-foreground"
+                                                />
+                                                <span class="text-center"
+                                                    >Lihat fitur peran</span
+                                                >
                                             </button>
                                         </div>
                                     </div>
 
                                     <!-- Back -->
                                     <div
-                                        class="role-face-back absolute inset-0 flex min-w-0 flex-col rounded-2xl border-2 border-primary/30 bg-card p-4 shadow-md [backface-visibility:hidden] [-webkit-backface-visibility:hidden]"
+                                        class="role-face-back absolute inset-0 flex min-w-0 flex-col rounded-2xl border-2 border-primary/30 bg-card p-4 shadow-md [-webkit-backface-visibility:hidden] [backface-visibility:hidden]"
                                         :class="[
                                             reducedMotion
                                                 ? ''
                                                 : '[transform:rotateY(180deg)_translate3d(0,0,0)] [-webkit-transform:rotateY(180deg)_translate3d(0,0,0)]',
-                                            !isFlipped(role) ? 'pointer-events-none' : ''
+                                            !isFlipped(role)
+                                                ? 'pointer-events-none'
+                                                : '',
                                         ]"
                                     >
                                         <div class="flex items-start gap-3">
                                             <div
                                                 class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br"
-                                                :class="roleConfig[role as RoleKey]?.gradient"
+                                                :class="
+                                                    roleConfig[role as RoleKey]
+                                                        ?.gradient
+                                                "
                                             >
                                                 <component
-                                                    :is="roleConfig[role as RoleKey]?.icon ?? ShoppingBag"
+                                                    :is="
+                                                        roleConfig[
+                                                            role as RoleKey
+                                                        ]?.icon ?? ShoppingBag
+                                                    "
                                                     class="size-5 text-white"
                                                 />
                                             </div>
                                             <div class="min-w-0 flex-1">
-                                                <p class="text-sm font-bold text-foreground">
-                                                    {{ roleConfig[role as RoleKey]?.label ?? role }}
+                                                <p
+                                                    class="text-sm font-bold text-foreground"
+                                                >
+                                                    {{
+                                                        roleConfig[
+                                                            role as RoleKey
+                                                        ]?.label ?? role
+                                                    }}
                                                 </p>
-                                                <p class="text-xs text-muted-foreground">
+                                                <p
+                                                    class="text-xs text-muted-foreground"
+                                                >
                                                     Detail kemampuan peran
                                                 </p>
                                             </div>
                                             <button
                                                 type="button"
-                                                class="flex size-7 shrink-0 items-center justify-center rounded-full border border-border/80 bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                                                class="flex size-7 shrink-0 items-center justify-center rounded-full border border-border/80 bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none"
                                                 aria-label="Tutup detail peran"
                                                 @click="hideDetail($event)"
                                             >
@@ -565,27 +701,42 @@ function handleError(errors: Record<string, string>) {
                                             </button>
                                         </div>
 
-                                        <ul class="mt-3 min-h-0 flex-1 space-y-2 overflow-y-auto pr-0.5">
+                                        <ul
+                                            class="mt-3 min-h-0 flex-1 space-y-2 overflow-y-auto pr-0.5"
+                                        >
                                             <li
-                                                v-for="feature in roleConfig[role as RoleKey]?.features ?? []"
+                                                v-for="feature in roleConfig[
+                                                    role as RoleKey
+                                                ]?.features ?? []"
                                                 :key="feature"
                                                 class="flex min-w-0 items-start gap-2 text-[11px] leading-snug text-muted-foreground"
                                             >
                                                 <span
                                                     class="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full"
-                                                    :class="roleConfig[role as RoleKey]?.lightBg"
+                                                    :class="
+                                                        roleConfig[
+                                                            role as RoleKey
+                                                        ]?.lightBg
+                                                    "
                                                 >
                                                     <Check
                                                         class="size-2.5"
-                                                        :class="roleConfig[role as RoleKey]?.iconColor"
+                                                        :class="
+                                                            roleConfig[
+                                                                role as RoleKey
+                                                            ]?.iconColor
+                                                        "
                                                     />
                                                 </span>
                                                 {{ feature }}
                                             </li>
                                         </ul>
 
-                                        <p class="mt-2 shrink-0 text-[10px] leading-snug text-muted-foreground">
-                                            Satu akun bisa punya beberapa peran & satu saldo wallet.
+                                        <p
+                                            class="mt-2 shrink-0 text-[10px] leading-snug text-muted-foreground"
+                                        >
+                                            Satu akun bisa punya beberapa peran
+                                            & satu saldo wallet.
                                         </p>
 
                                         <div class="mt-3 shrink-0">
@@ -593,8 +744,17 @@ function handleError(errors: Record<string, string>) {
                                                 type="button"
                                                 size="sm"
                                                 class="h-9 w-full rounded-xl px-2 text-xs"
-                                                :variant="isSelected(role) ? 'secondary' : 'default'"
-                                                @click="selectRoleFromBack(role, $event)"
+                                                :variant="
+                                                    isSelected(role)
+                                                        ? 'secondary'
+                                                        : 'default'
+                                                "
+                                                @click="
+                                                    selectRoleFromBack(
+                                                        role,
+                                                        $event,
+                                                    )
+                                                "
                                             >
                                                 {{
                                                     isSelected(role)
@@ -607,10 +767,11 @@ function handleError(errors: Record<string, string>) {
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
-                    <p class="mt-2 mb-4 text-center text-[11px] text-muted-foreground">
+                    <p
+                        class="mt-2 mb-4 text-center text-[11px] text-muted-foreground"
+                    >
                         Geser ke samping untuk melihat semua peran
                     </p>
 

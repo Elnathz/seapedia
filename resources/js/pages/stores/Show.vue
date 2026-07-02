@@ -8,7 +8,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useInitials } from '@/composables/useInitials';
 import { formatIDR } from '@/lib/utils';
 
-
 interface Product {
     id: number;
     slug: string;
@@ -67,7 +66,9 @@ function formatDate(dateStr: string): string {
             </div>
             <div class="min-w-0 flex-1">
                 <div class="flex flex-wrap items-center gap-2">
-                    <h1 class="text-xl font-semibold sm:text-2xl">{{ store.name }}</h1>
+                    <h1 class="text-xl font-semibold sm:text-2xl">
+                        {{ store.name }}
+                    </h1>
                     <span
                         v-if="store.is_active"
                         class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700"
@@ -82,10 +83,13 @@ function formatDate(dateStr: string): string {
                     {{ store.description }}
                 </p>
                 <!-- Meta: product count + join date -->
-                <div class="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                <div
+                    class="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground"
+                >
                     <span class="inline-flex items-center gap-1">
                         <Package class="size-3.5" />
-                        {{ store.products_count }} {{ store.products_count === 1 ? 'produk' : 'produk' }}
+                        {{ store.products_count }}
+                        {{ store.products_count === 1 ? 'produk' : 'produk' }}
                     </span>
                     <span>Bergabung {{ formatDate(store.created_at) }}</span>
                 </div>
@@ -100,7 +104,10 @@ function formatDate(dateStr: string): string {
             class="mt-10"
         />
 
-        <div v-else class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+        <div
+            v-else
+            class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4"
+        >
             <Link
                 v-for="product in store.products"
                 :key="product.id"
@@ -134,8 +141,14 @@ function formatDate(dateStr: string): string {
                         >
                             {{ product.category.name }}
                         </span>
-                        <h2 class="text-sm font-medium leading-tight line-clamp-2">{{ product.name }}</h2>
-                        <p class="mt-0.5 font-semibold tabular-nums text-primary sm:text-base">
+                        <h2
+                            class="line-clamp-2 text-sm leading-tight font-medium"
+                        >
+                            {{ product.name }}
+                        </h2>
+                        <p
+                            class="mt-0.5 font-semibold text-primary tabular-nums sm:text-base"
+                        >
                             {{ formatIDR(product.price) }}
                         </p>
                     </CardContent>

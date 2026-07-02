@@ -69,7 +69,10 @@ defineProps<{
             </div>
 
             <div class="flex items-center">
-                <Label for="remember" class="flex cursor-pointer items-center gap-2 font-normal">
+                <Label
+                    for="remember"
+                    class="flex cursor-pointer items-center gap-2 font-normal"
+                >
                     <Checkbox id="remember" name="remember" :tabindex="3" />
                     <span>Ingat saya</span>
                 </Label>
@@ -89,7 +92,9 @@ defineProps<{
 
         <div class="text-center text-sm text-muted-foreground">
             Belum punya akun?
-            <TextLink :href="register()" :tabindex="5">Daftar sekarang</TextLink>
+            <TextLink :href="register()" :tabindex="5"
+                >Daftar sekarang</TextLink
+            >
         </div>
     </Form>
 </template>

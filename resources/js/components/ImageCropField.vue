@@ -5,7 +5,13 @@ import { useI18n } from 'vue-i18n';
 import 'vue-advanced-cropper/dist/style.css';
 import { toast } from 'vue-sonner';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 
 const props = withDefaults(
     defineProps<{
@@ -51,14 +57,25 @@ function apply() {
     }
 
     const maxDimension = 1200;
+
     if (canvas.width > maxDimension || canvas.height > maxDimension) {
-        const scale = Math.min(maxDimension / canvas.width, maxDimension / canvas.height);
+        const scale = Math.min(
+            maxDimension / canvas.width,
+            maxDimension / canvas.height,
+        );
         const resizedCanvas = document.createElement('canvas');
         resizedCanvas.width = canvas.width * scale;
         resizedCanvas.height = canvas.height * scale;
         const ctx = resizedCanvas.getContext('2d');
+
         if (ctx) {
-            ctx.drawImage(canvas, 0, 0, resizedCanvas.width, resizedCanvas.height);
+            ctx.drawImage(
+                canvas,
+                0,
+                0,
+                resizedCanvas.width,
+                resizedCanvas.height,
+            );
             canvas = resizedCanvas;
         }
     }
@@ -69,7 +86,9 @@ function apply() {
                 return;
             }
 
-            const cropped = new File([blob], 'image.jpg', { type: 'image/jpeg' });
+            const cropped = new File([blob], 'image.jpg', {
+                type: 'image/jpeg',
+            });
             const dt = new DataTransfer();
             dt.items.add(cropped);
 
@@ -92,23 +111,40 @@ function apply() {
         <input ref="fileInput" type="file" :name="name" class="hidden" />
 
         <label
-            class="inline-flex w-fit cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-muted">
+            class="inline-flex w-fit cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-muted"
+        >
             {{ t('product.cropChoose') }}
-            <input type="file" accept="image/png,image/jpeg,image/webp" class="hidden" @change="onPick" />
+            <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                class="hidden"
+                @change="onPick"
+            />
         </label>
 
-        <img v-if="previewUrl" :src="previewUrl" alt=""
-            class="mt-1 size-32 rounded-md border border-border object-cover" />
+        <img
+            v-if="previewUrl"
+            :src="previewUrl"
+            alt=""
+            class="mt-1 size-32 rounded-md border border-border object-cover"
+        />
 
         <Dialog v-model:open="cropOpen">
             <DialogContent class="max-w-lg">
                 <DialogHeader>
                     <DialogTitle>{{ t('product.cropChoose') }}</DialogTitle>
                 </DialogHeader>
-                <Cropper v-if="cropSrc" ref="cropperRef" :src="cropSrc" :stencil-props="{ aspectRatio }"
-                    class="h-72 w-full max-w-full overflow-hidden bg-muted" />
+                <Cropper
+                    v-if="cropSrc"
+                    ref="cropperRef"
+                    :src="cropSrc"
+                    :stencil-props="{ aspectRatio }"
+                    class="h-72 w-full max-w-full overflow-hidden bg-muted"
+                />
                 <DialogFooter>
-                    <Button type="button" @click="apply">{{ t('product.cropApply') }}</Button>
+                    <Button type="button" @click="apply">{{
+                        t('product.cropApply')
+                    }}</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

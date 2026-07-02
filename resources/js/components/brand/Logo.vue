@@ -1,11 +1,11 @@
 <script setup lang="ts">
 interface Props {
-    variant?: 'full' | 'mark'
+    variant?: 'full' | 'mark';
 }
 
-withDefaults(defineProps<Props>(), { variant: 'full' })
+withDefaults(defineProps<Props>(), { variant: 'full' });
 
-defineOptions({ inheritAttrs: false })
+defineOptions({ inheritAttrs: false });
 </script>
 
 <template>
@@ -43,7 +43,8 @@ defineOptions({ inheritAttrs: false })
             font-size="52"
             letter-spacing="-1.5"
         >
-            <tspan fill="#0A7180">SEA</tspan><tspan fill="#13B5C4">PEDIA</tspan>
+            <tspan fill="#0A7180">SEA</tspan>
+            <tspan fill="#13B5C4">PEDIA</tspan>
         </text>
     </svg>
 

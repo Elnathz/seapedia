@@ -90,7 +90,6 @@ const methodLabelKey: Record<DeliveryMethodKey, string> = {
     regular: 'checkout.regular',
 };
 
-
 function confirmAction() {
     confirmOpen.value = false;
     processing.value = true;
@@ -138,8 +137,8 @@ onMounted(() => {
 
 onUnmounted(() => {
     if (timer) {
-clearInterval(timer);
-}
+        clearInterval(timer);
+    }
 });
 </script>
 
@@ -154,7 +153,11 @@ clearInterval(timer);
                 :description="formatDateTime(job.order.created_sim_at, locale)"
             />
             <div class="flex items-center gap-2">
-                <Badge v-if="job.status === 'taken'" variant="destructive" class="font-mono text-sm">
+                <Badge
+                    v-if="job.status === 'taken'"
+                    variant="destructive"
+                    class="font-mono text-sm"
+                >
                     {{ elapsedTime }}
                 </Badge>
                 <Badge :variant="deliveryStatusBadgeVariant(job.status)">
@@ -254,9 +257,7 @@ clearInterval(timer);
                     <div
                         class="rounded-xl border border-primary/20 bg-primary/5 p-4"
                     >
-                        <p
-                            class="text-xs font-medium text-primary"
-                        >
+                        <p class="text-xs font-medium text-primary">
                             {{
                                 job.status === 'completed'
                                     ? t('driver.totalEarnings')
@@ -280,9 +281,7 @@ clearInterval(timer);
                         >
                             <div class="h-full w-[80%] bg-primary" />
                         </div>
-                        <p
-                            class="mt-2 text-xs text-primary/70"
-                        >
+                        <p class="mt-2 text-xs text-primary/70">
                             {{ t('driver.earningShareNote') }}
                         </p>
                     </div>

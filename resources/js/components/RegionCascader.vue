@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { ref, onMounted } from 'vue';
+import InputError from '@/components/InputError.vue';
 import { Label } from '@/components/ui/label';
 import {
     Select,
@@ -9,7 +9,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import InputError from '@/components/InputError.vue';
 
 const props = defineProps<{
     province: string;
@@ -25,8 +24,6 @@ const emit = defineEmits<{
     (e: 'update:district', value: string): void;
     (e: 'update:village', value: string): void;
 }>();
-
-const { t } = useI18n();
 
 interface Region {
     id: string;
@@ -51,13 +48,17 @@ const isLoading = ref({
 
 const fetchProvinces = async () => {
     isLoading.value.provinces = true;
+
     try {
-        const res = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
+        const res = await fetch(
+            'https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json',
+        );
         provinces.value = await res.json();
-        
+
         // If editing and province exists, find its ID to fetch cities
         if (props.province) {
-            const p = provinces.value.find(x => x.name === props.province);
+            const p = provinces.value.find((x) => x.name === props.province);
+
             if (p) {
                 selectedProvinceId.value = p.id;
                 await fetchCities(p.id);
@@ -71,14 +72,21 @@ const fetchProvinces = async () => {
 };
 
 const fetchCities = async (provinceId: string) => {
-    if (!provinceId) return;
+    if (!provinceId) {
+        return;
+    }
+
     isLoading.value.cities = true;
+
     try {
-        const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provinceId}.json`);
+        const res = await fetch(
+            `https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provinceId}.json`,
+        );
         cities.value = await res.json();
-        
+
         if (props.city) {
-            const c = cities.value.find(x => x.name === props.city);
+            const c = cities.value.find((x) => x.name === props.city);
+
             if (c) {
                 selectedCityId.value = c.id;
                 await fetchDistricts(c.id);
@@ -92,14 +100,21 @@ const fetchCities = async (provinceId: string) => {
 };
 
 const fetchDistricts = async (cityId: string) => {
-    if (!cityId) return;
+    if (!cityId) {
+        return;
+    }
+
     isLoading.value.districts = true;
+
     try {
-        const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${cityId}.json`);
+        const res = await fetch(
+            `https://www.emsifa.com/api-wilayah-indonesia/api/districts/${cityId}.json`,
+        );
         districts.value = await res.json();
-        
+
         if (props.district) {
-            const d = districts.value.find(x => x.name === props.district);
+            const d = districts.value.find((x) => x.name === props.district);
+
             if (d) {
                 selectedDistrictId.value = d.id;
                 await fetchVillages(d.id);
@@ -113,10 +128,16 @@ const fetchDistricts = async (cityId: string) => {
 };
 
 const fetchVillages = async (districtId: string) => {
-    if (!districtId) return;
+    if (!districtId) {
+        return;
+    }
+
     isLoading.value.villages = true;
+
     try {
-        const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${districtId}.json`);
+        const res = await fetch(
+            `https://www.emsifa.com/api-wilayah-indonesia/api/villages/${districtId}.json`,
+        );
         villages.value = await res.json();
     } catch (e) {
         console.error(e);
@@ -131,7 +152,11 @@ onMounted(() => {
 
 const onProvinceChange = async (val: any) => {
     const name = val as string;
-    if (!name) return;
+
+    if (!name) {
+        return;
+    }
+
     emit('update:province', name);
     emit('update:city', '');
     emit('update:district', '');
@@ -139,8 +164,9 @@ const onProvinceChange = async (val: any) => {
     cities.value = [];
     districts.value = [];
     villages.value = [];
-    
-    const p = provinces.value.find(x => x.name === name);
+
+    const p = provinces.value.find((x) => x.name === name);
+
     if (p) {
         selectedProvinceId.value = p.id;
         await fetchCities(p.id);
@@ -149,14 +175,19 @@ const onProvinceChange = async (val: any) => {
 
 const onCityChange = async (val: any) => {
     const name = val as string;
-    if (!name) return;
+
+    if (!name) {
+        return;
+    }
+
     emit('update:city', name);
     emit('update:district', '');
     emit('update:village', '');
     districts.value = [];
     villages.value = [];
-    
-    const c = cities.value.find(x => x.name === name);
+
+    const c = cities.value.find((x) => x.name === name);
+
     if (c) {
         selectedCityId.value = c.id;
         await fetchDistricts(c.id);
@@ -165,12 +196,17 @@ const onCityChange = async (val: any) => {
 
 const onDistrictChange = async (val: any) => {
     const name = val as string;
-    if (!name) return;
+
+    if (!name) {
+        return;
+    }
+
     emit('update:district', name);
     emit('update:village', '');
     villages.value = [];
-    
-    const d = districts.value.find(x => x.name === name);
+
+    const d = districts.value.find((x) => x.name === name);
+
     if (d) {
         selectedDistrictId.value = d.id;
         await fetchVillages(d.id);
@@ -179,7 +215,11 @@ const onDistrictChange = async (val: any) => {
 
 const onVillageChange = (val: any) => {
     const name = val as string;
-    if (!name) return;
+
+    if (!name) {
+        return;
+    }
+
     emit('update:village', name);
 };
 </script>
@@ -197,7 +237,11 @@ const onVillageChange = (val: any) => {
                     <SelectValue placeholder="Pilih Provinsi" />
                 </SelectTrigger>
                 <SelectContent class="max-h-64">
-                    <SelectItem v-for="item in provinces" :key="item.id" :value="item.name">
+                    <SelectItem
+                        v-for="item in provinces"
+                        :key="item.id"
+                        :value="item.name"
+                    >
                         {{ item.name }}
                     </SelectItem>
                 </SelectContent>
@@ -216,7 +260,11 @@ const onVillageChange = (val: any) => {
                     <SelectValue placeholder="Pilih Kota/Kabupaten" />
                 </SelectTrigger>
                 <SelectContent class="max-h-64">
-                    <SelectItem v-for="item in cities" :key="item.id" :value="item.name">
+                    <SelectItem
+                        v-for="item in cities"
+                        :key="item.id"
+                        :value="item.name"
+                    >
                         {{ item.name }}
                     </SelectItem>
                 </SelectContent>
@@ -235,7 +283,11 @@ const onVillageChange = (val: any) => {
                     <SelectValue placeholder="Pilih Kecamatan" />
                 </SelectTrigger>
                 <SelectContent class="max-h-64">
-                    <SelectItem v-for="item in districts" :key="item.id" :value="item.name">
+                    <SelectItem
+                        v-for="item in districts"
+                        :key="item.id"
+                        :value="item.name"
+                    >
                         {{ item.name }}
                     </SelectItem>
                 </SelectContent>
@@ -254,7 +306,11 @@ const onVillageChange = (val: any) => {
                     <SelectValue placeholder="Pilih Kelurahan" />
                 </SelectTrigger>
                 <SelectContent class="max-h-64">
-                    <SelectItem v-for="item in villages" :key="item.id" :value="item.name">
+                    <SelectItem
+                        v-for="item in villages"
+                        :key="item.id"
+                        :value="item.name"
+                    >
                         {{ item.name }}
                     </SelectItem>
                 </SelectContent>

@@ -40,7 +40,10 @@ interface PaginatedOrders {
     total: number;
 }
 
-const props = defineProps<{ orders: PaginatedOrders; currentStatus?: string }>();
+const props = defineProps<{
+    orders: PaginatedOrders;
+    currentStatus?: string;
+}>();
 
 defineOptions({
     layout: {
@@ -95,16 +98,18 @@ function filterStatus(status: string) {
         <Heading variant="small" :title="t('order.incomingOrdersTitle')" />
 
         <!-- Tabs Filter -->
-        <div class="flex overflow-x-auto pb-2 scrollbar-hide gap-2 border-b border-border">
+        <div
+            class="scrollbar-hide flex gap-2 overflow-x-auto border-b border-border pb-2"
+        >
             <button
                 v-for="s in statuses"
                 :key="s.value"
                 @click="filterStatus(s.value)"
-                class="whitespace-nowrap border-b-2 px-4 py-2 text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                class="border-b-2 px-4 py-2 text-sm font-medium whitespace-nowrap transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
                 :class="[
                     (props.currentStatus || '') === s.value
                         ? 'border-primary text-primary'
-                        : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted',
+                        : 'border-transparent text-muted-foreground hover:border-muted hover:text-foreground',
                 ]"
             >
                 {{ s.label }}
@@ -123,24 +128,44 @@ function filterStatus(status: string) {
                 <Card
                     v-for="order in props.orders.data"
                     :key="order.id"
-                    class="group relative overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-lg hover:border-primary/50 hover:-translate-y-1"
+                    class="group relative overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg"
                 >
-                    <div class="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/0 to-primary/0 opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:from-primary/5 group-hover:to-transparent group-hover:opacity-100"></div>
-                    <CardContent class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 relative z-10">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/0 to-primary/0 opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:from-primary/5 group-hover:to-transparent group-hover:opacity-100"
+                    ></div>
+                    <CardContent
+                        class="relative z-10 flex flex-col justify-between gap-4 pt-6 sm:flex-row sm:items-center"
+                    >
                         <Link
                             :href="SellerOrderController.show.url(order.id)"
-                            class="min-w-0 flex-1 grid gap-1"
+                            class="grid min-w-0 flex-1 gap-1"
                         >
                             <div class="flex items-center gap-2">
-                                <p class="font-bold text-base text-foreground group-hover:text-primary transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]">{{ order.code }}</p>
+                                <p
+                                    class="text-base font-bold text-foreground transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-primary"
+                                >
+                                    {{ order.code }}
+                                </p>
                             </div>
-                            <p class="text-sm text-muted-foreground">{{ order.buyer.name }} • <span class="text-xs">{{ formatDateTime(order.created_sim_at, locale) }}</span></p>
+                            <p class="text-sm text-muted-foreground">
+                                {{ order.buyer.name }} •
+                                <span class="text-xs">{{
+                                    formatDateTime(order.created_sim_at, locale)
+                                }}</span>
+                            </p>
                         </Link>
-                        <div class="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 w-full sm:w-auto">
-                            <Badge :variant="orderStatusBadgeVariant(order.status)" class="shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105">
+                        <div
+                            class="flex w-full items-center justify-between gap-2 sm:w-auto sm:flex-col sm:items-end sm:justify-center"
+                        >
+                            <Badge
+                                :variant="orderStatusBadgeVariant(order.status)"
+                                class="shadow-sm transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                            >
                                 {{ orderStatusLabel(order.status) }}
                             </Badge>
-                            <p class="text-base font-bold text-primary tabular-nums">
+                            <p
+                                class="text-base font-bold text-primary tabular-nums"
+                            >
                                 {{ formatIDR(order.grand_total) }}
                             </p>
                             <Button

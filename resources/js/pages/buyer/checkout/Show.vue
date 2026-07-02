@@ -266,7 +266,15 @@ function confirmCheckout() {
                                     :value="address.id"
                                 >
                                     {{ address.recipient_name }},
-                                    {{ [address.district, address.city, address.province].filter(Boolean).join(', ') }},
+                                    {{
+                                        [
+                                            address.district,
+                                            address.city,
+                                            address.province,
+                                        ]
+                                            .filter(Boolean)
+                                            .join(', ')
+                                    }},
                                     {{ address.full_address }}
                                 </SelectItem>
                             </SelectContent>

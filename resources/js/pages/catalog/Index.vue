@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import { Head, Link, router, useRemember } from '@inertiajs/vue3';
-import { ChevronRight, Search } from '@lucide/vue';
+import { Head, router, useRemember } from '@inertiajs/vue3';
+import { ChevronRight } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import EmptyState from '@/components/EmptyState.vue';
-import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import ProductCard from '@/components/ProductCard.vue';
 import BannerCarousel from '@/components/storefront/BannerCarousel.vue';
 import BannerImage from '@/components/storefront/BannerImage.vue';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 
 import {
     Select,
@@ -22,8 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { useCategories } from '@/composables/useCategories';
-import { formatIDR } from '@/lib/utils';
-import { index as catalogIndex, show as catalogShow } from '@/routes/catalog';
+import { index as catalogIndex } from '@/routes/catalog';
 import type { BannerNode } from '@/types/banner';
 
 interface Store {
@@ -63,7 +58,11 @@ const props = defineProps<{
     search: string | null;
     sort: string | null;
     activeCategory: ActiveCategory | null;
-    banners: { main: BannerNode[]; side_top: BannerNode[]; side_bottom: BannerNode[] };
+    banners: {
+        main: BannerNode[];
+        side_top: BannerNode[];
+        side_bottom: BannerNode[];
+    };
     personalizedProducts: Product[];
     popularCategories: ActiveCategory[];
 }>();
@@ -84,17 +83,23 @@ const activeParentSlug = computed(
         null,
 );
 
-const allProducts = useRemember<Product[]>([...props.products.data], 'catalog-products');
+const allProducts = useRemember<Product[]>(
+    [...props.products.data],
+    'catalog-products',
+);
 let isLoadMore = false;
 
-watch(() => props.products.data, (newData) => {
-    if (isLoadMore) {
-        allProducts.value.push(...newData);
-        isLoadMore = false;
-    } else {
-        allProducts.value = [...newData];
-    }
-});
+watch(
+    () => props.products.data,
+    (newData) => {
+        if (isLoadMore) {
+            allProducts.value.push(...newData);
+            isLoadMore = false;
+        } else {
+            allProducts.value = [...newData];
+        }
+    },
+);
 
 const subCategories = computed(
     () =>
@@ -103,12 +108,24 @@ const subCategories = computed(
 );
 
 function selectCategory(slug: string | null) {
-    visit(buildParams({ category: slug ?? undefined, q: props.search, sort: sortValue.value }));
+    visit(
+        buildParams({
+            category: slug ?? undefined,
+            q: props.search,
+            sort: sortValue.value,
+        }),
+    );
 }
 
 function applySort(val: string) {
     sortValue.value = val;
-    visit(buildParams({ category: props.activeCategory?.slug, q: props.search, sort: val }));
+    visit(
+        buildParams({
+            category: props.activeCategory?.slug,
+            q: props.search,
+            sort: val,
+        }),
+    );
 }
 
 function goToPage(page: number) {
@@ -176,10 +193,20 @@ function visit(params: Record<string, string | number>) {
 
     <!-- Banner block -->
     <div class="w-full">
-        <div v-if="banners.main.length || banners.side_top.length || banners.side_bottom.length" class="mx-auto max-w-7xl">
+        <div
+            v-if="
+                banners.main.length ||
+                banners.side_top.length ||
+                banners.side_bottom.length
+            "
+            class="mx-auto max-w-7xl"
+        >
             <!-- Desktop: carousel (2/3) | side banners (1/3) -->
-            <div class="hidden lg:block px-4 py-6 sm:px-6 w-full">
-                <div class="grid grid-cols-3 gap-3 w-full" style="aspect-ratio: 3.75/1;">
+            <div class="hidden w-full px-4 py-6 sm:px-6 lg:block">
+                <div
+                    class="grid w-full grid-cols-3 gap-3"
+                    style="aspect-ratio: 3.75/1"
+                >
                     <!-- kiri -->
                     <div class="col-span-2 h-full min-h-0 min-w-0">
                         <BannerCarousel
@@ -189,9 +216,9 @@ function visit(params: Record<string, string | number>) {
                         />
                     </div>
                     <!-- kanan -->
-                    <div class="grid grid-rows-2 gap-3 h-full min-h-0 min-w-0">
+                    <div class="grid h-full min-h-0 min-w-0 grid-rows-2 gap-3">
                         <!-- row pertama -->
-                        <div class="grid grid-cols-2 gap-3 min-h-0 min-w-0">
+                        <div class="grid min-h-0 min-w-0 grid-cols-2 gap-3">
                             <BannerImage
                                 v-for="b in banners.side_top.slice(0, 2)"
                                 :key="b.id"
@@ -209,30 +236,41 @@ function visit(params: Record<string, string | number>) {
                 </div>
             </div>
             <!-- Mobile/tablet -->
-            <div class="space-y-3 lg:hidden px-4 py-4 w-full">
-                <div v-if="banners.main.length" class="w-full aspect-[5/2]">
+            <div class="w-full space-y-3 px-4 py-4 lg:hidden">
+                <div v-if="banners.main.length" class="aspect-[5/2] w-full">
                     <BannerCarousel :slides="banners.main" />
                 </div>
-                <div v-if="banners.side_top.length > 0" class="grid grid-cols-2 gap-3">
-                    <div v-for="b in banners.side_top.slice(0, 2)" :key="b.id" class="w-full aspect-[5/4]">
+                <div
+                    v-if="banners.side_top.length > 0"
+                    class="grid grid-cols-2 gap-3"
+                >
+                    <div
+                        v-for="b in banners.side_top.slice(0, 2)"
+                        :key="b.id"
+                        class="aspect-[5/4] w-full"
+                    >
                         <BannerImage :banner="b" />
                     </div>
                 </div>
-                <div v-if="banners.side_bottom.length > 0" class="w-full aspect-[5/2]">
+                <div
+                    v-if="banners.side_bottom.length > 0"
+                    class="aspect-[5/2] w-full"
+                >
                     <BannerImage :banner="banners.side_bottom[0]" />
                 </div>
             </div>
         </div>
         <!-- Fallback hero when no banners -->
-        <div
-            v-else
-            class="mx-auto max-w-7xl px-4 py-6 sm:px-6"
-        >
-            <div class="overflow-hidden rounded-2xl bg-gradient-to-br from-primary/15 via-secondary/40 to-background px-6 py-10 sm:px-10 sm:py-14">
+        <div v-else class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+            <div
+                class="overflow-hidden rounded-2xl bg-gradient-to-br from-primary/15 via-secondary/40 to-background px-6 py-10 sm:px-10 sm:py-14"
+            >
                 <h1 class="text-2xl font-semibold sm:text-3xl">
                     {{ t('catalog.heroTitle') }}
                 </h1>
-                <p class="mt-2 max-w-md text-sm text-muted-foreground sm:text-base">
+                <p
+                    class="mt-2 max-w-md text-sm text-muted-foreground sm:text-base"
+                >
                     {{ t('catalog.heroSubtitle') }}
                 </p>
             </div>
@@ -240,8 +278,16 @@ function visit(params: Record<string, string | number>) {
     </div>
 
     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-        <div v-if="popularCategories && popularCategories.length > 0 && !activeCategory && !query" class="mb-10">
-            <h2 class="text-xl font-bold mb-4">Kategori Populer</h2>
+        <div
+            v-if="
+                popularCategories &&
+                popularCategories.length > 0 &&
+                !activeCategory &&
+                !query
+            "
+            class="mb-10"
+        >
+            <h2 class="mb-4 text-xl font-bold">Kategori Populer</h2>
             <div class="flex gap-3 overflow-x-auto pb-2">
                 <button
                     v-for="cat in popularCategories"
@@ -256,9 +302,19 @@ function visit(params: Record<string, string | number>) {
         </div>
 
         <!-- Pilihan Untukmu -->
-        <div v-if="personalizedProducts && personalizedProducts.length > 0 && !activeCategory && !query" class="mb-10">
-            <h2 class="text-xl font-bold mb-4">Pilihan Untukmu</h2>
-            <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        <div
+            v-if="
+                personalizedProducts &&
+                personalizedProducts.length > 0 &&
+                !activeCategory &&
+                !query
+            "
+            class="mb-10"
+        >
+            <h2 class="mb-4 text-xl font-bold">Pilihan Untukmu</h2>
+            <div
+                class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+            >
                 <ProductCard
                     v-for="product in personalizedProducts"
                     :key="product.id"
@@ -268,14 +324,23 @@ function visit(params: Record<string, string | number>) {
         </div>
 
         <!-- Section Title for All Products -->
-        <h2 v-if="!activeCategory && !query" class="text-xl font-bold mb-4">Jelajahi Produk</h2>
+        <h2 v-if="!activeCategory && !query" class="mb-4 text-xl font-bold">
+            Jelajahi Produk
+        </h2>
 
         <!-- Active category breadcrumb -->
-        <div v-if="activeCategory" class="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground">
+        <div
+            v-if="activeCategory"
+            class="mb-6 flex items-center gap-1.5 text-sm text-muted-foreground"
+        >
             <span>{{ t('catalog.title') }}</span>
             <ChevronRight class="size-3.5" />
             <template v-if="activeCategory.parent">
-                <button type="button" class="hover:text-foreground" @click="selectCategory(activeCategory.parent.slug)">
+                <button
+                    type="button"
+                    class="hover:text-foreground"
+                    @click="selectCategory(activeCategory.parent.slug)"
+                >
                     {{ activeCategory.parent.name }}
                 </button>
                 <ChevronRight class="size-3.5" />
@@ -286,13 +351,19 @@ function visit(params: Record<string, string | number>) {
         </div>
 
         <!-- Sort & Filter Bar -->
-        <div class="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+        <div
+            class="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4"
+        >
             <div class="flex flex-wrap items-center gap-2">
                 <!-- Category filter chips -->
                 <button
                     type="button"
                     class="rounded-full border px-4 py-2 text-sm font-medium transition-colors"
-                    :class="!activeCategory ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'"
+                    :class="
+                        !activeCategory
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                    "
                     @click="selectCategory(null)"
                 >
                     Semua
@@ -302,7 +373,11 @@ function visit(params: Record<string, string | number>) {
                     :key="root.id"
                     type="button"
                     class="rounded-full border px-4 py-2 text-sm font-medium transition-colors"
-                    :class="root.slug === activeParentSlug ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'"
+                    :class="
+                        root.slug === activeParentSlug
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                    "
                     @click="selectCategory(root.slug)"
                 >
                     {{ root.name }}
@@ -312,30 +387,45 @@ function visit(params: Record<string, string | number>) {
             <div class="flex items-center gap-3">
                 <Spinner v-if="loading" class="size-4" />
                 <p class="text-sm text-muted-foreground">
-                    Menampilkan {{ allProducts.length }} dari {{ products.total }} produk
+                    Menampilkan {{ allProducts.length }} dari
+                    {{ products.total }} produk
                 </p>
-                <Select :model-value="sortValue" @update:model-value="applySort">
+                <Select
+                    :model-value="sortValue"
+                    @update:model-value="applySort"
+                >
                     <SelectTrigger class="w-44">
                         <SelectValue placeholder="Urutkan" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="random">Acak</SelectItem>
                         <SelectItem value="newest">Terbaru</SelectItem>
-                        <SelectItem value="price_asc">Harga Terendah</SelectItem>
-                        <SelectItem value="price_desc">Harga Tertinggi</SelectItem>
+                        <SelectItem value="price_asc"
+                            >Harga Terendah</SelectItem
+                        >
+                        <SelectItem value="price_desc"
+                            >Harga Tertinggi</SelectItem
+                        >
                     </SelectContent>
                 </Select>
             </div>
         </div>
 
         <!-- Subcategory chips for the active parent -->
-        <div v-if="subCategories.length" class="mb-6 flex w-max gap-2 sm:w-auto sm:flex-wrap overflow-x-auto pb-2">
+        <div
+            v-if="subCategories.length"
+            class="mb-6 flex w-max gap-2 overflow-x-auto pb-2 sm:w-auto sm:flex-wrap"
+        >
             <button
                 v-for="child in subCategories"
                 :key="child.id"
                 type="button"
                 class="shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors"
-                :class="child.slug === activeCategory?.slug ? 'border-primary/60 bg-primary/10 text-primary' : 'border-border bg-card text-muted-foreground hover:text-foreground'"
+                :class="
+                    child.slug === activeCategory?.slug
+                        ? 'border-primary/60 bg-primary/10 text-primary'
+                        : 'border-border bg-card text-muted-foreground hover:text-foreground'
+                "
                 @click="selectCategory(child.slug)"
             >
                 {{ child.name }}
@@ -350,7 +440,9 @@ function visit(params: Record<string, string | number>) {
         />
 
         <template v-else>
-            <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+            <div
+                class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+            >
                 <ProductCard
                     v-for="product in allProducts"
                     :key="product.id"
@@ -359,14 +451,32 @@ function visit(params: Record<string, string | number>) {
             </div>
 
             <!-- Tampilkan Lebih Banyak -->
-            <div v-if="products.current_page < products.last_page" class="mt-10 flex justify-center">
-                <Button variant="outline" size="lg" :disabled="loading" @click="loadMore" class="w-full max-w-sm rounded-full">
+            <div
+                v-if="products.current_page < products.last_page"
+                class="mt-10 flex justify-center"
+            >
+                <Button
+                    variant="outline"
+                    size="lg"
+                    :disabled="loading"
+                    @click="loadMore"
+                    class="w-full max-w-sm rounded-full"
+                >
                     <Spinner v-if="loading" class="mr-2 size-4" />
                     Tampilkan Lebih Banyak
                 </Button>
             </div>
-            <div v-else-if="allProducts.length < products.total" class="mt-10 flex justify-center">
-                <Button variant="outline" size="lg" :disabled="loading" @click="resetToPageOne" class="w-full max-w-sm rounded-full">
+            <div
+                v-else-if="allProducts.length < products.total"
+                class="mt-10 flex justify-center"
+            >
+                <Button
+                    variant="outline"
+                    size="lg"
+                    :disabled="loading"
+                    @click="resetToPageOne"
+                    class="w-full max-w-sm rounded-full"
+                >
                     <Spinner v-if="loading" class="mr-2 size-4" />
                     Muat Ulang Semua Produk
                 </Button>

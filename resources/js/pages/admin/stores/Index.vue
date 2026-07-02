@@ -3,7 +3,14 @@ import { router } from '@inertiajs/vue3';
 import { Store as StoreIcon } from '@lucide/vue';
 import { ref, watch } from 'vue';
 import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 interface User {
@@ -37,7 +44,11 @@ const props = defineProps<{
 const search = ref(props.filters.q ?? '');
 
 watch(search, (val) => {
-    router.get('/admin/stores', { q: val }, { preserveState: true, replace: true });
+    router.get(
+        '/admin/stores',
+        { q: val },
+        { preserveState: true, replace: true },
+    );
 });
 </script>
 
@@ -45,17 +56,25 @@ watch(search, (val) => {
     <AppLayout>
         <div class="p-6">
             <div class="mb-6 flex items-center gap-3">
-                <div class="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <div
+                    class="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary"
+                >
                     <StoreIcon class="size-5" />
                 </div>
                 <div>
                     <h1 class="text-xl font-bold">Toko</h1>
-                    <p class="text-sm text-muted-foreground">Total {{ stores.total }} toko</p>
+                    <p class="text-sm text-muted-foreground">
+                        Total {{ stores.total }} toko
+                    </p>
                 </div>
             </div>
 
             <div class="mb-4">
-                <Input v-model="search" placeholder="Cari nama toko..." class="max-w-xs" />
+                <Input
+                    v-model="search"
+                    placeholder="Cari nama toko..."
+                    class="max-w-xs"
+                />
             </div>
 
             <div class="overflow-x-auto rounded-lg border border-border">
@@ -71,14 +90,26 @@ watch(search, (val) => {
                     </TableHeader>
                     <TableBody>
                         <TableRow v-if="stores.data.length === 0">
-                            <TableCell colspan="5" class="py-8 text-center text-muted-foreground">Tidak ada toko ditemukan.</TableCell>
+                            <TableCell
+                                colspan="5"
+                                class="py-8 text-center text-muted-foreground"
+                                >Tidak ada toko ditemukan.</TableCell
+                            >
                         </TableRow>
                         <TableRow v-for="store in stores.data" :key="store.id">
-                            <TableCell class="font-mono text-xs">{{ store.id }}</TableCell>
-                            <TableCell class="font-medium">{{ store.name }}</TableCell>
-                            <TableCell class="text-sm text-muted-foreground">{{ store.user?.name ?? '-' }}</TableCell>
+                            <TableCell class="font-mono text-xs">{{
+                                store.id
+                            }}</TableCell>
+                            <TableCell class="font-medium">{{
+                                store.name
+                            }}</TableCell>
+                            <TableCell class="text-sm text-muted-foreground">{{
+                                store.user?.name ?? '-'
+                            }}</TableCell>
                             <TableCell>{{ store.products_count }}</TableCell>
-                            <TableCell class="text-xs text-muted-foreground">{{ store.created_at?.slice(0, 10) }}</TableCell>
+                            <TableCell class="text-xs text-muted-foreground">{{
+                                store.created_at?.slice(0, 10)
+                            }}</TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
@@ -90,11 +121,19 @@ watch(search, (val) => {
                         v-if="link.url"
                         type="button"
                         class="rounded border px-3 py-1 text-sm"
-                        :class="link.active ? 'border-primary bg-primary text-white' : 'border-border hover:bg-muted'"
+                        :class="
+                            link.active
+                                ? 'border-primary bg-primary text-white'
+                                : 'border-border hover:bg-muted'
+                        "
                         @click="router.get(link.url)"
                         v-html="link.label"
                     />
-                    <span v-else class="rounded border border-border px-3 py-1 text-sm opacity-40" v-html="link.label" />
+                    <span
+                        v-else
+                        class="rounded border border-border px-3 py-1 text-sm opacity-40"
+                        v-html="link.label"
+                    />
                 </template>
             </div>
         </div>

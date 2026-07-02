@@ -41,7 +41,11 @@ interface PaginatedJobs {
     total: number;
 }
 
-const props = defineProps<{ jobs: PaginatedJobs; currentMethod?: string; activeJob?: any }>();
+const props = defineProps<{
+    jobs: PaginatedJobs;
+    currentMethod?: string;
+    activeJob?: any;
+}>();
 
 defineOptions({
     layout: {
@@ -89,30 +93,40 @@ function filterMethod(method: string) {
     <div class="flex flex-col gap-6">
         <Heading variant="small" :title="t('driver.jobsTitle')" />
 
-        <div v-if="props.activeJob" class="bg-destructive/10 border border-destructive/20 rounded-xl p-4 flex items-center justify-between">
+        <div
+            v-if="props.activeJob"
+            class="flex items-center justify-between rounded-xl border border-destructive/20 bg-destructive/10 p-4"
+        >
             <div>
-                <h3 class="font-bold text-destructive flex items-center gap-2">
+                <h3 class="flex items-center gap-2 font-bold text-destructive">
                     <Truck class="size-4" />
                     Pekerjaan Aktif!
                 </h3>
-                <p class="text-sm text-destructive/80 mt-1">Anda memiliki pengiriman yang belum selesai.</p>
+                <p class="mt-1 text-sm text-destructive/80">
+                    Anda memiliki pengiriman yang belum selesai.
+                </p>
             </div>
-            <Link :href="DriverJobController.show.url(props.activeJob.id)" class="bg-destructive text-destructive-foreground px-4 py-2 rounded font-medium text-sm hover:bg-destructive/90 transition-colors">
+            <Link
+                :href="DriverJobController.show.url(props.activeJob.id)"
+                class="rounded bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground transition-colors hover:bg-destructive/90"
+            >
                 Lanjutkan
             </Link>
         </div>
 
         <!-- Tabs Filter -->
-        <div class="flex overflow-x-auto pb-2 scrollbar-hide gap-2 border-b border-border">
+        <div
+            class="scrollbar-hide flex gap-2 overflow-x-auto border-b border-border pb-2"
+        >
             <button
                 v-for="m in methods"
                 :key="m.value"
                 @click="filterMethod(m.value)"
-                class="whitespace-nowrap border-b-2 px-4 py-2 text-sm font-medium transition-colors"
+                class="border-b-2 px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors"
                 :class="[
                     (props.currentMethod || '') === m.value
                         ? 'border-primary text-primary'
-                        : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted',
+                        : 'border-transparent text-muted-foreground hover:border-muted hover:text-foreground',
                 ]"
             >
                 {{ m.label }}
@@ -164,9 +178,7 @@ function filterMethod(method: string) {
                     </div>
                     <div class="flex shrink-0 items-center gap-3">
                         <div class="text-right">
-                            <p
-                                class="font-semibold text-primary tabular-nums"
-                            >
+                            <p class="font-semibold text-primary tabular-nums">
                                 +{{ formatIDR(job.earning_preview) }}
                             </p>
                             <p class="text-xs text-muted-foreground">

@@ -1,25 +1,19 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { 
-    ClipboardList, 
-    Wallet, 
-    CheckCircle, 
-    ShoppingBag, 
-    ShoppingCart, 
-    MapPin, 
+import {
+    ClipboardList,
+    Wallet,
+    CheckCircle,
+    ShoppingBag,
+    ShoppingCart,
+    MapPin,
     History,
     ArrowRight,
-    Package
+    Package,
 } from '@lucide/vue';
-import EmptyState from '@/components/EmptyState.vue';
 import StatCard from '@/components/StatCard.vue';
-import { formatIDR } from '@/lib/utils';
-import { index as catalogIndex } from '@/routes/catalog';
-import { index as buyerCart } from '@/routes/buyer/cart';
-import { index as buyerAddresses } from '@/routes/buyer/addresses';
-import { index as buyerOrders, show as buyerOrderShow } from '@/routes/buyer/orders';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -27,8 +21,16 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { formatIDR } from '@/lib/utils';
+import { index as buyerAddresses } from '@/routes/buyer/addresses';
+import { index as buyerCart } from '@/routes/buyer/cart';
+import {
+    index as buyerOrders,
+    show as buyerOrderShow,
+} from '@/routes/buyer/orders';
+import { index as catalogIndex } from '@/routes/catalog';
 
-const props = defineProps<{
+defineProps<{
     balance: number;
     activeOrdersCount: number;
     completedOrdersCount: number;
@@ -36,15 +38,22 @@ const props = defineProps<{
 }>();
 
 const formatStatus = (status: string) => {
-    return status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    return status
+        .split('_')
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
 };
 
 const getStatusColor = (status: string) => {
-    switch(status) {
-        case 'sedang_dikemas': return 'default';
-        case 'menunggu_pengirim': return 'secondary';
-        case 'sedang_dikirim': return 'destructive';
-        default: return 'outline';
+    switch (status) {
+        case 'sedang_dikemas':
+            return 'default';
+        case 'menunggu_pengirim':
+            return 'secondary';
+        case 'sedang_dikirim':
+            return 'destructive';
+        default:
+            return 'outline';
     }
 };
 </script>
@@ -69,7 +78,7 @@ const getStatusColor = (status: string) => {
                 label="Saldo Wallet"
                 :value="formatIDR(balance)"
                 :icon="Wallet"
-                class="bg-gradient-to-br from-primary/10 to-transparent border-primary/20"
+                class="border-primary/20 bg-gradient-to-br from-primary/10 to-transparent"
             />
             <StatCard
                 label="Pesanan Aktif"
@@ -86,30 +95,52 @@ const getStatusColor = (status: string) => {
         <!-- Main Dashboard Content -->
         <div class="grid gap-6 md:grid-cols-7 lg:grid-cols-12">
             <!-- Left Column: Active Orders -->
-            <div class="md:col-span-4 lg:col-span-8 flex flex-col gap-4">
+            <div class="flex flex-col gap-4 md:col-span-4 lg:col-span-8">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-semibold tracking-tight">Pesanan Sedang Berjalan</h2>
-                    <Button variant="ghost" size="sm" class="text-muted-foreground hover:text-foreground" @click="router.visit(buyerOrders.url())">
+                    <h2 class="text-xl font-semibold tracking-tight">
+                        Pesanan Sedang Berjalan
+                    </h2>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        class="text-muted-foreground hover:text-foreground"
+                        @click="router.visit(buyerOrders.url())"
+                    >
                         Lihat Semua <ArrowRight class="ml-2 h-4 w-4" />
                     </Button>
                 </div>
 
                 <template v-if="activeOrdersCount === 0">
                     <Card class="border-dashed bg-muted/30">
-                        <CardContent class="flex flex-col items-center justify-center p-12 text-center">
-                            <div class="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                        <CardContent
+                            class="flex flex-col items-center justify-center p-12 text-center"
+                        >
+                            <div
+                                class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10"
+                            >
                                 <Package class="h-10 w-10 text-primary" />
                             </div>
-                            <h3 class="text-lg font-bold mb-2">Belum ada pesanan yang berjalan nih!</h3>
-                            <p class="text-sm text-muted-foreground max-w-sm mb-6">
-                                Kamu belum memiliki pesanan aktif. Mulai belanja sekarang atau cek riwayat pesananmu yang sudah selesai.
+                            <h3 class="mb-2 text-lg font-bold">
+                                Belum ada pesanan yang berjalan nih!
+                            </h3>
+                            <p
+                                class="mb-6 max-w-sm text-sm text-muted-foreground"
+                            >
+                                Kamu belum memiliki pesanan aktif. Mulai belanja
+                                sekarang atau cek riwayat pesananmu yang sudah
+                                selesai.
                             </p>
-                            <div class="flex flex-wrap gap-3 justify-center">
-                                <Button variant="outline" @click="router.visit(buyerOrders.url())">
+                            <div class="flex flex-wrap justify-center gap-3">
+                                <Button
+                                    variant="outline"
+                                    @click="router.visit(buyerOrders.url())"
+                                >
                                     <History class="mr-2 h-4 w-4" />
                                     Cek Pesanan Saya
                                 </Button>
-                                <Button @click="router.visit(catalogIndex.url())">
+                                <Button
+                                    @click="router.visit(catalogIndex.url())"
+                                >
                                     <ShoppingBag class="mr-2 h-4 w-4" />
                                     Mulai Belanja
                                 </Button>
@@ -120,40 +151,84 @@ const getStatusColor = (status: string) => {
 
                 <template v-else>
                     <div class="grid gap-4">
-                        <Card v-for="order in recentActiveOrders" :key="order.id" class="overflow-hidden transition-all hover:shadow-md border-border/50">
-                            <CardHeader class="bg-muted/30 pb-4 border-b">
+                        <Card
+                            v-for="order in recentActiveOrders"
+                            :key="order.id"
+                            class="overflow-hidden border-border/50 transition-all hover:shadow-md"
+                        >
+                            <CardHeader class="border-b bg-muted/30 pb-4">
                                 <div class="flex items-start justify-between">
                                     <div>
-                                        <CardTitle class="text-base font-semibold flex items-center gap-2">
+                                        <CardTitle
+                                            class="flex items-center gap-2 text-base font-semibold"
+                                        >
                                             {{ order.store?.name }}
                                         </CardTitle>
-                                        <CardDescription class="text-xs mt-1">
-                                            Order ID: #{{ order.id }} • {{ new Date(order.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}
+                                        <CardDescription class="mt-1 text-xs">
+                                            Order ID: #{{ order.id }} •
+                                            {{
+                                                new Date(
+                                                    order.created_at,
+                                                ).toLocaleDateString('id-ID', {
+                                                    day: 'numeric',
+                                                    month: 'long',
+                                                    year: 'numeric',
+                                                })
+                                            }}
                                         </CardDescription>
                                     </div>
-                                    <Badge :variant="getStatusColor(order.status)" class="capitalize">
+                                    <Badge
+                                        :variant="getStatusColor(order.status)"
+                                        class="capitalize"
+                                    >
                                         {{ formatStatus(order.status) }}
                                     </Badge>
                                 </div>
                             </CardHeader>
                             <CardContent class="pt-4">
                                 <div class="flex items-center gap-4">
-                                    <div class="h-16 w-16 bg-muted rounded-md flex items-center justify-center flex-shrink-0">
-                                        <Package class="h-8 w-8 text-muted-foreground/50" />
+                                    <div
+                                        class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-md bg-muted"
+                                    >
+                                        <Package
+                                            class="h-8 w-8 text-muted-foreground/50"
+                                        />
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium line-clamp-1">
-                                            {{ order.items?.[0]?.product?.name || 'Produk' }}
+                                    <div class="min-w-0 flex-1">
+                                        <p
+                                            class="line-clamp-1 text-sm font-medium"
+                                        >
+                                            {{
+                                                order.items?.[0]?.product
+                                                    ?.name || 'Produk'
+                                            }}
                                         </p>
-                                        <p class="text-xs text-muted-foreground mt-1" v-if="order.items?.length > 1">
-                                            + {{ order.items.length - 1 }} produk lainnya
+                                        <p
+                                            class="mt-1 text-xs text-muted-foreground"
+                                            v-if="order.items?.length > 1"
+                                        >
+                                            +
+                                            {{ order.items.length - 1 }} produk
+                                            lainnya
                                         </p>
-                                        <p class="text-sm font-bold text-primary mt-2">
+                                        <p
+                                            class="mt-2 text-sm font-bold text-primary"
+                                        >
                                             {{ formatIDR(order.grand_total) }}
                                         </p>
                                     </div>
                                     <div class="ml-auto">
-                                        <Button variant="secondary" size="sm" @click="router.visit(buyerOrderShow.url({ order: order.id }))">
+                                        <Button
+                                            variant="secondary"
+                                            size="sm"
+                                            @click="
+                                                router.visit(
+                                                    buyerOrderShow.url({
+                                                        order: order.id,
+                                                    }),
+                                                )
+                                            "
+                                        >
                                             Lacak
                                         </Button>
                                     </div>
@@ -165,50 +240,80 @@ const getStatusColor = (status: string) => {
             </div>
 
             <!-- Right Column: Quick Actions -->
-            <div class="md:col-span-3 lg:col-span-4 flex flex-col gap-4">
+            <div class="flex flex-col gap-4 md:col-span-3 lg:col-span-4">
                 <h2 class="text-xl font-semibold tracking-tight">Aksi Cepat</h2>
                 <Card>
-                    <CardContent class="p-4 grid grid-cols-2 gap-3">
-                        <Link :href="catalogIndex.url()" class="flex flex-col items-center justify-center p-4 rounded-xl border border-border/50 bg-card hover:bg-muted/50 hover:border-primary/50 transition-all text-center group cursor-pointer h-28">
-                            <div class="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <CardContent class="grid grid-cols-2 gap-3 p-4">
+                        <Link
+                            :href="catalogIndex.url()"
+                            class="group flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border border-border/50 bg-card p-4 text-center transition-all hover:border-primary/50 hover:bg-muted/50"
+                        >
+                            <div
+                                class="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-transform group-hover:scale-110"
+                            >
                                 <ShoppingBag class="h-5 w-5" />
                             </div>
                             <span class="text-xs font-semibold">Katalog</span>
                         </Link>
-                        
-                        <Link :href="buyerCart.url()" class="flex flex-col items-center justify-center p-4 rounded-xl border border-border/50 bg-card hover:bg-muted/50 hover:border-primary/50 transition-all text-center group cursor-pointer h-28">
-                            <div class="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+
+                        <Link
+                            :href="buyerCart.url()"
+                            class="group flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border border-border/50 bg-card p-4 text-center transition-all hover:border-primary/50 hover:bg-muted/50"
+                        >
+                            <div
+                                class="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-transform group-hover:scale-110"
+                            >
                                 <ShoppingCart class="h-5 w-5" />
                             </div>
                             <span class="text-xs font-semibold">Keranjang</span>
                         </Link>
 
-                        <Link :href="buyerOrders.url()" class="flex flex-col items-center justify-center p-4 rounded-xl border border-border/50 bg-card hover:bg-muted/50 hover:border-primary/50 transition-all text-center group cursor-pointer h-28">
-                            <div class="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Link
+                            :href="buyerOrders.url()"
+                            class="group flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border border-border/50 bg-card p-4 text-center transition-all hover:border-primary/50 hover:bg-muted/50"
+                        >
+                            <div
+                                class="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-transform group-hover:scale-110"
+                            >
                                 <History class="h-5 w-5" />
                             </div>
                             <span class="text-xs font-semibold">Riwayat</span>
                         </Link>
 
-                        <Link :href="buyerAddresses.url()" class="flex flex-col items-center justify-center p-4 rounded-xl border border-border/50 bg-card hover:bg-muted/50 hover:border-primary/50 transition-all text-center group cursor-pointer h-28">
-                            <div class="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <Link
+                            :href="buyerAddresses.url()"
+                            class="group flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border border-border/50 bg-card p-4 text-center transition-all hover:border-primary/50 hover:bg-muted/50"
+                        >
+                            <div
+                                class="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-transform group-hover:scale-110"
+                            >
                                 <MapPin class="h-5 w-5" />
                             </div>
                             <span class="text-xs font-semibold">Alamat</span>
                         </Link>
                     </CardContent>
                 </Card>
-                
-                <Card class="bg-primary text-primary-foreground mt-2 overflow-hidden relative">
-                    <div class="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-white/10 blur-2xl"></div>
+
+                <Card
+                    class="relative mt-2 overflow-hidden bg-primary text-primary-foreground"
+                >
+                    <div
+                        class="absolute -top-6 -right-6 h-32 w-32 rounded-full bg-white/10 blur-2xl"
+                    ></div>
                     <CardHeader class="pb-2">
                         <CardTitle class="text-lg">Promo Spesial</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p class="text-sm text-primary-foreground/80 mb-4">
-                            Gunakan voucher gratis ongkir untuk pesanan pertamamu bulan ini!
+                        <p class="mb-4 text-sm text-primary-foreground/80">
+                            Gunakan voucher gratis ongkir untuk pesanan
+                            pertamamu bulan ini!
                         </p>
-                        <Button variant="secondary" size="sm" class="w-full text-xs font-bold" @click="router.visit(catalogIndex.url())">
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            class="w-full text-xs font-bold"
+                            @click="router.visit(catalogIndex.url())"
+                        >
                             Klaim Sekarang
                         </Button>
                     </CardContent>

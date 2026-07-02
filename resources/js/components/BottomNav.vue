@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { ClipboardList, Home, LayoutGrid, Package, Search, ShoppingCart, Tag, Truck, User } from '@lucide/vue';
+import {
+    ClipboardList,
+    Home,
+    LayoutGrid,
+    Package,
+    Search,
+    ShoppingCart,
+    Tag,
+    Truck,
+    User,
+} from '@lucide/vue';
 import { computed } from 'vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { dashboard, home, login } from '@/routes';
@@ -80,7 +90,11 @@ const items = computed<NavItem[]>(() => {
             :key="item.title"
             :href="item.href"
             class="relative flex min-h-11 min-w-11 flex-1 flex-col items-center justify-center gap-1 text-xs transition-colors"
-            :class="isCurrentOrParentUrl(item.href) ? 'font-medium text-primary' : 'text-muted-foreground/70'"
+            :class="
+                isCurrentOrParentUrl(item.href)
+                    ? 'font-medium text-primary'
+                    : 'text-muted-foreground/70'
+            "
         >
             <component :is="item.icon" class="size-5" />
             <span>{{ item.title }}</span>

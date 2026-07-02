@@ -202,65 +202,129 @@ function goToPage(page: number) {
                     >
                         <div
                             class="flex size-9 shrink-0 items-center justify-center rounded-full"
-                            :class="tx.direction === 'credit' ? 'bg-green-500/10' : 'bg-rose-500/10'"
+                            :class="
+                                tx.direction === 'credit'
+                                    ? 'bg-green-500/10'
+                                    : 'bg-rose-500/10'
+                            "
                         >
                             <component
-                                :is="tx.direction === 'credit' ? ArrowDownLeft : ArrowUpRight"
+                                :is="
+                                    tx.direction === 'credit'
+                                        ? ArrowDownLeft
+                                        : ArrowUpRight
+                                "
                                 class="size-4"
-                                :class="tx.direction === 'credit' ? 'text-green-600' : 'text-rose-600'"
+                                :class="
+                                    tx.direction === 'credit'
+                                        ? 'text-green-600'
+                                        : 'text-rose-600'
+                                "
                             />
                         </div>
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-2">
-                                <Badge variant="secondary" class="text-xs">{{ typeLabel(tx.type) }}</Badge>
+                                <Badge variant="secondary" class="text-xs">{{
+                                    typeLabel(tx.type)
+                                }}</Badge>
                             </div>
-                            <p class="mt-0.5 text-xs text-muted-foreground">{{ formatDateTime(tx.created_at, locale) }}</p>
+                            <p class="mt-0.5 text-xs text-muted-foreground">
+                                {{ formatDateTime(tx.created_at, locale) }}
+                            </p>
                         </div>
                         <div class="shrink-0 text-right">
                             <p
                                 class="font-semibold tabular-nums"
-                                :class="tx.direction === 'credit' ? 'text-green-600' : 'text-rose-600'"
+                                :class="
+                                    tx.direction === 'credit'
+                                        ? 'text-green-600'
+                                        : 'text-rose-600'
+                                "
                             >
-                                {{ tx.direction === 'credit' ? '+' : '-' }}{{ formatIDR(tx.amount) }}
+                                {{ tx.direction === 'credit' ? '+' : '-'
+                                }}{{ formatIDR(tx.amount) }}
                             </p>
-                            <p class="text-xs text-muted-foreground tabular-nums">{{ formatIDR(tx.balance_after) }}</p>
+                            <p
+                                class="text-xs text-muted-foreground tabular-nums"
+                            >
+                                {{ formatIDR(tx.balance_after) }}
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                <div class="hidden overflow-x-auto rounded-lg border border-border lg:block">
+                <div
+                    class="hidden overflow-x-auto rounded-lg border border-border lg:block"
+                >
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>{{ t('wallet.columnDate') }}</TableHead>
-                                <TableHead>{{ t('wallet.columnType') }}</TableHead>
-                                <TableHead>{{ t('wallet.columnDirection') }}</TableHead>
-                                <TableHead class="text-right">{{ t('wallet.columnAmount') }}</TableHead>
-                                <TableHead class="text-right">{{ t('wallet.columnBalance') }}</TableHead>
+                                <TableHead>{{
+                                    t('wallet.columnDate')
+                                }}</TableHead>
+                                <TableHead>{{
+                                    t('wallet.columnType')
+                                }}</TableHead>
+                                <TableHead>{{
+                                    t('wallet.columnDirection')
+                                }}</TableHead>
+                                <TableHead class="text-right">{{
+                                    t('wallet.columnAmount')
+                                }}</TableHead>
+                                <TableHead class="text-right">{{
+                                    t('wallet.columnBalance')
+                                }}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            <TableRow v-for="tx in props.transactions.data" :key="tx.id">
-                                <TableCell class="whitespace-nowrap text-sm text-muted-foreground">
+                            <TableRow
+                                v-for="tx in props.transactions.data"
+                                :key="tx.id"
+                            >
+                                <TableCell
+                                    class="text-sm whitespace-nowrap text-muted-foreground"
+                                >
                                     {{ formatDateTime(tx.created_at, locale) }}
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant="secondary">{{ typeLabel(tx.type) }}</Badge>
+                                    <Badge variant="secondary">{{
+                                        typeLabel(tx.type)
+                                    }}</Badge>
                                 </TableCell>
                                 <TableCell>
                                     <span
                                         class="inline-flex items-center gap-1 text-sm"
-                                        :class="tx.direction === 'credit' ? 'text-green-600' : 'text-rose-600'"
+                                        :class="
+                                            tx.direction === 'credit'
+                                                ? 'text-green-600'
+                                                : 'text-rose-600'
+                                        "
                                     >
-                                        <component :is="tx.direction === 'credit' ? ArrowDownLeft : ArrowUpRight" class="size-3.5" />
-                                        {{ tx.direction === 'credit' ? t('wallet.directionCredit') : t('wallet.directionDebit') }}
+                                        <component
+                                            :is="
+                                                tx.direction === 'credit'
+                                                    ? ArrowDownLeft
+                                                    : ArrowUpRight
+                                            "
+                                            class="size-3.5"
+                                        />
+                                        {{
+                                            tx.direction === 'credit'
+                                                ? t('wallet.directionCredit')
+                                                : t('wallet.directionDebit')
+                                        }}
                                     </span>
                                 </TableCell>
                                 <TableCell
                                     class="text-right font-medium tabular-nums"
-                                    :class="tx.direction === 'credit' ? 'text-green-600' : 'text-rose-600'"
+                                    :class="
+                                        tx.direction === 'credit'
+                                            ? 'text-green-600'
+                                            : 'text-rose-600'
+                                    "
                                 >
-                                    {{ tx.direction === 'credit' ? '+' : '-' }}{{ formatIDR(tx.amount) }}
+                                    {{ tx.direction === 'credit' ? '+' : '-'
+                                    }}{{ formatIDR(tx.amount) }}
                                 </TableCell>
                                 <TableCell class="text-right tabular-nums">
                                     {{ formatIDR(tx.balance_after) }}

@@ -129,9 +129,7 @@ const { t, locale } = useI18n();
                                 {{ formatDateTime(entry.completed_at, locale) }}
                             </p>
                         </div>
-                        <p
-                            class="font-semibold text-primary tabular-nums"
-                        >
+                        <p class="font-semibold text-primary tabular-nums">
                             +{{ formatIDR(entry.earning_amount) }}
                         </p>
                     </div>

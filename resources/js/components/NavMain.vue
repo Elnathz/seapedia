@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { useI18n } from 'vue-i18n';
 import {
     SidebarGroup,
     SidebarGroupLabel,
@@ -20,8 +19,14 @@ const { isCurrentUrl } = useCurrentUrl();
 
 <template>
     <div class="space-y-4">
-        <SidebarGroup v-for="group in groups" :key="group.label" class="px-2 py-0">
-            <SidebarGroupLabel v-if="group.label">{{ group.label }}</SidebarGroupLabel>
+        <SidebarGroup
+            v-for="group in groups"
+            :key="group.label"
+            class="px-2 py-0"
+        >
+            <SidebarGroupLabel v-if="group.label">{{
+                group.label
+            }}</SidebarGroupLabel>
             <SidebarMenu>
                 <SidebarMenuItem v-for="item in group.items" :key="item.title">
                     <SidebarMenuButton

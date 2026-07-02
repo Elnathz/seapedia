@@ -114,14 +114,32 @@ function openEdit(address: AddressData) {
                             {{ t('address.defaultBadge') }}
                         </Badge>
                     </div>
-                    <div class="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                    <div
+                        class="mt-1 flex items-center gap-2 text-sm text-muted-foreground"
+                    >
                         <span class="font-semibold">{{ address.phone }}</span>
                     </div>
-                    <div class="text-sm text-muted-foreground mt-1 space-y-1">
-                        <p class="leading-relaxed">{{ address.full_address }}</p>
+                    <div class="mt-1 space-y-1 text-sm text-muted-foreground">
+                        <p class="leading-relaxed">
+                            {{ address.full_address }}
+                        </p>
                         <p v-if="address.province" class="text-xs">
-                            {{ [address.village, address.district, address.city, address.province].filter(Boolean).join(', ') }}
-                            <span v-if="address.postal_code" class="font-medium"> - {{ address.postal_code }}</span>
+                            {{
+                                [
+                                    address.village,
+                                    address.district,
+                                    address.city,
+                                    address.province,
+                                ]
+                                    .filter(Boolean)
+                                    .join(', ')
+                            }}
+                            <span
+                                v-if="address.postal_code"
+                                class="font-medium"
+                            >
+                                - {{ address.postal_code }}</span
+                            >
                         </p>
                     </div>
 
@@ -278,7 +296,7 @@ function openEdit(address: AddressData) {
                         <InputError :message="errors.full_address" />
                     </div>
 
-                    <RegionCascader 
+                    <RegionCascader
                         v-model:province="formProvince"
                         v-model:city="formCity"
                         v-model:district="formDistrict"
