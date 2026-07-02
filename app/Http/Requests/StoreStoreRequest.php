@@ -19,6 +19,8 @@ class StoreStoreRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'min:3', 'max:100', 'unique:stores,name'],
             'description' => ['nullable', 'string', 'max:500'],
+            'origin_latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'origin_longitude' => ['nullable', 'numeric', 'between:-180,180'],
         ];
     }
 }

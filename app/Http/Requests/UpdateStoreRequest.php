@@ -24,6 +24,8 @@ class UpdateStoreRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'min:3', 'max:100', Rule::unique('stores', 'name')->ignore($store->id)],
             'description' => ['nullable', 'string', 'max:500'],
+            'origin_latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'origin_longitude' => ['nullable', 'numeric', 'between:-180,180'],
         ];
     }
 }

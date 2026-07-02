@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
 import { Store as StoreIcon } from '@lucide/vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import SellerStoreController from '@/actions/App/Http/Controllers/Web/SellerStoreController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import MapPicker from '@/components/MapPicker.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,8 @@ interface StoreData {
     name: string;
     slug: string;
     description: string | null;
+    origin_latitude: number | null;
+    origin_longitude: number | null;
     is_active: boolean;
 }
 
@@ -36,6 +39,9 @@ const formBinding = computed(() =>
         ? SellerStoreController.update.form(props.store.id)
         : SellerStoreController.store.form(),
 );
+
+const originLat = ref<number | null>(props.store?.origin_latitude ?? null);
+const originLng = ref<number | null>(props.store?.origin_longitude ?? null);
 
 const { t } = useI18n();
 </script>
@@ -103,6 +109,29 @@ const { t } = useI18n();
                     :placeholder="t('store.descriptionPlaceholder')"
                 />
                 <InputError :message="errors.description" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label>Titik Asal Pengiriman</Label>
+                <p class="text-xs text-muted-foreground">
+                    Tandai lokasi toko/gudang asal pengiriman. Dipakai untuk
+                    menghitung ongkir berdasarkan jarak ke alamat pembeli.
+                </p>
+                <MapPicker
+                    v-model:latitude="originLat"
+                    v-model:longitude="originLng"
+                />
+                <input
+                    type="hidden"
+                    name="origin_latitude"
+                    :value="originLat ?? ''"
+                />
+                <input
+                    type="hidden"
+                    name="origin_longitude"
+                    :value="originLng ?? ''"
+                />
+                <InputError :message="errors.origin_latitude" />
             </div>
 
             <div class="flex items-center gap-3">

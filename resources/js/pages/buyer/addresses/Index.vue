@@ -7,6 +7,7 @@ import BuyerAddressController from '@/actions/App/Http/Controllers/Web/BuyerAddr
 import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import MapPicker from '@/components/MapPicker.vue';
 import RegionCascader from '@/components/RegionCascader.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -37,6 +38,8 @@ interface AddressData {
     district?: string;
     village?: string;
     postal_code?: string;
+    latitude?: number | null;
+    longitude?: number | null;
 }
 
 defineProps<{
@@ -64,6 +67,8 @@ const formProvince = ref('');
 const formCity = ref('');
 const formDistrict = ref('');
 const formVillage = ref('');
+const formLat = ref<number | null>(null);
+const formLng = ref<number | null>(null);
 
 function openCreate() {
     editing.value = null;
@@ -71,6 +76,8 @@ function openCreate() {
     formCity.value = '';
     formDistrict.value = '';
     formVillage.value = '';
+    formLat.value = null;
+    formLng.value = null;
     formOpen.value = true;
 }
 
@@ -80,6 +87,8 @@ function openEdit(address: AddressData) {
     formCity.value = address.city ?? '';
     formDistrict.value = address.district ?? '';
     formVillage.value = address.village ?? '';
+    formLat.value = address.latitude ?? null;
+    formLng.value = address.longitude ?? null;
     formOpen.value = true;
 }
 </script>
@@ -314,6 +323,25 @@ function openEdit(address: AddressData) {
                             maxlength="20"
                         />
                         <InputError :message="errors.postal_code" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label>Titik Lokasi di Peta</Label>
+                        <MapPicker
+                            v-model:latitude="formLat"
+                            v-model:longitude="formLng"
+                        />
+                        <input
+                            type="hidden"
+                            name="latitude"
+                            :value="formLat ?? ''"
+                        />
+                        <input
+                            type="hidden"
+                            name="longitude"
+                            :value="formLng ?? ''"
+                        />
+                        <InputError :message="errors.latitude" />
                     </div>
 
                     <DialogFooter class="gap-2">

@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class StoreService
 {
     /**
-     * @param  array{name: string, description: ?string}  $data
+     * @param  array{name: string, description: ?string, origin_latitude?: ?float, origin_longitude?: ?float}  $data
      */
     public function createForUser(User $user, array $data): Store
     {
@@ -18,12 +18,14 @@ class StoreService
             'name' => $data['name'],
             'slug' => $this->uniqueSlug($data['name']),
             'description' => $data['description'] ?? null,
+            'origin_latitude' => $data['origin_latitude'] ?? null,
+            'origin_longitude' => $data['origin_longitude'] ?? null,
             'is_active' => true,
         ]);
     }
 
     /**
-     * @param  array{name: string, description: ?string}  $data
+     * @param  array{name: string, description: ?string, origin_latitude?: ?float, origin_longitude?: ?float}  $data
      */
     public function update(Store $store, array $data): Store
     {
@@ -33,6 +35,8 @@ class StoreService
                 ? $store->slug
                 : $this->uniqueSlug($data['name'], $store->id),
             'description' => $data['description'] ?? null,
+            'origin_latitude' => $data['origin_latitude'] ?? $store->origin_latitude,
+            'origin_longitude' => $data['origin_longitude'] ?? $store->origin_longitude,
         ]);
 
         return $store->refresh();
