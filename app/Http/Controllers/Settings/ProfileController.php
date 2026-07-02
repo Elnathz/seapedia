@@ -98,7 +98,6 @@ class ProfileController extends Controller
 
         $hasActiveOrders = Order::where('buyer_id', $user->id)
             ->whereIn('status', [
-                OrderStatus::BelumDibayar,
                 OrderStatus::SedangDikemas,
                 OrderStatus::MenungguPengirim,
                 OrderStatus::SedangDikirim,

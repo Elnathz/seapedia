@@ -53,7 +53,6 @@ class RoleDeleteController extends Controller
         if ($roleName === 'buyer') {
             $hasActiveOrders = Order::where('buyer_id', $user->id)
                 ->whereIn('status', [
-                    OrderStatus::BelumDibayar,
                     OrderStatus::SedangDikemas,
                     OrderStatus::MenungguPengirim,
                     OrderStatus::SedangDikirim,
