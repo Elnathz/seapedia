@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\DeliveryMethod;
 use App\Enums\WalletTransactionType;
 use App\Models\Address;
+use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -51,13 +52,12 @@ class CheckoutService
         $taxableBase = $subtotal - $discount['discount_total'];
         $taxAmount = (int) round($taxableBase * 0.12);
 
-        // Delivery fee = per-method base (§5.4) + region-tier surcharge based on
-        // the store origin vs the selected address. Passing the same address to
+        // Delivery fee = base(method) + Haversine distance (store origin → this
+        // address) + order weight (§5.4). Passing the same address and weight to
         // commit() guarantees the previewed fee equals the amount charged.
-        $baseFee = $deliveryMethod->fee();
-        $regionTier = $this->deliveryFees->tier($cart->store, $address);
-        $surcharge = $regionTier->surcharge();
-        $deliveryFee = $baseFee + $surcharge;
+        $weightGrams = $this->cartWeightGrams($cart);
+        $fee = $this->deliveryFees->breakdown($deliveryMethod, $cart->store, $address, $weightGrams);
+        $deliveryFee = $fee['total'];
         $grandTotal = $taxableBase + $taxAmount + $deliveryFee;
 
         return [
@@ -69,15 +69,28 @@ class CheckoutService
             'voucher_error' => $discount['voucher_error'],
             'taxable_base' => $taxableBase,
             'tax_amount' => $taxAmount,
-            'delivery_base_fee' => $baseFee,
-            'delivery_surcharge' => $surcharge,
-            'region_tier' => $regionTier->value,
-            'region_tier_label' => $regionTier->label(),
+            'delivery_base_fee' => $fee['base_fee'],
+            'delivery_distance_km' => $fee['distance_km'],
+            'delivery_distance_fee' => $fee['distance_fee'],
+            'delivery_weight_grams' => $fee['weight_grams'],
+            'delivery_weight_fee' => $fee['weight_fee'],
             'delivery_fee' => $deliveryFee,
             'grand_total' => $grandTotal,
             'balance' => $user->wallet->balance,
             'sufficient_balance' => $user->wallet->balance >= $grandTotal,
         ];
+    }
+
+    /**
+     * Total shippable weight (grams) of the cart: per line, the variant weight
+     * when set, else the product weight, times quantity. A null weight counts
+     * as 0 so incomplete data never blocks checkout.
+     */
+    private function cartWeightGrams(Cart $cart): int
+    {
+        return (int) $cart->items->sum(
+            fn ($item) => (($item->variant?->weight ?? $item->product?->weight ?? 0)) * $item->quantity,
+        );
     }
 
     /**
@@ -147,6 +160,7 @@ class CheckoutService
             }
 
             $subtotal = 0;
+            $weightGrams = 0;
             $orderItemsData = [];
 
             foreach ($cart->items as $item) {
@@ -155,6 +169,7 @@ class CheckoutService
                 $price = $variant ? $variant->price : $product->price;
                 $lineSubtotal = $price * $item->quantity;
                 $subtotal += $lineSubtotal;
+                $weightGrams += ($variant?->weight ?? $product->weight ?? 0) * $item->quantity;
 
                 $orderItemsData[] = [
                     'product_id' => $product->id,
@@ -183,9 +198,9 @@ class CheckoutService
             $discountTotal = $discount['discount_total'];
             $taxableBase = $subtotal - $discountTotal;
             $taxAmount = (int) round($taxableBase * 0.12);
-            // Same fee formula as preview(): base + region-tier surcharge from the
-            // store origin vs this buyer's address, so the charge matches the quote.
-            $deliveryFee = $this->deliveryFees->fee($deliveryMethod, $cart->store, $address);
+            // Same fee formula as preview(): base + Haversine distance (store
+            // origin → this address) + order weight, so the charge matches the quote.
+            $deliveryFee = $this->deliveryFees->fee($deliveryMethod, $cart->store, $address, $weightGrams);
             $grandTotal = $taxableBase + $taxAmount + $deliveryFee;
 
             foreach ($lockedProducts as $cartItemId => $product) {

@@ -19,9 +19,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $city
  * @property string|null $district
  * @property string|null $village
+ * @property float|null $origin_latitude
+ * @property float|null $origin_longitude
  * @property bool $is_active
  */
-#[Fillable(['user_id', 'name', 'slug', 'description', 'province', 'city', 'district', 'village', 'is_active'])]
+#[Fillable(['user_id', 'name', 'slug', 'description', 'province', 'city', 'district', 'village', 'origin_latitude', 'origin_longitude', 'is_active'])]
 class Store extends Model
 {
     /** @use HasFactory<StoreFactory> */
@@ -30,6 +32,8 @@ class Store extends Model
     protected function casts(): array
     {
         return [
+            'origin_latitude' => 'float',
+            'origin_longitude' => 'float',
             'is_active' => 'boolean',
         ];
     }

@@ -33,7 +33,7 @@ class StoreFactory extends Factory
     }
 
     /**
-     * Set the store's origin region (drives the region-tier delivery surcharge).
+     * Set the store's origin region text (shown in the store profile).
      */
     public function origin(string $province, ?string $city = null, ?string $district = null, ?string $village = null): static
     {
@@ -42,6 +42,17 @@ class StoreFactory extends Factory
             'city' => $city,
             'district' => $district,
             'village' => $village,
+        ]);
+    }
+
+    /**
+     * Set the store's origin coordinates (drives the distance delivery fee).
+     */
+    public function originAt(float $latitude, float $longitude): static
+    {
+        return $this->state(fn () => [
+            'origin_latitude' => $latitude,
+            'origin_longitude' => $longitude,
         ]);
     }
 }

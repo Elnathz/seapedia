@@ -14,6 +14,7 @@ class ProductVariant extends Model
         'name',
         'price',
         'stock',
+        'weight',
         'is_active',
     ];
 
@@ -22,6 +23,7 @@ class ProductVariant extends Model
         return [
             'price' => 'integer',
             'stock' => 'integer',
+            'weight' => 'integer',
             'is_active' => 'boolean',
         ];
     }

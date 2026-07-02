@@ -63,9 +63,10 @@ interface Preview {
     taxable_base: number;
     tax_amount: number;
     delivery_base_fee: number;
-    delivery_surcharge: number;
-    region_tier: string;
-    region_tier_label: string;
+    delivery_distance_km: number;
+    delivery_distance_fee: number;
+    delivery_weight_grams: number;
+    delivery_weight_fee: number;
     delivery_fee: number;
     grand_total: number;
     balance: number;
@@ -506,16 +507,32 @@ function confirmCheckout() {
                             </dd>
                         </div>
                         <div
-                            v-if="preview.delivery_surcharge > 0"
+                            v-if="preview.delivery_distance_fee > 0"
                             class="flex justify-between text-xs text-muted-foreground"
                         >
                             <dt class="pl-3">
-                                Termasuk biaya wilayah ({{
-                                    preview.region_tier_label
-                                }})
+                                Jarak
+                                {{ preview.delivery_distance_km.toFixed(1) }} km
                             </dt>
                             <dd class="tabular-nums">
-                                +{{ formatIDR(preview.delivery_surcharge) }}
+                                +{{ formatIDR(preview.delivery_distance_fee) }}
+                            </dd>
+                        </div>
+                        <div
+                            v-if="preview.delivery_weight_fee > 0"
+                            class="flex justify-between text-xs text-muted-foreground"
+                        >
+                            <dt class="pl-3">
+                                Berat
+                                {{
+                                    (preview.delivery_weight_grams / 1000).toFixed(
+                                        1,
+                                    )
+                                }}
+                                kg
+                            </dt>
+                            <dd class="tabular-nums">
+                                +{{ formatIDR(preview.delivery_weight_fee) }}
                             </dd>
                         </div>
                         <div class="flex justify-between">

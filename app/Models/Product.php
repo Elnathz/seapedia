@@ -17,10 +17,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $description
  * @property int $price
  * @property int $stock
+ * @property int|null $weight
  * @property string|null $image_path
  * @property bool $is_active
  */
-#[Fillable(['store_id', 'category_id', 'name', 'slug', 'description', 'price', 'stock', 'image_path', 'is_active'])]
+#[Fillable(['store_id', 'category_id', 'name', 'slug', 'description', 'price', 'stock', 'weight', 'image_path', 'is_active'])]
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
@@ -31,6 +32,7 @@ class Product extends Model
         return [
             'price' => 'integer',
             'stock' => 'integer',
+            'weight' => 'integer',
             'is_active' => 'boolean',
         ];
     }

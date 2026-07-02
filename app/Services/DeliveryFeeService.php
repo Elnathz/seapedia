@@ -3,72 +3,114 @@
 namespace App\Services;
 
 use App\Enums\DeliveryMethod;
-use App\Enums\RegionTier;
 use App\Models\Address;
 use App\Models\Store;
 
 /**
- * Delivery fee = per-method base fee (§5.4) + region-tier surcharge. The
- * surcharge reflects how far the buyer's shipping address is from the store's
- * origin, using stored region strings (no coordinates). Base fee still differs
- * per method (spec line 278). The whole delivery fee — base and surcharge — is
- * never taxed (§5.2). Framework-agnostic; reused by web + /api/v1 checkout.
+ * Distance- and weight-based delivery fee (§5.4). The fee is:
+ *
+ *   fee = base(method) + billable_km × rate_per_km(method) + weight_fee
+ *
+ * where the distance is the Haversine great-circle distance between the store
+ * origin and the buyer's shipping address (both picked on a map, stored as
+ * lat/lng — no runtime geocoding), billed up to a cap, and the weight fee is a
+ * per-kilogram surcharge over the first free kilogram. The per-method base and
+ * per-km rate keep every method distinct (spec line 278). Every input is known
+ * at checkout, so preview() and commit() compute the same number — the quote
+ * equals the charge. Framework-agnostic; reused by web + /api/v1.
  */
 class DeliveryFeeService
 {
+    /** Distance is billed up to this many km; beyond it the per-km part is flat. */
+    private const KM_CAP = 80;
+
+    /** The first kilogram ships free; each started kg beyond it costs a step. */
+    private const FREE_WEIGHT_GRAMS = 1_000;
+
+    private const WEIGHT_STEP_GRAMS = 1_000;
+
+    private const WEIGHT_STEP_FEE = 2_000;
+
+    private const EARTH_RADIUS_KM = 6371.0;
+
     /**
-     * Total delivery fee for a method given the store origin and destination.
+     * Total delivery fee for a method, origin, destination and order weight.
      */
-    public function fee(DeliveryMethod $method, ?Store $store, ?Address $address): int
+    public function fee(DeliveryMethod $method, ?Store $store, ?Address $address, int $weightGrams = 0): int
     {
-        return $method->fee() + $this->tier($store, $address)->surcharge();
+        return $this->breakdown($method, $store, $address, $weightGrams)['total'];
     }
 
     /**
-     * Just the surcharge component (0 when local or origin unknown).
+     * The itemised fee so the checkout summary can show base / distance / weight.
+     *
+     * @return array{base_fee:int, distance_km:float, billable_km:int, distance_fee:int, weight_grams:int, weight_fee:int, total:int}
      */
-    public function surcharge(?Store $store, ?Address $address): int
+    public function breakdown(DeliveryMethod $method, ?Store $store, ?Address $address, int $weightGrams = 0): array
     {
-        return $this->tier($store, $address)->surcharge();
+        $km = $this->distanceKm($store, $address);
+        $billableKm = $this->billableKm($km);
+        $baseFee = $method->fee();
+        $distanceFee = $billableKm * $method->ratePerKm();
+        $weightFee = $this->weightFee($weightGrams);
+
+        return [
+            'base_fee' => $baseFee,
+            'distance_km' => round($km, 1),
+            'billable_km' => $billableKm,
+            'distance_fee' => $distanceFee,
+            'weight_grams' => $weightGrams,
+            'weight_fee' => $weightFee,
+            'total' => $baseFee + $distanceFee + $weightFee,
+        ];
     }
 
     /**
-     * Closeness tier by region hierarchy. When the store has no recorded
-     * origin province, closeness is unknown and we fall back to SameVillage
-     * (0 surcharge) rather than surprise-charging the buyer for missing data.
+     * Great-circle km between store origin and address. 0 when either point is
+     * missing a coordinate — never surprise-charge on incomplete geo data.
      */
-    public function tier(?Store $store, ?Address $address): RegionTier
+    public function distanceKm(?Store $store, ?Address $address): float
     {
-        if (! $store || ! $address || $this->norm($store->province) === null) {
-            return RegionTier::SameVillage;
+        if (! $store || ! $address) {
+            return 0.0;
         }
 
-        $sameProvince = $this->matches($store->province, $address->province);
-        $sameCity = $sameProvince && $this->matches($store->city, $address->city);
-        $sameDistrict = $sameCity && $this->matches($store->district, $address->district);
-        $sameVillage = $sameDistrict && $this->matches($store->village, $address->village);
+        $lat1 = $store->origin_latitude;
+        $lng1 = $store->origin_longitude;
+        $lat2 = $address->latitude;
+        $lng2 = $address->longitude;
 
-        return match (true) {
-            $sameVillage => RegionTier::SameVillage,
-            $sameDistrict => RegionTier::SameDistrict,
-            $sameCity => RegionTier::SameCity,
-            $sameProvince => RegionTier::SameProvince,
-            default => RegionTier::Interregional,
-        };
+        if ($lat1 === null || $lng1 === null || $lat2 === null || $lng2 === null) {
+            return 0.0;
+        }
+
+        return $this->haversine((float) $lat1, (float) $lng1, (float) $lat2, (float) $lng2);
     }
 
-    private function matches(?string $a, ?string $b): bool
+    private function billableKm(float $km): int
     {
-        $a = $this->norm($a);
-        $b = $this->norm($b);
-
-        return $a !== null && $a === $b;
+        return min((int) ceil($km), self::KM_CAP);
     }
 
-    private function norm(?string $value): ?string
+    private function weightFee(int $grams): int
     {
-        $value = trim((string) $value);
+        if ($grams <= self::FREE_WEIGHT_GRAMS) {
+            return 0;
+        }
 
-        return $value === '' ? null : mb_strtolower($value);
+        $extraKg = (int) ceil(($grams - self::FREE_WEIGHT_GRAMS) / self::WEIGHT_STEP_GRAMS);
+
+        return $extraKg * self::WEIGHT_STEP_FEE;
+    }
+
+    private function haversine(float $lat1, float $lng1, float $lat2, float $lng2): float
+    {
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+
+        $a = sin($dLat / 2) ** 2
+            + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
+
+        return self::EARTH_RADIUS_KM * 2 * asin(min(1.0, sqrt($a)));
     }
 }
