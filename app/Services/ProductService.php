@@ -18,9 +18,10 @@ class ProductService
         return DB::transaction(function () use ($store, $data) {
             $hasVariants = $data['has_variants'] ?? false;
 
-            // Calculate base price and total stock from variants if has_variants
+            // Calculate base price, stock and weight from variants if has_variants
             $basePrice = $hasVariants ? (int) min(array_column($data['variants'], 'price')) : $data['price'];
             $totalStock = $hasVariants ? (int) array_sum(array_column($data['variants'], 'stock')) : $data['stock'];
+            $baseWeight = $hasVariants ? (int) min(array_column($data['variants'], 'weight')) : ($data['weight'] ?? null);
 
             $product = Product::create([
                 'store_id' => $store->id,
@@ -30,6 +31,7 @@ class ProductService
                 'description' => $data['description'] ?? null,
                 'price' => $basePrice,
                 'stock' => $totalStock,
+                'weight' => $baseWeight,
                 'image_path' => null, // Will update after images are processed
                 'is_active' => true,
             ]);
@@ -43,6 +45,7 @@ class ProductService
                         'name' => $variantData['name'],
                         'price' => $variantData['price'],
                         'stock' => $variantData['stock'],
+                        'weight' => $variantData['weight'],
                         'is_active' => true,
                     ]);
                 }
@@ -88,6 +91,7 @@ class ProductService
 
             $basePrice = $hasVariants ? (int) min(array_column($data['variants'], 'price')) : $data['price'];
             $totalStock = $hasVariants ? (int) array_sum(array_column($data['variants'], 'stock')) : $data['stock'];
+            $baseWeight = $hasVariants ? (int) min(array_column($data['variants'], 'weight')) : ($data['weight'] ?? null);
 
             $product->update([
                 'category_id' => $data['category_id'],
@@ -98,6 +102,7 @@ class ProductService
                 'description' => $data['description'] ?? null,
                 'price' => $basePrice,
                 'stock' => $totalStock,
+                'weight' => $baseWeight,
             ]);
 
             // Handle deleted images
@@ -123,6 +128,7 @@ class ProductService
                                 'name' => $variantData['name'],
                                 'price' => $variantData['price'],
                                 'stock' => $variantData['stock'],
+                                'weight' => $variantData['weight'],
                             ]);
                             $existingVariantIds[] = $variant->id;
                             $createdVariants[$vIndex] = $variant;
@@ -134,6 +140,7 @@ class ProductService
                             'name' => $variantData['name'],
                             'price' => $variantData['price'],
                             'stock' => $variantData['stock'],
+                            'weight' => $variantData['weight'],
                             'is_active' => true,
                         ]);
                         $existingVariantIds[] = $variant->id;

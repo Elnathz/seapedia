@@ -23,6 +23,7 @@ class StoreProductRequest extends FormRequest
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'price' => ['required_without:has_variants', 'nullable', 'integer', 'min:100', 'max:100000000'],
             'stock' => ['required_without:has_variants', 'nullable', 'integer', 'min:0', 'max:1000000'],
+            'weight' => ['required_without:has_variants', 'nullable', 'integer', 'min:1', 'max:500000'],
             'images' => ['nullable', 'array', 'max:5'],
             'images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'has_variants' => ['required', 'boolean'],
@@ -30,6 +31,7 @@ class StoreProductRequest extends FormRequest
             'variants.*.name' => ['required_if:has_variants,true', 'string', 'max:150'],
             'variants.*.price' => ['required_if:has_variants,true', 'integer', 'min:100', 'max:100000000'],
             'variants.*.stock' => ['required_if:has_variants,true', 'integer', 'min:0', 'max:1000000'],
+            'variants.*.weight' => ['required_if:has_variants,true', 'integer', 'min:1', 'max:500000'],
             'variants.*.image_index' => ['nullable', 'integer', 'min:0', 'max:4'],
         ];
     }
@@ -43,9 +45,13 @@ class StoreProductRequest extends FormRequest
             'category_id.required' => 'Pilih kategori produk.',
             'category_id.exists' => 'Kategori yang dipilih tidak valid.',
             'price.min' => 'Harga minimal Rp100.',
+            'weight.required_without' => 'Berat produk (gram) wajib diisi.',
+            'weight.min' => 'Berat minimal 1 gram.',
             'images.*.uploaded' => 'Gambar gagal diunggah. Pastikan ukuran file tidak melebihi batas server (Maks 2MB).',
             'images.*.max' => 'Ukuran gambar maksimal 2MB.',
             'variants.*.price.min' => 'Harga varian minimal Rp100.',
+            'variants.*.weight.required_if' => 'Berat tiap varian (gram) wajib diisi.',
+            'variants.*.weight.min' => 'Berat varian minimal 1 gram.',
         ];
     }
 

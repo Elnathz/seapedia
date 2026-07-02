@@ -27,8 +27,15 @@ interface ProductData {
     category_id: number;
     price: number;
     stock: number;
+    weight: number | null;
     image_path: string | null;
-    variants?: { id: number; name: string; price: number; stock: number }[];
+    variants?: {
+        id: number;
+        name: string;
+        price: number;
+        stock: number;
+        weight: number;
+    }[];
     images?: { id: number; image_path: string }[];
 }
 
@@ -96,11 +103,11 @@ const hasVariants = ref(
 const variants = ref(
     props.product?.variants && props.product.variants.length > 0
         ? props.product.variants
-        : [{ name: '', price: 0, stock: 0 }],
+        : [{ name: '', price: 0, stock: 0, weight: 0 }],
 );
 
 function addVariant() {
-    variants.value.push({ name: '', price: 0, stock: 0 });
+    variants.value.push({ name: '', price: 0, stock: 0, weight: 0 });
 }
 
 function removeVariant(index: number) {
@@ -288,6 +295,23 @@ function handleImageSelect(e: Event) {
                     />
                     <InputError :message="errors.stock" />
                 </div>
+                <div class="col-span-2 grid gap-2">
+                    <Label for="weight">Berat (gram) <RequiredMark /></Label>
+                    <Input
+                        id="weight"
+                        name="weight"
+                        type="number"
+                        min="1"
+                        step="1"
+                        :default-value="product?.weight ?? undefined"
+                        :required="!hasVariants"
+                        placeholder="mis. 500"
+                    />
+                    <p class="text-xs text-muted-foreground">
+                        Dipakai untuk menghitung ongkir berdasarkan berat.
+                    </p>
+                    <InputError :message="errors.weight" />
+                </div>
             </div>
 
             <div v-else class="space-y-4 pt-2">
@@ -320,7 +344,7 @@ function handleImageSelect(e: Event) {
                             required
                         />
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-3 gap-3">
                         <div class="grid gap-2">
                             <Label>Harga</Label>
                             <Input
@@ -336,6 +360,16 @@ function handleImageSelect(e: Event) {
                                 :name="`variants[${idx}][stock]`"
                                 v-model="variant.stock"
                                 type="number"
+                                required
+                            />
+                        </div>
+                        <div class="grid gap-2">
+                            <Label>Berat (g)</Label>
+                            <Input
+                                :name="`variants[${idx}][weight]`"
+                                v-model="variant.weight"
+                                type="number"
+                                min="1"
                                 required
                             />
                         </div>
