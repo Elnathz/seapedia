@@ -48,6 +48,16 @@ const auth = useAuthStore();
 const { t } = useI18n();
 const { categories } = useCategories();
 const showAllCategoriesModal = ref(false);
+// Controlled so tapping "Semua Kategori" can close the mobile category
+// Sheet before the all-categories Dialog opens — otherwise the Sheet
+// overlay stacks on top of the Dialog and covers it (mobile z-index bug).
+const mobileCategoriesOpen = ref(false);
+
+function openAllCategories() {
+    mobileCategoriesOpen.value = false;
+    activeMobileParent.value = null;
+    showAllCategoriesModal.value = true;
+}
 
 const page = usePage();
 const isLandingPage = computed(() => page.component === 'Welcome');
@@ -201,7 +211,7 @@ start = currentTime;
                 </Sheet>
 
                 <!-- Mobile Category Menu (Sheet) -->
-                <Sheet v-if="categories.length && !isLandingPage">
+                <Sheet v-if="categories.length && !isLandingPage" v-model:open="mobileCategoriesOpen">
                     <SheetTrigger as-child>
                         <Button variant="ghost" size="icon" class="lg:hidden shrink-0">
                             <Menu class="size-5" />
@@ -222,8 +232,8 @@ start = currentTime;
                                     <span>{{ root.name }}</span>
                                     <ChevronRight class="size-4 text-muted-foreground" />
                                 </button>
-                                <button 
-                                    @click="showAllCategoriesModal = true" 
+                                <button
+                                    @click="openAllCategories"
                                     class="w-full flex items-center px-5 py-3.5 border-b border-border hover:bg-muted/50 transition-colors text-left text-sm font-medium text-primary"
                                 >
                                     {{ t('nav.allCategories') }}
