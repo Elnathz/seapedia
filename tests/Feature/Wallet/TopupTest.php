@@ -59,6 +59,37 @@ class TopupTest extends TestCase
         $this->assertSame(0, $buyer->wallet->refresh()->balance);
     }
 
+    public function test_amount_above_the_maximum_is_rejected(): void
+    {
+        $buyer = $this->buyer();
+
+        $response = $this->actingAsBuyer($buyer)->post(route('buyer.wallet.topup'), [
+            'amount' => 100_000_001,
+        ]);
+
+        $response->assertInvalid(['amount']);
+        $this->assertSame(0, $buyer->wallet->refresh()->balance);
+    }
+
+    public function test_amounts_at_the_min_and_max_bounds_are_accepted(): void
+    {
+        foreach ([5_000, 100_000_000] as $amount) {
+            $buyer = $this->buyer();
+
+            $response = $this->actingAsBuyer($buyer)->post(route('buyer.wallet.topup'), [
+                'amount' => $amount,
+            ]);
+
+            $response->assertValid();
+            $this->assertNotNull(
+                Topup::query()
+                    ->where('wallet_id', $buyer->wallet->id)
+                    ->where('amount', $amount)
+                    ->first(),
+            );
+        }
+    }
+
     public function test_the_processing_page_resolves_to_paid_once_the_delay_elapses_and_credits_exactly_once(): void
     {
         config(['payment.topup.processing_seconds' => 0]);

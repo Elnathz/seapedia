@@ -10,9 +10,13 @@ return [
     'gateway' => env('PAYMENT_GATEWAY', 'fake'),
 
     'topup' => [
-        // No minimum is locked by the TDD; 10,000 IDR is the simplest
-        // reasonable floor, documented in the README (§ when unsure).
-        'min_amount' => 10_000,
+        // No bounds are locked by the spec (top-up is a dummy flow). 5,000 IDR
+        // floor and 100,000,000 IDR ceiling per transaction, documented in the
+        // README (§ when unsure).
+        'min_amount' => 5_000,
+
+        // Ceiling for a single top-up — guards against an absurd one-shot credit.
+        'max_amount' => 100_000_000,
 
         // How long FakeGateway::checkStatus() keeps a top-up "processing"
         // before resolving it to paid — long enough to read as a real

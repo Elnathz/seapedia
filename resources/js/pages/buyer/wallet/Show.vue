@@ -64,6 +64,7 @@ const props = defineProps<{
     wallet: { balance: number };
     transactions: PaginatedTransactions;
     minTopupAmount: number;
+    maxTopupAmount: number;
 }>();
 
 defineOptions({
@@ -147,9 +148,14 @@ function goToPage(page: number) {
                             type="number"
                             inputmode="numeric"
                             :min="minTopupAmount"
+                            :max="maxTopupAmount"
                             step="1000"
                             :placeholder="t('wallet.amountPlaceholder')"
                         />
+                        <p class="text-xs text-muted-foreground tabular-nums">
+                            Min {{ formatIDR(minTopupAmount) }} · Maks
+                            {{ formatIDR(maxTopupAmount) }}
+                        </p>
                         <InputError :message="errors.amount" />
 
                         <div class="flex flex-wrap gap-2">

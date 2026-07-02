@@ -20,8 +20,8 @@ class StoreTopupRequest extends FormRequest
             'amount' => [
                 'required',
                 'integer',
-                'min:'.config('payment.topup.min_amount', 10000),
-                'max:10000000', // Rp 10.000.000 per transaction (§balance-cap)
+                'min:'.config('payment.topup.min_amount', 5000),
+                'max:'.config('payment.topup.max_amount', 100000000),
             ],
         ];
     }
@@ -32,8 +32,8 @@ class StoreTopupRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'amount.min' => 'Minimal top up Rp'.number_format(config('payment.topup.min_amount', 10000), 0, ',', '.').'.',
-            'amount.max' => 'Maksimal top up per transaksi adalah Rp10.000.000.',
+            'amount.min' => 'Minimal top up Rp'.number_format(config('payment.topup.min_amount', 5000), 0, ',', '.').'.',
+            'amount.max' => 'Maksimal top up per transaksi adalah Rp'.number_format(config('payment.topup.max_amount', 100000000), 0, ',', '.').'.',
         ];
     }
 }

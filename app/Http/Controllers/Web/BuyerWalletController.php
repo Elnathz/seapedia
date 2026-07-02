@@ -23,6 +23,7 @@ class BuyerWalletController extends Controller
             'wallet' => ['balance' => $wallet->balance],
             'transactions' => $wallet->transactions()->latest('id')->paginate(20),
             'minTopupAmount' => config('payment.topup.min_amount'),
+            'maxTopupAmount' => config('payment.topup.max_amount'),
         ]);
     }
 

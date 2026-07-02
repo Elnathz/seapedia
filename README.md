@@ -74,7 +74,7 @@ All seeded accounts have the password: `password`.
 
 - **Single-Store Checkout**: Buyers can only check out items from a single store at a time per cart. Adding an item from a different store will prompt the buyer to clear their current cart.
 - **PPN 12% Calculation**: Tax is applied dynamically based on the subtotal *after* discounts have been applied. Delivery fees are exempt from PPN.
-- **Unified Wallet System**: Buyers, sellers, and drivers share a unified wallet system. All transactions are securely recorded as immutable ledger entries within a database transaction.
+- **Unified Wallet System**: Buyers, sellers, and drivers share a unified wallet system. All transactions are securely recorded as immutable ledger entries within a database transaction. A single top-up is bounded to **Rp5.000–Rp100.000.000** (the spec leaves top-up amounts open; these are our documented limits).
 - **Voucher & Promo Constraints**: Vouchers and Promos can be applied simultaneously. They feature minimum spend limits, maximum discount caps, and usage limits. Expired or exhausted codes are instantly rejected.
 - **Overdue Refund / Time Machine**: Admins can advance the system time to test SLA due dates. Overdue orders that have not been delivered are automatically refunded to the buyer's wallet without duplicating refunds or reversing seller income (as seller income is held in escrow until delivery is complete).
 

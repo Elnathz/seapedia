@@ -5,7 +5,7 @@
 - [x] A2 fix(catalog): close sheet before category modal — `1fe2331`
 
 ## F — Wallet
-- [ ] F1 feat(wallet): bound top-up between 5rb and 100jt
+- [x] F1 feat(wallet): bound top-up between 5rb and 100jt
 
 ## B — Cart & Checkout
 - [ ] B0 feat(checkout): add region-tier delivery surcharge
