@@ -31,4 +31,17 @@ class StoreFactory extends Factory
             'is_active' => true,
         ];
     }
+
+    /**
+     * Set the store's origin region (drives the region-tier delivery surcharge).
+     */
+    public function origin(string $province, ?string $city = null, ?string $district = null, ?string $village = null): static
+    {
+        return $this->state(fn () => [
+            'province' => $province,
+            'city' => $city,
+            'district' => $district,
+            'village' => $village,
+        ]);
+    }
 }

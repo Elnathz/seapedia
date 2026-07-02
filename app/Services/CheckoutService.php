@@ -19,6 +19,7 @@ class CheckoutService
         private readonly WalletService $wallets,
         private readonly OrderService $orders,
         private readonly DiscountService $discounts,
+        private readonly DeliveryFeeService $deliveryFees,
         private readonly ClockService $clock,
     ) {}
 
@@ -33,6 +34,7 @@ class CheckoutService
         DeliveryMethod $deliveryMethod,
         ?string $promoCode = null,
         ?string $voucherCode = null,
+        ?Address $address = null,
     ): array {
         $cart = $this->carts->summary($user);
 
@@ -48,7 +50,14 @@ class CheckoutService
 
         $taxableBase = $subtotal - $discount['discount_total'];
         $taxAmount = (int) round($taxableBase * 0.12);
-        $deliveryFee = $deliveryMethod->fee();
+
+        // Delivery fee = per-method base (§5.4) + region-tier surcharge based on
+        // the store origin vs the selected address. Passing the same address to
+        // commit() guarantees the previewed fee equals the amount charged.
+        $baseFee = $deliveryMethod->fee();
+        $regionTier = $this->deliveryFees->tier($cart->store, $address);
+        $surcharge = $regionTier->surcharge();
+        $deliveryFee = $baseFee + $surcharge;
         $grandTotal = $taxableBase + $taxAmount + $deliveryFee;
 
         return [
@@ -60,6 +69,10 @@ class CheckoutService
             'voucher_error' => $discount['voucher_error'],
             'taxable_base' => $taxableBase,
             'tax_amount' => $taxAmount,
+            'delivery_base_fee' => $baseFee,
+            'delivery_surcharge' => $surcharge,
+            'region_tier' => $regionTier->value,
+            'region_tier_label' => $regionTier->label(),
             'delivery_fee' => $deliveryFee,
             'grand_total' => $grandTotal,
             'balance' => $user->wallet->balance,
@@ -170,7 +183,9 @@ class CheckoutService
             $discountTotal = $discount['discount_total'];
             $taxableBase = $subtotal - $discountTotal;
             $taxAmount = (int) round($taxableBase * 0.12);
-            $deliveryFee = $deliveryMethod->fee();
+            // Same fee formula as preview(): base + region-tier surcharge from the
+            // store origin vs this buyer's address, so the charge matches the quote.
+            $deliveryFee = $this->deliveryFees->fee($deliveryMethod, $cart->store, $address);
             $grandTotal = $taxableBase + $taxAmount + $deliveryFee;
 
             foreach ($lockedProducts as $cartItemId => $product) {

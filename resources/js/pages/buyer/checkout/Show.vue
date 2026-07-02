@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ShoppingBag, X } from '@lucide/vue';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import CheckoutController from '@/actions/App/Http/Controllers/Web/CheckoutController';
 import EmptyState from '@/components/EmptyState.vue';
@@ -62,6 +62,10 @@ interface Preview {
     voucher_error: string | null;
     taxable_base: number;
     tax_amount: number;
+    delivery_base_fee: number;
+    delivery_surcharge: number;
+    region_tier: string;
+    region_tier_label: string;
     delivery_fee: number;
     grand_total: number;
     balance: number;
@@ -84,6 +88,7 @@ const props = defineProps<{
     cart: CartData;
     addresses: AddressData[];
     previews: Record<DeliveryMethodKey, Preview>;
+    selectedAddressId: number | null;
 }>();
 
 defineOptions({
@@ -115,8 +120,27 @@ function reloadPreviews(promoCode: string, voucherCode: string) {
     return {
         promo_code: promoCode,
         voucher_code: voucherCode,
+        address_id: addressId.value ?? '',
     };
 }
+
+// The delivery surcharge depends on the ships-to address, so re-preview
+// server-side whenever it changes — keeps the quote equal to what commit
+// charges. Skip the redundant round trip when it already matches the server.
+watch(addressId, (value) => {
+    if (value === props.selectedAddressId) {
+        return;
+    }
+
+    router.get(
+        CheckoutController.show.url(),
+        reloadPreviews(
+            preview.value.promo?.code ?? '',
+            preview.value.voucher?.code ?? '',
+        ),
+        { preserveState: true, preserveScroll: true, only: ['previews', 'selectedAddressId'] },
+    );
+});
 
 function applyPromo() {
     if (!promoInput.value) {
@@ -479,6 +503,19 @@ function confirmCheckout() {
                             </dt>
                             <dd class="tabular-nums">
                                 {{ formatIDR(preview.delivery_fee) }}
+                            </dd>
+                        </div>
+                        <div
+                            v-if="preview.delivery_surcharge > 0"
+                            class="flex justify-between text-xs text-muted-foreground"
+                        >
+                            <dt class="pl-3">
+                                Termasuk biaya wilayah ({{
+                                    preview.region_tier_label
+                                }})
+                            </dt>
+                            <dd class="tabular-nums">
+                                +{{ formatIDR(preview.delivery_surcharge) }}
                             </dd>
                         </div>
                         <div class="flex justify-between">

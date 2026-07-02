@@ -126,7 +126,8 @@ class CartService
     {
         return Cart::query()
             ->with([
-                'store:id,name,slug',
+                // Region columns feed the checkout delivery-fee surcharge (§5.4a).
+                'store:id,name,slug,province,city,district,village',
                 'items.product:id,name,slug,image_path,price,stock,store_id',
                 'items.variant:id,product_id,name,price,stock',
             ])

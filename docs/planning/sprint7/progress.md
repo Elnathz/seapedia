@@ -8,7 +8,7 @@
 - [x] F1 feat(wallet): bound top-up between 5rb and 100jt
 
 ## B — Cart & Checkout
-- [ ] B0 feat(checkout): add region-tier delivery surcharge
+- [x] B0 feat(checkout): add region-tier delivery surcharge — DeliveryFeeService (base + tier surcharge), store origin region, preview==commit, TDD §5.4a, +8 Pest tests
 - [x] B1 fix(cart): stop price overflow and align mobile summary
 - [ ] B2 feat(checkout): make layout responsive with summary rail
 - [ ] B3 feat(checkout): add inline add-address modal

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\CheckoutController::preview
- * @see app/Http/Controllers/Api/CheckoutController.php:38
+ * @see app/Http/Controllers/Api/CheckoutController.php:39
  * @route '/api/v1/buyer/checkout/preview'
  */
 export const preview = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ preview.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\CheckoutController::preview
- * @see app/Http/Controllers/Api/CheckoutController.php:38
+ * @see app/Http/Controllers/Api/CheckoutController.php:39
  * @route '/api/v1/buyer/checkout/preview'
  */
 preview.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ preview.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\CheckoutController::preview
- * @see app/Http/Controllers/Api/CheckoutController.php:38
+ * @see app/Http/Controllers/Api/CheckoutController.php:39
  * @route '/api/v1/buyer/checkout/preview'
  */
 preview.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ preview.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\CheckoutController::preview
- * @see app/Http/Controllers/Api/CheckoutController.php:38
+ * @see app/Http/Controllers/Api/CheckoutController.php:39
  * @route '/api/v1/buyer/checkout/preview'
  */
     const previewForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ preview.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\CheckoutController::preview
- * @see app/Http/Controllers/Api/CheckoutController.php:38
+ * @see app/Http/Controllers/Api/CheckoutController.php:39
  * @route '/api/v1/buyer/checkout/preview'
  */
         previewForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -56,7 +56,7 @@ preview.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     preview.form = previewForm
 /**
 * @see \App\Http\Controllers\Api\CheckoutController::store
- * @see app/Http/Controllers/Api/CheckoutController.php:73
+ * @see app/Http/Controllers/Api/CheckoutController.php:81
  * @route '/api/v1/buyer/checkout'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -71,7 +71,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Api\CheckoutController::store
- * @see app/Http/Controllers/Api/CheckoutController.php:73
+ * @see app/Http/Controllers/Api/CheckoutController.php:81
  * @route '/api/v1/buyer/checkout'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -80,7 +80,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Api\CheckoutController::store
- * @see app/Http/Controllers/Api/CheckoutController.php:73
+ * @see app/Http/Controllers/Api/CheckoutController.php:81
  * @route '/api/v1/buyer/checkout'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -90,7 +90,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Api\CheckoutController::store
- * @see app/Http/Controllers/Api/CheckoutController.php:73
+ * @see app/Http/Controllers/Api/CheckoutController.php:81
  * @route '/api/v1/buyer/checkout'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -100,7 +100,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Api\CheckoutController::store
- * @see app/Http/Controllers/Api/CheckoutController.php:73
+ * @see app/Http/Controllers/Api/CheckoutController.php:81
  * @route '/api/v1/buyer/checkout'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

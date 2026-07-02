@@ -22,6 +22,7 @@ class PreviewCheckoutRequest extends FormRequest
             'delivery_method' => ['required', new Enum(DeliveryMethod::class)],
             'promo_code' => ['nullable', 'string', 'max:50'],
             'voucher_code' => ['nullable', 'string', 'max:50'],
+            'address_id' => ['nullable', 'integer'],
         ];
     }
 }

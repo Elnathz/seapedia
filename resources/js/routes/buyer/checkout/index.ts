@@ -79,7 +79,7 @@ show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Web\CheckoutController::store
- * @see app/Http/Controllers/Web/CheckoutController.php:47
+ * @see app/Http/Controllers/Web/CheckoutController.php:59
  * @route '/buyer/checkout'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\CheckoutController::store
- * @see app/Http/Controllers/Web/CheckoutController.php:47
+ * @see app/Http/Controllers/Web/CheckoutController.php:59
  * @route '/buyer/checkout'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\CheckoutController::store
- * @see app/Http/Controllers/Web/CheckoutController.php:47
+ * @see app/Http/Controllers/Web/CheckoutController.php:59
  * @route '/buyer/checkout'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\CheckoutController::store
- * @see app/Http/Controllers/Web/CheckoutController.php:47
+ * @see app/Http/Controllers/Web/CheckoutController.php:59
  * @route '/buyer/checkout'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\CheckoutController::store
- * @see app/Http/Controllers/Web/CheckoutController.php:47
+ * @see app/Http/Controllers/Web/CheckoutController.php:59
  * @route '/buyer/checkout'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

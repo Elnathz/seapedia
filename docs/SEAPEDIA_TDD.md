@@ -224,7 +224,7 @@ subtotal        = Σ(item.price_snapshot × item.quantity)
 discount_total  = promo_discount + voucher_discount   (capped: ≤ subtotal)
 taxable_base    = subtotal − discount_total
 tax_amount      = round(taxable_base × 0.12)
-delivery_fee    = fee(delivery_method)                (see 5.4)
+delivery_fee    = base_fee(delivery_method) + region_surcharge(origin, dest)   (see 5.4)
 grand_total     = taxable_base + tax_amount + delivery_fee
 ```
 - **PPN base = discounted subtotal** (discount applied *before* tax). Delivery fee is **not** taxed. This is consistent and must be stated in README.
@@ -246,6 +246,24 @@ grand_total     = taxable_base + tax_amount + delivery_fee
 | Regular | 5,000 | 4 ticks |
 
 "Day-tick" = one advance of the simulated clock (see 5.7). SLA is measured from order creation; if the order is not `Pesanan Selesai` by `created_sim_day + SLA`, it is overdue.
+
+The fees above are the **base fee per method** (spec line 278 only requires the fee to *differ* per method, not these exact values). The final `delivery_fee` adds a region-tier surcharge (§5.4a).
+
+### 5.4a Region-tier delivery surcharge (Sprint 7 decision — spec-legal)
+`delivery_fee = base_fee(method) + surcharge(tier)`. The tier is how far the buyer's shipping address is from the store's **origin region** (stored region strings, no coordinates), computed by `DeliveryFeeService` and applied identically in `preview()` and `commit()` so the quote equals the charge.
+
+| Tier (`RegionTier`) | Condition (origin vs destination) | Surcharge (IDR) |
+|---|---|---|
+| `same_village` | province+city+district+village all match | 0 |
+| `same_district` | province+city+district match | 2,000 |
+| `same_city` | province+city match | 5,000 |
+| `same_province` | province matches | 10,000 |
+| `interregional` | province differs | 20,000 |
+
+- Comparison is case-insensitive/trimmed via Eloquent attributes (no raw SQL).
+- **Fallback:** if the store has no recorded origin province, the tier is `same_village` (surcharge 0) — never surprise-charge on missing data. This also keeps stores/tests without an origin at the plain base fee.
+- Surcharge is integer IDR and, like the base fee, is **not taxed** (§5.2). PPN base is unchanged.
+- Driver earning is still 80% of the *total* `delivery_fee` (§5.5); the surcharge flows through normally.
 
 ### 5.5 Driver earning rule (LOCKED)
 - Driver earns **80% of the order's `delivery_fee`** on `Pesanan Selesai`. Platform keeps 20%. Stored on the delivery row as `earning_amount` at completion. Documented in README.
@@ -899,9 +917,12 @@ description: Use when implementing or editing checkout preview, checkout commit,
   discount_total = min(promo + voucher, subtotal)   # both off original subtotal
   taxable_base = subtotal − discount_total
   tax_amount = round(taxable_base × 0.12)            # PPN base = discounted subtotal
-  delivery_fee = {instant:20000, next_day:10000, regular:5000}
+  base_fee = {instant:20000, next_day:10000, regular:5000}
+  delivery_fee = base_fee + region_surcharge         # DeliveryFeeService, see §5.4a
   grand_total = taxable_base + tax_amount + delivery_fee
-- Discount applied BEFORE tax. Delivery fee NOT taxed.
+- Discount applied BEFORE tax. Delivery fee (base + surcharge) NOT taxed.
+- region_surcharge = surcharge(tier(store.origin, buyer.address)); 0 when origin unknown.
+  Compute it the SAME way in preview() and commit() — pass the same address — so the quote equals the charge.
 - Checkout commit (single DB::transaction):
   1. lockForUpdate each product; assert stock ≥ qty (else 422, no negative stock).
   2. lockForUpdate voucher (if any); assert remaining usage; increment used_count.

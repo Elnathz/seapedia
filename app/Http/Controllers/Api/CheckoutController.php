@@ -28,11 +28,12 @@ class CheckoutController extends Controller
                     new OA\Property(property: 'delivery_method', type: 'string', enum: ['pickup', 'delivery']),
                     new OA\Property(property: 'promo_code', type: 'string', nullable: true, maxLength: 32),
                     new OA\Property(property: 'voucher_code', type: 'string', nullable: true, maxLength: 32),
+                    new OA\Property(property: 'address_id', type: 'integer', nullable: true, description: 'Ships-to address; sets the region-tier delivery surcharge'),
                 ],
             ),
         ),
         responses: [
-            new OA\Response(response: 200, description: 'subtotal/discount/tax/delivery_fee/grand_total + balance check'),
+            new OA\Response(response: 200, description: 'subtotal/discount/tax/delivery_fee (base+surcharge)/grand_total + balance check'),
         ],
     )]
     public function preview(PreviewCheckoutRequest $request): JsonResponse
@@ -40,11 +41,18 @@ class CheckoutController extends Controller
         $data = $request->validated();
         $deliveryMethod = DeliveryMethod::from($data['delivery_method']);
 
+        // Scoped to the caller's own addresses, so a foreign id resolves to
+        // null (base fee only) with no leak.
+        $address = isset($data['address_id'])
+            ? $request->user()->addresses()->find($data['address_id'])
+            : null;
+
         return response()->json($this->checkout->preview(
             $request->user(),
             $deliveryMethod,
             $data['promo_code'] ?? null,
             $data['voucher_code'] ?? null,
+            $address,
         ));
     }
 

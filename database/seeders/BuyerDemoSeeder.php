@@ -35,11 +35,17 @@ class BuyerDemoSeeder extends Seeder
     {
         config(['payment.topup.processing_seconds' => 0]);
 
+        // Semarang regions with varied kelurahan so the demo shows a spread of
+        // region-tier surcharges against the seeded store origins (§5.4).
+        $tembalang = ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Sumurboto'];
+        $banyumanik = ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Banyumanik', 'village' => 'Pedalangan'];
+        $bulusan = ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Bulusan'];
+
         // buyer1: full checkout with discount codes.
         $buyer1 = User::query()->where('email', 'buyer1@seapedia.test')->first();
         if ($buyer1) {
             $this->ensureBalance($buyer1, 5_000_000);
-            $address = $this->seedAddressIfMissing($buyer1, 'Buyer One', '081234567890', 'Jl. Kampus No. 1, Semarang');
+            $address = $this->seedAddressIfMissing($buyer1, 'Buyer One', '081234567890', 'Jl. Kampus No. 1, Semarang', $tembalang);
             $this->seedSampleOrder($buyer1, $address);
         }
 
@@ -47,21 +53,21 @@ class BuyerDemoSeeder extends Seeder
         $buyer2 = User::query()->where('email', 'buyer2@seapedia.test')->first();
         if ($buyer2) {
             $this->ensureBalance($buyer2, 300_000);
-            $this->seedAddressIfMissing($buyer2, 'Buyer Two', '082233445566', 'Jl. Kost Biru No. 2, Semarang');
+            $this->seedAddressIfMissing($buyer2, 'Buyer Two', '082233445566', 'Jl. Kost Biru No. 2, Semarang', $banyumanik);
         }
 
         // buyer3: topped up, no orders yet.
         $buyer3 = User::query()->where('email', 'buyer3@seapedia.test')->first();
         if ($buyer3) {
             $this->ensureBalance($buyer3, 200_000);
-            $this->seedAddressIfMissing($buyer3, 'Buyer Three', '083344556677', 'Jl. Asrama UNDIP No. 3, Semarang');
+            $this->seedAddressIfMissing($buyer3, 'Buyer Three', '083344556677', 'Jl. Asrama UNDIP No. 3, Semarang', $bulusan);
         }
 
         // multi1: topped up, has a store but no buyer orders yet.
         $multi = User::query()->where('email', 'multi1@seapedia.test')->first();
         if ($multi) {
             $this->ensureBalance($multi, 300_000);
-            $this->seedAddressIfMissing($multi, 'Multi Role', '089876543210', 'Jl. Mahasiswa No. 2, Semarang');
+            $this->seedAddressIfMissing($multi, 'Multi Role', '089876543210', 'Jl. Mahasiswa No. 2, Semarang', $tembalang);
         }
     }
 
@@ -81,7 +87,10 @@ class BuyerDemoSeeder extends Seeder
         $this->checkout->commit($buyer, $address, DeliveryMethod::Regular, 'PROMO20K', 'HEMAT10');
     }
 
-    private function seedAddressIfMissing(User $user, string $recipientName, string $phone, string $address): Address
+    /**
+     * @param  array{province?: string, city?: string, district?: string, village?: string}  $region
+     */
+    private function seedAddressIfMissing(User $user, string $recipientName, string $phone, string $address, array $region = []): Address
     {
         if ($user->addresses()->exists()) {
             return $user->addresses()->first();
@@ -91,6 +100,7 @@ class BuyerDemoSeeder extends Seeder
             'recipient_name' => $recipientName,
             'phone' => $phone,
             'full_address' => $address,
+            ...$region,
         ]);
     }
 

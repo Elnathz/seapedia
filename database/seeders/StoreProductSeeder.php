@@ -700,8 +700,11 @@ Potongan crop-nya yang trendi menjadikannya pasangan sejati bagi celana high-wai
             return;
         }
 
-        // Skip if store already exists (idempotent on re-run), but reset stock.
+        // Skip if store already exists (idempotent on re-run), but reset stock
+        // and keep the origin region in sync.
         if ($user->store) {
+            $user->store->update($this->originFor($email));
+
             foreach ($products as $data) {
                 $product = $user->store->products()->where('name', $data['name'])->first();
                 if ($product) {
@@ -716,6 +719,8 @@ Potongan crop-nya yang trendi menjadikannya pasangan sejati bagi celana high-wai
             'name' => $storeName,
             'description' => $description,
         ]);
+
+        $store->update($this->originFor($email));
 
         foreach ($products as $data) {
             $data['category_id'] = Category::query()->where('slug', $data['category'])->value('id');
@@ -740,6 +745,28 @@ Potongan crop-nya yang trendi menjadikannya pasangan sejati bagi celana high-wai
                 $product->update(['image_path' => $data['image_path']]);
             }
         }
+    }
+
+    /**
+     * Origin region per seeded seller, spread across tiers so a buyer in
+     * Semarang sees the full range of surcharges (§5.4): seller1 is one
+     * kecamatan away, seller6 same province, the rest interregional.
+     *
+     * @return array{province: ?string, city: ?string, district: ?string, village: ?string}
+     */
+    private function originFor(string $email): array
+    {
+        return match ($email) {
+            'seller1@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Bulusan'],
+            'seller2@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Banyumanik', 'village' => 'Srondol Wetan'],
+            'seller3@seapedia.test' => ['province' => 'DI Yogyakarta', 'city' => 'Kota Yogyakarta', 'district' => 'Gondokusuman', 'village' => 'Terban'],
+            'seller4@seapedia.test' => ['province' => 'DKI Jakarta', 'city' => 'Jakarta Selatan', 'district' => 'Kebayoran Baru', 'village' => 'Melawai'],
+            'seller5@seapedia.test' => ['province' => 'Jawa Barat', 'city' => 'Kota Bandung', 'district' => 'Coblong', 'village' => 'Dago'],
+            'seller6@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kabupaten Semarang', 'district' => 'Ungaran Barat', 'village' => 'Bandarjo'],
+            'seller7@seapedia.test' => ['province' => 'Jawa Timur', 'city' => 'Kota Surabaya', 'district' => 'Gubeng', 'village' => 'Airlangga'],
+            'multi1@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Sumurboto'],
+            default => ['province' => null, 'city' => null, 'district' => null, 'village' => null],
+        };
     }
 
     private function attachImagesToProduct($product, array $imagesData): void
