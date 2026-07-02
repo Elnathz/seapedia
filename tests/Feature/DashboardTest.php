@@ -65,7 +65,7 @@ class DashboardTest extends TestCase
             ->get(route('dashboard'));
 
         $response->assertOk();
-        $response->assertInertia(fn ($page) => $page->where('activeOrders', 2));
+        $response->assertInertia(fn ($page) => $page->where('activeOrdersCount', 2));
     }
 
     public function test_admin_dashboard_shows_a_live_resource_count_snapshot(): void

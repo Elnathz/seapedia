@@ -36,8 +36,8 @@ class RegistrationTest extends TestCase
             'username' => 'testuser',
             'email' => 'test@example.com',
             'phone' => '081234567890',
-            'password' => 'password',
-            'password_confirmation' => 'password',
+            'password' => 'Bq9$xKp2!mWz',
+            'password_confirmation' => 'Bq9$xKp2!mWz',
             'roles' => [RoleName::Buyer->value],
         ]);
 

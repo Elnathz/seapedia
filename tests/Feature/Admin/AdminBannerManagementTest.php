@@ -63,14 +63,14 @@ class AdminBannerManagementTest extends TestCase
         $banner = Banner::factory()->create(['title' => 'Lama']);
 
         $response = $this->actingAs($admin)->put(route('admin.banners.update', $banner), [
-            'placement' => 'side',
+            'placement' => 'side_top',
             'title' => 'Baru',
             'sort_order' => 2,
             'is_active' => '0',
         ]);
 
         $response->assertRedirect(route('admin.banners.index'));
-        $this->assertDatabaseHas('banners', ['id' => $banner->id, 'title' => 'Baru', 'placement' => 'side']);
+        $this->assertDatabaseHas('banners', ['id' => $banner->id, 'title' => 'Baru', 'placement' => 'side_top']);
         $this->assertFalse($banner->refresh()->is_active);
     }
 
@@ -99,21 +99,29 @@ class AdminBannerManagementTest extends TestCase
         $response->assertSessionHasErrors('image');
     }
 
-    public function test_duplicate_sort_order_on_same_placement_is_rejected(): void
+    public function test_duplicate_sort_order_on_same_placement_replaces_the_old_banner(): void
     {
         Storage::fake('public');
         $admin = User::factory()->create(['is_admin' => true]);
-        Banner::factory()->create(['placement' => 'main', 'sort_order' => 1]);
+        $old = Banner::factory()->create(['placement' => 'main', 'sort_order' => 1]);
 
         $image = UploadedFile::fake()->image('banner.jpg', 800, 320);
 
+        // Storing into an occupied slot (same placement + sort_order) replaces
+        // the old banner rather than rejecting — the documented BannerService rule.
         $response = $this->actingAs($admin)->post(route('admin.banners.store'), [
             'placement' => 'main',
             'title' => 'Flash Sale Kedua',
-            'sort_order' => 1, // Duplicate sort_order on same placement 'main'
+            'sort_order' => 1,
             'image' => $image,
         ]);
 
-        $response->assertSessionHasErrors('sort_order');
+        $response->assertRedirect(route('admin.banners.index'));
+        $this->assertDatabaseMissing('banners', ['id' => $old->id]);
+        $this->assertDatabaseHas('banners', [
+            'placement' => 'main',
+            'sort_order' => 1,
+            'title' => 'Flash Sale Kedua',
+        ]);
     }
 }

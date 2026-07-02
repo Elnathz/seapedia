@@ -120,7 +120,8 @@ class CatalogTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->has('banners')
             ->has('banners.main')
-            ->has('banners.side')
+            ->has('banners.side_top')
+            ->has('banners.side_bottom')
         );
     }
 

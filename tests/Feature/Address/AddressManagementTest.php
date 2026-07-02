@@ -38,6 +38,8 @@ class AddressManagementTest extends TestCase
             'phone' => '081234567890',
             'province' => 'DKI Jakarta',
             'city' => 'Jakarta Selatan',
+            'district' => 'Kebayoran Baru',
+            'village' => 'Senayan',
             'postal_code' => '12345',
             'full_address' => 'Jl. Merdeka No. 1',
         ]);
@@ -71,6 +73,8 @@ class AddressManagementTest extends TestCase
             'phone' => '080000000000',
             'province' => 'DKI Jakarta',
             'city' => 'Jakarta Pusat',
+            'district' => 'Gambir',
+            'village' => 'Cideng',
             'postal_code' => '10000',
             'full_address' => 'Somewhere else',
         ]);
