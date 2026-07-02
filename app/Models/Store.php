@@ -15,15 +15,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property string $slug
  * @property string|null $description
+ * @property string|null $full_address
  * @property string|null $province
  * @property string|null $city
  * @property string|null $district
  * @property string|null $village
+ * @property string|null $postal_code
  * @property float|null $origin_latitude
  * @property float|null $origin_longitude
  * @property bool $is_active
  */
-#[Fillable(['user_id', 'name', 'slug', 'description', 'province', 'city', 'district', 'village', 'origin_latitude', 'origin_longitude', 'is_active'])]
+#[Fillable(['user_id', 'name', 'slug', 'description', 'full_address', 'province', 'city', 'district', 'village', 'postal_code', 'origin_latitude', 'origin_longitude', 'is_active'])]
 class Store extends Model
 {
     /** @use HasFactory<StoreFactory> */

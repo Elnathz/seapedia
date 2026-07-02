@@ -767,20 +767,20 @@ Potongan crop-nya yang trendi menjadikannya pasangan sejati bagi celana high-wai
      * the store profile; the lat/lng drives the distance delivery fee (§5.4).
      * Spread across Java so a Semarang buyer sees near, same-city and far fees.
      *
-     * @return array{province: ?string, city: ?string, district: ?string, village: ?string, origin_latitude: ?float, origin_longitude: ?float}
+     * @return array{full_address: ?string, province: ?string, city: ?string, district: ?string, village: ?string, postal_code: ?string, origin_latitude: ?float, origin_longitude: ?float}
      */
     private function originFor(string $email): array
     {
         return match ($email) {
-            'seller1@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Bulusan', 'origin_latitude' => -7.0505, 'origin_longitude' => 110.4381],
-            'seller2@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Banyumanik', 'village' => 'Srondol Wetan', 'origin_latitude' => -7.0680, 'origin_longitude' => 110.4180],
-            'seller3@seapedia.test' => ['province' => 'DI Yogyakarta', 'city' => 'Kota Yogyakarta', 'district' => 'Gondokusuman', 'village' => 'Terban', 'origin_latitude' => -7.7956, 'origin_longitude' => 110.3695],
-            'seller4@seapedia.test' => ['province' => 'DKI Jakarta', 'city' => 'Jakarta Selatan', 'district' => 'Kebayoran Baru', 'village' => 'Melawai', 'origin_latitude' => -6.2615, 'origin_longitude' => 106.8106],
-            'seller5@seapedia.test' => ['province' => 'Jawa Barat', 'city' => 'Kota Bandung', 'district' => 'Coblong', 'village' => 'Dago', 'origin_latitude' => -6.8915, 'origin_longitude' => 107.6107],
-            'seller6@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kabupaten Semarang', 'district' => 'Ungaran Barat', 'village' => 'Bandarjo', 'origin_latitude' => -7.1387, 'origin_longitude' => 110.4058],
-            'seller7@seapedia.test' => ['province' => 'Jawa Timur', 'city' => 'Kota Surabaya', 'district' => 'Gubeng', 'village' => 'Airlangga', 'origin_latitude' => -7.2756, 'origin_longitude' => 112.6426],
-            'multi1@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Sumurboto', 'origin_latitude' => -7.0525, 'origin_longitude' => 110.4290],
-            default => ['province' => null, 'city' => null, 'district' => null, 'village' => null, 'origin_latitude' => null, 'origin_longitude' => null],
+            'seller1@seapedia.test' => ['full_address' => 'Jl. Prof. Soedarto No. 13, RT 02/RW 05', 'province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Bulusan', 'postal_code' => '50277', 'origin_latitude' => -7.0505, 'origin_longitude' => 110.4381],
+            'seller2@seapedia.test' => ['full_address' => 'Jl. Setiabudi No. 88, RT 04/RW 02', 'province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Banyumanik', 'village' => 'Srondol Wetan', 'postal_code' => '50263', 'origin_latitude' => -7.0680, 'origin_longitude' => 110.4180],
+            'seller3@seapedia.test' => ['full_address' => 'Jl. Cik Di Tiro No. 21, RT 01/RW 03', 'province' => 'DI Yogyakarta', 'city' => 'Kota Yogyakarta', 'district' => 'Gondokusuman', 'village' => 'Terban', 'postal_code' => '55223', 'origin_latitude' => -7.7956, 'origin_longitude' => 110.3695],
+            'seller4@seapedia.test' => ['full_address' => 'Jl. Melawai Raya No. 5, RT 06/RW 01', 'province' => 'DKI Jakarta', 'city' => 'Jakarta Selatan', 'district' => 'Kebayoran Baru', 'village' => 'Melawai', 'postal_code' => '12160', 'origin_latitude' => -6.2615, 'origin_longitude' => 106.8106],
+            'seller5@seapedia.test' => ['full_address' => 'Jl. Ir. H. Djuanda No. 102, RT 03/RW 04', 'province' => 'Jawa Barat', 'city' => 'Kota Bandung', 'district' => 'Coblong', 'village' => 'Dago', 'postal_code' => '40135', 'origin_latitude' => -6.8915, 'origin_longitude' => 107.6107],
+            'seller6@seapedia.test' => ['full_address' => 'Jl. Diponegoro No. 45, RT 01/RW 07', 'province' => 'Jawa Tengah', 'city' => 'Kabupaten Semarang', 'district' => 'Ungaran Barat', 'village' => 'Bandarjo', 'postal_code' => '50517', 'origin_latitude' => -7.1387, 'origin_longitude' => 110.4058],
+            'seller7@seapedia.test' => ['full_address' => 'Jl. Airlangga No. 4, RT 05/RW 06', 'province' => 'Jawa Timur', 'city' => 'Kota Surabaya', 'district' => 'Gubeng', 'village' => 'Airlangga', 'postal_code' => '60286', 'origin_latitude' => -7.2756, 'origin_longitude' => 112.6426],
+            'multi1@seapedia.test' => ['full_address' => 'Jl. Ngesrep Timur V No. 9, RT 03/RW 02', 'province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Sumurboto', 'postal_code' => '50269', 'origin_latitude' => -7.0525, 'origin_longitude' => 110.4290],
+            default => ['full_address' => null, 'province' => null, 'city' => null, 'district' => null, 'village' => null, 'postal_code' => null, 'origin_latitude' => null, 'origin_longitude' => null],
         };
     }
 

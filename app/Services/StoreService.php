@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class StoreService
 {
     /**
-     * @param  array{name: string, description: ?string, origin_latitude?: ?float, origin_longitude?: ?float}  $data
+     * @param  array{name: string, description?: ?string, full_address?: ?string, province?: ?string, city?: ?string, district?: ?string, village?: ?string, postal_code?: ?string, origin_latitude?: ?float, origin_longitude?: ?float}  $data
      */
     public function createForUser(User $user, array $data): Store
     {
@@ -18,6 +18,12 @@ class StoreService
             'name' => $data['name'],
             'slug' => $this->uniqueSlug($data['name']),
             'description' => $data['description'] ?? null,
+            'full_address' => $data['full_address'] ?? null,
+            'province' => $data['province'] ?? null,
+            'city' => $data['city'] ?? null,
+            'district' => $data['district'] ?? null,
+            'village' => $data['village'] ?? null,
+            'postal_code' => $data['postal_code'] ?? null,
             'origin_latitude' => $data['origin_latitude'] ?? null,
             'origin_longitude' => $data['origin_longitude'] ?? null,
             'is_active' => true,
@@ -25,7 +31,7 @@ class StoreService
     }
 
     /**
-     * @param  array{name: string, description: ?string, origin_latitude?: ?float, origin_longitude?: ?float}  $data
+     * @param  array{name: string, description?: ?string, full_address?: ?string, province?: ?string, city?: ?string, district?: ?string, village?: ?string, postal_code?: ?string, origin_latitude?: ?float, origin_longitude?: ?float}  $data
      */
     public function update(Store $store, array $data): Store
     {
@@ -35,6 +41,12 @@ class StoreService
                 ? $store->slug
                 : $this->uniqueSlug($data['name'], $store->id),
             'description' => $data['description'] ?? null,
+            'full_address' => $data['full_address'] ?? $store->full_address,
+            'province' => $data['province'] ?? $store->province,
+            'city' => $data['city'] ?? $store->city,
+            'district' => $data['district'] ?? $store->district,
+            'village' => $data['village'] ?? $store->village,
+            'postal_code' => $data['postal_code'] ?? $store->postal_code,
             'origin_latitude' => $data['origin_latitude'] ?? $store->origin_latitude,
             'origin_longitude' => $data['origin_longitude'] ?? $store->origin_longitude,
         ]);
