@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import 'leaflet/dist/leaflet.css';
 import { LocateFixed, Search } from '@lucide/vue';
-import L from 'leaflet';
+import type {
+    DivIcon,
+    LeafletMouseEvent,
+    Map as LMap,
+    Marker as LMarker,
+} from 'leaflet';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,17 +33,14 @@ const search = ref('');
 const searching = ref(false);
 const searchError = ref('');
 
-let map: L.Map | null = null;
-let marker: L.Marker | null = null;
+// Leaflet touches `window` at import time, so it is loaded lazily inside
+// onMounted (client only) — a top-level import would crash Inertia SSR.
+ 
+let L: any = null;
+let map: LMap | null = null;
+let marker: LMarker | null = null;
+let pinIcon: DivIcon | null = null;
 let resizeObserver: ResizeObserver | null = null;
-
-// A teal SVG pin as a divIcon avoids Leaflet's bundler-broken default marker.
-const pinIcon = L.divIcon({
-    className: 'map-picker-pin',
-    html: '<svg width="30" height="40" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12c0 8.4 12 20 12 20s12-11.6 12-20C24 5.4 18.6 0 12 0z" fill="#0d9488"/><circle cx="12" cy="12" r="5" fill="#fff"/></svg>',
-    iconSize: [30, 40],
-    iconAnchor: [15, 40],
-});
 
 function round7(value: number): number {
     return Math.round(value * 1e7) / 1e7;
@@ -48,7 +50,7 @@ function placeMarker(lat: number, lng: number, pan = true): void {
     emit('update:latitude', round7(lat));
     emit('update:longitude', round7(lng));
 
-    if (!map) {
+    if (!map || !L || !pinIcon) {
         return;
     }
 
@@ -59,7 +61,7 @@ function placeMarker(lat: number, lng: number, pan = true): void {
             icon: pinIcon,
             draggable: true,
         }).addTo(map);
-        marker.on('dragend', () => {
+        marker!.on('dragend', () => {
             const p = marker!.getLatLng();
             placeMarker(p.lat, p.lng, false);
         });
@@ -116,10 +118,20 @@ function useMyLocation(): void {
     );
 }
 
-onMounted(() => {
+onMounted(async () => {
     if (!mapEl.value) {
         return;
     }
+
+    L = (await import('leaflet')).default;
+
+    // A teal SVG pin as a divIcon avoids Leaflet's bundler-broken default marker.
+    pinIcon = L.divIcon({
+        className: 'map-picker-pin',
+        html: '<svg width="30" height="40" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12c0 8.4 12 20 12 20s12-11.6 12-20C24 5.4 18.6 0 12 0z" fill="#0d9488"/><circle cx="12" cy="12" r="5" fill="#fff"/></svg>',
+        iconSize: [30, 40],
+        iconAnchor: [15, 40],
+    });
 
     const startLat = props.latitude ?? DEFAULT.lat;
     const startLng = props.longitude ?? DEFAULT.lng;
@@ -133,7 +145,7 @@ onMounted(() => {
         maxZoom: 19,
     }).addTo(map);
 
-    map.on('click', (e: L.LeafletMouseEvent) =>
+    map!.on('click', (e: LeafletMouseEvent) =>
         placeMarker(e.latlng.lat, e.latlng.lng, false),
     );
 
@@ -202,10 +214,12 @@ watch(
             </Button>
         </div>
 
+        <!-- isolate: contains Leaflet's high z-index panes/controls so they
+             never paint above the app's dialogs and mobile sidebar sheet. -->
         <div
             ref="mapEl"
             :style="{ height }"
-            class="w-full overflow-hidden rounded-xl border border-border"
+            class="relative isolate w-full overflow-hidden rounded-xl border border-border"
         ></div>
 
         <p v-if="searchError" class="text-xs text-destructive">
