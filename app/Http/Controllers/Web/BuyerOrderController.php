@@ -19,7 +19,7 @@ class BuyerOrderController extends Controller
 
         return Inertia::render('buyer/orders/Index', [
             'orders' => $this->orders->forBuyer($request->user(), 10, $orderStatus),
-            'currentStatus' => $status,
+            'currentStatus' => $orderStatus?->value,
         ]);
     }
 

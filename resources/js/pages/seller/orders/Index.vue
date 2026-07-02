@@ -72,12 +72,11 @@ function goToPage(page: number) {
 
 const statuses = [
     { value: '', label: 'Semua' },
-    { value: 'menunggu_pembayaran', label: 'Belum Bayar' },
     { value: 'sedang_dikemas', label: 'Perlu Diproses' },
     { value: 'menunggu_pengirim', label: 'Menunggu Kurir' },
     { value: 'sedang_dikirim', label: 'Dikirim' },
     { value: 'pesanan_selesai', label: 'Selesai' },
-    { value: 'dibatalkan', label: 'Batal' },
+    { value: 'dikembalikan', label: 'Dikembalikan' },
 ];
 
 function filterStatus(status: string) {
@@ -109,7 +108,6 @@ function filterStatus(status: string) {
                 ]"
             >
                 {{ s.label }}
-                <Badge v-if="s.value === 'sedang_dikemas' && !props.currentStatus" variant="destructive" class="ml-1 text-[10px] px-1.5 py-0">!</Badge>
             </button>
         </div>
 

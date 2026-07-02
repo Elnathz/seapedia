@@ -68,12 +68,11 @@ function goToPage(page: number) {
 
 const statuses = [
     { value: '', label: 'Semua' },
-    { value: 'menunggu_pembayaran', label: 'Belum Bayar' },
     { value: 'sedang_dikemas', label: 'Dikemas' },
     { value: 'menunggu_pengirim', label: 'Menunggu Kurir' },
     { value: 'sedang_dikirim', label: 'Dikirim' },
     { value: 'pesanan_selesai', label: 'Selesai' },
-    { value: 'dibatalkan', label: 'Batal' },
+    { value: 'dikembalikan', label: 'Dikembalikan' },
 ];
 
 function filterStatus(status: string) {

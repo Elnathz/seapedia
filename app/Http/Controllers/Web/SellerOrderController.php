@@ -30,7 +30,7 @@ class SellerOrderController extends Controller
 
         return Inertia::render('seller/orders/Index', [
             'orders' => $this->orders->forSeller($store, 10, $orderStatus),
-            'currentStatus' => $status,
+            'currentStatus' => $orderStatus?->value,
         ]);
     }
 
