@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class AddressService
 {
     /**
-     * @param  array{recipient_name: string, phone: string, full_address: string, province?: string, city?: string, district?: string, village?: string, postal_code?: string, is_default?: bool}  $data
+     * @param  array{recipient_name: string, phone: string, full_address: string, province?: string, city?: string, district?: string, village?: string, postal_code?: string, latitude?: float, longitude?: float, is_default?: bool}  $data
      */
     public function createForUser(User $user, array $data): Address
     {
@@ -32,13 +32,15 @@ class AddressService
                 'district' => $data['district'] ?? null,
                 'village' => $data['village'] ?? null,
                 'postal_code' => $data['postal_code'] ?? null,
+                'latitude' => $data['latitude'] ?? null,
+                'longitude' => $data['longitude'] ?? null,
                 'is_default' => $isDefault,
             ]);
         });
     }
 
     /**
-     * @param  array{recipient_name: string, phone: string, full_address: string, province?: string, city?: string, district?: string, village?: string, postal_code?: string, is_default?: bool}  $data
+     * @param  array{recipient_name: string, phone: string, full_address: string, province?: string, city?: string, district?: string, village?: string, postal_code?: string, latitude?: float, longitude?: float, is_default?: bool}  $data
      */
     public function update(Address $address, array $data): Address
     {
@@ -58,6 +60,8 @@ class AddressService
                 'district' => $data['district'] ?? $address->district,
                 'village' => $data['village'] ?? $address->village,
                 'postal_code' => $data['postal_code'] ?? $address->postal_code,
+                'latitude' => $data['latitude'] ?? $address->latitude,
+                'longitude' => $data['longitude'] ?? $address->longitude,
                 'is_default' => $isDefault,
             ]);
 

@@ -708,7 +708,12 @@ Potongan crop-nya yang trendi menjadikannya pasangan sejati bagi celana high-wai
             foreach ($products as $data) {
                 $product = $user->store->products()->where('name', $data['name'])->first();
                 if ($product) {
-                    $product->update(['stock' => $data['stock']]);
+                    $defaultWeight = $this->defaultWeightFor($data['category']);
+                    $product->update([
+                        'stock' => $data['stock'],
+                        'weight' => $data['weight'] ?? $defaultWeight,
+                    ]);
+                    $product->variants()->whereNull('weight')->update(['weight' => $defaultWeight]);
                 }
             }
 
@@ -726,6 +731,16 @@ Potongan crop-nya yang trendi menjadikannya pasangan sejati bagi celana high-wai
             $data['category_id'] = Category::query()->where('slug', $data['category'])->value('id');
             if (! $data['category_id']) {
                 continue;
+            }
+
+            // Ship weight (grams): mandatory now, so default by category and give
+            // each variant the same default unless the entry already sets one.
+            $defaultWeight = $this->defaultWeightFor($data['category']);
+            $data['weight'] = $data['weight'] ?? $defaultWeight;
+            if (! empty($data['variants'])) {
+                foreach ($data['variants'] as $i => $variant) {
+                    $data['variants'][$i]['weight'] = $variant['weight'] ?? $defaultWeight;
+                }
             }
 
             // Extract seed_images before passing to ProductService
@@ -748,24 +763,42 @@ Potongan crop-nya yang trendi menjadikannya pasangan sejati bagi celana high-wai
     }
 
     /**
-     * Origin region per seeded seller, spread across tiers so a buyer in
-     * Semarang sees the full range of surcharges (§5.4): seller1 is one
-     * kecamatan away, seller6 same province, the rest interregional.
+     * Origin region + map coordinates per seeded seller. Region text shows in
+     * the store profile; the lat/lng drives the distance delivery fee (§5.4).
+     * Spread across Java so a Semarang buyer sees near, same-city and far fees.
      *
-     * @return array{province: ?string, city: ?string, district: ?string, village: ?string}
+     * @return array{province: ?string, city: ?string, district: ?string, village: ?string, origin_latitude: ?float, origin_longitude: ?float}
      */
     private function originFor(string $email): array
     {
         return match ($email) {
-            'seller1@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Bulusan'],
-            'seller2@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Banyumanik', 'village' => 'Srondol Wetan'],
-            'seller3@seapedia.test' => ['province' => 'DI Yogyakarta', 'city' => 'Kota Yogyakarta', 'district' => 'Gondokusuman', 'village' => 'Terban'],
-            'seller4@seapedia.test' => ['province' => 'DKI Jakarta', 'city' => 'Jakarta Selatan', 'district' => 'Kebayoran Baru', 'village' => 'Melawai'],
-            'seller5@seapedia.test' => ['province' => 'Jawa Barat', 'city' => 'Kota Bandung', 'district' => 'Coblong', 'village' => 'Dago'],
-            'seller6@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kabupaten Semarang', 'district' => 'Ungaran Barat', 'village' => 'Bandarjo'],
-            'seller7@seapedia.test' => ['province' => 'Jawa Timur', 'city' => 'Kota Surabaya', 'district' => 'Gubeng', 'village' => 'Airlangga'],
-            'multi1@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Sumurboto'],
-            default => ['province' => null, 'city' => null, 'district' => null, 'village' => null],
+            'seller1@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Bulusan', 'origin_latitude' => -7.0505, 'origin_longitude' => 110.4381],
+            'seller2@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Banyumanik', 'village' => 'Srondol Wetan', 'origin_latitude' => -7.0680, 'origin_longitude' => 110.4180],
+            'seller3@seapedia.test' => ['province' => 'DI Yogyakarta', 'city' => 'Kota Yogyakarta', 'district' => 'Gondokusuman', 'village' => 'Terban', 'origin_latitude' => -7.7956, 'origin_longitude' => 110.3695],
+            'seller4@seapedia.test' => ['province' => 'DKI Jakarta', 'city' => 'Jakarta Selatan', 'district' => 'Kebayoran Baru', 'village' => 'Melawai', 'origin_latitude' => -6.2615, 'origin_longitude' => 106.8106],
+            'seller5@seapedia.test' => ['province' => 'Jawa Barat', 'city' => 'Kota Bandung', 'district' => 'Coblong', 'village' => 'Dago', 'origin_latitude' => -6.8915, 'origin_longitude' => 107.6107],
+            'seller6@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kabupaten Semarang', 'district' => 'Ungaran Barat', 'village' => 'Bandarjo', 'origin_latitude' => -7.1387, 'origin_longitude' => 110.4058],
+            'seller7@seapedia.test' => ['province' => 'Jawa Timur', 'city' => 'Kota Surabaya', 'district' => 'Gubeng', 'village' => 'Airlangga', 'origin_latitude' => -7.2756, 'origin_longitude' => 112.6426],
+            'multi1@seapedia.test' => ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Sumurboto', 'origin_latitude' => -7.0525, 'origin_longitude' => 110.4290],
+            default => ['province' => null, 'city' => null, 'district' => null, 'village' => null, 'origin_latitude' => null, 'origin_longitude' => null],
+        };
+    }
+
+    /**
+     * A plausible shipping weight (grams) by category so seeded products get a
+     * realistic weight fee without hand-tagging every entry.
+     */
+    private function defaultWeightFor(string $categorySlug): int
+    {
+        return match (true) {
+            str_contains($categorySlug, 'sepeda') => 14_000,
+            str_contains($categorySlug, 'beras') => 5_000,
+            str_contains($categorySlug, 'perkakas') => 3_000,
+            str_contains($categorySlug, 'outdoor') => 2_500,
+            in_array($categorySlug, ['smartphone', 'kamera', 'keyboard'], true) => 900,
+            in_array($categorySlug, ['makeup-blush', 'makeup-concealer', 'makeup-cushion', 'makeup-lip', 'makeup-powder', 'aksesoris-hp', 'kopi'], true) => 300,
+            str_contains($categorySlug, 'kaos') || str_contains($categorySlug, 'pakaian') => 350,
+            default => 1_000,
         };
     }
 

@@ -37,9 +37,9 @@ class BuyerDemoSeeder extends Seeder
 
         // Semarang regions with varied kelurahan so the demo shows a spread of
         // region-tier surcharges against the seeded store origins (§5.4).
-        $tembalang = ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Sumurboto'];
-        $banyumanik = ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Banyumanik', 'village' => 'Pedalangan'];
-        $bulusan = ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Bulusan'];
+        $tembalang = ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Sumurboto', 'latitude' => -7.0525, 'longitude' => 110.4290];
+        $banyumanik = ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Banyumanik', 'village' => 'Pedalangan', 'latitude' => -7.0700, 'longitude' => 110.4210];
+        $bulusan = ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Bulusan', 'latitude' => -7.0490, 'longitude' => 110.4360];
 
         // buyer1: full checkout with discount codes.
         $buyer1 = User::query()->where('email', 'buyer1@seapedia.test')->first();
