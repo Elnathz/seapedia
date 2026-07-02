@@ -8,6 +8,7 @@
 - [ ] F1 feat(wallet): bound top-up between 5rb and 100jt
 
 ## B — Cart & Checkout
+- [ ] B0 feat(checkout): add region-tier delivery surcharge
 - [ ] B1 fix(cart): stop price overflow and align mobile summary
 - [ ] B2 feat(checkout): make layout responsive with summary rail
 - [ ] B3 feat(checkout): add inline add-address modal
@@ -28,6 +29,6 @@
 ## E — Cross-cutting
 - [ ] E1 feat(ui): open mobile sidebar with edge swipe
 
-## Open decisions (see plan Risks)
-- [ ] Delivery fee: keep fixed (default) or add region-tier surcharge?
-- [ ] Promos: expiry-only (default) or add usage limit?
+## Decisions (resolved)
+- [x] Delivery fee: base per-method + region-tier surcharge (B0)
+- [x] Promos: expiry-only (progress bar = vouchers only)

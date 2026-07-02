@@ -68,6 +68,12 @@ still invokes `ui-ux-pro-max` (+ `frontend-design`, + `motion-design` for animat
   - Commit: `feat(wallet): bound top-up between 5rb and 100jt`
 
 ### Workstream B — Cart & Checkout (buyer)
+- **B0: Region-tier delivery surcharge (money-math)** — DECIDED
+  - Files: `app/Enums/DeliveryMethod.php` (base fee stays) + a `DeliveryFeeService` computing `fee = base(method) + surcharge(tier)`; tier derived from buyer-address vs store region strings (same village = 0 / district / city / province / other); `CheckoutService::preview` + `commit` use it; update **TDD §5.4**, the **`money-and-checkout`** skill, and README; Pest.
+  - Rules: PPN base unchanged — delivery fee (incl. surcharge) is still NOT taxed (§5.2); surcharge is integer IDR; base fee still differs per method (spec line 278 satisfied).
+  - Acceptance: preview & commit show base + surcharge; grand_total recomputes; preview == amount charged.
+  - Tests: Pest — surcharge per tier; grand_total correct; existing money-math tests updated to new expected fees.
+  - Commit: `feat(checkout): add region-tier delivery surcharge`
 - **B1: Cart mobile layout rework**
   - Files: `resources/js/pages/buyer/cart/Index.vue` (+ any cart item component).
   - Fix: line price overflowing the card on mobile; move Kosongkan Keranjang, Subtotal, and "Lanjut ke Checkout" into a right-aligned summary column (CTA below subtotal). Make single-store rule explicit (banner + clear-first conflict handling).
@@ -162,8 +168,8 @@ still invokes `ui-ux-pro-max` (+ `frontend-design`, + `motion-design` for animat
 - Any role on mobile: edge-swipe opens the sidebar.
 
 ## Risks / open questions (defaults applied if unanswered)
-1. **Delivery fee formula vs fixed** — spec allows a formula (only requires per-method difference); TDD locked fixed values. **Default: keep fixed**; optionally add a region-tier surcharge (B-workstream) only if you confirm — it would require updating TDD §5.4 + `money-and-checkout` + Pest + README. *Your call.*
-2. **Promo usage limit** — spec permits it but it blurs the required voucher/promo distinction. **Default: promos stay expiry-only (progress bar = vouchers only).** *Your call.*
+1. **Delivery fee** — ✅ DECIDED: **base per-method fee + region-tier surcharge** (task B0). Requires updating TDD §5.4, the `money-and-checkout` skill, Pest tests, and README. Base fees still differ per method, so spec line 278 stays satisfied.
+2. **Promo usage limit** — ✅ DECIDED: **promos stay expiry-only** (progress bar applies to vouchers only; promos show an expiry countdown). Preserves the required voucher/promo distinction.
 3. **Driver distance** — no coordinates stored, so distance is a region-hierarchy ordinal proxy, not km. **Default: proxy sort/label** (you chose "sort by nearest").
 4. **Concurrent-pickup cap value** — **Default: 3** (config-driven, easy to change).
 5. **Product-not-showing** — needs live reproduction before a fix is written; no data-loss found in static analysis.
