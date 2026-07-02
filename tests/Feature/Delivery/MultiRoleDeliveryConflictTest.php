@@ -12,6 +12,7 @@ use App\Models\Store;
 use App\Models\User;
 use App\Services\CartService;
 use App\Services\CheckoutService;
+use App\Services\DeliveryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
@@ -56,8 +57,8 @@ class MultiRoleDeliveryConflictTest extends TestCase
         $buyer->wallet->update(['balance' => 1_000_000]);
         $product = Product::factory()->create([
             'store_id' => $store->id,
-            'price'    => 50_000,
-            'stock'    => 10,
+            'price' => 50_000,
+            'stock' => 10,
         ]);
         $address = Address::factory()->create(['user_id' => $buyer->id, 'is_default' => true]);
 
@@ -115,7 +116,7 @@ class MultiRoleDeliveryConflictTest extends TestCase
         [$delivery] = $this->availableJobForStore($store);
 
         $this->expectException(ValidationException::class);
-        app(\App\Services\DeliveryService::class)->take($delivery, $sellerDriver);
+        app(DeliveryService::class)->take($delivery, $sellerDriver);
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -162,7 +163,7 @@ class MultiRoleDeliveryConflictTest extends TestCase
         [$delivery] = $this->availableJobForStore($store, $buyerDriver);
 
         $this->expectException(ValidationException::class);
-        app(\App\Services\DeliveryService::class)->take($delivery, $buyerDriver);
+        app(DeliveryService::class)->take($delivery, $buyerDriver);
     }
 
     // ─────────────────────────────────────────────────────────────────────

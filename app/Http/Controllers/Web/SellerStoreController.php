@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStoreRequest;
 use App\Http\Requests\UpdateStoreRequest;
+use App\Models\Order;
+use App\Models\Role;
 use App\Models\Store;
 use App\Services\StoreService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -54,24 +58,24 @@ class SellerStoreController extends Controller
     {
         $this->authorize('delete', $store);
 
-        $hasActiveOrders = \App\Models\Order::where('store_id', $store->id)
+        $hasActiveOrders = Order::where('store_id', $store->id)
             ->whereIn('status', [
-                \App\Enums\OrderStatus::SedangDikemas,
-                \App\Enums\OrderStatus::MenungguPengirim,
-                \App\Enums\OrderStatus::SedangDikirim,
+                OrderStatus::SedangDikemas,
+                OrderStatus::MenungguPengirim,
+                OrderStatus::SedangDikirim,
             ])
             ->exists();
 
         if ($hasActiveOrders) {
             return back()->withErrors([
-                'store' => 'Tidak dapat menghapus toko saat masih ada pesanan aktif. Tunggu hingga semua pesanan selesai atau di-refund.'
+                'store' => 'Tidak dapat menghapus toko saat masih ada pesanan aktif. Tunggu hingga semua pesanan selesai atau di-refund.',
             ]);
         }
 
         $store->delete();
-        
-        \Illuminate\Support\Facades\Auth::user()->roles()->detach(
-            \App\Models\Role::where('name', 'seller')->first()
+
+        Auth::user()->roles()->detach(
+            Role::where('name', 'seller')->first()
         );
 
         return redirect()->route('dashboard');

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Web\BuyerWalletController::show
- * @see app/Http/Controllers/Web/BuyerWalletController.php:40
+ * @see app/Http/Controllers/Web/BuyerWalletController.php:41
  * @route '/buyer/wallet/topup/{topup}'
  */
 export const show = (args: { topup: number | { id: number } } | [topup: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\BuyerWalletController::show
- * @see app/Http/Controllers/Web/BuyerWalletController.php:40
+ * @see app/Http/Controllers/Web/BuyerWalletController.php:41
  * @route '/buyer/wallet/topup/{topup}'
  */
 show.url = (args: { topup: number | { id: number } } | [topup: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -49,7 +49,7 @@ show.url = (args: { topup: number | { id: number } } | [topup: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Web\BuyerWalletController::show
- * @see app/Http/Controllers/Web/BuyerWalletController.php:40
+ * @see app/Http/Controllers/Web/BuyerWalletController.php:41
  * @route '/buyer/wallet/topup/{topup}'
  */
 show.get = (args: { topup: number | { id: number } } | [topup: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -58,7 +58,7 @@ show.get = (args: { topup: number | { id: number } } | [topup: number | { id: nu
 })
 /**
 * @see \App\Http\Controllers\Web\BuyerWalletController::show
- * @see app/Http/Controllers/Web/BuyerWalletController.php:40
+ * @see app/Http/Controllers/Web/BuyerWalletController.php:41
  * @route '/buyer/wallet/topup/{topup}'
  */
 show.head = (args: { topup: number | { id: number } } | [topup: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -68,7 +68,7 @@ show.head = (args: { topup: number | { id: number } } | [topup: number | { id: n
 
     /**
 * @see \App\Http\Controllers\Web\BuyerWalletController::show
- * @see app/Http/Controllers/Web/BuyerWalletController.php:40
+ * @see app/Http/Controllers/Web/BuyerWalletController.php:41
  * @route '/buyer/wallet/topup/{topup}'
  */
     const showForm = (args: { topup: number | { id: number } } | [topup: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -78,7 +78,7 @@ show.head = (args: { topup: number | { id: number } } | [topup: number | { id: n
 
             /**
 * @see \App\Http\Controllers\Web\BuyerWalletController::show
- * @see app/Http/Controllers/Web/BuyerWalletController.php:40
+ * @see app/Http/Controllers/Web/BuyerWalletController.php:41
  * @route '/buyer/wallet/topup/{topup}'
  */
         showForm.get = (args: { topup: number | { id: number } } | [topup: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -87,7 +87,7 @@ show.head = (args: { topup: number | { id: number } } | [topup: number | { id: n
         })
             /**
 * @see \App\Http\Controllers\Web\BuyerWalletController::show
- * @see app/Http/Controllers/Web/BuyerWalletController.php:40
+ * @see app/Http/Controllers/Web/BuyerWalletController.php:41
  * @route '/buyer/wallet/topup/{topup}'
  */
         showForm.head = (args: { topup: number | { id: number } } | [topup: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

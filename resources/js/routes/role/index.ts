@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Web\Profile\RoleDeleteController::destroy
- * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:17
+ * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:16
  * @route '/role/{role}'
  */
 export const destroy = (args: { role: string | number } | [role: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -149,7 +149,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\Profile\RoleDeleteController::destroy
- * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:17
+ * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:16
  * @route '/role/{role}'
  */
 destroy.url = (args: { role: string | number } | [role: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -177,7 +177,7 @@ destroy.url = (args: { role: string | number } | [role: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\Web\Profile\RoleDeleteController::destroy
- * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:17
+ * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:16
  * @route '/role/{role}'
  */
 destroy.delete = (args: { role: string | number } | [role: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -187,7 +187,7 @@ destroy.delete = (args: { role: string | number } | [role: string | number ] | s
 
     /**
 * @see \App\Http\Controllers\Web\Profile\RoleDeleteController::destroy
- * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:17
+ * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:16
  * @route '/role/{role}'
  */
     const destroyForm = (args: { role: string | number } | [role: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -202,7 +202,7 @@ destroy.delete = (args: { role: string | number } | [role: string | number ] | s
 
             /**
 * @see \App\Http\Controllers\Web\Profile\RoleDeleteController::destroy
- * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:17
+ * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:16
  * @route '/role/{role}'
  */
         destroyForm.delete = (args: { role: string | number } | [role: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

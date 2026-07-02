@@ -12,7 +12,7 @@ class AppReviewSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\AppReview::truncate();
-        \App\Models\AppReview::factory()->count(6)->create();
+        AppReview::truncate();
+        AppReview::factory()->count(6)->create();
     }
 }

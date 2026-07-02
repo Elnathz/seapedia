@@ -80,7 +80,7 @@ show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Web\BuyerWalletController::topup
- * @see app/Http/Controllers/Web/BuyerWalletController.php:29
+ * @see app/Http/Controllers/Web/BuyerWalletController.php:30
  * @route '/buyer/wallet/topup'
  */
 export const topup = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -95,7 +95,7 @@ topup.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\BuyerWalletController::topup
- * @see app/Http/Controllers/Web/BuyerWalletController.php:29
+ * @see app/Http/Controllers/Web/BuyerWalletController.php:30
  * @route '/buyer/wallet/topup'
  */
 topup.url = (options?: RouteQueryOptions) => {
@@ -104,7 +104,7 @@ topup.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\BuyerWalletController::topup
- * @see app/Http/Controllers/Web/BuyerWalletController.php:29
+ * @see app/Http/Controllers/Web/BuyerWalletController.php:30
  * @route '/buyer/wallet/topup'
  */
 topup.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -114,7 +114,7 @@ topup.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\BuyerWalletController::topup
- * @see app/Http/Controllers/Web/BuyerWalletController.php:29
+ * @see app/Http/Controllers/Web/BuyerWalletController.php:30
  * @route '/buyer/wallet/topup'
  */
     const topupForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -124,7 +124,7 @@ topup.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\BuyerWalletController::topup
- * @see app/Http/Controllers/Web/BuyerWalletController.php:29
+ * @see app/Http/Controllers/Web/BuyerWalletController.php:30
  * @route '/buyer/wallet/topup'
  */
         topupForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

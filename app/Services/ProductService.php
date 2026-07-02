@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Models\Store;
-use App\Models\ProductImage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +17,7 @@ class ProductService
     {
         return DB::transaction(function () use ($store, $data) {
             $hasVariants = $data['has_variants'] ?? false;
-            
+
             // Calculate base price and total stock from variants if has_variants
             $basePrice = $hasVariants ? (int) min(array_column($data['variants'], 'price')) : $data['price'];
             $totalStock = $hasVariants ? (int) array_sum(array_column($data['variants'], 'stock')) : $data['stock'];
@@ -37,7 +36,7 @@ class ProductService
 
             $createdVariants = [];
             // Handle variants
-            if ($hasVariants && !empty($data['variants'])) {
+            if ($hasVariants && ! empty($data['variants'])) {
                 foreach ($data['variants'] as $variantData) {
                     $createdVariants[] = $product->variants()->create([
                         'variant_type' => null,
@@ -50,13 +49,13 @@ class ProductService
             }
 
             // Handle images
-            if (!empty($data['images'])) {
+            if (! empty($data['images'])) {
                 foreach ($data['images'] as $index => $image) {
                     $path = $this->storeImage($image);
-                    
+
                     // Find if any variant uses this image
                     $variantId = null;
-                    if ($hasVariants && !empty($data['variants'])) {
+                    if ($hasVariants && ! empty($data['variants'])) {
                         foreach ($data['variants'] as $vIndex => $variantData) {
                             if (isset($variantData['image_index']) && (int) $variantData['image_index'] === $index) {
                                 $variantId = $createdVariants[$vIndex]->id;
@@ -86,7 +85,7 @@ class ProductService
     {
         return DB::transaction(function () use ($product, $data) {
             $hasVariants = $data['has_variants'] ?? false;
-            
+
             $basePrice = $hasVariants ? (int) min(array_column($data['variants'], 'price')) : $data['price'];
             $totalStock = $hasVariants ? (int) array_sum(array_column($data['variants'], 'stock')) : $data['stock'];
 
@@ -102,7 +101,7 @@ class ProductService
             ]);
 
             // Handle deleted images
-            if (!empty($data['deleted_image_ids'])) {
+            if (! empty($data['deleted_image_ids'])) {
                 $imagesToDelete = $product->images()->whereIn('id', $data['deleted_image_ids'])->get();
                 foreach ($imagesToDelete as $img) {
                     $this->deleteImage($img->image_path);
@@ -113,10 +112,10 @@ class ProductService
             // Handle variants update (sync)
             $existingVariantIds = [];
             $createdVariants = [];
-            
-            if ($hasVariants && !empty($data['variants'])) {
+
+            if ($hasVariants && ! empty($data['variants'])) {
                 foreach ($data['variants'] as $vIndex => $variantData) {
-                    if (!empty($variantData['id'])) {
+                    if (! empty($variantData['id'])) {
                         // Update existing
                         $variant = $product->variants()->find($variantData['id']);
                         if ($variant) {
@@ -142,22 +141,22 @@ class ProductService
                     }
                 }
             }
-            
+
             // Delete removed variants
             $product->variants()->whereNotIn('id', $existingVariantIds)->delete();
 
             // Handle new images
-            if (!empty($data['images'])) {
+            if (! empty($data['images'])) {
                 $maxSortOrder = $product->images()->max('sort_order') ?? -1;
-                
+
                 foreach ($data['images'] as $index => $image) {
                     $path = $this->storeImage($image);
                     $sortOrder = $maxSortOrder + 1 + $index;
-                    
+
                     // Note: mapping new images to variants during update can be tricky if the UI mixes existing/new images
                     // We map by image_index if provided
                     $variantId = null;
-                    if ($hasVariants && !empty($data['variants'])) {
+                    if ($hasVariants && ! empty($data['variants'])) {
                         foreach ($data['variants'] as $vIndex => $variantData) {
                             if (isset($variantData['image_index']) && (int) $variantData['image_index'] === $index) {
                                 if (isset($createdVariants[$vIndex])) {
@@ -176,7 +175,7 @@ class ProductService
                     ]);
                 }
             }
-            
+
             // Ensure primary image exists and is set on product
             $primaryImage = $product->images()->orderBy('sort_order')->first();
             if ($primaryImage) {

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCartItemRequest;
 use App\Http\Requests\UpdateCartItemRequest;
 use App\Models\CartItem;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Services\CartService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,10 +29,10 @@ class BuyerCartController extends Controller
     {
         $data = $request->validated();
         $product = Product::findOrFail($data['product_id']);
-        
+
         $variant = null;
-        if (!empty($data['product_variant_id'])) {
-            $variant = \App\Models\ProductVariant::where('product_id', $product->id)
+        if (! empty($data['product_variant_id'])) {
+            $variant = ProductVariant::where('product_id', $product->id)
                 ->findOrFail($data['product_variant_id']);
         } elseif ($product->variants()->exists()) {
             // If the product has variants, require a variant to be selected

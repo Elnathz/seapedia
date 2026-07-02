@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchCategories
- * @see app/Http/Controllers/Web/Admin/BannerController.php:20
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:23
  * @route '/admin/banners/search-categories'
  */
 export const searchCategories = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ searchCategories.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchCategories
- * @see app/Http/Controllers/Web/Admin/BannerController.php:20
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:23
  * @route '/admin/banners/search-categories'
  */
 searchCategories.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ searchCategories.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchCategories
- * @see app/Http/Controllers/Web/Admin/BannerController.php:20
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:23
  * @route '/admin/banners/search-categories'
  */
 searchCategories.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ searchCategories.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => 
 })
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchCategories
- * @see app/Http/Controllers/Web/Admin/BannerController.php:20
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:23
  * @route '/admin/banners/search-categories'
  */
 searchCategories.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ searchCategories.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 
     /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchCategories
- * @see app/Http/Controllers/Web/Admin/BannerController.php:20
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:23
  * @route '/admin/banners/search-categories'
  */
     const searchCategoriesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ searchCategories.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
 
             /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchCategories
- * @see app/Http/Controllers/Web/Admin/BannerController.php:20
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:23
  * @route '/admin/banners/search-categories'
  */
         searchCategoriesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ searchCategories.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
         })
             /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchCategories
- * @see app/Http/Controllers/Web/Admin/BannerController.php:20
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:23
  * @route '/admin/banners/search-categories'
  */
         searchCategoriesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ searchCategories.head = (options?: RouteQueryOptions): RouteDefinition<'head'> =
     searchCategories.form = searchCategoriesForm
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchProducts
- * @see app/Http/Controllers/Web/Admin/BannerController.php:38
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:41
  * @route '/admin/banners/search-products'
  */
 export const searchProducts = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ searchProducts.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchProducts
- * @see app/Http/Controllers/Web/Admin/BannerController.php:38
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:41
  * @route '/admin/banners/search-products'
  */
 searchProducts.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ searchProducts.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchProducts
- * @see app/Http/Controllers/Web/Admin/BannerController.php:38
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:41
  * @route '/admin/banners/search-products'
  */
 searchProducts.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ searchProducts.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchProducts
- * @see app/Http/Controllers/Web/Admin/BannerController.php:38
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:41
  * @route '/admin/banners/search-products'
  */
 searchProducts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ searchProducts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 
     /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchProducts
- * @see app/Http/Controllers/Web/Admin/BannerController.php:38
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:41
  * @route '/admin/banners/search-products'
  */
     const searchProductsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ searchProducts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
 
             /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchProducts
- * @see app/Http/Controllers/Web/Admin/BannerController.php:38
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:41
  * @route '/admin/banners/search-products'
  */
         searchProductsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ searchProducts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
         })
             /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchProducts
- * @see app/Http/Controllers/Web/Admin/BannerController.php:38
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:41
  * @route '/admin/banners/search-products'
  */
         searchProductsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ searchProducts.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => 
     searchProducts.form = searchProductsForm
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchStores
- * @see app/Http/Controllers/Web/Admin/BannerController.php:56
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:59
  * @route '/admin/banners/search-stores'
  */
 export const searchStores = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ searchStores.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchStores
- * @see app/Http/Controllers/Web/Admin/BannerController.php:56
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:59
  * @route '/admin/banners/search-stores'
  */
 searchStores.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ searchStores.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchStores
- * @see app/Http/Controllers/Web/Admin/BannerController.php:56
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:59
  * @route '/admin/banners/search-stores'
  */
 searchStores.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -190,7 +190,7 @@ searchStores.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchStores
- * @see app/Http/Controllers/Web/Admin/BannerController.php:56
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:59
  * @route '/admin/banners/search-stores'
  */
 searchStores.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +200,7 @@ searchStores.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchStores
- * @see app/Http/Controllers/Web/Admin/BannerController.php:56
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:59
  * @route '/admin/banners/search-stores'
  */
     const searchStoresForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -210,7 +210,7 @@ searchStores.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchStores
- * @see app/Http/Controllers/Web/Admin/BannerController.php:56
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:59
  * @route '/admin/banners/search-stores'
  */
         searchStoresForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -219,7 +219,7 @@ searchStores.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::searchStores
- * @see app/Http/Controllers/Web/Admin/BannerController.php:56
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:59
  * @route '/admin/banners/search-stores'
  */
         searchStoresForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -235,7 +235,7 @@ searchStores.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     searchStores.form = searchStoresForm
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::index
- * @see app/Http/Controllers/Web/Admin/BannerController.php:74
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:77
  * @route '/admin/banners'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -250,7 +250,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::index
- * @see app/Http/Controllers/Web/Admin/BannerController.php:74
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:77
  * @route '/admin/banners'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -259,7 +259,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::index
- * @see app/Http/Controllers/Web/Admin/BannerController.php:74
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:77
  * @route '/admin/banners'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -268,7 +268,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::index
- * @see app/Http/Controllers/Web/Admin/BannerController.php:74
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:77
  * @route '/admin/banners'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -278,7 +278,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::index
- * @see app/Http/Controllers/Web/Admin/BannerController.php:74
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:77
  * @route '/admin/banners'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -288,7 +288,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::index
- * @see app/Http/Controllers/Web/Admin/BannerController.php:74
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:77
  * @route '/admin/banners'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -297,7 +297,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::index
- * @see app/Http/Controllers/Web/Admin/BannerController.php:74
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:77
  * @route '/admin/banners'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -313,7 +313,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::store
- * @see app/Http/Controllers/Web/Admin/BannerController.php:79
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:82
  * @route '/admin/banners'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -328,7 +328,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::store
- * @see app/Http/Controllers/Web/Admin/BannerController.php:79
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:82
  * @route '/admin/banners'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -337,7 +337,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::store
- * @see app/Http/Controllers/Web/Admin/BannerController.php:79
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:82
  * @route '/admin/banners'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -347,7 +347,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::store
- * @see app/Http/Controllers/Web/Admin/BannerController.php:79
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:82
  * @route '/admin/banners'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -357,7 +357,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::store
- * @see app/Http/Controllers/Web/Admin/BannerController.php:79
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:82
  * @route '/admin/banners'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -368,7 +368,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::update
- * @see app/Http/Controllers/Web/Admin/BannerController.php:87
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:90
  * @route '/admin/banners/{banner}'
  */
 export const update = (args: { banner: number | { id: number } } | [banner: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -383,7 +383,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::update
- * @see app/Http/Controllers/Web/Admin/BannerController.php:87
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:90
  * @route '/admin/banners/{banner}'
  */
 update.url = (args: { banner: number | { id: number } } | [banner: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -416,7 +416,7 @@ update.url = (args: { banner: number | { id: number } } | [banner: number | { id
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::update
- * @see app/Http/Controllers/Web/Admin/BannerController.php:87
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:90
  * @route '/admin/banners/{banner}'
  */
 update.put = (args: { banner: number | { id: number } } | [banner: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -426,7 +426,7 @@ update.put = (args: { banner: number | { id: number } } | [banner: number | { id
 
     /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::update
- * @see app/Http/Controllers/Web/Admin/BannerController.php:87
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:90
  * @route '/admin/banners/{banner}'
  */
     const updateForm = (args: { banner: number | { id: number } } | [banner: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -441,7 +441,7 @@ update.put = (args: { banner: number | { id: number } } | [banner: number | { id
 
             /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::update
- * @see app/Http/Controllers/Web/Admin/BannerController.php:87
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:90
  * @route '/admin/banners/{banner}'
  */
         updateForm.put = (args: { banner: number | { id: number } } | [banner: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -457,7 +457,7 @@ update.put = (args: { banner: number | { id: number } } | [banner: number | { id
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::destroy
- * @see app/Http/Controllers/Web/Admin/BannerController.php:95
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:98
  * @route '/admin/banners/{banner}'
  */
 export const destroy = (args: { banner: number | { id: number } } | [banner: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -472,7 +472,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::destroy
- * @see app/Http/Controllers/Web/Admin/BannerController.php:95
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:98
  * @route '/admin/banners/{banner}'
  */
 destroy.url = (args: { banner: number | { id: number } } | [banner: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -505,7 +505,7 @@ destroy.url = (args: { banner: number | { id: number } } | [banner: number | { i
 
 /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::destroy
- * @see app/Http/Controllers/Web/Admin/BannerController.php:95
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:98
  * @route '/admin/banners/{banner}'
  */
 destroy.delete = (args: { banner: number | { id: number } } | [banner: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -515,7 +515,7 @@ destroy.delete = (args: { banner: number | { id: number } } | [banner: number | 
 
     /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::destroy
- * @see app/Http/Controllers/Web/Admin/BannerController.php:95
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:98
  * @route '/admin/banners/{banner}'
  */
     const destroyForm = (args: { banner: number | { id: number } } | [banner: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -530,7 +530,7 @@ destroy.delete = (args: { banner: number | { id: number } } | [banner: number | 
 
             /**
 * @see \App\Http\Controllers\Web\Admin\BannerController::destroy
- * @see app/Http/Controllers/Web/Admin/BannerController.php:95
+ * @see app/Http/Controllers/Web/Admin/BannerController.php:98
  * @route '/admin/banners/{banner}'
  */
         destroyForm.delete = (args: { banner: number | { id: number } } | [banner: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

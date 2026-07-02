@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Web\SellerStoreController::show
- * @see app/Http/Controllers/Web/SellerStoreController.php:24
+ * @see app/Http/Controllers/Web/SellerStoreController.php:28
  * @route '/seller/store'
  */
 export const show = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\SellerStoreController::show
- * @see app/Http/Controllers/Web/SellerStoreController.php:24
+ * @see app/Http/Controllers/Web/SellerStoreController.php:28
  * @route '/seller/store'
  */
 show.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ show.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\SellerStoreController::show
- * @see app/Http/Controllers/Web/SellerStoreController.php:24
+ * @see app/Http/Controllers/Web/SellerStoreController.php:28
  * @route '/seller/store'
  */
 show.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ show.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Web\SellerStoreController::show
- * @see app/Http/Controllers/Web/SellerStoreController.php:24
+ * @see app/Http/Controllers/Web/SellerStoreController.php:28
  * @route '/seller/store'
  */
 show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\SellerStoreController::show
- * @see app/Http/Controllers/Web/SellerStoreController.php:24
+ * @see app/Http/Controllers/Web/SellerStoreController.php:28
  * @route '/seller/store'
  */
     const showForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\SellerStoreController::show
- * @see app/Http/Controllers/Web/SellerStoreController.php:24
+ * @see app/Http/Controllers/Web/SellerStoreController.php:28
  * @route '/seller/store'
  */
         showForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Web\SellerStoreController::show
- * @see app/Http/Controllers/Web/SellerStoreController.php:24
+ * @see app/Http/Controllers/Web/SellerStoreController.php:28
  * @route '/seller/store'
  */
         showForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Web\SellerStoreController::store
- * @see app/Http/Controllers/Web/SellerStoreController.php:31
+ * @see app/Http/Controllers/Web/SellerStoreController.php:35
  * @route '/seller/store'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\SellerStoreController::store
- * @see app/Http/Controllers/Web/SellerStoreController.php:31
+ * @see app/Http/Controllers/Web/SellerStoreController.php:35
  * @route '/seller/store'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\SellerStoreController::store
- * @see app/Http/Controllers/Web/SellerStoreController.php:31
+ * @see app/Http/Controllers/Web/SellerStoreController.php:35
  * @route '/seller/store'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\SellerStoreController::store
- * @see app/Http/Controllers/Web/SellerStoreController.php:31
+ * @see app/Http/Controllers/Web/SellerStoreController.php:35
  * @route '/seller/store'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\SellerStoreController::store
- * @see app/Http/Controllers/Web/SellerStoreController.php:31
+ * @see app/Http/Controllers/Web/SellerStoreController.php:35
  * @route '/seller/store'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Web\SellerStoreController::update
- * @see app/Http/Controllers/Web/SellerStoreController.php:42
+ * @see app/Http/Controllers/Web/SellerStoreController.php:46
  * @route '/seller/store/{store}'
  */
 export const update = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -149,7 +149,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\SellerStoreController::update
- * @see app/Http/Controllers/Web/SellerStoreController.php:42
+ * @see app/Http/Controllers/Web/SellerStoreController.php:46
  * @route '/seller/store/{store}'
  */
 update.url = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -182,7 +182,7 @@ update.url = (args: { store: number | { id: number } } | [store: number | { id: 
 
 /**
 * @see \App\Http\Controllers\Web\SellerStoreController::update
- * @see app/Http/Controllers/Web/SellerStoreController.php:42
+ * @see app/Http/Controllers/Web/SellerStoreController.php:46
  * @route '/seller/store/{store}'
  */
 update.put = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -192,7 +192,7 @@ update.put = (args: { store: number | { id: number } } | [store: number | { id: 
 
     /**
 * @see \App\Http\Controllers\Web\SellerStoreController::update
- * @see app/Http/Controllers/Web/SellerStoreController.php:42
+ * @see app/Http/Controllers/Web/SellerStoreController.php:46
  * @route '/seller/store/{store}'
  */
     const updateForm = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -207,7 +207,7 @@ update.put = (args: { store: number | { id: number } } | [store: number | { id: 
 
             /**
 * @see \App\Http\Controllers\Web\SellerStoreController::update
- * @see app/Http/Controllers/Web/SellerStoreController.php:42
+ * @see app/Http/Controllers/Web/SellerStoreController.php:46
  * @route '/seller/store/{store}'
  */
         updateForm.put = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -223,7 +223,7 @@ update.put = (args: { store: number | { id: number } } | [store: number | { id: 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Web\SellerStoreController::destroy
- * @see app/Http/Controllers/Web/SellerStoreController.php:53
+ * @see app/Http/Controllers/Web/SellerStoreController.php:57
  * @route '/seller/store/{store}'
  */
 export const destroy = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -238,7 +238,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\SellerStoreController::destroy
- * @see app/Http/Controllers/Web/SellerStoreController.php:53
+ * @see app/Http/Controllers/Web/SellerStoreController.php:57
  * @route '/seller/store/{store}'
  */
 destroy.url = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -271,7 +271,7 @@ destroy.url = (args: { store: number | { id: number } } | [store: number | { id:
 
 /**
 * @see \App\Http\Controllers\Web\SellerStoreController::destroy
- * @see app/Http/Controllers/Web/SellerStoreController.php:53
+ * @see app/Http/Controllers/Web/SellerStoreController.php:57
  * @route '/seller/store/{store}'
  */
 destroy.delete = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -281,7 +281,7 @@ destroy.delete = (args: { store: number | { id: number } } | [store: number | { 
 
     /**
 * @see \App\Http\Controllers\Web\SellerStoreController::destroy
- * @see app/Http/Controllers/Web/SellerStoreController.php:53
+ * @see app/Http/Controllers/Web/SellerStoreController.php:57
  * @route '/seller/store/{store}'
  */
     const destroyForm = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -296,7 +296,7 @@ destroy.delete = (args: { store: number | { id: number } } | [store: number | { 
 
             /**
 * @see \App\Http\Controllers\Web\SellerStoreController::destroy
- * @see app/Http/Controllers/Web/SellerStoreController.php:53
+ * @see app/Http/Controllers/Web/SellerStoreController.php:57
  * @route '/seller/store/{store}'
  */
         destroyForm.delete = (args: { store: number | { id: number } } | [store: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

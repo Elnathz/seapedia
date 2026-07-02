@@ -35,7 +35,7 @@ class BannerService
         return [
             'main' => $this->mainActive(),
             'side_top' => $this->sideTopActive(),
-            'side_bottom' => $this->sideBottomActive()
+            'side_bottom' => $this->sideBottomActive(),
         ];
     }
 

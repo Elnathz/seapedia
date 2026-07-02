@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -22,7 +23,7 @@ class CartService
      * different store is rejected with a 422 unless `$replaceStore` is set,
      * in which case the cart is cleared first (the UI's "Clear & add").
      */
-    public function addItem(User $user, Product $product, ?\App\Models\ProductVariant $variant, int $quantity, bool $replaceStore = false): CartItem
+    public function addItem(User $user, Product $product, ?ProductVariant $variant, int $quantity, bool $replaceStore = false): CartItem
     {
         return DB::transaction(function () use ($user, $product, $variant, $quantity, $replaceStore) {
             $cart = $this->resolveOrCreateFor($user);
@@ -61,13 +62,13 @@ class CartService
             $query = CartItem::query()
                 ->where('cart_id', $cart->id)
                 ->where('product_id', $product->id);
-                
+
             if ($variant) {
                 $query->where('product_variant_id', $variant->id);
             } else {
                 $query->whereNull('product_variant_id');
             }
-                
+
             $item = $query->first();
 
             $priceSnapshot = $variant ? $variant->price : $product->price;

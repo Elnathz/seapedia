@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Enums\OrderStatus;
 use App\Enums\RoleName;
+use App\Models\Order;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class DashboardService
@@ -61,7 +63,7 @@ class DashboardService
             RoleName::Buyer, null => [
                 'component' => 'dashboard/Buyer',
                 'props' => [
-                    'balance' => $balance, 
+                    'balance' => $balance,
                     'activeOrdersCount' => $this->activeOrderCount($user),
                     'completedOrdersCount' => $this->completedOrderCount($user),
                     'recentActiveOrders' => $this->recentActiveOrders($user, 3),
@@ -86,7 +88,7 @@ class DashboardService
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\Order>
+     * @return Collection<int, Order>
      */
     private function recentActiveOrders(User $user, int $limit)
     {

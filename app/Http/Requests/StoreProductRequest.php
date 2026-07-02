@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class StoreProductRequest extends FormRequest
 {
@@ -54,7 +55,7 @@ class StoreProductRequest extends FormRequest
 
         if (isset($data['images']) && is_array($data['images'])) {
             foreach ($data['images'] as $key => $file) {
-                if ($file instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
+                if ($file instanceof UploadedFile) {
                     if ($file->getError() === \UPLOAD_ERR_NO_FILE) {
                         unset($data['images'][$key]);
                     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\OrderService;
@@ -26,7 +27,7 @@ class SellerOrderController extends Controller
         }
 
         $status = $request->query('status');
-        $orderStatus = $status ? \App\Enums\OrderStatus::tryFrom($status) : null;
+        $orderStatus = $status ? OrderStatus::tryFrom($status) : null;
 
         return Inertia::render('seller/orders/Index', [
             'orders' => $this->orders->forSeller($store, 10, $orderStatus),

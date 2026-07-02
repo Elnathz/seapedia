@@ -23,7 +23,7 @@ class AppReviewFactory extends Factory
             'Rizky Pratama', 'Aulia Rahma', 'Bima Satria', 'Dinda Mutiara', 'Kevin Wijaya',
             'Siti Aminah', 'Andi Firmansyah', 'Putri Larasati', 'Reza Kurniawan', 'Nadia Safitri',
             'Dimas Aditya', 'Ayu Lestari', 'Fajar Nugroho', 'Siska Amelia', 'Gilang Saputra',
-            'Fikri Haikal', 'Tiara Andini', 'Ardiansyah', 'Nisa Sabyan', 'Iqbaal Ramadhan'
+            'Fikri Haikal', 'Tiara Andini', 'Ardiansyah', 'Nisa Sabyan', 'Iqbaal Ramadhan',
         ];
 
         $comments = [
@@ -36,7 +36,7 @@ class AppReviewFactory extends Factory
             'Super recommended! Seller-nya ramah-ramah, dan aplikasinya ngasih rekomendasi barang yang pas banget sama histori pencarian kita. Algoritmanya jalan banget.',
             'UX-nya juara! Gampang dipakai walau baru pertama kali install. Proses checkout sat-set, pilihan kurirnya juga banyak dan harganya transparan.',
             'Akhirnya ada marketplace khusus lingkungan kampus! Jadi gampang kalau mau beli makanan atau alat tulis tanpa harus keluar kosan. Luv banget sama SEAPEDIA <3',
-            'Luar biasa, UI/UX-nya masterclass! Animasi saat pindah halamannya mulus banget, kayak bukan aplikasi tugas kampus biasa. Belanja di sini jadi nagih.'
+            'Luar biasa, UI/UX-nya masterclass! Animasi saat pindah halamannya mulus banget, kayak bukan aplikasi tugas kampus biasa. Belanja di sini jadi nagih.',
         ];
 
         // Dominan bintang 5

@@ -47,7 +47,7 @@ class SelfStorePurchaseGuardTest extends TestCase
 
         $response = $this->actingAsBuyer($user)->post(route('buyer.cart.store'), [
             'product_id' => $product->id,
-            'quantity'   => 1,
+            'quantity' => 1,
         ]);
 
         // Must get a validation error on the 'product' field
@@ -58,7 +58,7 @@ class SelfStorePurchaseGuardTest extends TestCase
     public function test_different_buyer_can_add_that_product(): void
     {
         $seller = User::factory()->create();
-        $store   = Store::factory()->create(['user_id' => $seller->id]);
+        $store = Store::factory()->create(['user_id' => $seller->id]);
         $product = Product::factory()->create(['store_id' => $store->id, 'price' => 50_000]);
 
         $buyer = User::factory()->create();
@@ -68,7 +68,7 @@ class SelfStorePurchaseGuardTest extends TestCase
 
         $response = $this->actingAsBuyer($buyer)->post(route('buyer.cart.store'), [
             'product_id' => $product->id,
-            'quantity'   => 1,
+            'quantity' => 1,
         ]);
 
         $response->assertSessionDoesntHaveErrors();
@@ -87,8 +87,8 @@ class SelfStorePurchaseGuardTest extends TestCase
 
         $response = $this->actingAsBuyer($user)->post(route('buyer.cart.store'), [
             'product_id' => $product->id,
-            'quantity'   => 1,
-            'replace'    => true,
+            'quantity' => 1,
+            'replace' => true,
         ]);
 
         $response->assertInvalid(['product']);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAppReviewRequest;
 use App\Services\AppReviewService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -16,15 +17,15 @@ class AppReviewController extends Controller
     /**
      * Public, paginated review list (TDD §8 "GET /reviews").
      */
-    public function index(\Illuminate\Http\Request $request): Response
+    public function index(Request $request): Response
     {
         return Inertia::render('reviews/Index', [
             'reviews' => $this->reviews->paginated(
-                12, 
-                $request->query('role'), 
+                12,
+                $request->query('role'),
                 $request->query('rating') ? (int) $request->query('rating') : null
             ),
-            'filters' => $request->only(['role', 'rating'])
+            'filters' => $request->only(['role', 'rating']),
         ]);
     }
 

@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBannerRequest;
 use App\Http\Requests\UpdateBannerRequest;
 use App\Models\Banner;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Store;
 use App\Services\BannerService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -25,7 +28,7 @@ class BannerController extends Controller
 
         $q = $data['q'] ?? '';
 
-        $categories = \App\Models\Category::query()
+        $categories = Category::query()
             ->when($q !== '', function ($query) use ($q) {
                 $query->where('name', 'like', "%{$q}%");
             })
@@ -43,7 +46,7 @@ class BannerController extends Controller
 
         $q = $data['q'] ?? '';
 
-        $products = \App\Models\Product::query()
+        $products = Product::query()
             ->when($q !== '', function ($query) use ($q) {
                 $query->where('name', 'like', "%{$q}%");
             })
@@ -61,7 +64,7 @@ class BannerController extends Controller
 
         $q = $data['q'] ?? '';
 
-        $stores = \App\Models\Store::query()
+        $stores = Store::query()
             ->when($q !== '', function ($query) use ($q) {
                 $query->where('name', 'like', "%{$q}%");
             })

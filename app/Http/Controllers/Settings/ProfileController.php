@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Enums\DeliveryStatus;
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Models\Delivery;
+use App\Models\Order;
 use App\Models\Store;
 use App\Models\Wallet;
 use App\Services\RoleService;
@@ -13,6 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -91,30 +96,30 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        $hasActiveOrders = \App\Models\Order::where('buyer_id', $user->id)
+        $hasActiveOrders = Order::where('buyer_id', $user->id)
             ->whereIn('status', [
-                \App\Enums\OrderStatus::BelumDibayar,
-                \App\Enums\OrderStatus::SedangDikemas,
-                \App\Enums\OrderStatus::MenungguPengirim,
-                \App\Enums\OrderStatus::SedangDikirim,
+                OrderStatus::BelumDibayar,
+                OrderStatus::SedangDikemas,
+                OrderStatus::MenungguPengirim,
+                OrderStatus::SedangDikirim,
             ])
             ->exists();
 
-        $hasActiveSellerOrders = $user->store ? \App\Models\Order::where('store_id', $user->store->id)
+        $hasActiveSellerOrders = $user->store ? Order::where('store_id', $user->store->id)
             ->whereIn('status', [
-                \App\Enums\OrderStatus::SedangDikemas,
-                \App\Enums\OrderStatus::MenungguPengirim,
-                \App\Enums\OrderStatus::SedangDikirim,
+                OrderStatus::SedangDikemas,
+                OrderStatus::MenungguPengirim,
+                OrderStatus::SedangDikirim,
             ])
             ->exists() : false;
 
-        $hasActiveDelivery = \App\Models\Delivery::where('driver_id', $user->id)
-            ->whereIn('status', [\App\Enums\DeliveryStatus::Available, \App\Enums\DeliveryStatus::Taken])
+        $hasActiveDelivery = Delivery::where('driver_id', $user->id)
+            ->whereIn('status', [DeliveryStatus::Available, DeliveryStatus::Taken])
             ->exists();
 
         if ($hasActiveOrders || $hasActiveSellerOrders || $hasActiveDelivery) {
             return back()->withErrors([
-                'password' => 'Tidak dapat menghapus akun karena masih ada pesanan atau pengiriman aktif.'
+                'password' => 'Tidak dapat menghapus akun karena masih ada pesanan atau pengiriman aktif.',
             ]);
         }
 
@@ -122,9 +127,9 @@ class ProfileController extends Controller
 
         $user->update([
             'name' => 'Pengguna Dihapus',
-            'email' => \Illuminate\Support\Str::uuid() . '@deleted.seapedia.test',
+            'email' => Str::uuid().'@deleted.seapedia.test',
         ]);
-        
+
         $user->delete();
 
         $request->session()->invalidate();

@@ -5,8 +5,8 @@ namespace Database\Seeders;
 use App\Enums\RoleName;
 use App\Models\User;
 use App\Services\RoleService;
-use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 
 class DemoUserSeeder extends Seeder
 {

@@ -40,13 +40,13 @@ class ProductManagementTest extends TestCase
         $image = UploadedFile::fake()->image('product.jpg');
 
         $response = $this->actingAsSeller($seller)->post(route('seller.products.store'), [
-            'name'         => 'Kopi Susu',
-            'description'  => 'Kopi susu segar.',
-            'category_id'  => Category::factory()->create()->id,
-            'price'        => 18000,
-            'stock'        => 20,
+            'name' => 'Kopi Susu',
+            'description' => 'Kopi susu segar.',
+            'category_id' => Category::factory()->create()->id,
+            'price' => 18000,
+            'stock' => 20,
             'has_variants' => false,
-            'images'       => [$image],
+            'images' => [$image],
         ]);
 
         $response->assertRedirect(route('seller.products.index'));
@@ -76,11 +76,11 @@ class ProductManagementTest extends TestCase
         $product = Product::factory()->create(['store_id' => $seller->store->id]);
 
         $response = $this->actingAsSeller($seller)->put(route('seller.products.update', $product), [
-            'name'         => 'Nama Baru',
-            'description'  => 'Deskripsi baru.',
-            'category_id'  => $product->category_id,
-            'price'        => 25000,
-            'stock'        => 10,
+            'name' => 'Nama Baru',
+            'description' => 'Deskripsi baru.',
+            'category_id' => $product->category_id,
+            'price' => 25000,
+            'stock' => 10,
             'has_variants' => false,
         ]);
 
@@ -111,10 +111,10 @@ class ProductManagementTest extends TestCase
         $intruder = $this->sellerWithStore();
 
         $response = $this->actingAsSeller($intruder)->put(route('seller.products.update', $product), [
-            'name'         => 'Diretas',
-            'category_id'  => $product->category_id,
-            'price'        => 100,
-            'stock'        => 1,
+            'name' => 'Diretas',
+            'category_id' => $product->category_id,
+            'price' => 100,
+            'stock' => 1,
             'has_variants' => false,
         ]);
 

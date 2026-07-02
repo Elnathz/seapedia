@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::index
- * @see app/Http/Controllers/Web/BuyerOrderController.php:15
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:16
  * @route '/buyer/orders'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::index
- * @see app/Http/Controllers/Web/BuyerOrderController.php:15
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:16
  * @route '/buyer/orders'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::index
- * @see app/Http/Controllers/Web/BuyerOrderController.php:15
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:16
  * @route '/buyer/orders'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::index
- * @see app/Http/Controllers/Web/BuyerOrderController.php:15
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:16
  * @route '/buyer/orders'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::index
- * @see app/Http/Controllers/Web/BuyerOrderController.php:15
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:16
  * @route '/buyer/orders'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::index
- * @see app/Http/Controllers/Web/BuyerOrderController.php:15
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:16
  * @route '/buyer/orders'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::index
- * @see app/Http/Controllers/Web/BuyerOrderController.php:15
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:16
  * @route '/buyer/orders'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:26
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:27
  * @route '/buyer/orders/{order}'
  */
 export const show = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:26
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:27
  * @route '/buyer/orders/{order}'
  */
 show.url = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -122,7 +122,7 @@ show.url = (args: { order: string | number } | [order: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:26
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:27
  * @route '/buyer/orders/{order}'
  */
 show.get = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -131,7 +131,7 @@ show.get = (args: { order: string | number } | [order: string | number ] | strin
 })
 /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:26
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:27
  * @route '/buyer/orders/{order}'
  */
 show.head = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -141,7 +141,7 @@ show.head = (args: { order: string | number } | [order: string | number ] | stri
 
     /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:26
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:27
  * @route '/buyer/orders/{order}'
  */
     const showForm = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -151,7 +151,7 @@ show.head = (args: { order: string | number } | [order: string | number ] | stri
 
             /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:26
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:27
  * @route '/buyer/orders/{order}'
  */
         showForm.get = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -160,7 +160,7 @@ show.head = (args: { order: string | number } | [order: string | number ] | stri
         })
             /**
 * @see \App\Http\Controllers\Web\BuyerOrderController::show
- * @see app/Http/Controllers/Web/BuyerOrderController.php:26
+ * @see app/Http/Controllers/Web/BuyerOrderController.php:27
  * @route '/buyer/orders/{order}'
  */
         showForm.head = (args: { order: string | number } | [order: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

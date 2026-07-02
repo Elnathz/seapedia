@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Enums\DiscountType;
+use App\Models\Promo;
+use App\Models\Voucher;
 use App\Services\DiscountService;
 use Illuminate\Database\Seeder;
 
@@ -18,7 +20,7 @@ class DiscountSeeder extends Seeder
     public function run(): void
     {
         // --- Vouchers ---
-        \App\Models\Voucher::query()->firstOrCreate(
+        Voucher::query()->firstOrCreate(
             ['code' => 'HEMAT10'],
             [
                 'type' => DiscountType::Percentage,
@@ -33,7 +35,7 @@ class DiscountSeeder extends Seeder
         );
 
         // Expired voucher — rejected with "expired" message.
-        \App\Models\Voucher::query()->firstOrCreate(
+        Voucher::query()->firstOrCreate(
             ['code' => 'EXPIRED5K'],
             [
                 'type' => DiscountType::Fixed,
@@ -48,7 +50,7 @@ class DiscountSeeder extends Seeder
         );
 
         // Used-up voucher — rejected with "fully redeemed" message.
-        $voucher = \App\Models\Voucher::query()->firstOrCreate(
+        $voucher = Voucher::query()->firstOrCreate(
             ['code' => 'HABIS'],
             [
                 'type' => DiscountType::Fixed,
@@ -64,7 +66,7 @@ class DiscountSeeder extends Seeder
         $voucher->update(['used_count' => 1]);
 
         // Inactive voucher.
-        \App\Models\Voucher::query()->firstOrCreate(
+        Voucher::query()->firstOrCreate(
             ['code' => 'NONAKTIF'],
             [
                 'type' => DiscountType::Percentage,
@@ -79,7 +81,7 @@ class DiscountSeeder extends Seeder
         );
 
         // --- Promos ---
-        \App\Models\Promo::query()->firstOrCreate(
+        Promo::query()->firstOrCreate(
             ['code' => 'PROMO20K'],
             [
                 'type' => DiscountType::Fixed,
@@ -92,7 +94,7 @@ class DiscountSeeder extends Seeder
         );
 
         // Expired promo — rejected with "expired" message.
-        \App\Models\Promo::query()->firstOrCreate(
+        Promo::query()->firstOrCreate(
             ['code' => 'EXPIREDPROMO'],
             [
                 'type' => DiscountType::Percentage,
@@ -105,7 +107,7 @@ class DiscountSeeder extends Seeder
         );
 
         // Inactive promo.
-        \App\Models\Promo::query()->firstOrCreate(
+        Promo::query()->firstOrCreate(
             ['code' => 'INACTIVE10'],
             [
                 'type' => DiscountType::Percentage,
@@ -118,7 +120,7 @@ class DiscountSeeder extends Seeder
         );
 
         // Active promo with no minimum spend.
-        \App\Models\Promo::query()->firstOrCreate(
+        Promo::query()->firstOrCreate(
             ['code' => 'HEMAT50'],
             [
                 'type' => DiscountType::Fixed,

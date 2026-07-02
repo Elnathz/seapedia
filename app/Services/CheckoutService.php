@@ -7,6 +7,7 @@ use App\Enums\WalletTransactionType;
 use App\Models\Address;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -117,7 +118,7 @@ class CheckoutService
                 }
 
                 if ($item->product_variant_id) {
-                    $variant = \App\Models\ProductVariant::query()->lockForUpdate()->find($item->product_variant_id);
+                    $variant = ProductVariant::query()->lockForUpdate()->find($item->product_variant_id);
                     if (! $variant || $variant->stock < $item->quantity) {
                         throw ValidationException::withMessages([
                             'stock' => [__('Insufficient stock for variant :variant (:stock left).', [

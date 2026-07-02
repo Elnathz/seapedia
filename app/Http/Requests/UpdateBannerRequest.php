@@ -28,16 +28,16 @@ class UpdateBannerRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     if ($value !== null && $value !== '') {
                         if (str_starts_with($value, '/')) {
-                            if (!preg_match('/^\/(catalog|stores)($|[\/?#])/', $value)) {
+                            if (! preg_match('/^\/(catalog|stores)($|[\/?#])/', $value)) {
                                 $fail('Tautan internal harus diawali dengan /catalog atau /stores.');
                             }
                         } else {
-                            if (!preg_match('/^https?:\/\//', $value)) {
+                            if (! preg_match('/^https?:\/\//', $value)) {
                                 $fail('Tautan eksternal wajib diawali dengan http:// atau https://');
                             }
                         }
                     }
-                }
+                },
             ],
             'sort_order' => [
                 'required',
@@ -73,7 +73,7 @@ class UpdateBannerRequest extends FormRequest
         $file = $this->file('image');
         // If the user didn't upload a file at all (error 4), remove it from validation
         // so that the 'nullable' rule passes properly.
-        if (!$file || $file->getError() === \UPLOAD_ERR_NO_FILE) {
+        if (! $file || $file->getError() === \UPLOAD_ERR_NO_FILE) {
             unset($data['image']);
         }
 

@@ -8,6 +8,7 @@ use App\Http\Requests\TakeJobRequest;
 use App\Models\Delivery;
 use App\Services\DeliveryService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -19,9 +20,10 @@ class DriverJobController extends Controller
     /**
      * Jobs no driver has claimed yet.
      */
-    public function index(\Illuminate\Http\Request $request): Response
+    public function index(Request $request): Response
     {
         $method = $request->query('method');
+
         return Inertia::render('driver/jobs/Index', [
             'jobs' => $this->deliveries->availableJobs(10, $method),
             'currentMethod' => $method,

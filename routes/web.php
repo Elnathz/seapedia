@@ -23,6 +23,7 @@ use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\DriverJobController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\LocaleController;
+use App\Http\Controllers\Web\Profile\RoleDeleteController;
 use App\Http\Controllers\Web\RoleController;
 use App\Http\Controllers\Web\SellerOrderController;
 use App\Http\Controllers\Web\SellerProductController;
@@ -48,7 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('role/select', [RoleController::class, 'create'])->name('role.select');
     Route::post('role/select', [RoleController::class, 'store'])->name('role.store');
-    Route::delete('role/{role}', [\App\Http\Controllers\Web\Profile\RoleDeleteController::class, 'destroy'])->name('role.destroy');
+    Route::delete('role/{role}', [RoleDeleteController::class, 'destroy'])->name('role.destroy');
 
     Route::middleware('active_role:seller')->prefix('seller')->name('seller.')->group(function () {
         Route::get('store', [SellerStoreController::class, 'show'])->name('store.show');

@@ -31,7 +31,7 @@ class BannerSeeder extends Seeder
                 'sort_order' => 1,
                 'is_active' => true,
             ],
-            
+
             // Atas (side_top)
             [
                 'title' => 'Panasonic Lumix FZ80D',
@@ -64,7 +64,7 @@ class BannerSeeder extends Seeder
                 'image_path' => 'images/banner/bawah/Apex Pro TKL Wireless Gen 3 rp 3,299,000.png',
                 'sort_order' => 0,
                 'is_active' => true,
-            ]
+            ],
         ];
 
         foreach ($banners as $b) {

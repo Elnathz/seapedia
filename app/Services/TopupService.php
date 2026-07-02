@@ -6,16 +6,16 @@ use App\Enums\PaymentGatewayType;
 use App\Enums\TopupStatus;
 use App\Models\Topup;
 use App\Models\User;
+use App\Models\Wallet;
 use App\Services\Payment\PaymentGateway;
-use Illuminate\Support\Str;
-
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class TopupService
 {
     public const int MAX_BALANCE = 1_000_000_000;
-    
+
     public function __construct(private readonly PaymentGateway $gateway) {}
 
     /**
@@ -25,7 +25,7 @@ class TopupService
     public function create(User $user, int $amount): Topup
     {
         return DB::transaction(function () use ($user, $amount) {
-            $wallet = \App\Models\Wallet::query()->lockForUpdate()->findOrFail($user->wallet->id);
+            $wallet = Wallet::query()->lockForUpdate()->findOrFail($user->wallet->id);
 
             if ($wallet->balance + $amount > self::MAX_BALANCE) {
                 throw ValidationException::withMessages([
@@ -46,7 +46,6 @@ class TopupService
             return $topup;
         });
     }
-
 
     /**
      * Poll the gateway for the current state, resolving (and crediting)

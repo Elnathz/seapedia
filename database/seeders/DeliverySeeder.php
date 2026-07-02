@@ -7,12 +7,13 @@ use App\Models\User;
 use App\Services\CartService;
 use App\Services\CheckoutService;
 use App\Services\OrderService;
+use App\Services\TopupService;
 use Illuminate\Database\Seeder;
 
 class DeliverySeeder extends Seeder
 {
     public function __construct(
-        private readonly \App\Services\TopupService $topups,
+        private readonly TopupService $topups,
         private readonly CartService $carts,
         private readonly CheckoutService $checkout,
         private readonly OrderService $orders,
