@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Minus, Plus, ShoppingBag, Trash2 } from '@lucide/vue';
+import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from '@lucide/vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import BuyerCartController from '@/actions/App/Http/Controllers/Web/BuyerCartController';
@@ -9,7 +9,6 @@ import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { formatIDR } from '@/lib/utils';
 import { index as catalogIndex } from '@/routes/catalog';
 
@@ -22,11 +21,20 @@ interface CartProduct {
     stock: number;
 }
 
+interface CartVariant {
+    id: number;
+    name: string;
+    price: number;
+    stock: number;
+    image_path: string | null;
+}
+
 interface CartItemData {
     id: number;
     quantity: number;
     price_snapshot: number;
     product: CartProduct;
+    variant?: CartVariant | null;
 }
 
 interface CartData {
@@ -107,105 +115,142 @@ function clearAll() {
             </p>
 
             <div class="flex flex-col gap-3">
-                <Card v-for="item in cart.items" :key="item.id">
-                    <CardContent class="flex items-center gap-4 pt-6">
+                <Card
+                    v-for="item in cart.items"
+                    :key="item.id"
+                    class="overflow-hidden transition-shadow duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-[0_10px_30px_-14px_rgba(33,200,185,0.35)]"
+                >
+                    <CardContent class="flex gap-3 pt-6 sm:gap-4">
                         <img
                             v-if="item.variant?.image_path || item.product.image_path"
                             :src="`/storage/${item.variant?.image_path || item.product.image_path}`"
                             :alt="item.product.name"
-                            class="size-16 rounded-md border border-border object-cover"
+                            class="size-16 shrink-0 rounded-lg border border-border object-cover sm:size-20"
                         />
                         <div
                             v-else
-                            class="flex size-16 items-center justify-center rounded-md border border-dashed border-border text-muted-foreground"
+                            class="flex size-16 shrink-0 items-center justify-center rounded-lg border border-dashed border-border text-muted-foreground sm:size-20"
                         >
                             <ShoppingBag class="size-5" />
                         </div>
 
-                        <div class="flex-1">
-                            <p class="font-medium">{{ item.product.name }}</p>
-                            <p v-if="item.variant" class="text-xs font-semibold text-primary bg-primary/10 w-fit px-2 py-0.5 rounded-full mt-1 mb-1">
-                                Varian: {{ item.variant.name }}
-                            </p>
-                            <p
-                                class="text-sm text-muted-foreground tabular-nums"
-                            >
-                                {{ formatIDR(item.price_snapshot) }}
-                            </p>
-                            <p
-                                v-if="item.quantity > (item.variant?.stock ?? item.product.stock)"
-                                class="mt-1 text-xs text-amber-600"
-                            >
-                                {{
-                                    t('cart.stockWarning', {
-                                        stock: item.variant?.stock ?? item.product.stock,
-                                    })
-                                }}
-                            </p>
+                        <div class="flex min-w-0 flex-1 flex-col gap-2">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <p class="line-clamp-2 font-medium leading-snug">
+                                        {{ item.product.name }}
+                                    </p>
+                                    <span
+                                        v-if="item.variant"
+                                        class="mt-1 inline-block w-fit rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary"
+                                    >
+                                        {{ item.variant.name }}
+                                    </span>
+                                    <p class="mt-0.5 text-sm text-muted-foreground tabular-nums">
+                                        {{ formatIDR(item.price_snapshot) }}
+                                    </p>
+                                    <p
+                                        v-if="item.quantity > (item.variant?.stock ?? item.product.stock)"
+                                        class="mt-1 text-xs text-amber-600"
+                                    >
+                                        {{
+                                            t('cart.stockWarning', {
+                                                stock: item.variant?.stock ?? item.product.stock,
+                                            })
+                                        }}
+                                    </p>
+                                </div>
+
+                                <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    class="-mr-2 -mt-1 size-8 shrink-0 text-muted-foreground transition-colors hover:text-destructive"
+                                    @click="removeItem(item)"
+                                >
+                                    <Trash2 class="size-4" />
+                                    <span class="sr-only">{{
+                                        t('cart.remove', { name: item.product.name })
+                                    }}</span>
+                                </Button>
+                            </div>
+
+                            <div class="mt-auto flex items-center justify-between gap-2">
+                                <div
+                                    class="inline-flex items-center rounded-full border border-border bg-muted/40 p-0.5"
+                                >
+                                    <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        class="size-7 rounded-full active:scale-95"
+                                        :disabled="item.quantity <= 1"
+                                        @click="changeQty(item, -1)"
+                                    >
+                                        <Minus class="size-3.5" />
+                                    </Button>
+                                    <span class="w-8 text-center text-sm font-medium tabular-nums">{{
+                                        item.quantity
+                                    }}</span>
+                                    <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        class="size-7 rounded-full active:scale-95"
+                                        @click="changeQty(item, 1)"
+                                    >
+                                        <Plus class="size-3.5" />
+                                    </Button>
+                                </div>
+
+                                <p class="font-semibold tabular-nums text-foreground">
+                                    {{ formatIDR(item.price_snapshot * item.quantity) }}
+                                </p>
+                            </div>
                         </div>
-
-                        <div class="flex items-center gap-2">
-                            <Button
-                                size="icon"
-                                variant="outline"
-                                class="size-8"
-                                :disabled="item.quantity <= 1"
-                                @click="changeQty(item, -1)"
-                            >
-                                <Minus class="size-3.5" />
-                            </Button>
-                            <span class="w-8 text-center tabular-nums">{{
-                                item.quantity
-                            }}</span>
-                            <Button
-                                size="icon"
-                                variant="outline"
-                                class="size-8"
-                                @click="changeQty(item, 1)"
-                            >
-                                <Plus class="size-3.5" />
-                            </Button>
-                        </div>
-
-                        <p class="w-28 text-right font-medium tabular-nums">
-                            {{ formatIDR(item.price_snapshot * item.quantity) }}
-                        </p>
-
-                        <Button
-                            size="icon"
-                            variant="ghost"
-                            class="text-muted-foreground hover:text-destructive"
-                            @click="removeItem(item)"
-                        >
-                            <Trash2 class="size-4" />
-                            <span class="sr-only">{{
-                                t('cart.remove', { name: item.product.name })
-                            }}</span>
-                        </Button>
                     </CardContent>
                 </Card>
             </div>
 
-            <Separator />
+            <div class="flex justify-end">
+                <!-- Sea-glass summary: a glass plate seated in a teal tray (double-bezel). -->
+                <div
+                    class="w-full rounded-[1.75rem] bg-primary/5 p-1.5 ring-1 ring-primary/10 sm:w-80"
+                >
+                    <div
+                        class="rounded-[calc(1.75rem-0.375rem)] border border-white/60 bg-card p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]"
+                    >
+                        <div class="flex items-baseline justify-between gap-3">
+                            <span class="text-sm text-muted-foreground">
+                                {{ t('cart.subtotal') }}
+                            </span>
+                            <span class="text-xl font-bold tabular-nums text-primary">
+                                {{ formatIDR(subtotal) }}
+                            </span>
+                        </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-4">
-                <Button variant="outline" @click="clearAll">
-                    {{ t('cart.clearCart') }}
-                </Button>
-                <div class="flex items-center gap-4">
-                    <div class="text-right">
-                        <p class="text-sm text-muted-foreground">
-                            {{ t('cart.subtotal') }}
-                        </p>
-                        <p class="text-xl font-semibold tabular-nums">
-                            {{ formatIDR(subtotal) }}
-                        </p>
+                        <Button
+                            as-child
+                            size="lg"
+                            class="group mt-4 h-12 w-full justify-between rounded-full pr-2 pl-5"
+                        >
+                            <Link :href="CheckoutController.show.url()">
+                                <span class="font-semibold">{{
+                                    t('cart.goToCheckout')
+                                }}</span>
+                                <span
+                                    class="flex size-8 items-center justify-center rounded-full bg-primary-foreground/20 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1"
+                                >
+                                    <ArrowRight class="size-4" />
+                                </span>
+                            </Link>
+                        </Button>
+
+                        <Button
+                            variant="ghost"
+                            class="mt-2 w-full text-muted-foreground hover:text-destructive"
+                            @click="clearAll"
+                        >
+                            {{ t('cart.clearCart') }}
+                        </Button>
                     </div>
-                    <Button as-child>
-                        <Link :href="CheckoutController.show.url()">{{
-                            t('cart.goToCheckout')
-                        }}</Link>
-                    </Button>
                 </div>
             </div>
         </template>

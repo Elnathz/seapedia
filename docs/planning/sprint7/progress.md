@@ -9,7 +9,7 @@
 
 ## B — Cart & Checkout
 - [ ] B0 feat(checkout): add region-tier delivery surcharge
-- [ ] B1 fix(cart): stop price overflow and align mobile summary
+- [x] B1 fix(cart): stop price overflow and align mobile summary
 - [ ] B2 feat(checkout): make layout responsive with summary rail
 - [ ] B3 feat(checkout): add inline add-address modal
 - [ ] B4 feat(discount): add buyer promo and voucher picker modal
