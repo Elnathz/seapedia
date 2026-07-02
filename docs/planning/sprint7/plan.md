@@ -68,12 +68,10 @@ still invokes `ui-ux-pro-max` (+ `frontend-design`, + `motion-design` for animat
   - Commit: `feat(wallet): bound top-up between 5rb and 100jt`
 
 ### Workstream B — Cart & Checkout (buyer)
-- **B0: Region-tier delivery surcharge (money-math)** — DECIDED
-  - Files: `app/Enums/DeliveryMethod.php` (base fee stays) + a `DeliveryFeeService` computing `fee = base(method) + surcharge(tier)`; tier derived from buyer-address vs store region strings (same village = 0 / district / city / province / other); `CheckoutService::preview` + `commit` use it; update **TDD §5.4**, the **`money-and-checkout`** skill, and README; Pest.
-  - Rules: PPN base unchanged — delivery fee (incl. surcharge) is still NOT taxed (§5.2); surcharge is integer IDR; base fee still differs per method (spec line 278 satisfied).
-  - Acceptance: preview & commit show base + surcharge; grand_total recomputes; preview == amount charged.
-  - Tests: Pest — surcharge per tier; grand_total correct; existing money-math tests updated to new expected fees.
-  - Commit: `feat(checkout): add region-tier delivery surcharge`
+- **B0: Distance + weight delivery fee (money-math)** — DONE (revised from the earlier region-tier idea after the user chose a real-marketplace model; SPEC line 278 is the only hard rule, distance/weight are spec-legal).
+  - `DeliveryFeeService` computes `fee = base(method) + min(ceil(km),80) × rate(method) + weight_fee`. Distance = Haversine between store origin lat/lng and buyer address lat/lng (Leaflet/OpenStreetMap picker, no API key; no runtime geocoding). Weight = mandatory per-variant/product grams, Rp2.000/kg over the first free kg. `CheckoutService::preview` + `commit` use it (preview == charge). TDD §5.4a, `money-and-checkout` skill, README updated.
+  - Guardrails: base + per-km rate keep every method distinct at all distances (spec line 278); delivery fee (base + distance + weight) NOT taxed (§5.2); driver distance never in the fee (no driver at checkout) — only job sorting; store origin fixed before checkout.
+  - Commits: `7ec3bf9` (fee engine), `a66acce` (weight), `1e08feb` (seed geo/weight), `443c10a` (Leaflet picker), docs.
 - **B1: Cart mobile layout rework**
   - Files: `resources/js/pages/buyer/cart/Index.vue` (+ any cart item component).
   - Fix: line price overflowing the card on mobile; move Kosongkan Keranjang, Subtotal, and "Lanjut ke Checkout" into a right-aligned summary column (CTA below subtotal). Make single-store rule explicit (banner + clear-first conflict handling).
@@ -168,7 +166,7 @@ still invokes `ui-ux-pro-max` (+ `frontend-design`, + `motion-design` for animat
 - Any role on mobile: edge-swipe opens the sidebar.
 
 ## Risks / open questions (defaults applied if unanswered)
-1. **Delivery fee** — ✅ DECIDED: **base per-method fee + region-tier surcharge** (task B0). Requires updating TDD §5.4, the `money-and-checkout` skill, Pest tests, and README. Base fees still differ per method, so spec line 278 stays satisfied.
+1. **Delivery fee** — ✅ DECIDED (revised): **base(method) + Haversine distance × per-km rate(method) + weight fee** (task B0). The earlier region-tier surcharge was superseded when the user chose a real-marketplace model. Only SPEC line 278 (fee differs per method) is a hard rule; distance/weight are spec-silent = legal. Store origin + buyer address pinned on a Leaflet/OpenStreetMap map; weight mandatory per variant. Driver distance is NOT in the fee (no driver at checkout) — it only sorts jobs.
 2. **Promo usage limit** — ✅ DECIDED: **promos stay expiry-only** (progress bar applies to vouchers only; promos show an expiry countdown). Preserves the required voucher/promo distinction.
 3. **Driver distance** — no coordinates stored, so distance is a region-hierarchy ordinal proxy, not km. **Default: proxy sort/label** (you chose "sort by nearest").
 4. **Concurrent-pickup cap value** — **Default: 3** (config-driven, easy to change).

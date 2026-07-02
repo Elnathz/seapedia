@@ -35,8 +35,8 @@ class BuyerDemoSeeder extends Seeder
     {
         config(['payment.topup.processing_seconds' => 0]);
 
-        // Semarang regions with varied kelurahan so the demo shows a spread of
-        // region-tier surcharges against the seeded store origins (§5.4).
+        // Semarang addresses (region text + coordinates) near the seeded store
+        // origins so the demo shows a real distance delivery fee (§5.4a).
         $tembalang = ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Sumurboto', 'latitude' => -7.0525, 'longitude' => 110.4290];
         $banyumanik = ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Banyumanik', 'village' => 'Pedalangan', 'latitude' => -7.0700, 'longitude' => 110.4210];
         $bulusan = ['province' => 'Jawa Tengah', 'city' => 'Kota Semarang', 'district' => 'Tembalang', 'village' => 'Bulusan', 'latitude' => -7.0490, 'longitude' => 110.4360];

@@ -28,12 +28,12 @@ class CheckoutController extends Controller
                     new OA\Property(property: 'delivery_method', type: 'string', enum: ['pickup', 'delivery']),
                     new OA\Property(property: 'promo_code', type: 'string', nullable: true, maxLength: 32),
                     new OA\Property(property: 'voucher_code', type: 'string', nullable: true, maxLength: 32),
-                    new OA\Property(property: 'address_id', type: 'integer', nullable: true, description: 'Ships-to address; sets the region-tier delivery surcharge'),
+                    new OA\Property(property: 'address_id', type: 'integer', nullable: true, description: 'Ships-to address; its coordinates set the distance delivery fee'),
                 ],
             ),
         ),
         responses: [
-            new OA\Response(response: 200, description: 'subtotal/discount/tax/delivery_fee (base+surcharge)/grand_total + balance check'),
+            new OA\Response(response: 200, description: 'subtotal/discount/tax/delivery_fee (base+distance+weight)/grand_total + balance check'),
         ],
     )]
     public function preview(PreviewCheckoutRequest $request): JsonResponse

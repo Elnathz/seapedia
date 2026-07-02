@@ -7,10 +7,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * The store's origin/pickup region. Used to compute the region-tier
-     * delivery surcharge (§5.4) by comparing it against the buyer's shipping
-     * address, and to sort driver jobs by nearest. Nullable: a store without a
-     * recorded origin is charged base fee only (no surprise surcharge).
+     * The store's origin/pickup region as human-readable text, shown on the
+     * store profile and as the driver's pickup label. (The delivery fee itself
+     * is computed from lat/lng added in a later migration, §5.4a.) Nullable.
      */
     public function up(): void
     {

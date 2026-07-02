@@ -8,7 +8,7 @@
 - [x] F1 feat(wallet): bound top-up between 5rb and 100jt
 
 ## B — Cart & Checkout
-- [x] B0 feat(checkout): add region-tier delivery surcharge — DeliveryFeeService (base + tier surcharge), store origin region, preview==commit, TDD §5.4a, +8 Pest tests
+- [x] B0 feat(checkout): distance + weight delivery fee — superseded the region-tier surcharge after the user chose a real-marketplace model (SPEC line 278 is the only hard rule; distance/weight are spec-legal). DeliveryFeeService = base(method) + Haversine km × rate(method) + weight; lat/lng on stores+addresses (Leaflet/OSM picker, no API key), mandatory per-variant weight; preview==commit; TDD §5.4a rewritten; +6 Pest tests. Commits: 7ec3bf9, a66acce, 1e08feb, 443c10a.
 - [x] B1 fix(cart): stop price overflow and align mobile summary
 - [ ] B2 feat(checkout): make layout responsive with summary rail
 - [ ] B3 feat(checkout): add inline add-address modal

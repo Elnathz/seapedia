@@ -28,8 +28,8 @@ class CheckoutController extends Controller
 
         $addresses = $user->addresses()->orderByDesc('is_default')->orderByDesc('id')->get();
 
-        // The previewed delivery surcharge depends on which address the order
-        // ships to, so previews are computed for the selected address (default
+        // The previewed delivery fee depends on which address the order ships
+        // to (distance from the store), so previews use the selected address (default
         // when none is chosen yet). Resolved from the user's own collection, so
         // an address_id that isn't theirs simply falls back to the default.
         $selectedAddress = $request->filled('address_id')
