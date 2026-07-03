@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\DeliveryStatus;
 use App\Enums\OrderStatus;
+use App\Enums\SlaUrgency;
 use App\Models\Delivery;
 use App\Models\Order;
 use App\Models\Store;
@@ -131,17 +132,55 @@ class OrderService
     }
 
     /**
-     * A seller's incoming orders for their store, newest first.
+     * A seller's incoming orders for their store. Ordering is risk-first: the
+     * orders still racing an SLA deadline (near-cancel) surface at the top so
+     * the seller acts before the overdue sweep refunds them (§6C), while
+     * finished orders fall to a newest-first history tail below.
+     *
+     * The two CASE keys are parameter-bound constant SQL (no interpolation), so
+     * golden rule 8's injection concern does not apply.
      */
     public function forSeller(Store $store, int $perPage = 10, ?OrderStatus $status = null): LengthAwarePaginator
     {
-        return Order::query()
+        $active = array_map(
+            fn (OrderStatus $s) => $s->value,
+            [OrderStatus::SedangDikemas, OrderStatus::MenungguPengirim, OrderStatus::SedangDikirim],
+        );
+
+        $orders = Order::query()
             ->where('store_id', $store->id)
             ->when($status, fn ($q) => $q->where('status', $status))
             ->with('buyer:id,name')
-            ->latest()
+            // Active orders above finished ones...
+            ->orderByRaw('CASE WHEN status IN (?, ?, ?) THEN 0 ELSE 1 END', $active)
+            // ...soonest SLA first among the active (near-cancel on top; NULL —
+            // hence no effect — for the finished tail)...
+            ->orderByRaw('CASE WHEN status IN (?, ?, ?) THEN sla_due_at END', $active)
+            // ...then newest first (history order + tiebreak).
+            ->orderByDesc('created_sim_at')
             ->paginate($perPage)
             ->withQueryString();
+
+        return $this->annotateUrgency($orders);
+    }
+
+    /**
+     * Attach the read-only `sla_urgency` / `sla_ticks_remaining` display fields
+     * to each order in a paginated list. Derived at render time from the frozen
+     * simulated clock (§5.7); never persisted.
+     */
+    private function annotateUrgency(LengthAwarePaginator $orders): LengthAwarePaginator
+    {
+        $now = $this->clock->now();
+        $finalStatuses = [OrderStatus::PesananSelesai, OrderStatus::Dikembalikan];
+
+        $orders->getCollection()->each(function (Order $order) use ($now, $finalStatuses) {
+            $isFinal = in_array($order->status, $finalStatuses, true);
+            $order->setAttribute('sla_urgency', SlaUrgency::forDueDate($order->sla_due_at, $now, $isFinal)->value);
+            $order->setAttribute('sla_ticks_remaining', SlaUrgency::ticksRemaining($order->sla_due_at, $now));
+        });
+
+        return $orders;
     }
 
     /**

@@ -266,6 +266,7 @@ export default {
         incomingOrdersTitle: 'Pesanan Masuk',
         incomingEmptyTitle: 'Belum ada pesanan masuk',
         incomingEmptyDescription: 'Pesanan dari pembeli akan muncul di sini.',
+        needsAttention: 'Perlu perhatian',
         columnBuyer: 'Pembeli',
         processAction: 'Proses Pesanan',
         processConfirmTitle: 'Proses pesanan ini?',

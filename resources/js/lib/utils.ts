@@ -27,3 +27,9 @@ export function formatDateTime(value: string, locale: string) {
         timeStyle: 'short',
     }).format(new Date(value));
 }
+
+export function formatDate(value: string, locale: string) {
+    return new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'id-ID', {
+        dateStyle: 'medium',
+    }).format(new Date(value));
+}

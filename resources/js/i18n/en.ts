@@ -266,6 +266,7 @@ export default {
         incomingOrdersTitle: 'Incoming Orders',
         incomingEmptyTitle: 'No incoming orders yet',
         incomingEmptyDescription: 'Orders from buyers will show up here.',
+        needsAttention: 'Needs attention',
         columnBuyer: 'Buyer',
         processAction: 'Process Order',
         processConfirmTitle: 'Process this order?',
