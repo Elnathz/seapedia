@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Enums\RoleName;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AddRoleRequest;
 use App\Http\Requests\SelectRoleRequest;
 use App\Services\RoleService;
 use Illuminate\Http\RedirectResponse;
@@ -39,5 +40,16 @@ class RoleController extends Controller
         }
 
         return redirect()->intended(route('dashboard', absolute: false));
+    }
+
+    /**
+     * Attach a new non-admin role the user does not yet own (guards live in
+     * RoleService). Lands back on the role picker showing the updated set.
+     */
+    public function add(AddRoleRequest $request): RedirectResponse
+    {
+        $this->roleService->addRole($request->user(), $request->role());
+
+        return redirect()->route('role.select');
     }
 }

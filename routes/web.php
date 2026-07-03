@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('role/select', [RoleController::class, 'create'])->name('role.select');
     Route::post('role/select', [RoleController::class, 'store'])->name('role.store');
+    Route::post('role/add', [RoleController::class, 'add'])->name('role.add');
     Route::delete('role/{role}', [RoleDeleteController::class, 'destroy'])->name('role.destroy');
 
     Route::middleware('active_role:seller')->prefix('seller')->name('seller.')->group(function () {

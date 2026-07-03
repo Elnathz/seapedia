@@ -2,10 +2,17 @@
 
 namespace App\Services;
 
+use App\Enums\DeliveryStatus;
+use App\Enums\OrderStatus;
 use App\Enums\RoleName;
+use App\Models\Delivery;
+use App\Models\Order;
 use App\Models\Role;
+use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\NewAccessToken;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -120,5 +127,127 @@ class RoleService
         }
 
         return route('dashboard', absolute: false);
+    }
+
+    /**
+     * Order statuses that still bind a buyer/seller to an in-flight order and
+     * therefore block resigning the related role or deleting the account.
+     *
+     * @var list<OrderStatus>
+     */
+    private const ACTIVE_ORDER_STATUSES = [
+        OrderStatus::SedangDikemas,
+        OrderStatus::MenungguPengirim,
+        OrderStatus::SedangDikirim,
+    ];
+
+    /**
+     * Detach a non-admin role after enforcing that (a) it is not the user's
+     * last role and (b) it has no in-flight obligations. Seller removal
+     * SOFT-HIDES the store — never hard-deletes it, because orders.store_id is
+     * cascadeOnDelete and would take completed orders/histories/deliveries with
+     * it. Throws ValidationException (keyed "role") on any guard failure.
+     */
+    public function removeRole(User $user, RoleName $role): void
+    {
+        if (count($user->ownedRoles()) <= 1) {
+            throw ValidationException::withMessages([
+                'role' => __('Tidak dapat melepas role terakhir. Hapus akun jika ingin keluar sepenuhnya.'),
+            ]);
+        }
+
+        match ($role) {
+            RoleName::Driver => $this->guardNoActiveDelivery($user),
+            RoleName::Buyer => $this->guardNoActiveBuyerOrders($user),
+            RoleName::Seller => $this->guardAndCloseSellerStore($user),
+            default => throw ValidationException::withMessages([
+                'role' => __('Role ini tidak dapat dilepas.'),
+            ]),
+        };
+
+        DB::transaction(function () use ($user, $role) {
+            $roleModel = Role::query()->where('name', $role->value)->first();
+            if ($roleModel) {
+                $user->roles()->detach($roleModel->id);
+            }
+        });
+    }
+
+    /**
+     * Attach a non-admin role the user does not yet own. Admin is never
+     * self-assignable (§ admin setup is seed/documented only). Re-adding the
+     * Seller role restores a previously soft-hidden store.
+     */
+    public function addRole(User $user, RoleName $role): void
+    {
+        if (! in_array($role, [RoleName::Buyer, RoleName::Seller, RoleName::Driver], true)) {
+            throw ValidationException::withMessages([
+                'role' => __('Role ini tidak dapat ditambahkan.'),
+            ]);
+        }
+
+        if ($user->hasRole($role)) {
+            throw ValidationException::withMessages([
+                'role' => __('Kamu sudah memiliki role ini.'),
+            ]);
+        }
+
+        DB::transaction(function () use ($user, $role) {
+            $this->assignRoles($user, [$role->value]);
+
+            if ($role === RoleName::Seller) {
+                Store::onlyTrashed()->where('user_id', $user->id)->first()?->restore();
+            }
+        });
+    }
+
+    private function guardNoActiveDelivery(User $user): void
+    {
+        $hasActive = Delivery::query()
+            ->where('driver_id', $user->id)
+            ->where('status', DeliveryStatus::Taken)
+            ->exists();
+
+        if ($hasActive) {
+            throw ValidationException::withMessages([
+                'role' => __('Selesaikan semua pengiriman aktif sebelum melepas role Driver.'),
+            ]);
+        }
+    }
+
+    private function guardNoActiveBuyerOrders(User $user): void
+    {
+        $hasActive = Order::query()
+            ->where('buyer_id', $user->id)
+            ->whereIn('status', self::ACTIVE_ORDER_STATUSES)
+            ->exists();
+
+        if ($hasActive) {
+            throw ValidationException::withMessages([
+                'role' => __('Tidak dapat melepas role Buyer saat masih ada pesanan aktif.'),
+            ]);
+        }
+    }
+
+    private function guardAndCloseSellerStore(User $user): void
+    {
+        $store = $user->store;
+
+        if (! $store) {
+            return;
+        }
+
+        $hasActive = Order::query()
+            ->where('store_id', $store->id)
+            ->whereIn('status', self::ACTIVE_ORDER_STATUSES)
+            ->exists();
+
+        if ($hasActive) {
+            throw ValidationException::withMessages([
+                'role' => __('Tidak dapat melepas role Seller saat masih ada pesanan aktif.'),
+            ]);
+        }
+
+        $store->delete(); // soft-delete: catalog hides it, orders stay intact
     }
 }
