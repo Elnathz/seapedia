@@ -10,13 +10,14 @@
 ## B — Cart & Checkout
 - [x] B0 feat(checkout): distance + weight delivery fee — superseded the region-tier surcharge after the user chose a real-marketplace model (SPEC line 278 is the only hard rule; distance/weight are spec-legal). DeliveryFeeService = base(method) + Haversine km × rate(method) + weight; lat/lng on stores+addresses (Leaflet/OSM picker, no API key), mandatory per-variant weight; preview==commit; TDD §5.4a rewritten; +6 Pest tests. Commits: 7ec3bf9, a66acce, 1e08feb, 443c10a.
 - [x] B1 fix(cart): stop price overflow and align mobile summary
-- [ ] B2 feat(checkout): make layout responsive with summary rail
+- [x] B2 feat(checkout): redesign payment summary rail (sea-tinted plate, highlighted total, distance/weight breakdown) — `1090aea`. Layout already responsive (lg:grid-cols-3 + sticky rail).
 - [ ] B3 feat(checkout): add inline add-address modal
+- [ ] Map picker: fix(ui) SSR-safe + z-index isolate — `c42b973`
 - [ ] B4 feat(discount): add buyer promo and voucher picker modal
 - [ ] B5 feat(checkout): add post-checkout success screen
 
 ## C — Seller
-- [ ] C1 feat(store): expand seller store profile fields
+- [x] C1 feat(store): store profile completeness — full address (jalan/RT/RW + region cascader + postal), map-pinned origin (Leaflet), 1:1 logo upload with Cropper.js crop + validation, saved-state summary card. Commits `9d8644b`, `e9140d1`.
 - [ ] C2 feat(store): add seller first-run onboarding steps
 - [ ] C3 feat(store): enrich seller dashboard with pipeline stats
 - [ ] C4 fix(product): <root cause once reproduced>
