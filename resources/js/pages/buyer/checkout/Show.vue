@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ShoppingBag, X } from '@lucide/vue';
+import { ReceiptText, ShoppingBag, X } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import CheckoutController from '@/actions/App/Http/Controllers/Web/CheckoutController';
@@ -456,9 +456,12 @@ function confirmCheckout() {
                 </Card>
             </div>
 
-            <Card class="lg:sticky lg:top-6 lg:self-start">
+            <Card
+                class="border-primary/20 bg-gradient-to-b from-primary/5 to-transparent shadow-[0_8px_30px_-12px_rgba(13,148,136,0.25)] lg:sticky lg:top-6 lg:self-start"
+            >
                 <CardContent class="space-y-4 pt-6">
-                    <h3 class="font-medium">
+                    <h3 class="flex items-center gap-2 font-semibold">
+                        <ReceiptText class="size-4 text-primary" />
                         {{ t('checkout.summaryTitle') }}
                     </h3>
 
@@ -547,15 +550,21 @@ function confirmCheckout() {
 
                     <Separator />
 
-                    <div class="flex justify-between font-semibold">
-                        <span>{{ t('checkout.grandTotal') }}</span>
-                        <span class="text-lg tabular-nums">{{
-                            formatIDR(preview.grand_total)
+                    <div
+                        class="flex items-end justify-between rounded-xl bg-primary/10 px-3 py-2.5"
+                    >
+                        <span class="text-sm font-medium text-foreground">{{
+                            t('checkout.grandTotal')
                         }}</span>
+                        <span
+                            class="text-xl font-bold text-primary tabular-nums"
+                            >{{ formatIDR(preview.grand_total) }}</span
+                        >
                     </div>
 
                     <Button
-                        class="w-full"
+                        size="lg"
+                        class="w-full shadow-md shadow-primary/20"
                         :disabled="
                             !addressId ||
                             !preview.sufficient_balance ||
