@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ArrowRight, MapPin, Store, Truck } from '@lucide/vue';
+import { ArrowRight, MapPin, Navigation, Store, Truck } from '@lucide/vue';
 import { useI18n } from 'vue-i18n';
 import DriverJobController from '@/actions/App/Http/Controllers/Web/DriverJobController';
 import EmptyState from '@/components/EmptyState.vue';
@@ -29,6 +29,7 @@ interface JobRow {
         ship_address: string;
         delivery_method: DeliveryMethodKey;
         delivery_fee: number;
+        delivery_distance_km: number | null;
         store: { id: number; name: string };
     };
 }
@@ -174,6 +175,13 @@ function filterMethod(method: string) {
                         >
                             <MapPin class="size-3.5 shrink-0" />
                             {{ job.order.ship_address }}
+                        </p>
+                        <p
+                            v-if="job.order.delivery_distance_km != null"
+                            class="flex items-center gap-1.5 text-xs font-medium text-foreground/70"
+                        >
+                            <Navigation class="size-3.5 shrink-0 text-primary" />
+                            ~{{ job.order.delivery_distance_km.toFixed(1) }} km
                         </p>
                     </div>
                     <div class="flex shrink-0 items-center gap-3">

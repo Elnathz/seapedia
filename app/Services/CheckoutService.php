@@ -207,6 +207,7 @@ class CheckoutService
             // Same fee formula as preview(): base + Haversine distance (store
             // origin → this address) + order weight, so the charge matches the quote.
             $deliveryFee = $this->deliveryFees->fee($deliveryMethod, $cart->store, $address, $weightGrams);
+            $distanceKm = $this->deliveryFees->distanceKm($cart->store, $address);
             $grandTotal = $taxableBase + $taxAmount + $deliveryFee;
 
             foreach ($lockedProducts as $cartItemId => $product) {
@@ -224,12 +225,15 @@ class CheckoutService
                 'ship_recipient' => $address->recipient_name,
                 'ship_phone' => $address->phone,
                 'ship_address' => $address->full_address,
+                'ship_latitude' => $address->latitude,
+                'ship_longitude' => $address->longitude,
                 'delivery_method' => $deliveryMethod,
                 'subtotal' => $subtotal,
                 'discount_total' => $discountTotal,
                 'promo_id' => $discount['promo']?->id,
                 'voucher_id' => $discount['voucher']?->id,
                 'delivery_fee' => $deliveryFee,
+                'delivery_distance_km' => $distanceKm,
                 'tax_amount' => $taxAmount,
                 'grand_total' => $grandTotal,
                 'seller_income_amount' => $taxableBase,

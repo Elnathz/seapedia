@@ -22,7 +22,10 @@ class DeliveryService
     ) {}
 
     /**
-     * Jobs no driver has claimed yet, newest first, eager-loaded (no N+1).
+     * Jobs no driver has claimed yet, nearest first, eager-loaded (no N+1).
+     * "Nearest" is the store→buyer distance frozen on the order at checkout
+     * (D1), so drivers see the shortest trips at the top; ties fall back to
+     * newest.
      */
     public function availableJobs(int $perPage = 10, ?string $method = null): LengthAwarePaginator
     {
@@ -30,6 +33,11 @@ class DeliveryService
             ->where('status', DeliveryStatus::Available)
             ->when($method, fn ($q) => $q->whereHas('order', fn ($oq) => $oq->where('delivery_method', $method)))
             ->with(['order.store:id,name'])
+            ->orderBy(
+                Order::query()
+                    ->select('delivery_distance_km')
+                    ->whereColumn('orders.id', 'deliveries.order_id')
+            )
             ->latest()
             ->paginate($perPage)
             ->withQueryString();

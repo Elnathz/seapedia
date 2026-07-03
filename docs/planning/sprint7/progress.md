@@ -23,7 +23,7 @@
 - [x] C4 fix(product): make the "has variants" toggle work — root cause (two faults): the `Checkbox` component was never imported in `seller/products/Form.vue` (Vue couldn't resolve `<Checkbox>` at runtime), and it was bound with `:checked`/`@update:checked`, which reka-ui 2.10.1's `CheckboxRoot` doesn't expose (it only has `modelValue`/`update:modelValue`) so the toggle never updated `hasVariants`. Fixed by importing Checkbox and using `v-model`; also typed the `variants` ref (`id?`) so new variants stop tripping the union type. All 3 Form.vue TS errors cleared. NOTE: the same broken `:checked` pattern exists in admin/banners and catalog/Search (out of C4 scope — flagged).
 
 ## D — Driver
-- [ ] D1 feat(delivery): sort driver jobs by nearest region
+- [x] D1 feat(delivery): sort driver jobs by nearest — checkout now snapshots the destination coords + store→buyer Haversine distance on the order (`ship_latitude/longitude`, `delivery_distance_km`; also feeds D2's route). `availableJobs()` orders by that distance ascending (Eloquent subquery, no raw) so drivers see the shortest trips first; the job card shows `~x km`. Migration + Order fillable/casts + OrderFactory defaults. +1 Pest test (nearest-first ordering).
 - [ ] D2 feat(delivery): add delivery route animation to order detail
 - [ ] D3 feat(delivery): cap driver active pickups at three
 

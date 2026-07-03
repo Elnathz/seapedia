@@ -38,8 +38,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 #[Fillable([
     'code', 'buyer_id', 'store_id', 'ship_recipient', 'ship_phone', 'ship_address',
-    'delivery_method', 'subtotal', 'discount_total', 'promo_id', 'voucher_id',
-    'delivery_fee', 'tax_amount', 'grand_total', 'seller_income_amount', 'status',
+    'ship_latitude', 'ship_longitude', 'delivery_method', 'subtotal', 'discount_total',
+    'promo_id', 'voucher_id', 'delivery_fee', 'delivery_distance_km', 'tax_amount',
+    'grand_total', 'seller_income_amount', 'status',
     'created_sim_at', 'sla_due_at', 'paid_at', 'refunded_at',
 ])]
 class Order extends Model
@@ -51,9 +52,12 @@ class Order extends Model
     {
         return [
             'delivery_method' => DeliveryMethod::class,
+            'ship_latitude' => 'float',
+            'ship_longitude' => 'float',
             'subtotal' => 'integer',
             'discount_total' => 'integer',
             'delivery_fee' => 'integer',
+            'delivery_distance_km' => 'float',
             'tax_amount' => 'integer',
             'grand_total' => 'integer',
             'seller_income_amount' => 'integer',
