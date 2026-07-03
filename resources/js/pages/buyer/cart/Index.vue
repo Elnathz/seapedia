@@ -62,10 +62,16 @@ const subtotal = computed(() =>
     ),
 );
 
-function changeQty(item: CartItemData, delta: number) {
-    const next = item.quantity + delta;
+function stockOf(item: CartItemData): number {
+    return item.variant?.stock ?? item.product.stock;
+}
 
-    if (next < 1) {
+function changeQty(item: CartItemData, delta: number) {
+    // Clamp into [1, stock] so the buyer can never push the cart past what the
+    // seller has; the checkout also re-validates stock under a lock.
+    const next = Math.min(Math.max(item.quantity + delta, 1), stockOf(item));
+
+    if (next === item.quantity) {
         return;
     }
 
@@ -212,6 +218,9 @@ function clearAll() {
                                         size="icon"
                                         variant="ghost"
                                         class="size-7 rounded-full active:scale-95"
+                                        :disabled="
+                                            item.quantity >= stockOf(item)
+                                        "
                                         @click="changeQty(item, 1)"
                                     >
                                         <Plus class="size-3.5" />

@@ -198,6 +198,29 @@ const conflictOpen = ref(false);
 const conflictMessage = ref('');
 const buyingNow = ref(false);
 
+// Clamp manual entry to available stock: typing 90 when only 20 are in stock
+// snaps back to 20. The backend also rejects over-stock; this is the UX guard.
+watch([quantity, currentStock], () => {
+    const raw = quantity.value;
+    if (raw === '' || raw === null || raw === undefined) {
+        return; // let the field sit empty briefly while the buyer retypes
+    }
+    let n = Math.floor(Number(raw));
+    if (Number.isNaN(n)) {
+        n = 1;
+    }
+    const max = currentStock.value;
+    if (max > 0 && n > max) {
+        n = max;
+    }
+    if (n < 1) {
+        n = 1;
+    }
+    if (n !== Number(raw)) {
+        quantity.value = n;
+    }
+});
+
 function addToCart(replace = false, redirect = false) {
     if (redirect) {
         buyingNow.value = true;
