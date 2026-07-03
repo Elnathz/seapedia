@@ -19,7 +19,7 @@
 ## C — Seller
 - [x] C1 feat(store): store profile completeness — full address (jalan/RT/RW + region cascader + postal), map-pinned origin (Leaflet), 1:1 logo upload with Cropper.js crop + validation, saved-state summary card. Commits `9d8644b`, `e9140d1`.
 - [x] C2 feat(store): add seller first-run onboarding steps — `DashboardService` now emits an `onboarding` state (store / address+map / logo / first product) and the seller dashboard shows a `SellerOnboardingCard` checklist (progress bar, per-step status, next-step CTA) that fades out once every milestone is done. Replaced the stale "coming soon" empty state. +1 Pest test.
-- [ ] C3 feat(store): enrich seller dashboard with pipeline stats
+- [x] C3 feat(store): enrich seller dashboard with pipeline stats — `DashboardService::sellerStats` returns per-stage order counts (perlu diproses / menunggu pengirim / dikirim / selesai) + released revenue. Dashboard redesigned: revenue/wallet/products stat row plus an "Alur Pesanan" pipeline strip where "Perlu Diproses" is emphasised (pulse dot) and links to the filtered orders list. +1 Pest test.
 - [ ] C4 fix(product): <root cause once reproduced>
 
 ## D — Driver

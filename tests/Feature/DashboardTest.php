@@ -88,6 +88,31 @@ class DashboardTest extends TestCase
             );
     }
 
+    public function test_seller_dashboard_summarises_the_order_pipeline(): void
+    {
+        $seller = User::factory()->create();
+        $seller->roles()->attach(
+            Role::query()->firstOrCreate(['name' => RoleName::Seller->value])->id,
+        );
+        $store = Store::factory()->create(['user_id' => $seller->id]);
+        $buyer = User::factory()->create();
+
+        Order::factory()->count(2)->create(['store_id' => $store->id, 'buyer_id' => $buyer->id, 'status' => 'sedang_dikemas']);
+        Order::factory()->create(['store_id' => $store->id, 'buyer_id' => $buyer->id, 'status' => 'menunggu_pengirim']);
+        Order::factory()->create(['store_id' => $store->id, 'buyer_id' => $buyer->id, 'status' => 'pesanan_selesai', 'seller_income_amount' => 75_000]);
+
+        $this->actingAs($seller)
+            ->withSession(['active_role' => RoleName::Seller->value])
+            ->get(route('dashboard'))
+            ->assertInertia(fn ($page) => $page
+                ->where('stats.awaiting_process', 2)
+                ->where('stats.awaiting_pickup', 1)
+                ->where('stats.in_delivery', 0)
+                ->where('stats.completed', 1)
+                ->where('stats.revenue', 75_000)
+            );
+    }
+
     public function test_buyer_dashboard_excludes_finished_orders_from_active_count(): void
     {
         $buyer = User::factory()->create();

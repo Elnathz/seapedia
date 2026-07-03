@@ -54,6 +54,7 @@ class DashboardService
                     'balance' => $balance,
                     'activeProducts' => $this->activeProductCount($user),
                     'onboarding' => $this->sellerOnboarding($user),
+                    'stats' => $this->sellerStats($user),
                 ],
             ],
             RoleName::Driver => [
@@ -79,6 +80,44 @@ class DashboardService
     private function activeProductCount(User $user): int
     {
         return $user->store?->products()->where('is_active', true)->count() ?? 0;
+    }
+
+    /**
+     * The seller's order pipeline at a glance: how many orders sit at each
+     * stage (so "Perlu Diproses" can nudge the seller to act) plus the income
+     * already released from completed orders (§ escrow settles on completion).
+     *
+     * @return array{awaiting_process: int, awaiting_pickup: int, in_delivery: int, completed: int, revenue: int}
+     */
+    private function sellerStats(User $user): array
+    {
+        $storeId = $user->store?->id;
+
+        if ($storeId === null) {
+            return [
+                'awaiting_process' => 0,
+                'awaiting_pickup' => 0,
+                'in_delivery' => 0,
+                'completed' => 0,
+                'revenue' => 0,
+            ];
+        }
+
+        $countAt = fn (OrderStatus $status): int => Order::query()
+            ->where('store_id', $storeId)
+            ->where('status', $status->value)
+            ->count();
+
+        return [
+            'awaiting_process' => $countAt(OrderStatus::SedangDikemas),
+            'awaiting_pickup' => $countAt(OrderStatus::MenungguPengirim),
+            'in_delivery' => $countAt(OrderStatus::SedangDikirim),
+            'completed' => $countAt(OrderStatus::PesananSelesai),
+            'revenue' => (int) Order::query()
+                ->where('store_id', $storeId)
+                ->where('status', OrderStatus::PesananSelesai->value)
+                ->sum('seller_income_amount'),
+        ];
     }
 
     /**
