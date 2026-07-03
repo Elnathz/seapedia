@@ -38,14 +38,7 @@ class CheckoutService
         ?Address $address = null,
     ): array {
         $cart = $this->carts->summary($user);
-
-        // Price from the live product (fallback to the cart snapshot if the
-        // product vanished) so the previewed total matches what commit()
-        // actually charges — commit re-prices from the live product under a
-        // lock, and the buyer must be charged exactly what the summary shows.
-        $subtotal = $cart->items->sum(
-            fn ($item) => ($item->variant?->price ?? $item->product?->price ?? $item->price_snapshot) * $item->quantity,
-        );
+        $subtotal = $this->cartSubtotal($cart);
 
         $discount = $this->discounts->resolve($promoCode, $voucherCode, $subtotal);
 
@@ -79,6 +72,19 @@ class CheckoutService
             'balance' => $user->wallet->balance,
             'sufficient_balance' => $user->wallet->balance >= $grandTotal,
         ];
+    }
+
+    /**
+     * Cart subtotal (§5.2): price from the live variant/product, falling back
+     * to the cart snapshot if the product vanished, times quantity. Shared by
+     * preview() and the checkout page so the promo picker gates codes against
+     * the exact subtotal commit() will re-price under a lock.
+     */
+    public function cartSubtotal(Cart $cart): int
+    {
+        return (int) $cart->items->sum(
+            fn ($item) => ($item->variant?->price ?? $item->product?->price ?? $item->price_snapshot) * $item->quantity,
+        );
     }
 
     /**

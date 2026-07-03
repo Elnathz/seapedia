@@ -63,6 +63,64 @@ class DiscountService
     }
 
     /**
+     * The buyer-facing catalogue of codes that are live right now (active and
+     * unexpired; vouchers must still have quota) annotated with the discount
+     * each would yield for this subtotal and whether the subtotal clears its
+     * minimum spend — so the checkout picker can preview savings, gate
+     * ineligible codes, and show a voucher's redemption progress.
+     *
+     * @return array{promos: list<array<string, mixed>>, vouchers: list<array<string, mixed>>}
+     */
+    public function availableFor(int $subtotal): array
+    {
+        $now = $this->clock->now();
+
+        $promos = Promo::query()
+            ->where('is_active', true)
+            ->where('expiry_date', '>=', $now)
+            ->orderBy('min_spend')
+            ->get()
+            ->map(fn (Promo $promo) => $this->presentDiscount($promo, $subtotal))
+            ->all();
+
+        $vouchers = Voucher::query()
+            ->where('is_active', true)
+            ->where('expiry_date', '>=', $now)
+            ->whereColumn('used_count', '<', 'usage_limit')
+            ->orderBy('min_spend')
+            ->get()
+            ->map(fn (Voucher $voucher) => [
+                ...$this->presentDiscount($voucher, $subtotal),
+                'usage_limit' => $voucher->usage_limit,
+                'used_count' => $voucher->used_count,
+                'remaining' => $voucher->remainingUsage(),
+            ])
+            ->all();
+
+        return ['promos' => $promos, 'vouchers' => $vouchers];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function presentDiscount(Promo|Voucher $discount, int $subtotal): array
+    {
+        $eligible = $discount->min_spend === null || $subtotal >= $discount->min_spend;
+
+        return [
+            'code' => $discount->code,
+            'type' => $discount->type->value,
+            'value' => $discount->value,
+            'min_spend' => $discount->min_spend,
+            'max_discount' => $discount->max_discount,
+            'amount' => $eligible
+                ? $discount->type->amountFor($discount->value, $subtotal, $discount->max_discount)
+                : 0,
+            'eligible' => $eligible,
+        ];
+    }
+
+    /**
      * Read-only promo lookup against a subtotal — used by both the preview
      * (display only) and commit (promo has no used_count, so no lock needed).
      *

@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { MapPin, Plus, ReceiptText, ShoppingBag, X } from '@lucide/vue';
+import {
+    MapPin,
+    Plus,
+    ReceiptText,
+    ShoppingBag,
+    TicketPercent,
+    X,
+} from '@lucide/vue';
 import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import CheckoutController from '@/actions/App/Http/Controllers/Web/CheckoutController';
 import AddressFormDialog from '@/components/AddressFormDialog.vue';
+import DiscountPickerDialog from '@/components/DiscountPickerDialog.vue';
 import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
@@ -78,11 +86,31 @@ interface CartData {
     items: CartItemData[];
 }
 
+interface DiscountOption {
+    code: string;
+    type: 'percentage' | 'fixed';
+    value: number;
+    min_spend: number | null;
+    max_discount: number | null;
+    amount: number;
+    eligible: boolean;
+}
+
+interface VoucherOption extends DiscountOption {
+    usage_limit: number;
+    used_count: number;
+    remaining: number;
+}
+
 const props = defineProps<{
     cart: CartData;
     addresses: AddressData[];
     previews: Record<DeliveryMethodKey, Preview>;
     selectedAddressId: number | null;
+    availableDiscounts: {
+        promos: DiscountOption[];
+        vouchers: VoucherOption[];
+    };
 }>();
 
 defineOptions({
@@ -139,6 +167,21 @@ const promoInput = ref('');
 const voucherInput = ref('');
 const applyingPromo = ref(false);
 const applyingVoucher = ref(false);
+const discountPickerOpen = ref(false);
+
+// Picking a code from the modal fills the matching input and reuses the same
+// apply path, so the picker and manual entry stay one source of truth.
+function onPickDiscount(kind: 'promo' | 'voucher', code: string) {
+    discountPickerOpen.value = false;
+
+    if (kind === 'promo') {
+        promoInput.value = code;
+        applyPromo();
+    } else {
+        voucherInput.value = code;
+        applyVoucher();
+    }
+}
 
 function reloadPreviews(promoCode: string, voucherCode: string) {
     return {
@@ -425,9 +468,21 @@ function confirmCheckout() {
 
                 <Card>
                     <CardContent class="space-y-4 pt-6">
-                        <h3 class="font-medium">
-                            {{ t('checkout.discountTitle') }}
-                        </h3>
+                        <div class="flex items-center justify-between gap-2">
+                            <h3 class="font-medium">
+                                {{ t('checkout.discountTitle') }}
+                            </h3>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                class="text-primary"
+                                @click="discountPickerOpen = true"
+                            >
+                                <TicketPercent class="size-4" />
+                                {{ t('checkout.browseDiscounts') }}
+                            </Button>
+                        </div>
 
                         <div class="space-y-2">
                             <Label for="promo-code">{{
@@ -696,6 +751,15 @@ function confirmCheckout() {
         <AddressFormDialog
             v-model:open="addressDialogOpen"
             @success="onAddressCreated"
+        />
+
+        <DiscountPickerDialog
+            v-model:open="discountPickerOpen"
+            :promos="availableDiscounts.promos"
+            :vouchers="availableDiscounts.vouchers"
+            :active-promo="preview.promo?.code ?? null"
+            :active-voucher="preview.voucher?.code ?? null"
+            @apply="onPickDiscount"
         />
     </div>
 </template>

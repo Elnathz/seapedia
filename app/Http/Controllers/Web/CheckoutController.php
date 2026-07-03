@@ -8,6 +8,7 @@ use App\Http\Requests\StoreCheckoutRequest;
 use App\Models\Address;
 use App\Services\CartService;
 use App\Services\CheckoutService;
+use App\Services\DiscountService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -18,6 +19,7 @@ class CheckoutController extends Controller
     public function __construct(
         private readonly CheckoutService $checkout,
         private readonly CartService $carts,
+        private readonly DiscountService $discounts,
     ) {}
 
     public function show(Request $request): Response
@@ -26,6 +28,7 @@ class CheckoutController extends Controller
         $promoCode = $request->query('promo_code');
         $voucherCode = $request->query('voucher_code');
 
+        $cart = $this->carts->summary($user);
         $addresses = $user->addresses()->orderByDesc('is_default')->orderByDesc('id')->get();
 
         // The previewed delivery fee depends on which address the order ships
@@ -49,10 +52,11 @@ class CheckoutController extends Controller
             ]);
 
         return Inertia::render('buyer/checkout/Show', [
-            'cart' => $this->carts->summary($user),
+            'cart' => $cart,
             'addresses' => $addresses,
             'previews' => $previews,
             'selectedAddressId' => $selectedAddress?->id,
+            'availableDiscounts' => $this->discounts->availableFor($this->checkout->cartSubtotal($cart)),
         ]);
     }
 
