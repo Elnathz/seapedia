@@ -188,6 +188,7 @@ export default {
         addressTitle: 'Delivery Address',
         selectAddress: 'Select an address',
         noAddress: 'No saved addresses yet.',
+        addNewAddress: 'Add New Address',
         deliveryTitle: 'Delivery Method',
         instant: 'Instant',
         instantEta: 'Arrives in 1 day',

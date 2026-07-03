@@ -33,7 +33,10 @@ class BuyerAddressController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Address created.')]);
 
-        return to_route('buyer.addresses.index');
+        // Return to wherever the form was submitted from — the addresses page
+        // or an inline modal on checkout — so adding an address never yanks the
+        // buyer out of their current flow.
+        return back(fallback: route('buyer.addresses.index'));
     }
 
     public function update(UpdateAddressRequest $request, Address $address): RedirectResponse

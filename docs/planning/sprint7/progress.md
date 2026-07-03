@@ -11,7 +11,7 @@
 - [x] B0 feat(checkout): distance + weight delivery fee — superseded the region-tier surcharge after the user chose a real-marketplace model (SPEC line 278 is the only hard rule; distance/weight are spec-legal). DeliveryFeeService = base(method) + Haversine km × rate(method) + weight; lat/lng on stores+addresses (Leaflet/OSM picker, no API key), mandatory per-variant weight; preview==commit; TDD §5.4a rewritten; +6 Pest tests. Commits: 7ec3bf9, a66acce, 1e08feb, 443c10a.
 - [x] B1 fix(cart): stop price overflow and align mobile summary
 - [x] B2 feat(checkout): redesign payment summary rail (sea-tinted plate, highlighted total, distance/weight breakdown) — `1090aea`. Layout already responsive (lg:grid-cols-3 + sticky rail).
-- [ ] B3 feat(checkout): add inline add-address modal
+- [x] B3 feat(checkout): add inline add-address modal — extracted the address form into a reusable `AddressFormDialog`, redesigned the checkout address section as selectable radio cards (default badge, region line) with an "add new address" affordance + empty state, and made `BuyerAddressController@store` redirect `back()` so adding from checkout keeps the buyer on checkout and auto-selects the new address. +1 Pest test (referrer redirect).
 - [ ] Map picker: fix(ui) SSR-safe + z-index isolate — `c42b973`
 - [ ] B4 feat(discount): add buyer promo and voucher picker modal
 - [ ] B5 feat(checkout): add post-checkout success screen

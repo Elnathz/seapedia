@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
 import { MapPin, Pencil, Plus, Star, Trash2 } from '@lucide/vue';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import BuyerAddressController from '@/actions/App/Http/Controllers/Web/BuyerAddressController';
+import AddressFormDialog from '@/components/AddressFormDialog.vue';
 import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
-import InputError from '@/components/InputError.vue';
-import MapPicker from '@/components/MapPicker.vue';
-import RegionCascader from '@/components/RegionCascader.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -22,9 +20,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { index as indexAddresses } from '@/routes/buyer/addresses';
 
 interface AddressData {
@@ -57,38 +52,13 @@ const { t } = useI18n();
 const formOpen = ref(false);
 const editing = ref<AddressData | null>(null);
 
-const formBinding = computed(() =>
-    editing.value
-        ? BuyerAddressController.update.form(editing.value.id)
-        : BuyerAddressController.store.form(),
-);
-
-const formProvince = ref('');
-const formCity = ref('');
-const formDistrict = ref('');
-const formVillage = ref('');
-const formLat = ref<number | null>(null);
-const formLng = ref<number | null>(null);
-
 function openCreate() {
     editing.value = null;
-    formProvince.value = '';
-    formCity.value = '';
-    formDistrict.value = '';
-    formVillage.value = '';
-    formLat.value = null;
-    formLng.value = null;
     formOpen.value = true;
 }
 
 function openEdit(address: AddressData) {
     editing.value = address;
-    formProvince.value = address.province ?? '';
-    formCity.value = address.city ?? '';
-    formDistrict.value = address.district ?? '';
-    formVillage.value = address.village ?? '';
-    formLat.value = address.latitude ?? null;
-    formLng.value = address.longitude ?? null;
     formOpen.value = true;
 }
 </script>
@@ -242,120 +212,6 @@ function openEdit(address: AddressData) {
             </Card>
         </div>
 
-        <Dialog v-model:open="formOpen">
-            <DialogContent>
-                <Form
-                    :key="editing?.id ?? 'create'"
-                    v-bind="formBinding"
-                    :options="{ preserveScroll: true }"
-                    @success="formOpen = false"
-                    v-slot="{ errors, processing }"
-                    class="space-y-4"
-                >
-                    <DialogHeader>
-                        <DialogTitle>
-                            {{
-                                editing
-                                    ? t('address.editTitle')
-                                    : t('address.addTitle')
-                            }}
-                        </DialogTitle>
-                    </DialogHeader>
-
-                    <div class="grid gap-2">
-                        <Label for="recipient_name">{{
-                            t('address.recipientLabel')
-                        }}</Label>
-                        <Input
-                            id="recipient_name"
-                            name="recipient_name"
-                            :default-value="editing?.recipient_name ?? ''"
-                            required
-                            maxlength="255"
-                        />
-                        <InputError :message="errors.recipient_name" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="phone">{{ t('address.phoneLabel') }}</Label>
-                        <Input
-                            id="phone"
-                            name="phone"
-                            type="tel"
-                            :default-value="editing?.phone ?? ''"
-                            required
-                            maxlength="20"
-                        />
-                        <InputError :message="errors.phone" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="full_address">{{
-                            t('address.fullAddressLabel')
-                        }}</Label>
-                        <Textarea
-                            id="full_address"
-                            name="full_address"
-                            :default-value="editing?.full_address ?? ''"
-                            required
-                            maxlength="500"
-                            rows="3"
-                            :placeholder="t('address.fullAddressPlaceholder')"
-                        />
-                        <InputError :message="errors.full_address" />
-                    </div>
-
-                    <RegionCascader
-                        v-model:province="formProvince"
-                        v-model:city="formCity"
-                        v-model:district="formDistrict"
-                        v-model:village="formVillage"
-                        :errors="errors"
-                    />
-
-                    <div class="grid gap-2">
-                        <Label for="postal_code">Kode Pos</Label>
-                        <Input
-                            id="postal_code"
-                            name="postal_code"
-                            :default-value="editing?.postal_code ?? ''"
-                            required
-                            maxlength="20"
-                        />
-                        <InputError :message="errors.postal_code" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label>Titik Lokasi di Peta</Label>
-                        <MapPicker
-                            v-model:latitude="formLat"
-                            v-model:longitude="formLng"
-                        />
-                        <input
-                            type="hidden"
-                            name="latitude"
-                            :value="formLat ?? ''"
-                        />
-                        <input
-                            type="hidden"
-                            name="longitude"
-                            :value="formLng ?? ''"
-                        />
-                        <InputError :message="errors.latitude" />
-                    </div>
-
-                    <DialogFooter class="gap-2">
-                        <DialogClose as-child>
-                            <Button variant="secondary" type="button">{{
-                                t('common.cancel')
-                            }}</Button>
-                        </DialogClose>
-                        <Button type="submit" :disabled="processing">
-                            {{ t('common.save') }}
-                        </Button>
-                    </DialogFooter>
-                </Form>
-            </DialogContent>
-        </Dialog>
+        <AddressFormDialog v-model:open="formOpen" :editing="editing" />
     </div>
 </template>

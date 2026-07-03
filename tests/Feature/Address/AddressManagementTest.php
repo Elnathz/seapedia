@@ -49,6 +49,27 @@ class AddressManagementTest extends TestCase
         $this->assertTrue($address->is_default);
     }
 
+    public function test_creating_an_address_returns_to_the_referring_page(): void
+    {
+        $buyer = $this->buyer();
+
+        // Adding an address from the inline checkout modal must land the buyer
+        // back on checkout, not yank them to the addresses page.
+        $this->actingAsBuyer($buyer)
+            ->from(route('buyer.checkout.show'))
+            ->post(route('buyer.addresses.store'), [
+                'recipient_name' => 'Budi',
+                'phone' => '081234567890',
+                'province' => 'DKI Jakarta',
+                'city' => 'Jakarta Selatan',
+                'district' => 'Kebayoran Baru',
+                'village' => 'Senayan',
+                'postal_code' => '12345',
+                'full_address' => 'Jl. Merdeka No. 1',
+            ])
+            ->assertRedirect(route('buyer.checkout.show'));
+    }
+
     public function test_setting_a_new_default_unsets_the_previous_one(): void
     {
         $buyer = $this->buyer();

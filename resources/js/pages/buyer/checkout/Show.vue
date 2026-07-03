@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ReceiptText, ShoppingBag, X } from '@lucide/vue';
-import { computed, ref, watch } from 'vue';
+import { MapPin, Plus, ReceiptText, ShoppingBag, X } from '@lucide/vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import CheckoutController from '@/actions/App/Http/Controllers/Web/CheckoutController';
+import AddressFormDialog from '@/components/AddressFormDialog.vue';
 import EmptyState from '@/components/EmptyState.vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
@@ -20,16 +21,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { formatIDR } from '@/lib/utils';
-import { index as indexAddresses } from '@/routes/buyer/addresses';
 import { show as showWallet } from '@/routes/buyer/wallet';
 import { index as catalogIndex } from '@/routes/catalog';
 
@@ -109,8 +102,38 @@ const addressId = ref<number | null>(defaultAddress?.id ?? null);
 const deliveryMethod = ref<DeliveryMethodKey>('regular');
 const submitting = ref(false);
 const confirmOpen = ref(false);
+const addressDialogOpen = ref(false);
+let knownAddressIds = new Set<number>();
+
+// The RadioGroup binds to strings; the address id is numeric, so proxy between.
+const addressIdModel = computed({
+    get: () => (addressId.value === null ? '' : String(addressId.value)),
+    set: (value: string) => {
+        addressId.value = value ? Number(value) : null;
+    },
+});
 
 const preview = computed(() => props.previews[deliveryMethod.value]);
+
+// Snapshot the known ids before opening the form so the address created
+// server-side — surfaced once the back() redirect refreshes props — can be
+// picked out and auto-selected when the dialog reports success.
+function openAddAddress() {
+    knownAddressIds = new Set(props.addresses.map((address) => address.id));
+    addressDialogOpen.value = true;
+}
+
+function onAddressCreated() {
+    nextTick(() => {
+        const created = props.addresses.find(
+            (address) => !knownAddressIds.has(address.id),
+        );
+
+        if (created) {
+            addressId.value = created.id;
+        }
+    });
+}
 
 const promoInput = ref('');
 const voucherInput = ref('');
@@ -139,7 +162,11 @@ watch(addressId, (value) => {
             preview.value.promo?.code ?? '',
             preview.value.voucher?.code ?? '',
         ),
-        { preserveState: true, preserveScroll: true, only: ['previews', 'selectedAddressId'] },
+        {
+            preserveState: true,
+            preserveScroll: true,
+            only: ['previews', 'selectedAddressId'],
+        },
     );
 });
 
@@ -266,44 +293,97 @@ function confirmCheckout() {
 
                         <div
                             v-if="addresses.length === 0"
-                            class="rounded-lg border border-dashed border-border p-4 text-center"
+                            class="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-4 py-8 text-center"
                         >
+                            <span
+                                class="flex size-11 items-center justify-center rounded-full bg-primary/10 text-primary"
+                            >
+                                <MapPin class="size-5" />
+                            </span>
                             <p class="text-sm text-muted-foreground">
                                 {{ t('checkout.noAddress') }}
                             </p>
-                            <Button as-child size="sm" class="mt-3">
-                                <Link :href="indexAddresses.url()">{{
-                                    t('address.add')
-                                }}</Link>
+                            <Button size="sm" @click="openAddAddress">
+                                <Plus class="size-4" />
+                                {{ t('address.add') }}
                             </Button>
                         </div>
 
-                        <Select v-else v-model="addressId">
-                            <SelectTrigger class="w-full">
-                                <SelectValue
-                                    :placeholder="t('checkout.selectAddress')"
-                                />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem
+                        <template v-else>
+                            <RadioGroup v-model="addressIdModel" class="gap-3">
+                                <Label
                                     v-for="address in addresses"
                                     :key="address.id"
-                                    :value="address.id"
+                                    :for="`address-${address.id}`"
+                                    class="flex cursor-pointer items-start gap-3 rounded-lg border border-border p-3 transition-colors has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
                                 >
-                                    {{ address.recipient_name }},
-                                    {{
-                                        [
-                                            address.district,
-                                            address.city,
-                                            address.province,
-                                        ]
-                                            .filter(Boolean)
-                                            .join(', ')
-                                    }},
-                                    {{ address.full_address }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
+                                    <RadioGroupItem
+                                        :id="`address-${address.id}`"
+                                        :value="String(address.id)"
+                                        class="mt-1 shrink-0"
+                                    />
+                                    <span
+                                        class="flex min-w-0 flex-1 flex-col gap-1"
+                                    >
+                                        <span
+                                            class="flex flex-wrap items-center gap-2"
+                                        >
+                                            <span class="font-medium">{{
+                                                address.recipient_name
+                                            }}</span>
+                                            <Badge
+                                                v-if="address.is_default"
+                                                variant="secondary"
+                                                class="text-[10px]"
+                                                >{{
+                                                    t('address.defaultBadge')
+                                                }}</Badge
+                                            >
+                                        </span>
+                                        <span
+                                            class="text-sm text-muted-foreground"
+                                            >{{ address.phone }}</span
+                                        >
+                                        <span
+                                            class="text-sm leading-relaxed text-foreground/80"
+                                            >{{ address.full_address }}</span
+                                        >
+                                        <span
+                                            v-if="address.province"
+                                            class="text-xs text-muted-foreground"
+                                        >
+                                            {{
+                                                [
+                                                    address.village,
+                                                    address.district,
+                                                    address.city,
+                                                    address.province,
+                                                ]
+                                                    .filter(Boolean)
+                                                    .join(', ')
+                                            }}<template
+                                                v-if="address.postal_code"
+                                            >
+                                                ·
+                                                {{
+                                                    address.postal_code
+                                                }}</template
+                                            >
+                                        </span>
+                                    </span>
+                                </Label>
+                            </RadioGroup>
+
+                            <Button
+                                type="button"
+                                variant="outline"
+                                class="w-full border-dashed"
+                                @click="openAddAddress"
+                            >
+                                <Plus class="size-4" />
+                                {{ t('checkout.addNewAddress') }}
+                            </Button>
+                        </template>
                     </CardContent>
                 </Card>
 
@@ -528,9 +608,9 @@ function confirmCheckout() {
                             <dt class="pl-3">
                                 Berat
                                 {{
-                                    (preview.delivery_weight_grams / 1000).toFixed(
-                                        1,
-                                    )
+                                    (
+                                        preview.delivery_weight_grams / 1000
+                                    ).toFixed(1)
                                 }}
                                 kg
                             </dt>
@@ -612,5 +692,10 @@ function confirmCheckout() {
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+
+        <AddressFormDialog
+            v-model:open="addressDialogOpen"
+            @success="onAddressCreated"
+        />
     </div>
 </template>

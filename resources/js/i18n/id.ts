@@ -188,6 +188,7 @@ export default {
         addressTitle: 'Alamat Pengiriman',
         selectAddress: 'Pilih alamat',
         noAddress: 'Belum ada alamat tersimpan.',
+        addNewAddress: 'Tambah Alamat Baru',
         deliveryTitle: 'Metode Pengiriman',
         instant: 'Instan',
         instantEta: 'Tiba dalam 1 hari',
