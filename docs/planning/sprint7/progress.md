@@ -24,7 +24,7 @@
 
 ## D — Driver
 - [x] D1 feat(delivery): sort driver jobs by nearest — checkout now snapshots the destination coords + store→buyer Haversine distance on the order (`ship_latitude/longitude`, `delivery_distance_km`; also feeds D2's route). `availableJobs()` orders by that distance ascending (Eloquent subquery, no raw) so drivers see the shortest trips first; the job card shows `~x km`. Migration + Order fillable/casts + OrderFactory defaults. +1 Pest test (nearest-first ordering).
-- [ ] D2 feat(delivery): add delivery route animation to order detail
+- [x] D2 feat(delivery): add delivery route animation to order detail — new SSR-safe `DeliveryRouteMap` (Leaflet lazy-imported like MapPicker) draws the store→buyer leg with pickup/dropoff pins and a courier dot easing along the line on a loop (static when prefers-reduced-motion). Shown on the driver job detail; controller now eager-loads the store origin coords. +1 Pest test (coords exposed in payload).
 - [ ] D3 feat(delivery): cap driver active pickups at three
 
 ## E — Cross-cutting

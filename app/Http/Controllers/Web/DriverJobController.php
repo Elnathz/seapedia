@@ -36,7 +36,7 @@ class DriverJobController extends Controller
         $this->authorize('view', $delivery);
 
         $delivery->load([
-            'order.store:id,name',
+            'order.store:id,name,origin_latitude,origin_longitude',
             'order.items',
             'order.statusHistories' => fn ($query) => $query->oldest(),
             'driver:id,name',

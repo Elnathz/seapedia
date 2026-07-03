@@ -205,4 +205,33 @@ class DriverTakeCompleteTest extends TestCase
         app(DeliveryService::class)->complete($delivery, $driver);
         $this->assertGreaterThan(0, $seller->wallet->refresh()->balance);
     }
+
+    public function test_the_job_detail_exposes_coordinates_for_the_route_map(): void
+    {
+        $store = Store::factory()->create([
+            'origin_latitude' => -6.9,
+            'origin_longitude' => 107.6,
+        ]);
+        $order = Order::factory()->create([
+            'store_id' => $store->id,
+            'status' => OrderStatus::MenungguPengirim,
+            'ship_latitude' => -6.2,
+            'ship_longitude' => 106.8,
+        ]);
+        $delivery = Delivery::factory()->create([
+            'order_id' => $order->id,
+            'status' => DeliveryStatus::Available,
+        ]);
+        $driver = $this->userWithRole(RoleName::Driver);
+
+        $this->actingAsRole($driver, RoleName::Driver)
+            ->get(route('driver.jobs.show', $delivery))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->where('job.order.store.origin_latitude', -6.9)
+                ->where('job.order.store.origin_longitude', 107.6)
+                ->where('job.order.ship_latitude', -6.2)
+                ->where('job.order.ship_longitude', 106.8)
+            );
+    }
 }

@@ -4,6 +4,7 @@ import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 import DriverJobController from '@/actions/App/Http/Controllers/Web/DriverJobController';
+import DeliveryRouteMap from '@/components/DeliveryRouteMap.vue';
 import Heading from '@/components/Heading.vue';
 import StatusTimeline from '@/components/StatusTimeline.vue';
 import { Badge } from '@/components/ui/badge';
@@ -54,10 +55,17 @@ interface JobData {
         ship_recipient: string;
         ship_phone: string;
         ship_address: string;
+        ship_latitude: number | null;
+        ship_longitude: number | null;
         delivery_method: DeliveryMethodKey;
         delivery_fee: number;
         created_sim_at: string;
-        store: { id: number; name: string };
+        store: {
+            id: number;
+            name: string;
+            origin_latitude: number | null;
+            origin_longitude: number | null;
+        };
         items: OrderItemData[];
         status_histories: HistoryEntry[];
     };
@@ -82,6 +90,14 @@ const processing = ref(false);
 
 const isOwnJob = computed(
     () => props.job.driver !== null && props.job.driver.id === auth.user?.id,
+);
+
+const hasRoute = computed(
+    () =>
+        props.job.order.store.origin_latitude != null &&
+        props.job.order.store.origin_longitude != null &&
+        props.job.order.ship_latitude != null &&
+        props.job.order.ship_longitude != null,
 );
 
 const methodLabelKey: Record<DeliveryMethodKey, string> = {
@@ -203,6 +219,36 @@ onUnmounted(() => {
                             >
                             {{ t(methodLabelKey[job.order.delivery_method]) }}
                         </p>
+                    </CardContent>
+                </Card>
+
+                <Card v-if="hasRoute" class="min-w-0">
+                    <CardContent class="space-y-3 pt-6">
+                        <h3 class="font-medium">Rute Pengiriman</h3>
+                        <DeliveryRouteMap
+                            :origin-lat="job.order.store.origin_latitude!"
+                            :origin-lng="job.order.store.origin_longitude!"
+                            :dest-lat="job.order.ship_latitude!"
+                            :dest-lng="job.order.ship_longitude!"
+                            :origin-label="job.order.store.name"
+                            :dest-label="job.order.ship_recipient"
+                        />
+                        <div
+                            class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground"
+                        >
+                            <span class="flex items-center gap-1.5">
+                                <span
+                                    class="inline-block size-2.5 rounded-full bg-primary"
+                                />
+                                {{ job.order.store.name }}
+                            </span>
+                            <span class="flex items-center gap-1.5">
+                                <span
+                                    class="inline-block size-2.5 rounded-full bg-amber-500"
+                                />
+                                {{ job.order.ship_recipient }}
+                            </span>
+                        </div>
                     </CardContent>
                 </Card>
 
