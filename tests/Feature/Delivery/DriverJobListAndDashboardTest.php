@@ -89,7 +89,7 @@ class DriverJobListAndDashboardTest extends TestCase
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
             ->component('dashboard/Driver')
-            ->where('activeJob.id', $activeJob->id)
+            ->where('activeJobs.0.id', $activeJob->id)
             ->where('history.data.0.id', $completedJob->id)
             ->where('totalEarnings', $completedJob->refresh()->earning_amount)
         );

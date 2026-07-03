@@ -8,6 +8,7 @@ use App\Enums\WalletTransactionType;
 use App\Models\Delivery;
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -15,6 +16,13 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class DeliveryService
 {
+    /**
+     * How many jobs a driver may hold in flight at once (D3). The SPEC only
+     * requires one active driver per order (5B), not one job per driver, so
+     * batching a few pickups is allowed; three keeps routes manageable.
+     */
+    public const int MAX_ACTIVE_JOBS = 3;
+
     public function __construct(
         private readonly OrderService $orders,
         private readonly WalletService $wallets,
@@ -44,16 +52,30 @@ class DeliveryService
     }
 
     /**
-     * The driver's single in-flight job (Decision 6: one active job at a
-     * time), or null if they have none.
+     * The driver's in-flight jobs (up to MAX_ACTIVE_JOBS, D3), oldest first so
+     * the one taken earliest surfaces at the top to finish next.
+     *
+     * @return Collection<int, Delivery>
      */
-    public function activeJobFor(User $driver): ?Delivery
+    public function activeJobsFor(User $driver): Collection
     {
         return Delivery::query()
             ->where('driver_id', $driver->id)
             ->where('status', DeliveryStatus::Taken)
             ->with(['order.store:id,name', 'order.items'])
-            ->first();
+            ->oldest('taken_at')
+            ->get();
+    }
+
+    /**
+     * How many jobs the driver currently holds in flight (D3 cap check).
+     */
+    public function activeJobCountFor(User $driver): int
+    {
+        return Delivery::query()
+            ->where('driver_id', $driver->id)
+            ->where('status', DeliveryStatus::Taken)
+            ->count();
     }
 
     /**
@@ -81,15 +103,20 @@ class DeliveryService
     /**
      * Claim an unclaimed job (§6 double-take guard via row lock) and
      * advance the order Menunggu Pengirim → Sedang Dikirim. Rejects (422)
-     * if the driver already holds an active job (Decision 6); rejects
+     * if the driver already holds MAX_ACTIVE_JOBS in flight (D3); rejects
      * (409) if another driver already claimed this one.
      */
     public function take(Delivery $delivery, User $driver): Delivery
     {
         return DB::transaction(function () use ($delivery, $driver) {
-            if ($this->activeJobFor($driver) !== null) {
+            // Serialize this driver's takes so two concurrent claims can't
+            // both slip past the cap: lock the driver row, then count the
+            // in-flight jobs under that lock (D3).
+            User::query()->lockForUpdate()->find($driver->id);
+
+            if ($this->activeJobCountFor($driver) >= self::MAX_ACTIVE_JOBS) {
                 throw ValidationException::withMessages([
-                    'delivery' => [__('You already have an active delivery job.')],
+                    'delivery' => [__('You already hold the maximum of :max active delivery jobs.', ['max' => self::MAX_ACTIVE_JOBS])],
                 ]);
             }
 

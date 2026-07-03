@@ -60,7 +60,8 @@ class DashboardService
             RoleName::Driver => [
                 'component' => 'dashboard/Driver',
                 'props' => [
-                    'activeJob' => $this->deliveries->activeJobFor($user),
+                    'activeJobs' => $this->deliveries->activeJobsFor($user),
+                    'maxActiveJobs' => DeliveryService::MAX_ACTIVE_JOBS,
                     'history' => $this->deliveries->historyFor($user, perPage: 5),
                     'totalEarnings' => $this->deliveries->totalEarningsFor($user),
                 ],

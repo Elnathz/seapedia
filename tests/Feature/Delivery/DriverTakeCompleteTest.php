@@ -79,18 +79,48 @@ class DriverTakeCompleteTest extends TestCase
         $this->assertSame(OrderStatus::SedangDikirim, $delivery->order->status);
     }
 
-    public function test_a_driver_with_an_active_job_is_refused_a_second_take(): void
+    public function test_a_driver_may_batch_up_to_the_maximum_active_jobs(): void
     {
         $seller = $this->userWithRole(RoleName::Seller);
         $store = Store::factory()->create(['user_id' => $seller->id]);
-        $delivery1 = $this->availableJob($store);
-        $delivery2 = $this->availableJob($store);
         $driver = $this->userWithRole(RoleName::Driver);
+        $service = app(DeliveryService::class);
 
-        app(DeliveryService::class)->take($delivery1, $driver);
+        // The driver may hold up to MAX_ACTIVE_JOBS at once (D3).
+        for ($i = 0; $i < DeliveryService::MAX_ACTIVE_JOBS; $i++) {
+            $service->take($this->availableJob($store), $driver);
+        }
 
-        $this->expectException(ValidationException::class);
-        app(DeliveryService::class)->take($delivery2, $driver);
+        $this->assertSame(
+            DeliveryService::MAX_ACTIVE_JOBS,
+            $service->activeJobCountFor($driver),
+        );
+    }
+
+    public function test_a_driver_is_refused_a_take_beyond_the_cap(): void
+    {
+        $seller = $this->userWithRole(RoleName::Seller);
+        $store = Store::factory()->create(['user_id' => $seller->id]);
+        $driver = $this->userWithRole(RoleName::Driver);
+        $service = app(DeliveryService::class);
+
+        for ($i = 0; $i < DeliveryService::MAX_ACTIVE_JOBS; $i++) {
+            $service->take($this->availableJob($store), $driver);
+        }
+
+        // One beyond the cap is refused, and never claims the extra job.
+        $extra = $this->availableJob($store);
+
+        try {
+            $service->take($extra, $driver);
+            $this->fail('Expected the over-cap take to be rejected.');
+        } catch (ValidationException) {
+            $this->assertNull($extra->refresh()->driver_id);
+            $this->assertSame(
+                DeliveryService::MAX_ACTIVE_JOBS,
+                $service->activeJobCountFor($driver),
+            );
+        }
     }
 
     /**

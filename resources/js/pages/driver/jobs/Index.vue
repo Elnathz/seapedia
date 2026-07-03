@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ArrowRight, MapPin, Navigation, Store, Truck } from '@lucide/vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DriverJobController from '@/actions/App/Http/Controllers/Web/DriverJobController';
 import EmptyState from '@/components/EmptyState.vue';
@@ -45,7 +46,8 @@ interface PaginatedJobs {
 const props = defineProps<{
     jobs: PaginatedJobs;
     currentMethod?: string;
-    activeJob?: any;
+    activeJobsCount: number;
+    maxActiveJobs: number;
 }>();
 
 defineOptions({
@@ -57,6 +59,8 @@ defineOptions({
 });
 
 const { t } = useI18n();
+
+const atCap = computed(() => props.activeJobsCount >= props.maxActiveJobs);
 
 const methodLabelKey: Record<DeliveryMethodKey, string> = {
     instant: 'checkout.instant',
@@ -95,23 +99,44 @@ function filterMethod(method: string) {
         <Heading variant="small" :title="t('driver.jobsTitle')" />
 
         <div
-            v-if="props.activeJob"
-            class="flex items-center justify-between rounded-xl border border-destructive/20 bg-destructive/10 p-4"
+            v-if="props.activeJobsCount > 0"
+            class="flex items-center justify-between gap-4 rounded-xl border p-4"
+            :class="
+                atCap
+                    ? 'border-destructive/20 bg-destructive/10'
+                    : 'border-amber-500/25 bg-amber-500/10'
+            "
         >
-            <div>
-                <h3 class="flex items-center gap-2 font-bold text-destructive">
-                    <Truck class="size-4" />
-                    Pekerjaan Aktif!
+            <div class="min-w-0">
+                <h3
+                    class="flex items-center gap-2 font-bold"
+                    :class="
+                        atCap
+                            ? 'text-destructive'
+                            : 'text-amber-600 dark:text-amber-500'
+                    "
+                >
+                    <Truck class="size-4 shrink-0" />
+                    {{ atCap ? 'Batas pekerjaan tercapai' : 'Pekerjaan Aktif' }}
+                    <span class="tabular-nums"
+                        >({{ props.activeJobsCount }}/{{
+                            props.maxActiveJobs
+                        }})</span
+                    >
                 </h3>
-                <p class="mt-1 text-sm text-destructive/80">
-                    Anda memiliki pengiriman yang belum selesai.
+                <p class="mt-1 text-sm text-muted-foreground">
+                    {{
+                        atCap
+                            ? `Selesaikan salah satu pekerjaan aktif sebelum mengambil yang baru.`
+                            : `Anda masih bisa mengambil ${props.maxActiveJobs - props.activeJobsCount} pekerjaan lagi.`
+                    }}
                 </p>
             </div>
             <Link
-                :href="DriverJobController.show.url(props.activeJob.id)"
-                class="rounded bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground transition-colors hover:bg-destructive/90"
+                href="/dashboard"
+                class="shrink-0 rounded bg-foreground/10 px-4 py-2 text-sm font-medium transition-colors hover:bg-foreground/15"
             >
-                Lanjutkan
+                Lihat
             </Link>
         </div>
 
@@ -180,7 +205,9 @@ function filterMethod(method: string) {
                             v-if="job.order.delivery_distance_km != null"
                             class="flex items-center gap-1.5 text-xs font-medium text-foreground/70"
                         >
-                            <Navigation class="size-3.5 shrink-0 text-primary" />
+                            <Navigation
+                                class="size-3.5 shrink-0 text-primary"
+                            />
                             ~{{ job.order.delivery_distance_km.toFixed(1) }} km
                         </p>
                     </div>

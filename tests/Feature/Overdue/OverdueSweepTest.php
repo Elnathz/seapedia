@@ -182,9 +182,9 @@ class OverdueSweepTest extends TestCase
         // Delivery is cancelled, not left dangling as Taken.
         $this->assertSame(DeliveryStatus::Cancelled, $delivery->refresh()->status);
 
-        // Driver is no longer holding an active job, so the one-active-job
-        // rule lets them claim a new one.
-        $this->assertNull(app(DeliveryService::class)->activeJobFor($driver));
+        // Driver is no longer holding this job, freeing a slot under the
+        // active-jobs cap to claim a new one.
+        $this->assertSame(0, app(DeliveryService::class)->activeJobCountFor($driver));
 
         // No payout leaked to the seller for the undelivered order.
         $this->assertSame($sellerBalanceBeforeSweep, $seller->wallet->refresh()->balance);

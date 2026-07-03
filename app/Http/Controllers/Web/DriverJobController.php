@@ -27,7 +27,8 @@ class DriverJobController extends Controller
         return Inertia::render('driver/jobs/Index', [
             'jobs' => $this->deliveries->availableJobs(10, $method),
             'currentMethod' => $method,
-            'activeJob' => $this->deliveries->activeJobFor($request->user()),
+            'activeJobsCount' => $this->deliveries->activeJobCountFor($request->user()),
+            'maxActiveJobs' => DeliveryService::MAX_ACTIVE_JOBS,
         ]);
     }
 

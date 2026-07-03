@@ -36,7 +36,8 @@ interface PaginatedHistory {
 }
 
 defineProps<{
-    activeJob: ActiveJob | null;
+    activeJobs: ActiveJob[];
+    maxActiveJobs: number;
     history: PaginatedHistory;
     totalEarnings: number;
 }>();
@@ -64,13 +65,24 @@ const { t, locale } = useI18n();
         </div>
 
         <section class="rounded-xl border bg-card p-5">
-            <h3 class="mb-4 flex items-center gap-2 text-sm font-semibold">
-                <Truck class="size-4 text-muted-foreground" />
-                {{ t('driver.activeJobTitle') }}
+            <h3
+                class="mb-4 flex items-center justify-between gap-2 text-sm font-semibold"
+            >
+                <span class="flex items-center gap-2">
+                    <Truck class="size-4 text-muted-foreground" />
+                    {{ t('driver.activeJobTitle') }}
+                </span>
+                <Badge
+                    v-if="activeJobs.length > 0"
+                    variant="secondary"
+                    class="tabular-nums"
+                >
+                    {{ activeJobs.length }}/{{ maxActiveJobs }}
+                </Badge>
             </h3>
 
             <EmptyState
-                v-if="!activeJob"
+                v-if="activeJobs.length === 0"
                 :icon="Truck"
                 :title="t('driver.noActiveJobTitle')"
                 :description="t('driver.noActiveJobDescription')"
@@ -78,30 +90,33 @@ const { t, locale } = useI18n();
                 @action="router.visit(DriverJobController.index.url())"
             />
 
-            <Link
-                v-else
-                :href="DriverJobController.show.url(activeJob.id)"
-                class="group relative flex items-center justify-between gap-4 overflow-hidden rounded-xl border border-sky-300 bg-sky-50/60 p-4 pl-5 transition-colors hover:border-sky-400 dark:border-sky-800/70 dark:bg-sky-950/30"
-            >
-                <span
-                    class="absolute inset-y-0 left-0 w-1 bg-sky-500"
-                    aria-hidden="true"
-                />
-                <div class="min-w-0">
-                    <p class="font-mono font-semibold">
-                        {{ activeJob.order.code }}
-                    </p>
-                    <p class="text-sm text-muted-foreground">
-                        {{ activeJob.order.store.name }}
-                    </p>
-                    <p class="truncate text-xs text-muted-foreground">
-                        {{ activeJob.order.ship_address }}
-                    </p>
-                </div>
-                <Badge :variant="deliveryStatusBadgeVariant(activeJob.status)">
-                    {{ deliveryStatusLabel(activeJob.status) }}
-                </Badge>
-            </Link>
+            <div v-else class="space-y-3">
+                <Link
+                    v-for="job in activeJobs"
+                    :key="job.id"
+                    :href="DriverJobController.show.url(job.id)"
+                    class="group relative flex items-center justify-between gap-4 overflow-hidden rounded-xl border border-sky-300 bg-sky-50/60 p-4 pl-5 transition-colors hover:border-sky-400 dark:border-sky-800/70 dark:bg-sky-950/30"
+                >
+                    <span
+                        class="absolute inset-y-0 left-0 w-1 bg-sky-500"
+                        aria-hidden="true"
+                    />
+                    <div class="min-w-0">
+                        <p class="font-mono font-semibold">
+                            {{ job.order.code }}
+                        </p>
+                        <p class="text-sm text-muted-foreground">
+                            {{ job.order.store.name }}
+                        </p>
+                        <p class="truncate text-xs text-muted-foreground">
+                            {{ job.order.ship_address }}
+                        </p>
+                    </div>
+                    <Badge :variant="deliveryStatusBadgeVariant(job.status)">
+                        {{ deliveryStatusLabel(job.status) }}
+                    </Badge>
+                </Link>
+            </div>
         </section>
 
         <section class="rounded-xl border bg-card p-5">

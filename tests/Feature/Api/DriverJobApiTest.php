@@ -13,6 +13,7 @@ use App\Models\Store;
 use App\Models\User;
 use App\Services\CartService;
 use App\Services\CheckoutService;
+use App\Services\DeliveryService;
 use App\Services\RoleService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -108,16 +109,24 @@ class DriverJobApiTest extends TestCase
         $response->assertStatus(409);
     }
 
-    public function test_api_a_driver_with_an_active_job_is_refused_a_second_take_with_422(): void
+    public function test_api_a_driver_beyond_the_active_job_cap_is_refused_with_422(): void
     {
         [, $token] = $this->userWithToken(RoleName::Driver);
         $store = Store::factory()->create();
-        $delivery1 = $this->availableJob($store);
-        $delivery2 = $this->availableJob($store);
 
-        $this->asToken($token)->postJson(route('api.v1.driver.jobs.take', $delivery1));
+        // Filling the cap succeeds... (build the job before switching the
+        // auth header to the driver — availableJob acts as the seller.)
+        for ($i = 0; $i < DeliveryService::MAX_ACTIVE_JOBS; $i++) {
+            $delivery = $this->availableJob($store);
+            $this->asToken($token)
+                ->postJson(route('api.v1.driver.jobs.take', $delivery))
+                ->assertSuccessful();
+        }
 
-        $response = $this->asToken($token)->postJson(route('api.v1.driver.jobs.take', $delivery2));
+        // ...the one beyond it is refused.
+        $extra = $this->availableJob($store);
+        $response = $this->asToken($token)
+            ->postJson(route('api.v1.driver.jobs.take', $extra));
 
         $response->assertStatus(422);
     }

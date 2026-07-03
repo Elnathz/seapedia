@@ -25,7 +25,7 @@
 ## D — Driver
 - [x] D1 feat(delivery): sort driver jobs by nearest — checkout now snapshots the destination coords + store→buyer Haversine distance on the order (`ship_latitude/longitude`, `delivery_distance_km`; also feeds D2's route). `availableJobs()` orders by that distance ascending (Eloquent subquery, no raw) so drivers see the shortest trips first; the job card shows `~x km`. Migration + Order fillable/casts + OrderFactory defaults. +1 Pest test (nearest-first ordering).
 - [x] D2 feat(delivery): add delivery route animation to order detail — new SSR-safe `DeliveryRouteMap` (Leaflet lazy-imported like MapPicker) draws the store→buyer leg with pickup/dropoff pins and a courier dot easing along the line on a loop (static when prefers-reduced-motion). Shown on the driver job detail; controller now eager-loads the store origin coords. +1 Pest test (coords exposed in payload).
-- [ ] D3 feat(delivery): cap driver active pickups at three
+- [x] D3 feat(delivery): cap driver active pickups at three — decision-guard checked against SPEC first: 5B only requires **one active driver per order**, not one job per driver, so batching is spec-legal (the old "one active job" was a sprint-5 owner decision, not a brief rule). `DeliveryService::take` now allows up to `MAX_ACTIVE_JOBS = 3`, counted under a `lockForUpdate` on the driver row so concurrent takes can't slip past the cap. Dashboard lists all active jobs with an `N/3` badge; the jobs list shows a "still room / cap reached" banner. Updated the one-job tests (web + API) to the cap and swapped `activeJobFor` → `activeJobsFor`/`activeJobCountFor`. +1 Pest test.
 
 ## E — Cross-cutting
 - [ ] E1 feat(ui): open mobile sidebar with edge swipe
