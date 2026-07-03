@@ -140,6 +140,19 @@ function filterMethod(method: string) {
             </Link>
         </div>
 
+        <p
+            v-if="props.maxActiveJobs < 3"
+            class="rounded-lg border border-dashed border-border bg-muted/30 px-4 py-2.5 text-xs text-muted-foreground"
+        >
+            Kapasitas Anda saat ini
+            <span class="font-semibold text-foreground">{{
+                props.maxActiveJobs
+            }}</span>
+            pekerjaan sekaligus. Selesaikan pengiriman
+            <span class="font-medium">tepat waktu</span> untuk membuka lebih
+            banyak slot (15 → 2, 30 → 3).
+        </p>
+
         <!-- Tabs Filter -->
         <div
             class="scrollbar-hide flex gap-2 overflow-x-auto border-b border-border pb-2"

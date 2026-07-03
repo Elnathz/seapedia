@@ -28,7 +28,7 @@ class DriverJobController extends Controller
             'jobs' => $this->deliveries->availableJobs(10, $method),
             'currentMethod' => $method,
             'activeJobsCount' => $this->deliveries->activeJobCountFor($request->user()),
-            'maxActiveJobs' => DeliveryService::MAX_ACTIVE_JOBS,
+            'maxActiveJobs' => $this->deliveries->maxActiveJobsFor($request->user()),
         ]);
     }
 

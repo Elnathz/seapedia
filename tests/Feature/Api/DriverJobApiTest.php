@@ -13,7 +13,6 @@ use App\Models\Store;
 use App\Models\User;
 use App\Services\CartService;
 use App\Services\CheckoutService;
-use App\Services\DeliveryService;
 use App\Services\RoleService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -114,14 +113,12 @@ class DriverJobApiTest extends TestCase
         [, $token] = $this->userWithToken(RoleName::Driver);
         $store = Store::factory()->create();
 
-        // Filling the cap succeeds... (build the job before switching the
-        // auth header to the driver — availableJob acts as the seller.)
-        for ($i = 0; $i < DeliveryService::MAX_ACTIVE_JOBS; $i++) {
-            $delivery = $this->availableJob($store);
-            $this->asToken($token)
-                ->postJson(route('api.v1.driver.jobs.take', $delivery))
-                ->assertSuccessful();
-        }
+        // A new driver's cap is one — the first take succeeds... (build the job
+        // before switching the auth header — availableJob acts as the seller.)
+        $first = $this->availableJob($store);
+        $this->asToken($token)
+            ->postJson(route('api.v1.driver.jobs.take', $first))
+            ->assertSuccessful();
 
         // ...the one beyond it is refused.
         $extra = $this->availableJob($store);

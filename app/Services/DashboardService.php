@@ -61,7 +61,7 @@ class DashboardService
                 'component' => 'dashboard/Driver',
                 'props' => [
                     'activeJobs' => $this->deliveries->activeJobsFor($user),
-                    'maxActiveJobs' => DeliveryService::MAX_ACTIVE_JOBS,
+                    'maxActiveJobs' => $this->deliveries->maxActiveJobsFor($user),
                     'history' => $this->deliveries->historyFor($user, perPage: 5),
                     'totalEarnings' => $this->deliveries->totalEarningsFor($user),
                 ],

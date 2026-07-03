@@ -17,11 +17,22 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 class DeliveryService
 {
     /**
-     * How many jobs a driver may hold in flight at once (D3). The SPEC only
-     * requires one active driver per order (5B), not one job per driver, so
-     * batching a few pickups is allowed; three keeps routes manageable.
+     * Absolute ceiling on in-flight jobs (D3, documented extension). The SPEC
+     * only requires one active driver per order (5B); it is silent on how many
+     * orders one driver may batch, so a cap is a legal extension. Capacity is
+     * not flat — it grows with proven reliability (see maxActiveJobsFor).
      */
     public const int MAX_ACTIVE_JOBS = 3;
+
+    /**
+     * Reliability tiers: on-time completed deliveries → concurrent-job cap. A
+     * new driver carries one order at a time and unlocks more only by finishing
+     * on time (15 on-time → 2 jobs, 30 → 3). Deterministic, no rating subsystem.
+     * Ordered highest threshold first so the first match wins.
+     *
+     * @var array<int, int>
+     */
+    private const array CAPACITY_TIERS = [30 => 3, 15 => 2];
 
     public function __construct(
         private readonly OrderService $orders,
@@ -79,6 +90,38 @@ class DeliveryService
     }
 
     /**
+     * The reliability-based in-flight cap for this driver (D3). Starts at 1 and
+     * grows as on-time completions cross the CAPACITY_TIERS thresholds.
+     */
+    public function maxActiveJobsFor(User $driver): int
+    {
+        $onTime = $this->onTimeCompletedCountFor($driver);
+
+        foreach (self::CAPACITY_TIERS as $threshold => $cap) {
+            if ($onTime >= $threshold) {
+                return $cap;
+            }
+        }
+
+        return 1;
+    }
+
+    /**
+     * Count of the driver's deliveries completed on time — confirmed on or
+     * before the order's SLA due date. This is the reliability signal that
+     * unlocks more concurrent capacity (deterministic; no rating subsystem).
+     */
+    public function onTimeCompletedCountFor(User $driver): int
+    {
+        return Delivery::query()
+            ->where('deliveries.driver_id', $driver->id)
+            ->where('deliveries.status', DeliveryStatus::Completed)
+            ->join('orders', 'orders.id', '=', 'deliveries.order_id')
+            ->whereColumn('deliveries.completed_at', '<=', 'orders.sla_due_at')
+            ->count();
+    }
+
+    /**
      * The driver's completed jobs, newest first, plus their summed
      * earnings — feeds the dashboard's history + stat cards.
      */
@@ -114,9 +157,11 @@ class DeliveryService
             // in-flight jobs under that lock (D3).
             User::query()->lockForUpdate()->find($driver->id);
 
-            if ($this->activeJobCountFor($driver) >= self::MAX_ACTIVE_JOBS) {
+            $cap = $this->maxActiveJobsFor($driver);
+
+            if ($this->activeJobCountFor($driver) >= $cap) {
                 throw ValidationException::withMessages([
-                    'delivery' => [__('You already hold the maximum of :max active delivery jobs.', ['max' => self::MAX_ACTIVE_JOBS])],
+                    'delivery' => [__('You already hold the maximum of :max active delivery jobs.', ['max' => $cap])],
                 ]);
             }
 

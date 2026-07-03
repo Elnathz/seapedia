@@ -79,22 +79,18 @@ class DriverTakeCompleteTest extends TestCase
         $this->assertSame(OrderStatus::SedangDikirim, $delivery->order->status);
     }
 
-    public function test_a_driver_may_batch_up_to_the_maximum_active_jobs(): void
+    public function test_a_new_driver_is_capped_at_one_active_job(): void
     {
         $seller = $this->userWithRole(RoleName::Seller);
         $store = Store::factory()->create(['user_id' => $seller->id]);
         $driver = $this->userWithRole(RoleName::Driver);
         $service = app(DeliveryService::class);
 
-        // The driver may hold up to MAX_ACTIVE_JOBS at once (D3).
-        for ($i = 0; $i < DeliveryService::MAX_ACTIVE_JOBS; $i++) {
-            $service->take($this->availableJob($store), $driver);
-        }
+        // With no on-time history the driver carries a single order at a time.
+        $this->assertSame(1, $service->maxActiveJobsFor($driver));
 
-        $this->assertSame(
-            DeliveryService::MAX_ACTIVE_JOBS,
-            $service->activeJobCountFor($driver),
-        );
+        $service->take($this->availableJob($store), $driver);
+        $this->assertSame(1, $service->activeJobCountFor($driver));
     }
 
     public function test_a_driver_is_refused_a_take_beyond_the_cap(): void
@@ -104,11 +100,8 @@ class DriverTakeCompleteTest extends TestCase
         $driver = $this->userWithRole(RoleName::Driver);
         $service = app(DeliveryService::class);
 
-        for ($i = 0; $i < DeliveryService::MAX_ACTIVE_JOBS; $i++) {
-            $service->take($this->availableJob($store), $driver);
-        }
-
-        // One beyond the cap is refused, and never claims the extra job.
+        // Fresh-driver cap is 1: take one, the next is refused.
+        $service->take($this->availableJob($store), $driver);
         $extra = $this->availableJob($store);
 
         try {
@@ -116,10 +109,39 @@ class DriverTakeCompleteTest extends TestCase
             $this->fail('Expected the over-cap take to be rejected.');
         } catch (ValidationException) {
             $this->assertNull($extra->refresh()->driver_id);
-            $this->assertSame(
-                DeliveryService::MAX_ACTIVE_JOBS,
-                $service->activeJobCountFor($driver),
-            );
+            $this->assertSame(1, $service->activeJobCountFor($driver));
+        }
+    }
+
+    public function test_capacity_grows_with_on_time_completions(): void
+    {
+        $driver = $this->userWithRole(RoleName::Driver);
+        $service = app(DeliveryService::class);
+
+        $this->assertSame(1, $service->maxActiveJobsFor($driver));
+
+        $this->seedOnTimeCompletions($driver, 15);
+        $this->assertSame(2, $service->maxActiveJobsFor($driver));
+
+        $this->seedOnTimeCompletions($driver, 15); // 30 on-time total
+        $this->assertSame(3, $service->maxActiveJobsFor($driver));
+    }
+
+    private function seedOnTimeCompletions(User $driver, int $count): void
+    {
+        $now = now();
+
+        for ($i = 0; $i < $count; $i++) {
+            $order = Order::factory()->create([
+                'status' => OrderStatus::PesananSelesai,
+                'sla_due_at' => $now->copy()->addDays(3),
+            ]);
+            Delivery::factory()->create([
+                'order_id' => $order->id,
+                'driver_id' => $driver->id,
+                'status' => DeliveryStatus::Completed,
+                'completed_at' => $now,
+            ]);
         }
     }
 
