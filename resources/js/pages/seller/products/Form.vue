@@ -7,6 +7,7 @@ import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import RequiredMark from '@/components/RequiredMark.vue';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -97,12 +98,20 @@ if (props.product) {
     }
 }
 
+interface VariantForm {
+    id?: number;
+    name: string;
+    price: number;
+    stock: number;
+    weight: number;
+}
+
 const hasVariants = ref(
     !!(props.product?.variants && props.product.variants.length > 0),
 );
-const variants = ref(
+const variants = ref<VariantForm[]>(
     props.product?.variants && props.product.variants.length > 0
-        ? props.product.variants
+        ? props.product.variants.map((variant) => ({ ...variant }))
         : [{ name: '', price: 0, stock: 0, weight: 0 }],
 );
 
@@ -244,11 +253,7 @@ function handleImageSelect(e: Event) {
             </div>
 
             <div class="flex items-center space-x-2 pt-4">
-                <Checkbox
-                    id="has_variants"
-                    :checked="hasVariants"
-                    @update:checked="(v) => (hasVariants = !!v)"
-                />
+                <Checkbox id="has_variants" v-model="hasVariants" />
                 <input
                     type="hidden"
                     name="has_variants"
