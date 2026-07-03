@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\DeliveryStatus;
 use App\Enums\OrderStatus;
+use App\Enums\SlaUrgency;
 use App\Enums\WalletTransactionType;
 use App\Models\Delivery;
 use App\Models\Order;
@@ -63,19 +64,31 @@ class DeliveryService
     }
 
     /**
-     * The driver's in-flight jobs (up to MAX_ACTIVE_JOBS, D3), oldest first so
-     * the one taken earliest surfaces at the top to finish next.
+     * The driver's in-flight jobs (up to MAX_ACTIVE_JOBS, D3), sorted so the
+     * one closest to its SLA deadline (near-cancel) surfaces first — deliver
+     * that before the overdue sweep refunds it (§6C) and the earning is lost.
+     * Each row carries the read-only `sla_urgency` / `sla_ticks_remaining`
+     * display fields (never persisted). The set is tiny (≤ cap), so the sort
+     * and annotation run in PHP off the eager-loaded orders.
      *
      * @return Collection<int, Delivery>
      */
     public function activeJobsFor(User $driver): Collection
     {
+        $now = $this->clock->now();
+
         return Delivery::query()
             ->where('driver_id', $driver->id)
             ->where('status', DeliveryStatus::Taken)
             ->with(['order.store:id,name', 'order.items'])
-            ->oldest('taken_at')
-            ->get();
+            ->get()
+            ->each(function (Delivery $delivery) use ($now) {
+                $dueAt = $delivery->order?->sla_due_at;
+                $delivery->setAttribute('sla_urgency', SlaUrgency::forDueDate($dueAt, $now, false)->value);
+                $delivery->setAttribute('sla_ticks_remaining', SlaUrgency::ticksRemaining($dueAt, $now));
+            })
+            ->sortBy(fn (Delivery $delivery) => $delivery->order?->sla_due_at?->getTimestamp())
+            ->values();
     }
 
     /**

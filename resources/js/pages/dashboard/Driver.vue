@@ -1,22 +1,26 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { CheckCircle2, Truck, Wallet } from '@lucide/vue';
+import { AlertTriangle, CheckCircle2, Truck, Wallet } from '@lucide/vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DriverJobController from '@/actions/App/Http/Controllers/Web/DriverJobController';
 import EmptyState from '@/components/EmptyState.vue';
 import StatTile from '@/components/StatTile.vue';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import {
     deliveryStatusBadgeVariant,
     deliveryStatusLabel,
 } from '@/lib/deliveryStatus';
 import type { DeliveryStatusKey } from '@/lib/deliveryStatus';
-import { formatDateTime, formatIDR } from '@/lib/utils';
+import { isAtRisk, slaUrgencyLabel, slaUrgencyTone } from '@/lib/slaUrgency';
+import type { SlaUrgencyKey } from '@/lib/slaUrgency';
+import { formatDate, formatDateTime, formatIDR } from '@/lib/utils';
 
 interface ActiveJob {
     id: number;
     status: DeliveryStatusKey;
+    sla_urgency: SlaUrgencyKey;
+    sla_ticks_remaining: number;
     order: {
         code: string;
         ship_address: string;
@@ -35,7 +39,7 @@ interface PaginatedHistory {
     data: HistoryEntry[];
 }
 
-defineProps<{
+const props = defineProps<{
     activeJobs: ActiveJob[];
     maxActiveJobs: number;
     history: PaginatedHistory;
@@ -43,6 +47,24 @@ defineProps<{
 }>();
 
 const { t, locale } = useI18n();
+
+// Group completed jobs under their delivery day so the history reads by date.
+const historyByDate = computed(() => {
+    const groups: { key: string; entries: HistoryEntry[] }[] = [];
+
+    for (const entry of props.history.data) {
+        const key = formatDate(entry.completed_at, locale.value);
+        const last = groups.at(-1);
+
+        if (last?.key === key) {
+            last.entries.push(entry);
+        } else {
+            groups.push({ key, entries: [entry] });
+        }
+    }
+
+    return groups;
+});
 </script>
 
 <template>
@@ -95,16 +117,41 @@ const { t, locale } = useI18n();
                     v-for="job in activeJobs"
                     :key="job.id"
                     :href="DriverJobController.show.url(job.id)"
-                    class="group relative flex items-center justify-between gap-4 overflow-hidden rounded-xl border border-sky-300 bg-sky-50/60 p-4 pl-5 transition-colors hover:border-sky-400 dark:border-sky-800/70 dark:bg-sky-950/30"
+                    class="group relative flex items-center justify-between gap-4 overflow-hidden rounded-xl border p-4 pl-5 transition-colors"
+                    :class="
+                        isAtRisk(job.sla_urgency)
+                            ? 'border-amber-300 bg-amber-50/60 hover:border-amber-400 dark:border-amber-800/70 dark:bg-amber-950/30'
+                            : 'border-sky-300 bg-sky-50/60 hover:border-sky-400 dark:border-sky-800/70 dark:bg-sky-950/30'
+                    "
                 >
                     <span
-                        class="absolute inset-y-0 left-0 w-1 bg-sky-500"
+                        class="absolute inset-y-0 left-0 w-1"
+                        :class="
+                            isAtRisk(job.sla_urgency)
+                                ? slaUrgencyTone(job.sla_urgency).rail
+                                : 'bg-sky-500'
+                        "
                         aria-hidden="true"
                     />
                     <div class="min-w-0">
-                        <p class="font-mono font-semibold">
-                            {{ job.order.code }}
-                        </p>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <p class="font-mono font-semibold">
+                                {{ job.order.code }}
+                            </p>
+                            <span
+                                v-if="isAtRisk(job.sla_urgency)"
+                                class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold"
+                                :class="slaUrgencyTone(job.sla_urgency).badge"
+                            >
+                                <AlertTriangle class="size-3" />
+                                {{
+                                    slaUrgencyLabel(
+                                        job.sla_urgency,
+                                        job.sla_ticks_remaining,
+                                    )
+                                }}
+                            </span>
+                        </div>
                         <p class="text-sm text-muted-foreground">
                             {{ job.order.store.name }}
                         </p>
@@ -133,22 +180,42 @@ const { t, locale } = useI18n();
             />
 
             <template v-else>
-                <div v-for="(entry, index) in history.data" :key="entry.id">
-                    <div class="flex items-center justify-between py-2.5">
-                        <div class="min-w-0">
-                            <p class="font-mono text-sm font-medium">
-                                {{ entry.order.code }}
-                            </p>
-                            <p class="text-xs text-muted-foreground">
-                                {{ entry.order.store.name }} ·
-                                {{ formatDateTime(entry.completed_at, locale) }}
+                <div
+                    v-for="group in historyByDate"
+                    :key="group.key"
+                    class="mb-4 last:mb-0"
+                >
+                    <p
+                        class="mb-1 flex items-center gap-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+                    >
+                        {{ group.key }}
+                        <span class="h-px flex-1 bg-border" />
+                    </p>
+                    <div class="divide-y divide-border">
+                        <div
+                            v-for="entry in group.entries"
+                            :key="entry.id"
+                            class="flex items-center justify-between py-2.5"
+                        >
+                            <div class="min-w-0">
+                                <p class="font-mono text-sm font-medium">
+                                    {{ entry.order.code }}
+                                </p>
+                                <p class="text-xs text-muted-foreground">
+                                    {{ entry.order.store.name }} ·
+                                    {{
+                                        formatDateTime(
+                                            entry.completed_at,
+                                            locale,
+                                        )
+                                    }}
+                                </p>
+                            </div>
+                            <p class="font-semibold text-primary tabular-nums">
+                                +{{ formatIDR(entry.earning_amount) }}
                             </p>
                         </div>
-                        <p class="font-semibold text-primary tabular-nums">
-                            +{{ formatIDR(entry.earning_amount) }}
-                        </p>
                     </div>
-                    <Separator v-if="index < history.data.length - 1" />
                 </div>
             </template>
         </section>
