@@ -691,11 +691,7 @@ function confirmDelete() {
 
                 <!-- is_active -->
                 <div class="flex items-center gap-3">
-                    <Checkbox
-                        id="is_active"
-                        :checked="formActive"
-                        @update:checked="(v) => (formActive = !!v)"
-                    />
+                    <Checkbox id="is_active" v-model="formActive" />
                     <Label for="is_active" class="cursor-pointer">Aktif</Label>
                 </div>
 

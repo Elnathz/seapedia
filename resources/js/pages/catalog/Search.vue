@@ -322,12 +322,12 @@ const clearAllFilters = () => {
                                 >
                                     <Checkbox
                                         :id="'cat_' + child.id"
-                                        :checked="
+                                        :model-value="
                                             selectedCategories.includes(
                                                 String(child.id),
                                             )
                                         "
-                                        @update:checked="
+                                        @update:model-value="
                                             toggleCategory(child.id)
                                         "
                                     />
@@ -397,12 +397,12 @@ const clearAllFilters = () => {
                                                     :id="
                                                         'modal_cat_' + child.id
                                                     "
-                                                    :checked="
+                                                    :model-value="
                                                         selectedCategories.includes(
                                                             String(child.id),
                                                         )
                                                     "
-                                                    @update:checked="
+                                                    @update:model-value="
                                                         toggleCategory(child.id)
                                                     "
                                                 />
@@ -578,12 +578,12 @@ const clearAllFilters = () => {
                                     >
                                         <Checkbox
                                             :id="'mobile_cat_' + child.id"
-                                            :checked="
+                                            :model-value="
                                                 selectedCategories.includes(
                                                     String(child.id),
                                                 )
                                             "
-                                            @update:checked="
+                                            @update:model-value="
                                                 toggleCategory(child.id)
                                             "
                                         />
