@@ -50,6 +50,49 @@ useEventListener("keydown", (event: KeyboardEvent) => {
   }
 })
 
+// Edge swipe (E1): dragging in from the left screen edge opens the mobile
+// sidebar, mirroring the native drawer gesture. Desktop is untouched — the
+// Sheet already handles swipe/overlay-tap to close.
+const SWIPE_EDGE_ZONE = 24
+const SWIPE_OPEN_THRESHOLD = 60
+let swipeTracking = false
+let swipeStartX = 0
+let swipeStartY = 0
+
+useEventListener("touchstart", (event: TouchEvent) => {
+  if (!isMobile.value || openMobile.value || event.touches.length !== 1) {
+    swipeTracking = false
+    return
+  }
+
+  const touch = event.touches[0]
+  swipeTracking = touch.clientX <= SWIPE_EDGE_ZONE
+  swipeStartX = touch.clientX
+  swipeStartY = touch.clientY
+}, { passive: true })
+
+useEventListener("touchend", (event: TouchEvent) => {
+  if (!swipeTracking) {
+    return
+  }
+
+  swipeTracking = false
+  const touch = event.changedTouches[0]
+
+  if (!touch) {
+    return
+  }
+
+  const dx = touch.clientX - swipeStartX
+  const dy = touch.clientY - swipeStartY
+
+  // A mostly-horizontal drag past the threshold opens the drawer; the
+  // dx >= |dy| check keeps a vertical scroll from triggering it.
+  if (dx >= SWIPE_OPEN_THRESHOLD && dx >= Math.abs(dy)) {
+    setOpenMobile(true)
+  }
+}, { passive: true })
+
 // We add a state so that we can do data-state="expanded" or "collapsed".
 // This makes it easier to style the sidebar with Tailwind classes.
 const state = computed(() => open.value ? "expanded" : "collapsed")

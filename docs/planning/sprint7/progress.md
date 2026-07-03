@@ -28,7 +28,7 @@
 - [x] D3 feat(delivery): cap driver active pickups at three — decision-guard checked against SPEC first: 5B only requires **one active driver per order**, not one job per driver, so batching is spec-legal (the old "one active job" was a sprint-5 owner decision, not a brief rule). `DeliveryService::take` now allows up to `MAX_ACTIVE_JOBS = 3`, counted under a `lockForUpdate` on the driver row so concurrent takes can't slip past the cap. Dashboard lists all active jobs with an `N/3` badge; the jobs list shows a "still room / cap reached" banner. Updated the one-job tests (web + API) to the cap and swapped `activeJobFor` → `activeJobsFor`/`activeJobCountFor`. +1 Pest test.
 
 ## E — Cross-cutting
-- [ ] E1 feat(ui): open mobile sidebar with edge swipe
+- [x] E1 feat(ui): open mobile sidebar with edge swipe — a left-edge drag (start ≤24px, ≥60px mostly-horizontal travel) opens the mobile drawer, added in `SidebarProvider` alongside the existing keyboard shortcut via `useEventListener` (passive touch listeners). Desktop untouched; the Sheet still handles swipe/overlay-tap to close. Gated on `isMobile` and skipped while already open.
 
 ## Decisions (resolved)
 - [x] Delivery fee: base per-method + region-tier surcharge (B0)
