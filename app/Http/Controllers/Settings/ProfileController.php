@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers\Settings;
 
-use App\Enums\DeliveryStatus;
-use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Settings\AvatarUpdateRequest;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
-use App\Models\Delivery;
-use App\Models\Order;
 use App\Models\Store;
 use App\Models\Wallet;
+use App\Services\AccountService;
+use App\Services\AvatarService;
 use App\Services\RoleService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -90,47 +88,38 @@ class ProfileController extends Controller
     }
 
     /**
-     * Delete the user's profile.
+     * Replace the avatar. The service re-encodes the upload through GD so the
+     * stored bytes are ones we generated (strips any embedded payload).
      */
-    public function destroy(ProfileDeleteRequest $request): RedirectResponse
+    public function updateAvatar(AvatarUpdateRequest $request, AvatarService $avatars): RedirectResponse
     {
-        $user = $request->user();
+        $avatars->update($request->user(), $request->file('avatar'));
 
-        $hasActiveOrders = Order::where('buyer_id', $user->id)
-            ->whereIn('status', [
-                OrderStatus::SedangDikemas,
-                OrderStatus::MenungguPengirim,
-                OrderStatus::SedangDikirim,
-            ])
-            ->exists();
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Avatar updated.')]);
 
-        $hasActiveSellerOrders = $user->store ? Order::where('store_id', $user->store->id)
-            ->whereIn('status', [
-                OrderStatus::SedangDikemas,
-                OrderStatus::MenungguPengirim,
-                OrderStatus::SedangDikirim,
-            ])
-            ->exists() : false;
+        return to_route('profile.edit');
+    }
 
-        $hasActiveDelivery = Delivery::where('driver_id', $user->id)
-            ->whereIn('status', [DeliveryStatus::Available, DeliveryStatus::Taken])
-            ->exists();
+    /**
+     * Remove the current avatar.
+     */
+    public function destroyAvatar(Request $request, AvatarService $avatars): RedirectResponse
+    {
+        $avatars->delete($request->user());
 
-        if ($hasActiveOrders || $hasActiveSellerOrders || $hasActiveDelivery) {
-            return back()->withErrors([
-                'password' => 'Tidak dapat menghapus akun karena masih ada pesanan atau pengiriman aktif.',
-            ]);
-        }
+        return to_route('profile.edit');
+    }
+
+    /**
+     * Soft-delete + anonymize the user's account. The service enforces the
+     * in-flight-obligation and wallet-balance guards (throwing back to the form
+     * on failure) so the controller only wires the session teardown.
+     */
+    public function destroy(ProfileDeleteRequest $request, AccountService $accounts): RedirectResponse
+    {
+        $accounts->delete($request->user());
 
         Auth::logout();
-
-        $user->update([
-            'name' => 'Pengguna Dihapus',
-            'email' => Str::uuid().'@deleted.seapedia.test',
-        ]);
-
-        $user->delete();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

@@ -78,7 +78,9 @@ class ProfileUpdateTest extends TestCase
             ->assertRedirect(route('home'));
 
         $this->assertGuest();
-        $this->assertNull($user->fresh());
+        // Soft-delete (not hard): the row survives so dependent orders/
+        // deliveries/reviews stay intact for the other actors.
+        $this->assertSoftDeleted($user);
     }
 
     public function test_correct_password_must_be_provided_to_delete_account()
