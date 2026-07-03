@@ -49,6 +49,45 @@ class DashboardTest extends TestCase
         $response->assertInertia(fn ($page) => $page->where('activeProducts', 2));
     }
 
+    public function test_seller_dashboard_reports_onboarding_progress(): void
+    {
+        $seller = User::factory()->create();
+        $seller->roles()->attach(
+            Role::query()->firstOrCreate(['name' => RoleName::Seller->value])->id,
+        );
+
+        // No store yet → nothing is done.
+        $this->actingAs($seller)
+            ->withSession(['active_role' => RoleName::Seller->value])
+            ->get(route('dashboard'))
+            ->assertInertia(fn ($page) => $page
+                ->where('onboarding.has_store', false)
+                ->where('onboarding.has_product', false)
+            );
+
+        // A fully set-up store with a product → every milestone is done.
+        $store = Store::factory()->create([
+            'user_id' => $seller->id,
+            'full_address' => 'Jl. Contoh No. 1',
+            'origin_latitude' => -6.2,
+            'origin_longitude' => 106.8,
+            'logo_path' => 'stores/logo.png',
+        ]);
+        Product::factory()->create(['store_id' => $store->id]);
+
+        // Re-resolve the user so the store relation isn't the null cached on
+        // the instance from the first request.
+        $this->actingAs($seller->fresh())
+            ->withSession(['active_role' => RoleName::Seller->value])
+            ->get(route('dashboard'))
+            ->assertInertia(fn ($page) => $page
+                ->where('onboarding.has_store', true)
+                ->where('onboarding.has_address', true)
+                ->where('onboarding.has_logo', true)
+                ->where('onboarding.has_product', true)
+            );
+    }
+
     public function test_buyer_dashboard_excludes_finished_orders_from_active_count(): void
     {
         $buyer = User::factory()->create();

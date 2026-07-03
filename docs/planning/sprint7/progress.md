@@ -18,7 +18,7 @@
 
 ## C — Seller
 - [x] C1 feat(store): store profile completeness — full address (jalan/RT/RW + region cascader + postal), map-pinned origin (Leaflet), 1:1 logo upload with Cropper.js crop + validation, saved-state summary card. Commits `9d8644b`, `e9140d1`.
-- [ ] C2 feat(store): add seller first-run onboarding steps
+- [x] C2 feat(store): add seller first-run onboarding steps — `DashboardService` now emits an `onboarding` state (store / address+map / logo / first product) and the seller dashboard shows a `SellerOnboardingCard` checklist (progress bar, per-step status, next-step CTA) that fades out once every milestone is done. Replaced the stale "coming soon" empty state. +1 Pest test.
 - [ ] C3 feat(store): enrich seller dashboard with pipeline stats
 - [ ] C4 fix(product): <root cause once reproduced>
 

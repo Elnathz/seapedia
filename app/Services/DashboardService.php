@@ -50,7 +50,11 @@ class DashboardService
         return match ($activeRole) {
             RoleName::Seller => [
                 'component' => 'dashboard/Seller',
-                'props' => ['balance' => $balance, 'activeProducts' => $this->activeProductCount($user)],
+                'props' => [
+                    'balance' => $balance,
+                    'activeProducts' => $this->activeProductCount($user),
+                    'onboarding' => $this->sellerOnboarding($user),
+                ],
             ],
             RoleName::Driver => [
                 'component' => 'dashboard/Driver',
@@ -75,6 +79,28 @@ class DashboardService
     private function activeProductCount(User $user): int
     {
         return $user->store?->products()->where('is_active', true)->count() ?? 0;
+    }
+
+    /**
+     * First-run setup checklist for a seller: each milestone that makes the
+     * store ready to sell, so the dashboard can guide a new seller and fade
+     * out once everything is in place.
+     *
+     * @return array{has_store: bool, has_address: bool, has_logo: bool, has_product: bool}
+     */
+    private function sellerOnboarding(User $user): array
+    {
+        $store = $user->store;
+
+        return [
+            'has_store' => $store !== null,
+            'has_address' => $store !== null
+                && filled($store->full_address)
+                && $store->origin_latitude !== null
+                && $store->origin_longitude !== null,
+            'has_logo' => $store !== null && filled($store->logo_path),
+            'has_product' => $store !== null && $store->products()->exists(),
+        ];
     }
 
     private function activeOrderCount(User $user): int
