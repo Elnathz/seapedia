@@ -12,6 +12,7 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import SellerStoreController from '@/actions/App/Http/Controllers/Web/SellerStoreController';
 import Heading from '@/components/Heading.vue';
+import ImageCropUpload from '@/components/ImageCropUpload.vue';
 import InputError from '@/components/InputError.vue';
 import MapPicker from '@/components/MapPicker.vue';
 import RegionCascader from '@/components/RegionCascader.vue';
@@ -28,6 +29,7 @@ interface StoreData {
     id: number;
     name: string;
     slug: string;
+    logo_path: string | null;
     description: string | null;
     full_address: string | null;
     province: string | null;
@@ -65,6 +67,10 @@ const formDistrict = ref(props.store?.district ?? '');
 const formVillage = ref(props.store?.village ?? '');
 const originLat = ref<number | null>(props.store?.origin_latitude ?? null);
 const originLng = ref<number | null>(props.store?.origin_longitude ?? null);
+
+const logoUrl = computed(() =>
+    props.store?.logo_path ? `/storage/${props.store.logo_path}` : null,
+);
 
 // The summary card reads the SAVED store, so after a successful save it
 // re-renders with the new data — the clearest "it worked" signal there is.
@@ -122,10 +128,21 @@ function onSaved() {
             >
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-start">
                     <div
-                        class="flex size-16 shrink-0 items-center justify-center rounded-2xl text-xl font-bold text-white shadow-lg"
-                        :class="getGradientClass(store.name)"
+                        class="size-20 shrink-0 overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/5"
                     >
-                        {{ getInitials(store.name) }}
+                        <img
+                            v-if="logoUrl"
+                            :src="logoUrl"
+                            :alt="store.name"
+                            class="size-full object-cover"
+                        />
+                        <div
+                            v-else
+                            class="flex size-full items-center justify-center text-2xl font-bold text-white"
+                            :class="getGradientClass(store.name)"
+                        >
+                            {{ getInitials(store.name) }}
+                        </div>
                     </div>
 
                     <div class="min-w-0 flex-1 space-y-3">
@@ -172,10 +189,13 @@ function onSaved() {
                                     {{ store.full_address }}
                                 </p>
                                 <p class="text-muted-foreground">
-                                    {{ regionLine
-                                    }}<span v-if="store.postal_code">
-                                        {{ store.postal_code }}</span
-                                    >
+                                    {{ regionLine }}
+                                </p>
+                                <p
+                                    v-if="store.postal_code"
+                                    class="text-muted-foreground"
+                                >
+                                    Kode Pos {{ store.postal_code }}
                                 </p>
                             </div>
                             <p v-else class="text-muted-foreground">
@@ -235,6 +255,15 @@ function onSaved() {
                     <h3 class="text-lg font-semibold">Identitas Toko</h3>
                 </div>
                 <div class="grid gap-2">
+                    <Label>Foto Profil Toko</Label>
+                    <ImageCropUpload
+                        name="logo"
+                        :current-url="logoUrl"
+                        :aspect="1"
+                    />
+                    <InputError :message="errors.logo" />
+                </div>
+                <div class="grid gap-2">
                     <Label for="name">
                         {{ t('store.nameLabel') }}
                         <span class="text-destructive">*</span>
@@ -269,9 +298,7 @@ function onSaved() {
             <section class="space-y-4">
                 <div class="flex items-center gap-2">
                     <MapPin class="size-5 text-primary" />
-                    <h3 class="text-lg font-semibold">
-                        Alamat & Lokasi Pengiriman
-                    </h3>
+                    <h3 class="text-lg font-semibold">Alamat Toko</h3>
                 </div>
 
                 <div
@@ -279,9 +306,11 @@ function onSaved() {
                 >
                     <Info class="mt-0.5 size-4 shrink-0" />
                     <span>
-                        Alamat asal dipakai untuk menghitung ongkir berdasarkan
-                        jarak ke pembeli. Isi jalan, RT/RW, wilayah, lalu tandai
-                        titiknya di peta.
+                        Ini alamat toko sebagai titik asal pengiriman (bukan
+                        alamat pengiriman pembeli). Pin di peta menandai lokasi
+                        toko, dan jaraknya ke alamat pembeli dipakai menghitung
+                        ongkir. Isi jalan, RT/RW, wilayah, lalu tandai titik yang
+                        sama di peta.
                     </span>
                 </div>
 
@@ -319,7 +348,7 @@ function onSaved() {
                 </div>
 
                 <div class="grid gap-2">
-                    <Label>Titik Asal Pengiriman di Peta</Label>
+                    <Label>Tandai Lokasi Toko di Peta</Label>
                     <MapPicker
                         v-model:latitude="originLat"
                         v-model:longitude="originLng"

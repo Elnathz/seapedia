@@ -7,6 +7,8 @@ use App\Models\Role;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class StoreManagementTest extends TestCase
@@ -98,6 +100,64 @@ class StoreManagementTest extends TestCase
             'id' => $store->id,
             'name' => 'Toko Berkah Baru',
         ]);
+    }
+
+    public function test_seller_can_set_store_address_and_origin(): void
+    {
+        $seller = $this->seller();
+        $store = Store::factory()->create(['user_id' => $seller->id]);
+
+        $response = $this->actingAsSeller($seller)->put(route('seller.store.update', $store), [
+            'name' => $store->name,
+            'description' => 'Toko lengkap.',
+            'full_address' => 'Jl. Prof. Soedarto No. 13, RT 02/RW 05',
+            'province' => 'Jawa Tengah',
+            'city' => 'Kota Semarang',
+            'district' => 'Tembalang',
+            'village' => 'Bulusan',
+            'postal_code' => '50277',
+            'origin_latitude' => -7.0505,
+            'origin_longitude' => 110.4381,
+        ]);
+
+        $response->assertRedirect(route('seller.store.show'));
+        $store->refresh();
+        $this->assertSame('Jl. Prof. Soedarto No. 13, RT 02/RW 05', $store->full_address);
+        $this->assertSame('Kota Semarang', $store->city);
+        $this->assertSame('50277', $store->postal_code);
+        $this->assertEqualsWithDelta(-7.0505, (float) $store->origin_latitude, 0.0001);
+    }
+
+    public function test_seller_can_upload_a_store_logo(): void
+    {
+        Storage::fake('public');
+        $seller = $this->seller();
+        $store = Store::factory()->create(['user_id' => $seller->id]);
+
+        $response = $this->actingAsSeller($seller)->put(route('seller.store.update', $store), [
+            'name' => $store->name,
+            'logo' => UploadedFile::fake()->image('logo.jpg', 400, 400),
+        ]);
+
+        $response->assertRedirect(route('seller.store.show'));
+        $store->refresh();
+        $this->assertNotNull($store->logo_path);
+        Storage::disk('public')->assertExists($store->logo_path);
+    }
+
+    public function test_store_logo_rejects_a_non_image(): void
+    {
+        Storage::fake('public');
+        $seller = $this->seller();
+        $store = Store::factory()->create(['user_id' => $seller->id]);
+
+        $response = $this->actingAsSeller($seller)->put(route('seller.store.update', $store), [
+            'name' => $store->name,
+            'logo' => UploadedFile::fake()->create('brochure.pdf', 200, 'application/pdf'),
+        ]);
+
+        $response->assertSessionHasErrors('logo');
+        $this->assertNull($store->refresh()->logo_path);
     }
 
     public function test_seller_cannot_update_another_sellers_store(): void

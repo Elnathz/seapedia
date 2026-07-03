@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $user_id
  * @property string $name
  * @property string $slug
+ * @property string|null $logo_path
  * @property string|null $description
  * @property string|null $full_address
  * @property string|null $province
@@ -25,7 +26,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property float|null $origin_longitude
  * @property bool $is_active
  */
-#[Fillable(['user_id', 'name', 'slug', 'description', 'full_address', 'province', 'city', 'district', 'village', 'postal_code', 'origin_latitude', 'origin_longitude', 'is_active'])]
+#[Fillable(['user_id', 'name', 'slug', 'logo_path', 'description', 'full_address', 'province', 'city', 'district', 'village', 'postal_code', 'origin_latitude', 'origin_longitude', 'is_active'])]
 class Store extends Model
 {
     /** @use HasFactory<StoreFactory> */

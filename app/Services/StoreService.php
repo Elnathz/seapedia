@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Store;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class StoreService
@@ -17,6 +19,7 @@ class StoreService
             'user_id' => $user->id,
             'name' => $data['name'],
             'slug' => $this->uniqueSlug($data['name']),
+            'logo_path' => $this->storeLogo($data['logo'] ?? null),
             'description' => $data['description'] ?? null,
             'full_address' => $data['full_address'] ?? null,
             'province' => $data['province'] ?? null,
@@ -35,11 +38,18 @@ class StoreService
      */
     public function update(Store $store, array $data): Store
     {
+        $newLogo = $this->storeLogo($data['logo'] ?? null);
+
+        if ($newLogo !== null && $store->logo_path) {
+            Storage::disk('public')->delete($store->logo_path);
+        }
+
         $store->update([
             'name' => $data['name'],
             'slug' => $data['name'] === $store->name
                 ? $store->slug
                 : $this->uniqueSlug($data['name'], $store->id),
+            'logo_path' => $newLogo ?? $store->logo_path,
             'description' => $data['description'] ?? null,
             'full_address' => $data['full_address'] ?? $store->full_address,
             'province' => $data['province'] ?? $store->province,
@@ -70,6 +80,19 @@ class StoreService
             ->where('slug', $slug)
             ->where('is_active', true)
             ->first();
+    }
+
+    /**
+     * Persist an uploaded store logo to the public disk and return its path,
+     * or null when no new file was uploaded.
+     */
+    private function storeLogo(mixed $logo): ?string
+    {
+        if (! $logo instanceof UploadedFile) {
+            return null;
+        }
+
+        return $logo->store('stores', 'public');
     }
 
     private function uniqueSlug(string $name, ?int $ignoreId = null): string
