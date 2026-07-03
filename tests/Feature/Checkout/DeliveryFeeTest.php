@@ -149,9 +149,8 @@ class DeliveryFeeTest extends TestCase
             'address_id' => $address->id,
             'delivery_method' => 'regular',
         ]);
-        $response->assertRedirect(route('buyer.cart.index'));
-
         $order = Order::query()->firstOrFail();
+        $response->assertRedirect(route('buyer.checkout.success', $order));
         $this->assertSame($preview['delivery_fee'], $order->delivery_fee);
         $this->assertSame($preview['grand_total'], $order->grand_total);
         // subtotal 100,000 + tax 12,000 + delivery 15,000.

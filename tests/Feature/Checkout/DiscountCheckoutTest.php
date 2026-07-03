@@ -121,9 +121,8 @@ class DiscountCheckoutTest extends TestCase
             'voucher_code' => $voucher->code,
         ]);
 
-        $response->assertRedirect(route('buyer.cart.index'));
-
         $order = Order::query()->first();
+        $response->assertRedirect(route('buyer.checkout.success', $order));
         // subtotal 100_000; promo 10% = 10_000; voucher fixed = 5_000.
         // discount_total = min(10_000 + 5_000, 100_000) = 15_000.
         $this->assertSame(15_000, $order->discount_total);
@@ -151,9 +150,8 @@ class DiscountCheckoutTest extends TestCase
             'voucher_code' => $voucher->code,
         ]);
 
-        $response->assertRedirect(route('buyer.cart.index'));
-
         $order = Order::query()->first();
+        $response->assertRedirect(route('buyer.checkout.success', $order));
         // promo 8_000 + voucher 8_000 = 16_000, but subtotal is only 10_000.
         $this->assertSame(10_000, $order->discount_total);
         $this->assertSame(0, $order->tax_amount);

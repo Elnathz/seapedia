@@ -52,10 +52,9 @@ class CheckoutTest extends TestCase
             'delivery_method' => 'regular',
         ]);
 
-        $response->assertRedirect(route('buyer.cart.index'));
-
         $order = Order::query()->first();
         $this->assertNotNull($order);
+        $response->assertRedirect(route('buyer.checkout.success', $order));
         $this->assertSame(OrderStatus::SedangDikemas, $order->status);
         $this->assertSame(100_000, $order->subtotal);
         $this->assertSame(12_000, $order->tax_amount);
@@ -72,6 +71,47 @@ class CheckoutTest extends TestCase
 
         $this->assertSame(0, CartItem::query()->count());
         $this->assertSame(1, $order->statusHistories()->count());
+    }
+
+    public function test_the_success_screen_renders_for_the_buyer_who_placed_the_order(): void
+    {
+        $buyer = $this->buyer();
+        $store = Store::factory()->create();
+        $product = Product::factory()->create(['store_id' => $store->id, 'price' => 50_000, 'stock' => 10]);
+        $address = Address::factory()->create(['user_id' => $buyer->id, 'is_default' => true]);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
+
+        $this->actingAsBuyer($buyer)->post(route('buyer.checkout.store'), [
+            'address_id' => $address->id,
+            'delivery_method' => 'regular',
+        ]);
+
+        $order = Order::query()->firstOrFail();
+
+        $this->actingAsBuyer($buyer)
+            ->get(route('buyer.checkout.success', $order))
+            ->assertOk();
+    }
+
+    public function test_the_success_screen_is_forbidden_for_another_buyer(): void
+    {
+        $buyer = $this->buyer();
+        $intruder = $this->buyer();
+        $store = Store::factory()->create();
+        $product = Product::factory()->create(['store_id' => $store->id, 'price' => 50_000, 'stock' => 10]);
+        $address = Address::factory()->create(['user_id' => $buyer->id, 'is_default' => true]);
+        app(CartService::class)->addItem($buyer, $product, null, 1);
+
+        $this->actingAsBuyer($buyer)->post(route('buyer.checkout.store'), [
+            'address_id' => $address->id,
+            'delivery_method' => 'regular',
+        ]);
+
+        $order = Order::query()->firstOrFail();
+
+        $this->actingAsBuyer($intruder)
+            ->get(route('buyer.checkout.success', $order))
+            ->assertForbidden();
     }
 
     public function test_preview_uses_the_live_product_price_not_the_cart_snapshot(): void

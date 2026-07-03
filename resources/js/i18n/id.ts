@@ -230,6 +230,15 @@ export default {
         confirmTitle: 'Konfirmasi Pembayaran',
         confirmDescription: 'Dompet Anda akan didebit {amount}. Lanjutkan?',
         confirmPay: 'Ya, Bayar',
+        successTitle: 'Pesanan Berhasil Dibuat!',
+        successSubtitle:
+            'Terima kasih! Pesananmu sudah kami terima dan sedang disiapkan oleh penjual.',
+        successOrderCode: 'Nomor Pesanan',
+        successTotalPaid: 'Total Dibayar',
+        successDeliveredTo: 'Dikirim ke',
+        successDeliveryMethod: 'Metode Pengiriman',
+        successViewOrder: 'Lihat Pesanan Saya',
+        successShopAgain: 'Belanja Lagi',
     },
     order: {
         myOrdersTitle: 'Pesanan Saya',

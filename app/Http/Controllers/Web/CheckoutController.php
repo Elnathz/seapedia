@@ -9,6 +9,7 @@ use App\Models\Address;
 use App\Services\CartService;
 use App\Services\CheckoutService;
 use App\Services\DiscountService;
+use App\Services\OrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -20,6 +21,7 @@ class CheckoutController extends Controller
         private readonly CheckoutService $checkout,
         private readonly CartService $carts,
         private readonly DiscountService $discounts,
+        private readonly OrderService $orders,
     ) {}
 
     public function show(Request $request): Response
@@ -79,6 +81,20 @@ class CheckoutController extends Controller
             'message' => __('Order :code placed.', ['code' => $order->code]),
         ]);
 
-        return to_route('buyer.cart.index');
+        // Post/Redirect/Get to a dedicated success screen so a refresh never
+        // re-submits the order and the buyer lands on a clear confirmation
+        // with a path into "Pesanan Saya".
+        return to_route('buyer.checkout.success', $order);
+    }
+
+    public function success(int $order): Response
+    {
+        $placedOrder = $this->orders->findForBuyer($order);
+
+        abort_if($placedOrder === null, 404);
+
+        $this->authorize('view', $placedOrder);
+
+        return Inertia::render('buyer/checkout/Success', ['order' => $placedOrder]);
     }
 }

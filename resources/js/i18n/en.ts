@@ -230,6 +230,15 @@ export default {
         confirmTitle: 'Confirm Payment',
         confirmDescription: 'Your wallet will be debited {amount}. Continue?',
         confirmPay: 'Yes, Pay',
+        successTitle: 'Order Placed!',
+        successSubtitle:
+            'Thank you! Your order has been received and is being prepared by the seller.',
+        successOrderCode: 'Order Number',
+        successTotalPaid: 'Total Paid',
+        successDeliveredTo: 'Shipping to',
+        successDeliveryMethod: 'Delivery Method',
+        successViewOrder: 'View My Order',
+        successShopAgain: 'Continue Shopping',
     },
     order: {
         myOrdersTitle: 'My Orders',
