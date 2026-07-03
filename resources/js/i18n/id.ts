@@ -100,6 +100,7 @@ export default {
         active: 'Aktif',
         inactive: 'Nonaktif',
         outOfStock: 'Stok habis',
+        uncategorized: 'Tanpa Kategori',
         editAction: 'Edit',
         edit: 'Edit {name}',
         delete: 'Hapus {name}',

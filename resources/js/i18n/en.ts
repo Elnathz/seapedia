@@ -100,6 +100,7 @@ export default {
         active: 'Active',
         inactive: 'Inactive',
         outOfStock: 'Out of stock',
+        uncategorized: 'Uncategorized',
         editAction: 'Edit',
         edit: 'Edit {name}',
         delete: 'Delete {name}',
