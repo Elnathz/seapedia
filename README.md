@@ -11,6 +11,22 @@ design notes (schema, locked values, historical rationale) live in
 `docs/SEAPEDIA_TDD.md`, and the sprint plans under `docs/planning/`. Where any
 of those disagree with the brief, the brief wins.
 
+## Live demo
+
+A production instance runs at **https://seapedia.web.id**. It is seeded with the
+same demo accounts as a local install, so you can try the whole marketplace
+without installing anything. Log in with the fixed emails from
+[Demo credentials](#demo-credentials) using the password `password`.
+
+Notes for reviewers:
+
+- Payments are simulated. The wallet is the only money in the system, and
+  top-ups go through a fake gateway, so nothing ever touches a real card.
+- The site serves the production build from `docker-compose.prod.yml` (nginx,
+  PHP-FPM 8.3, and MySQL 8) over HTTPS on a small VPS.
+- One shared database backs it, so demo data drifts as people click around. If
+  an account looks off, run it locally for a clean seed.
+
 ## Setup (Docker)
 
 You need two things: Docker, and a shell to run the commands in. Getting them
