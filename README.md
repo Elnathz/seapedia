@@ -104,6 +104,31 @@ are random Faker data, so log in with the fixed emails below.
 | `driver1@seapedia.test`   | Driver                 | 1 active job, 2 completed jobs.                                                                         |
 | `multi1@seapedia.test`    | Buyer, Seller, Driver  | Store "Warung Mama Lia" (3 products), Wallet balance Rp 300.000.                                        |
 
+## Roles
+
+A non-admin account can hold any mix of Buyer, Seller, and Driver, and it picks
+one active role per session. Authorization always follows the active role, and
+it is checked on the server, never on the role the UI happens to show.
+
+- **Buyer.** Tops up a wallet, saves delivery addresses, fills a single-store
+  cart, and checks out by paying from the wallet. Reads order history and tracks
+  each delivery. A buyer cannot check out with an insufficient balance, and
+  cannot mix two stores in one cart. A single top-up is capped between Rp5.000
+  and Rp100.000.000.
+- **Seller.** Owns one store with a unique name, manages products and stock, and
+  processes incoming orders so they become delivery jobs. Sale income is held in
+  escrow and released only when the driver completes the delivery, so an overdue
+  refund never claws back money the seller has already been paid. The seller has
+  an income report.
+- **Driver.** Finds open delivery jobs, takes them, and confirms completion.
+  Earns 80% of each order's delivery fee, credited on completion. Holds 1 job at
+  a time by default, 2 after 15 on-time completions, and 3 after 30. One job
+  belongs to exactly one driver.
+- **Admin.** A separate, seeded role that nobody can self-assign. Monitors
+  users, stores, products, orders, vouchers and promos, delivery jobs, and
+  overdue orders; manages the vouchers and promos; and runs the overdue time
+  machine.
+
 ## Core business rules & features
 
 - **Single-store checkout.** A cart holds items from one store at a time. Adding
@@ -127,13 +152,20 @@ are random Faker data, so log in with the fixed emails below.
   transaction is written as an immutable ledger entry inside a database
   transaction. A single top-up is capped between Rp5.000 and Rp100.000.000. The
   spec leaves top-up amounts open, so those limits are ours and documented here.
-- **Vouchers and promos.** A voucher and a promo can apply at the same time.
-  Both honour minimum-spend thresholds, maximum-discount caps, and usage limits.
-  Expired or exhausted codes are rejected on the spot.
+- **Vouchers and promos.** A voucher and a promo can apply to the same order.
+  The promo comes off the subtotal first (capped at the subtotal), then the
+  voucher comes off what is left, so the two together never exceed the subtotal.
+  PPN 12% is charged afterward, on `subtotal - total discount`. Both discount
+  types honour minimum-spend thresholds, maximum-discount caps, and usage
+  limits, and expired or exhausted codes are rejected on the spot.
 - **Overdue refund / time machine.** Admins can advance the simulated clock to
-  test SLA deadlines. An overdue order that was never delivered is refunded to
-  the buyer's wallet automatically. Refunds never double up, and seller income
-  is not reversed because it stays in escrow until delivery completes.
+  test SLA deadlines. To move time forward, run
+  `./vendor/bin/sail artisan seapedia:advance-day` (one simulated day per run),
+  or use the Time Machine buttons on the admin overdue page. An overdue order
+  that was never delivered is refunded to the buyer's wallet automatically, the
+  refund is written to the wallet history, and the order moves to `Dikembalikan`.
+  Refunds never double up, and seller income is not reversed because it stays in
+  escrow until delivery completes.
 - **Delivery SLA and near-cancel urgency.** The spec requires SLA rules per
   method (line 454). Each order carries an `sla_due_at` deadline set by its
   delivery method: Instan 1 day, Besok 2 days, Reguler 4 days, measured in
@@ -146,12 +178,52 @@ are random Faker data, so log in with the fixed emails below.
   From the profile page, a user can add a role they lack or drop one they have.
   Dropping a role is guarded: a Seller with a live store or a Driver with active
   deliveries is blocked with a 422 rather than orphaning the dependent records.
+- **Driver earning.** A driver earns 80% of the order's delivery fee
+  (`intdiv(delivery_fee * 80, 100)`), credited to the driver's wallet in the same
+  locked transaction that marks the job complete and releases the seller's
+  escrowed income.
 - **Driver reliability tiers.** The spec never says how many jobs a driver may
   hold at once, so we cap it and let the cap grow with a proven track record (a
   documented, spec-legal extension). A driver holds 1 active job by default, 2
   after 15 on-time completions, and 3 after 30. "On time" means confirmed on or
   before the order's `sla_due_at`. The count runs inside a row-locked
   transaction, so two claims arriving at once can't both slip past the cap.
+
+## How to review the app
+
+The quickest way to see every rule fire is to walk one order from browsing all
+the way to an overdue refund. Every demo account uses the password `password`,
+and you switch roles from the account menu after logging in.
+
+1. **Browse as a guest.** Open the catalog, search for a product, and read the
+   public app reviews without logging in. Leave a review with a rating and a
+   comment. Try putting a `<script>` tag in the comment: it renders as text and
+   never executes, which is the XSS check from Level 7.
+2. **Sign in as a seller** (`seller1@seapedia.test`). Use the seeded products,
+   or add a new one with a price, stock, and weight.
+3. **Sign in as a buyer** (`buyer1@seapedia.test`). Top up the wallet, add a
+   delivery address, and add items from one store to the cart. Try adding an
+   item from a second store: the app asks you to clear the cart first. Open
+   checkout. The summary breaks down subtotal, discount, delivery fee, PPN 12%,
+   and total. Apply a voucher and a promo together to watch the combined
+   discount, pick a delivery method, then confirm. The wallet is charged and the
+   order starts at `Sedang Dikemas`.
+4. **Back as the seller,** process that order. It moves out of packing and shows
+   up as an available delivery job.
+5. **Sign in as a driver** (`driver1@seapedia.test`). Take the job, then confirm
+   completion. The driver's wallet receives 80% of the delivery fee and the
+   seller's escrowed income is released at the same moment.
+6. **Sign in as admin** (`admin@seapedia.test`). Look through the monitoring
+   pages, create or edit a voucher or promo, then open the overdue page.
+7. **Test overdue handling.** Place another order, leave it undelivered, and
+   advance the clock past its SLA with the Time Machine buttons (or
+   `./vendor/bin/sail artisan seapedia:advance-day`; Instan is due in 1 day,
+   Besok in 2, Reguler in 4). The order is refunded to the buyer's wallet once,
+   the refund appears in the wallet history, and the order becomes
+   `Dikembalikan`. Advancing time again does not refund it a second time.
+
+The seeded data already includes orders in several states, so you can inspect
+each stage without building it up from scratch first.
 
 ## API documentation
 
@@ -172,6 +244,9 @@ Security is handled layer by layer:
   Request with typed, strict rules before it reaches a controller.
 - **Sessions and CSRF.** Web routes use Laravel's CSRF protection
   (`VerifyCsrfToken`). API routes under `/api/v1/*` use Sanctum bearer tokens.
+  Web sessions last 120 minutes (`SESSION_LIFETIME`) and Sanctum tokens expire
+  after 480 minutes (`SANCTUM_TOKEN_EXPIRATION`). Logging out clears the session
+  and revokes the token.
 - **Role-based access control.**
   - Policies (`ProductPolicy`, `OrderPolicy`, `DeliveryPolicy`, and others)
     enforce ownership and role scope.
