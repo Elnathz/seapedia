@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductView;
+use App\Models\Store;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -40,6 +41,43 @@ class CatalogService
         };
 
         return $query->paginate($perPage)->withQueryString();
+    }
+
+    /**
+     * Stores relevant to a catalog text search: active stores whose own name
+     * matches, or that stock an active product matching the query. This is why
+     * a search for a brand surfaces the shop itself, not only its items.
+     *
+     * Ranked name-matches first, then by how many matching products they carry.
+     * Only public columns are selected, and `active_products_count` feeds the
+     * card's "N produk" line.
+     *
+     * @return Collection<int, Store>
+     */
+    public function searchStores(string $search, int $limit = 6): Collection
+    {
+        $like = "%{$search}%";
+
+        return Store::query()
+            ->select(['id', 'name', 'slug', 'logo_path', 'description'])
+            ->where('is_active', true)
+            ->where(fn ($q) => $q
+                ->where('name', 'like', $like)
+                ->orWhereHas('products', fn ($pq) => $pq
+                    ->where('is_active', true)
+                    ->where('name', 'like', $like)))
+            ->withCount([
+                'products as active_products_count' => fn ($pq) => $pq->where('is_active', true),
+                'products as matching_products_count' => fn ($pq) => $pq
+                    ->where('is_active', true)
+                    ->where('name', 'like', $like),
+            ])
+            // A store whose own name matches ranks above one that merely stocks a
+            // matching product; the CASE is constant SQL with a bound value.
+            ->orderByRaw('CASE WHEN name LIKE ? THEN 0 ELSE 1 END', [$like])
+            ->orderByDesc('matching_products_count')
+            ->limit($limit)
+            ->get();
     }
 
     public function featured(int $limit = 6): Collection

@@ -54,6 +54,43 @@ class CatalogTest extends TestCase
         );
     }
 
+    public function test_search_surfaces_matching_stores_by_name_and_by_product(): void
+    {
+        // Matches on its own name.
+        $byName = Store::factory()->create(['is_active' => true, 'name' => 'Kopi Nusantara']);
+        // Matches only because it stocks a matching product.
+        $byProduct = Store::factory()->create(['is_active' => true, 'name' => 'Warung Serba Ada']);
+        Product::factory()->create(['store_id' => $byProduct->id, 'is_active' => true, 'name' => 'Kopi Tubruk']);
+        // No relation to the query at all.
+        $unrelated = Store::factory()->create(['is_active' => true, 'name' => 'Toko Elektronik']);
+        Product::factory()->create(['store_id' => $unrelated->id, 'is_active' => true, 'name' => 'Televisi LED']);
+        // Name matches, but the store is hidden.
+        Store::factory()->create(['is_active' => false, 'name' => 'Kopi Tersembunyi']);
+
+        $response = $this->get(route('catalog.index', ['q' => 'kopi']));
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            // Only the two active, relevant stores — inactive and unrelated excluded.
+            ->has('stores', 2)
+            // A name match outranks a product-only match.
+            ->where('stores.0.id', $byName->id)
+        );
+    }
+
+    public function test_store_results_are_absent_without_a_text_search(): void
+    {
+        Store::factory()->create(['is_active' => true, 'name' => 'Kopi Nusantara']);
+
+        // A category-only filter still renders the search page, but with no stores.
+        $category = Category::factory()->create(['slug' => 'minuman']);
+
+        $response = $this->get(route('catalog.index', ['category' => 'minuman']));
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page->where('stores', []));
+    }
+
     public function test_catalog_filters_by_category_subtree(): void
     {
         $store = Store::factory()->create(['is_active' => true]);

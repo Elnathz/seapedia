@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Filter, SlidersHorizontal } from '@lucide/vue';
-import { ChevronDown, Search } from '@lucide/vue';
+import {
+    ArrowUpRight,
+    ChevronDown,
+    Search,
+    Store as StoreIcon,
+} from '@lucide/vue';
 import { ref, watch, computed } from 'vue';
 import EmptyState from '@/components/EmptyState.vue';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
@@ -35,6 +40,7 @@ import {
     SheetHeader,
     SheetTitle,
 } from '@/components/ui/sheet';
+import { useInitials } from '@/composables/useInitials';
 import { formatIDR } from '@/lib/utils';
 import { index as catalogIndex, show as catalogShow } from '@/routes/catalog';
 
@@ -42,6 +48,15 @@ interface Store {
     id: number;
     name: string;
     slug: string;
+}
+
+interface StoreResult {
+    id: number;
+    name: string;
+    slug: string;
+    logo_path: string | null;
+    description: string | null;
+    active_products_count: number;
 }
 
 interface Product {
@@ -72,9 +87,12 @@ interface Category {
 
 const props = defineProps<{
     products: PaginatedProducts;
+    stores: StoreResult[];
     filters: any;
     categories: Category[];
 }>();
+
+const { getInitials, getGradientClass } = useInitials();
 
 // ─── Filter State ───
 const searchQuery = ref(props.filters?.q || '');
@@ -440,6 +458,73 @@ const clearAllFilters = () => {
 
             <!-- Product Grid -->
             <div class="flex-1">
+                <!-- Matching stores — shops whose name or products match the query -->
+                <section v-if="stores.length > 0" class="mb-8">
+                    <div class="mb-3 flex items-center gap-2">
+                        <StoreIcon class="size-4 text-primary" />
+                        <h2 class="text-sm font-bold text-foreground">
+                            Toko terkait
+                        </h2>
+                        <span
+                            class="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground tabular-nums"
+                        >
+                            {{ stores.length }}
+                        </span>
+                        <span
+                            class="h-px flex-1 bg-border"
+                            aria-hidden="true"
+                        />
+                    </div>
+
+                    <div
+                        class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+                    >
+                        <Link
+                            v-for="(store, i) in stores"
+                            :key="store.id"
+                            :href="`/stores/${store.slug}`"
+                            class="group relative flex items-center gap-3 overflow-hidden rounded-2xl border border-border bg-card p-3 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-3"
+                            :style="{ animationDelay: `${i * 60}ms` }"
+                        >
+                            <!-- Logo, or gradient initials as a fallback -->
+                            <img
+                                v-if="store.logo_path"
+                                :src="`/storage/${store.logo_path}`"
+                                :alt="store.name"
+                                loading="lazy"
+                                class="size-12 shrink-0 rounded-xl border border-border object-cover"
+                            />
+                            <div
+                                v-else
+                                class="flex size-12 shrink-0 items-center justify-center rounded-xl text-sm font-bold text-white shadow-sm"
+                                :class="getGradientClass(store.name)"
+                            >
+                                {{ getInitials(store.name) }}
+                            </div>
+
+                            <div class="min-w-0 flex-1">
+                                <p
+                                    class="truncate text-sm font-semibold text-foreground transition-colors group-hover:text-primary"
+                                >
+                                    {{ store.name }}
+                                </p>
+                                <p class="text-xs text-muted-foreground">
+                                    {{ store.active_products_count }} produk
+                                </p>
+                            </div>
+
+                            <span
+                                class="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:bg-primary/10 group-hover:text-primary"
+                                aria-hidden="true"
+                            >
+                                <ArrowUpRight
+                                    class="size-4 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                                />
+                            </span>
+                        </Link>
+                    </div>
+                </section>
+
                 <div
                     v-if="products.data.length > 0"
                     class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"

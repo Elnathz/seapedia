@@ -79,6 +79,8 @@ class CatalogController extends Controller
 
             return Inertia::render('catalog/Search', [
                 'products' => $products,
+                // A text search also surfaces matching shops, not just products.
+                'stores' => $search ? $this->catalog->searchStores($search, 6) : [],
                 'filters' => $request->only(['q', 'category', 'sort', 'price_min', 'price_max', 'in_stock']),
                 'categories' => $categoriesTree,
                 'activeCategory' => $category,
