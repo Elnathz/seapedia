@@ -2,11 +2,14 @@
 
 A multi-role campus marketplace — buyers, sellers, and drivers share one
 platform and one wallet, with roles switchable per session. Built with
-Laravel 11, Inertia + Vue 3 (TypeScript), shadcn-vue, Tailwind 4, and MySQL,
-running on Docker via Laravel Sail.
+Laravel 13 (PHP 8.3), Inertia + Vue 3 (TypeScript), shadcn-vue, Tailwind 4,
+and MySQL 8, running on Docker via Laravel Sail.
 
-Full product/technical decisions live in `docs/SEAPEDIA_TDD.md`. Plans and
-progress are tracked under `docs/planning/`.
+The graded requirements are the committee brief in `docs/SEAPEDIA_SPEC.md` —
+that document is the source of truth for what this project must do. Our
+extended design notes (schema, locked values, historical rationale) live in
+`docs/SEAPEDIA_TDD.md`, and sprint plans under `docs/planning/`; where those
+ever disagree with the brief, the brief wins.
 
 ## Setup & Running Locally (Docker)
 
@@ -25,12 +28,25 @@ This project uses Laravel Sail, which provides a light-weight Docker environment
    ```
    The default `.env.example` contains all the necessary variables to run locally. Ensure `APP_URL` is set to `http://localhost`.
 
-3. **Start the Docker Containers**
+3. **Install PHP dependencies (first run only)**
+   A fresh clone has no `vendor/` directory yet, so the `sail` script does not
+   exist. Populate it with a one-off Composer container — no local PHP required:
+   ```bash
+   docker run --rm \
+       -u "$(id -u):$(id -g)" \
+       -v "$(pwd):/var/www/html" \
+       -w /var/www/html \
+       laravelsail/php84-composer:latest \
+       composer install --ignore-platform-reqs
+   ```
+   *(On native Windows PowerShell, run this from WSL, or drop the `-u "$(id -u):$(id -g)"` line.)*
+
+4. **Start the Docker Containers**
    ```bash
    ./vendor/bin/sail up -d
    ```
 
-4. **Initialize the Application**
+5. **Initialize the Application**
    Run the following commands to set up the application key, database, and storage:
    ```bash
    ./vendor/bin/sail artisan key:generate
@@ -39,13 +55,13 @@ This project uses Laravel Sail, which provides a light-weight Docker environment
    ```
    *(Note: `storage:link` is crucial for seeded and uploaded product images to load correctly).*
 
-5. **Install Frontend Dependencies & Build**
+6. **Install Frontend Dependencies & Build**
    ```bash
    ./vendor/bin/sail npm install
    ./vendor/bin/sail npm run dev
    ```
 
-6. **Access the App**
+7. **Access the App**
    Open `http://localhost` in your browser.
 
 ## Admin Account Setup
@@ -78,6 +94,9 @@ All seeded accounts have the password: `password`.
 - **Unified Wallet System**: Buyers, sellers, and drivers share a unified wallet system. All transactions are securely recorded as immutable ledger entries within a database transaction. A single top-up is bounded to **Rp5.000–Rp100.000.000** (the spec leaves top-up amounts open; these are our documented limits).
 - **Voucher & Promo Constraints**: Vouchers and Promos can be applied simultaneously. They feature minimum spend limits, maximum discount caps, and usage limits. Expired or exhausted codes are instantly rejected.
 - **Overdue Refund / Time Machine**: Admins can advance the system time to test SLA due dates. Overdue orders that have not been delivered are automatically refunded to the buyer's wallet without duplicating refunds or reversing seller income (as seller income is held in escrow until delivery is complete).
+- **Delivery SLA & Near-Cancel Urgency**: The spec requires defining SLA rules per method (line 454); each order carries an `sla_due_at` deadline derived from its delivery method (Instan 1 day, Besok 2 days, Reguler 4 days, in simulated day-ticks). Seller order lists and the driver dashboard classify each open order server-side into *Overdue* (past due), *Critical* (≤ 1 day-tick left), or *Normal*, float at-risk orders to the top, and surface the urgency as a read-only badge. The threshold lives entirely in the backend; the UI only formats it.
+- **Multi-Role Self-Service**: The spec lets one non-admin username own Buyer, Seller, and Driver simultaneously and choose an active role per session (lines 38–39). From their profile, users can add a role they don't yet have or remove one they do. Removal is guarded — a Seller with a live store or a Driver with active deliveries is hard-blocked (422) rather than silently orphaning dependent records.
+- **Driver Reliability Tiers**: The spec is silent on how many jobs a driver may hold at once, so we cap concurrency and let it grow with proven reliability (a documented, spec-legal extension). A driver holds **1** active job by default, **2** after **15** on-time completions, and **3** after **30**. "On time" means confirmed on or before the order's `sla_due_at`. The check runs inside a row-locked transaction so two concurrent claims can't both slip past the cap.
 
 ## API Documentation
 
@@ -100,6 +119,7 @@ SEAPEDIA implements several robust security measures to protect the platform and
   - Middlewares (`is_admin`, `active_role`) restrict access to role-specific dashboard routes and endpoints.
   - Sensitive operations (checkout, wallet debits) run entirely within `DB::transaction()` with `lockForUpdate()` to prevent race conditions (e.g., double refunds, double job claims).
 - **Account Deletion & Anonymization**: When users delete their account, their PII (Personally Identifiable Information) such as Name and Email are anonymized to comply with data privacy standards, and the account is soft-deleted to maintain database integrity for historical transactions. Additionally, per-role removal is guarded (e.g. drivers cannot resign if they have active deliveries).
+- **Secured Avatar Upload**: Avatar uploads are constrained by a Form Request (`jpeg/jpg/png/webp`, ≤ 2 MB, ≤ 2000×2000 px) and then **re-encoded through GD into a fresh PNG** before storage. Re-encoding discards any malicious payload (EXIF metadata, polyglot files, embedded scripts) that might survive a MIME check, so only clean pixel data is ever written to disk.
 
 ## Formatting and Testing
 
