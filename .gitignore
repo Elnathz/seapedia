@@ -30,8 +30,7 @@ yarn-error.log
 /.zed
 
 .claude/
-!.claude/settings.json
-!.claude/skills/
+/CLAUDE.md
 .playwright-mcp
 megamart
 .agents
