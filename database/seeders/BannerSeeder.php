@@ -9,6 +9,13 @@ class BannerSeeder extends Seeder
 {
     public function run(): void
     {
+        // Idempotent: clear existing banners first so re-running the seeder
+        // never duplicates a (placement, sort_order) slot. Without this, a
+        // second run doubles every banner and the `limit(2)` in
+        // BannerService::sideTopActive() picks two copies of the sort_order=0
+        // banner instead of one per slot.
+        Banner::query()->delete();
+
         $banners = [
             // Utama (main)
             [
