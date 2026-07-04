@@ -50,7 +50,7 @@ defineProps<{
                     autofocus
                     :tabindex="1"
                     autocomplete="email"
-                    placeholder="email@kampus.ac.id"
+                    placeholder="email@gmail.com"
                 />
                 <InputError :message="errors.email" />
             </div>
