@@ -1,10 +1,22 @@
 # SEAPEDIA — Technical Design Document (TDD)
 
+> ⚠️ **Non-authoritative — historical design notes.** This TDD was written up
+> front to plan the build. It is **not** the source of truth and may lag the
+> shipped code.
+>
+> **Authority, in order:**
+> 1. **`docs/SEAPEDIA_SPEC.md`** — the committee brief. This is what gets graded and is the source of truth for *what* SEAPEDIA must do.
+> 2. **The code + `README.md`** — the as-built system. The source of truth for *how* it actually works today.
+> 3. **This TDD** — the original plan and rationale. Useful background, but wherever it disagrees with the brief or the code, they win.
+>
+> Any "single source of truth" or "authoritative" wording further down predates
+> this note and is superseded by it.
+
 > **COMPFEST 18 — Software Engineering Academy Technical Challenge**
 > Author: Farros Rifantiarno Ramadhani (El)
 > Stack: Laravel 13 (what `laravel new` installs; 12 also fine) · Inertia.js · Vue 3 · Tailwind CSS · MySQL 8 · Docker · iPaymu
 > Timeline: **6 days, solo** · Target: **Levels 1–5 guaranteed (80 pts) + Level 6–7 stretch + UI/Deploy bonus**
-> Purpose: This document is the single source of truth for the build. It is written to be consumed by **Claude Code**. Every business-rule decision the challenge left open has been **locked here** so the agent never improvises.
+> Purpose: This document captures the up-front technical plan — schema, locked values, and the rationale behind decisions the brief left open. See the authority note above for how it relates to the committee brief and the shipped code.
 
 ---
 
