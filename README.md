@@ -244,9 +244,10 @@ each stage without building it up from scratch first.
 ## API documentation
 
 The API is documented with Swagger/OpenAPI. With the app running, open the
-Swagger UI at `http://localhost/api/documentation`. It covers 33 endpoints
-across 13 tags, including Catalog, Buyer Wallet, Checkout, Promo/Vouchers, and
-the Admin functions.
+Swagger UI at `http://localhost/api/documentation`. It covers 38 endpoints
+across 33 paths and 13 tags: Auth, Catalog, Buyer Wallet, Buyer Cart, Buyer
+Addresses, Buyer Orders, Buyer Reports, Checkout, Seller Orders, Seller Reports,
+Driver Jobs, Admin, and Admin Discounts.
 
 ## Security notes
 
