@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\Web\DriverJobController::show
- * @see app/Http/Controllers/Web/DriverJobController.php:34
+ * @see app/Http/Controllers/Web/DriverJobController.php:35
  * @route '/driver/jobs/{delivery}'
  */
 export const show = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\DriverJobController::show
- * @see app/Http/Controllers/Web/DriverJobController.php:34
+ * @see app/Http/Controllers/Web/DriverJobController.php:35
  * @route '/driver/jobs/{delivery}'
  */
 show.url = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -127,7 +127,7 @@ show.url = (args: { delivery: number | { id: number } } | [delivery: number | { 
 
 /**
 * @see \App\Http\Controllers\Web\DriverJobController::show
- * @see app/Http/Controllers/Web/DriverJobController.php:34
+ * @see app/Http/Controllers/Web/DriverJobController.php:35
  * @route '/driver/jobs/{delivery}'
  */
 show.get = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -136,7 +136,7 @@ show.get = (args: { delivery: number | { id: number } } | [delivery: number | { 
 })
 /**
 * @see \App\Http\Controllers\Web\DriverJobController::show
- * @see app/Http/Controllers/Web/DriverJobController.php:34
+ * @see app/Http/Controllers/Web/DriverJobController.php:35
  * @route '/driver/jobs/{delivery}'
  */
 show.head = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -146,7 +146,7 @@ show.head = (args: { delivery: number | { id: number } } | [delivery: number | {
 
     /**
 * @see \App\Http\Controllers\Web\DriverJobController::show
- * @see app/Http/Controllers/Web/DriverJobController.php:34
+ * @see app/Http/Controllers/Web/DriverJobController.php:35
  * @route '/driver/jobs/{delivery}'
  */
     const showForm = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -156,7 +156,7 @@ show.head = (args: { delivery: number | { id: number } } | [delivery: number | {
 
             /**
 * @see \App\Http\Controllers\Web\DriverJobController::show
- * @see app/Http/Controllers/Web/DriverJobController.php:34
+ * @see app/Http/Controllers/Web/DriverJobController.php:35
  * @route '/driver/jobs/{delivery}'
  */
         showForm.get = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -165,7 +165,7 @@ show.head = (args: { delivery: number | { id: number } } | [delivery: number | {
         })
             /**
 * @see \App\Http\Controllers\Web\DriverJobController::show
- * @see app/Http/Controllers/Web/DriverJobController.php:34
+ * @see app/Http/Controllers/Web/DriverJobController.php:35
  * @route '/driver/jobs/{delivery}'
  */
         showForm.head = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -181,7 +181,7 @@ show.head = (args: { delivery: number | { id: number } } | [delivery: number | {
     show.form = showForm
 /**
 * @see \App\Http\Controllers\Web\DriverJobController::take
- * @see app/Http/Controllers/Web/DriverJobController.php:53
+ * @see app/Http/Controllers/Web/DriverJobController.php:54
  * @route '/driver/jobs/{delivery}/take'
  */
 export const take = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -196,7 +196,7 @@ take.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\DriverJobController::take
- * @see app/Http/Controllers/Web/DriverJobController.php:53
+ * @see app/Http/Controllers/Web/DriverJobController.php:54
  * @route '/driver/jobs/{delivery}/take'
  */
 take.url = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -229,7 +229,7 @@ take.url = (args: { delivery: number | { id: number } } | [delivery: number | { 
 
 /**
 * @see \App\Http\Controllers\Web\DriverJobController::take
- * @see app/Http/Controllers/Web/DriverJobController.php:53
+ * @see app/Http/Controllers/Web/DriverJobController.php:54
  * @route '/driver/jobs/{delivery}/take'
  */
 take.post = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -239,7 +239,7 @@ take.post = (args: { delivery: number | { id: number } } | [delivery: number | {
 
     /**
 * @see \App\Http\Controllers\Web\DriverJobController::take
- * @see app/Http/Controllers/Web/DriverJobController.php:53
+ * @see app/Http/Controllers/Web/DriverJobController.php:54
  * @route '/driver/jobs/{delivery}/take'
  */
     const takeForm = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -249,7 +249,7 @@ take.post = (args: { delivery: number | { id: number } } | [delivery: number | {
 
             /**
 * @see \App\Http\Controllers\Web\DriverJobController::take
- * @see app/Http/Controllers/Web/DriverJobController.php:53
+ * @see app/Http/Controllers/Web/DriverJobController.php:54
  * @route '/driver/jobs/{delivery}/take'
  */
         takeForm.post = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -260,7 +260,7 @@ take.post = (args: { delivery: number | { id: number } } | [delivery: number | {
     take.form = takeForm
 /**
 * @see \App\Http\Controllers\Web\DriverJobController::complete
- * @see app/Http/Controllers/Web/DriverJobController.php:70
+ * @see app/Http/Controllers/Web/DriverJobController.php:71
  * @route '/driver/jobs/{delivery}/complete'
  */
 export const complete = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -275,7 +275,7 @@ complete.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\DriverJobController::complete
- * @see app/Http/Controllers/Web/DriverJobController.php:70
+ * @see app/Http/Controllers/Web/DriverJobController.php:71
  * @route '/driver/jobs/{delivery}/complete'
  */
 complete.url = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -308,7 +308,7 @@ complete.url = (args: { delivery: number | { id: number } } | [delivery: number 
 
 /**
 * @see \App\Http\Controllers\Web\DriverJobController::complete
- * @see app/Http/Controllers/Web/DriverJobController.php:70
+ * @see app/Http/Controllers/Web/DriverJobController.php:71
  * @route '/driver/jobs/{delivery}/complete'
  */
 complete.post = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -318,7 +318,7 @@ complete.post = (args: { delivery: number | { id: number } } | [delivery: number
 
     /**
 * @see \App\Http\Controllers\Web\DriverJobController::complete
- * @see app/Http/Controllers/Web/DriverJobController.php:70
+ * @see app/Http/Controllers/Web/DriverJobController.php:71
  * @route '/driver/jobs/{delivery}/complete'
  */
     const completeForm = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -328,7 +328,7 @@ complete.post = (args: { delivery: number | { id: number } } | [delivery: number
 
             /**
 * @see \App\Http\Controllers\Web\DriverJobController::complete
- * @see app/Http/Controllers/Web/DriverJobController.php:70
+ * @see app/Http/Controllers/Web/DriverJobController.php:71
  * @route '/driver/jobs/{delivery}/complete'
  */
         completeForm.post = (args: { delivery: number | { id: number } } | [delivery: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

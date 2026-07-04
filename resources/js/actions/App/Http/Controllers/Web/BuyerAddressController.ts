@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::update
- * @see app/Http/Controllers/Web/BuyerAddressController.php:39
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:42
  * @route '/buyer/addresses/{address}'
  */
 export const update = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -149,7 +149,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::update
- * @see app/Http/Controllers/Web/BuyerAddressController.php:39
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:42
  * @route '/buyer/addresses/{address}'
  */
 update.url = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -182,7 +182,7 @@ update.url = (args: { address: number | { id: number } } | [address: number | { 
 
 /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::update
- * @see app/Http/Controllers/Web/BuyerAddressController.php:39
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:42
  * @route '/buyer/addresses/{address}'
  */
 update.put = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -192,7 +192,7 @@ update.put = (args: { address: number | { id: number } } | [address: number | { 
 
     /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::update
- * @see app/Http/Controllers/Web/BuyerAddressController.php:39
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:42
  * @route '/buyer/addresses/{address}'
  */
     const updateForm = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -207,7 +207,7 @@ update.put = (args: { address: number | { id: number } } | [address: number | { 
 
             /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::update
- * @see app/Http/Controllers/Web/BuyerAddressController.php:39
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:42
  * @route '/buyer/addresses/{address}'
  */
         updateForm.put = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -223,7 +223,7 @@ update.put = (args: { address: number | { id: number } } | [address: number | { 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::setDefault
- * @see app/Http/Controllers/Web/BuyerAddressController.php:50
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:53
  * @route '/buyer/addresses/{address}/default'
  */
 export const setDefault = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -238,7 +238,7 @@ setDefault.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::setDefault
- * @see app/Http/Controllers/Web/BuyerAddressController.php:50
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:53
  * @route '/buyer/addresses/{address}/default'
  */
 setDefault.url = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -271,7 +271,7 @@ setDefault.url = (args: { address: number | { id: number } } | [address: number 
 
 /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::setDefault
- * @see app/Http/Controllers/Web/BuyerAddressController.php:50
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:53
  * @route '/buyer/addresses/{address}/default'
  */
 setDefault.patch = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -281,7 +281,7 @@ setDefault.patch = (args: { address: number | { id: number } } | [address: numbe
 
     /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::setDefault
- * @see app/Http/Controllers/Web/BuyerAddressController.php:50
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:53
  * @route '/buyer/addresses/{address}/default'
  */
     const setDefaultForm = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -296,7 +296,7 @@ setDefault.patch = (args: { address: number | { id: number } } | [address: numbe
 
             /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::setDefault
- * @see app/Http/Controllers/Web/BuyerAddressController.php:50
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:53
  * @route '/buyer/addresses/{address}/default'
  */
         setDefaultForm.patch = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -312,7 +312,7 @@ setDefault.patch = (args: { address: number | { id: number } } | [address: numbe
     setDefault.form = setDefaultForm
 /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::destroy
- * @see app/Http/Controllers/Web/BuyerAddressController.php:61
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:64
  * @route '/buyer/addresses/{address}'
  */
 export const destroy = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -327,7 +327,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::destroy
- * @see app/Http/Controllers/Web/BuyerAddressController.php:61
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:64
  * @route '/buyer/addresses/{address}'
  */
 destroy.url = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -360,7 +360,7 @@ destroy.url = (args: { address: number | { id: number } } | [address: number | {
 
 /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::destroy
- * @see app/Http/Controllers/Web/BuyerAddressController.php:61
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:64
  * @route '/buyer/addresses/{address}'
  */
 destroy.delete = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -370,7 +370,7 @@ destroy.delete = (args: { address: number | { id: number } } | [address: number 
 
     /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::destroy
- * @see app/Http/Controllers/Web/BuyerAddressController.php:61
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:64
  * @route '/buyer/addresses/{address}'
  */
     const destroyForm = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -385,7 +385,7 @@ destroy.delete = (args: { address: number | { id: number } } | [address: number 
 
             /**
 * @see \App\Http\Controllers\Web\BuyerAddressController::destroy
- * @see app/Http/Controllers/Web/BuyerAddressController.php:61
+ * @see app/Http/Controllers/Web/BuyerAddressController.php:64
  * @route '/buyer/addresses/{address}'
  */
         destroyForm.delete = (args: { address: number | { id: number } } | [address: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

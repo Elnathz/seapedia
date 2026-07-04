@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Web\RoleController::create
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::create
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
 create.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::create
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Web\RoleController::create
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\RoleController::create
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
     const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\RoleController::create
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
         createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Web\RoleController::create
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
         createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     create.form = createForm
 /**
 * @see \App\Http\Controllers\Web\RoleController::store
- * @see app/Http/Controllers/Web/RoleController.php:32
+ * @see app/Http/Controllers/Web/RoleController.php:33
  * @route '/role/select'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::store
- * @see app/Http/Controllers/Web/RoleController.php:32
+ * @see app/Http/Controllers/Web/RoleController.php:33
  * @route '/role/select'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::store
- * @see app/Http/Controllers/Web/RoleController.php:32
+ * @see app/Http/Controllers/Web/RoleController.php:33
  * @route '/role/select'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\RoleController::store
- * @see app/Http/Controllers/Web/RoleController.php:32
+ * @see app/Http/Controllers/Web/RoleController.php:33
  * @route '/role/select'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\RoleController::store
- * @see app/Http/Controllers/Web/RoleController.php:32
+ * @see app/Http/Controllers/Web/RoleController.php:33
  * @route '/role/select'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -132,6 +132,61 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
         })
     
     store.form = storeForm
-const RoleController = { create, store }
+/**
+* @see \App\Http\Controllers\Web\RoleController::add
+ * @see app/Http/Controllers/Web/RoleController.php:49
+ * @route '/role/add'
+ */
+export const add = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: add.url(options),
+    method: 'post',
+})
+
+add.definition = {
+    methods: ["post"],
+    url: '/role/add',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Web\RoleController::add
+ * @see app/Http/Controllers/Web/RoleController.php:49
+ * @route '/role/add'
+ */
+add.url = (options?: RouteQueryOptions) => {
+    return add.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Web\RoleController::add
+ * @see app/Http/Controllers/Web/RoleController.php:49
+ * @route '/role/add'
+ */
+add.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: add.url(options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Web\RoleController::add
+ * @see app/Http/Controllers/Web/RoleController.php:49
+ * @route '/role/add'
+ */
+    const addForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: add.url(options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Web\RoleController::add
+ * @see app/Http/Controllers/Web/RoleController.php:49
+ * @route '/role/add'
+ */
+        addForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: add.url(options),
+            method: 'post',
+        })
+    
+    add.form = addForm
+const RoleController = { create, store, add }
 
 export default RoleController

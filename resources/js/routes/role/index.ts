@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\Web\RoleController::select
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
 export const select = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ select.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::select
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
 select.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ select.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::select
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
 select.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ select.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Web\RoleController::select
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
 select.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ select.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\RoleController::select
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
     const selectForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ select.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\RoleController::select
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
         selectForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ select.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Web\RoleController::select
- * @see app/Http/Controllers/Web/RoleController.php:22
+ * @see app/Http/Controllers/Web/RoleController.php:23
  * @route '/role/select'
  */
         selectForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -79,7 +79,7 @@ select.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     select.form = selectForm
 /**
 * @see \App\Http\Controllers\Web\RoleController::store
- * @see app/Http/Controllers/Web/RoleController.php:32
+ * @see app/Http/Controllers/Web/RoleController.php:33
  * @route '/role/select'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::store
- * @see app/Http/Controllers/Web/RoleController.php:32
+ * @see app/Http/Controllers/Web/RoleController.php:33
  * @route '/role/select'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\RoleController::store
- * @see app/Http/Controllers/Web/RoleController.php:32
+ * @see app/Http/Controllers/Web/RoleController.php:33
  * @route '/role/select'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\RoleController::store
- * @see app/Http/Controllers/Web/RoleController.php:32
+ * @see app/Http/Controllers/Web/RoleController.php:33
  * @route '/role/select'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\RoleController::store
- * @see app/Http/Controllers/Web/RoleController.php:32
+ * @see app/Http/Controllers/Web/RoleController.php:33
  * @route '/role/select'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -133,8 +133,63 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     
     store.form = storeForm
 /**
+* @see \App\Http\Controllers\Web\RoleController::add
+ * @see app/Http/Controllers/Web/RoleController.php:49
+ * @route '/role/add'
+ */
+export const add = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: add.url(options),
+    method: 'post',
+})
+
+add.definition = {
+    methods: ["post"],
+    url: '/role/add',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Web\RoleController::add
+ * @see app/Http/Controllers/Web/RoleController.php:49
+ * @route '/role/add'
+ */
+add.url = (options?: RouteQueryOptions) => {
+    return add.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Web\RoleController::add
+ * @see app/Http/Controllers/Web/RoleController.php:49
+ * @route '/role/add'
+ */
+add.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: add.url(options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Web\RoleController::add
+ * @see app/Http/Controllers/Web/RoleController.php:49
+ * @route '/role/add'
+ */
+    const addForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: add.url(options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Web\RoleController::add
+ * @see app/Http/Controllers/Web/RoleController.php:49
+ * @route '/role/add'
+ */
+        addForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: add.url(options),
+            method: 'post',
+        })
+    
+    add.form = addForm
+/**
 * @see \App\Http\Controllers\Web\Profile\RoleDeleteController::destroy
- * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:16
+ * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:19
  * @route '/role/{role}'
  */
 export const destroy = (args: { role: string | number } | [role: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -149,7 +204,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\Profile\RoleDeleteController::destroy
- * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:16
+ * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:19
  * @route '/role/{role}'
  */
 destroy.url = (args: { role: string | number } | [role: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -177,7 +232,7 @@ destroy.url = (args: { role: string | number } | [role: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\Web\Profile\RoleDeleteController::destroy
- * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:16
+ * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:19
  * @route '/role/{role}'
  */
 destroy.delete = (args: { role: string | number } | [role: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -187,7 +242,7 @@ destroy.delete = (args: { role: string | number } | [role: string | number ] | s
 
     /**
 * @see \App\Http\Controllers\Web\Profile\RoleDeleteController::destroy
- * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:16
+ * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:19
  * @route '/role/{role}'
  */
     const destroyForm = (args: { role: string | number } | [role: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -202,7 +257,7 @@ destroy.delete = (args: { role: string | number } | [role: string | number ] | s
 
             /**
 * @see \App\Http\Controllers\Web\Profile\RoleDeleteController::destroy
- * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:16
+ * @see app/Http/Controllers/Web/Profile/RoleDeleteController.php:19
  * @route '/role/{role}'
  */
         destroyForm.delete = (args: { role: string | number } | [role: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -219,6 +274,7 @@ destroy.delete = (args: { role: string | number } | [role: string | number ] | s
 const role = {
     select: Object.assign(select, select),
 store: Object.assign(store, store),
+add: Object.assign(add, add),
 destroy: Object.assign(destroy, destroy),
 }
 
