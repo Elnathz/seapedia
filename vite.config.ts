@@ -13,14 +13,17 @@ export default defineConfig({
             host: 'localhost',
         },
         watch: {
-            usePolling: true,
+            // Polling is only needed when the dev server runs inside a
+            // container (Docker/WSL), where native filesystem events don't
+            // cross the boundary. On a native host it just pegs the CPU and
+            // slows HMR, so gate it on an env flag (default: off = fast).
+            usePolling: process.env.VITE_USE_POLLING === 'true',
         },
     },
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.ts'],
             refresh: true,
-
         }),
         inertia(),
         tailwindcss(),
