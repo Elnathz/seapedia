@@ -29,18 +29,36 @@ Notes for reviewers:
 
 ## Setup (Docker)
 
-You need two things: Docker, and a shell to run the commands in. Getting them
-differs a little per operating system.
+### Prerequisites — do these first
 
-- **Windows.** Install Docker Desktop with the WSL2 backend enabled. Run every
-  command below inside a WSL2 Ubuntu terminal. Sail is a Linux tool, so WSL2 is
-  where it behaves properly. Git Bash mostly works too, but it rewrites the
-  paths in Docker volume mounts and will trip you up.
-- **macOS.** Install Docker Desktop. Run the commands in Terminal (or iTerm).
-- **Linux.** Install Docker Engine plus the Compose plugin. Run the commands in
-  your normal shell.
+> **Docker must be installed and running before any step below will work.**
+> If you see `The command 'docker' could not be found`, start here.
 
-Everything after that is identical on all three.
+| OS | What to install | Where to get it |
+|---|---|---|
+| **Windows** | Docker Desktop (includes Docker Engine + Compose) | https://docs.docker.com/desktop/install/windows-install/ |
+| **macOS** | Docker Desktop | https://docs.docker.com/desktop/install/mac-install/ |
+| **Linux** | Docker Engine + Compose plugin | https://docs.docker.com/engine/install/ |
+
+**Windows extra step — WSL Integration:**
+
+After installing Docker Desktop you must link it to your WSL2 distro, otherwise
+the `docker` command will not be found inside WSL terminals.
+
+1. Open **Docker Desktop → Settings → Resources → WSL Integration**.
+2. Turn on **"Enable integration with my default WSL distro"**.
+3. If your Ubuntu distro is listed separately, enable its toggle too.
+4. Click **Apply & Restart** and wait for Docker Desktop to come back up.
+5. Open a new WSL2 terminal and run `docker --version` to confirm it works.
+
+After that, run every command below inside a WSL2 Ubuntu terminal. Sail is a
+Linux tool and behaves correctly there. Git Bash mostly works too, but it
+rewrites Docker volume-mount paths and will occasionally trip you up.
+
+**macOS / Linux:** Open Docker Desktop (macOS) or start the Docker daemon
+(`sudo systemctl start docker`) and verify with `docker --version`.
+
+Everything after that is identical on all three operating systems.
 
 1. **Clone the repository**
    ```bash
@@ -67,6 +85,10 @@ Everything after that is identical on all three.
        laravelsail/php84-composer:latest \
        composer install --ignore-platform-reqs
    ```
+   > **`The command 'docker' could not be found`?** Docker Desktop is either not
+   > installed or not integrated with your WSL2 distro. Complete the
+   > [Prerequisites](#prerequisites--do-these-first) section above and try
+   > again.
 
 4. **Start the containers**
    ```bash
