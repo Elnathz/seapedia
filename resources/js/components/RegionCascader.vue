@@ -150,6 +150,109 @@ onMounted(() => {
     fetchProvinces();
 });
 
+const API = 'https://www.emsifa.com/api-wilayah-indonesia/api';
+
+async function loadList(path: string): Promise<Region[]> {
+    try {
+        const res = await fetch(`${API}/${path}`);
+
+        return (await res.json()) as Region[];
+    } catch {
+        return [];
+    }
+}
+
+// Region names from reverse-geocoding rarely match the dataset verbatim (case,
+// "Kota"/"Kabupaten" prefixes, abbreviations), so match leniently: exact first,
+// then normalized-equal, then a contains either way. Returns undefined when
+// nothing is close enough — the caller stops and leaves that level manual.
+function normalize(value: string): string {
+    return value
+        .toLowerCase()
+        .replace(/^(kabupaten|kota|kab\.?|kec\.?|kel\.?|desa)\s+/i, '')
+        .trim();
+}
+
+function matchRegion(list: Region[], name?: string): Region | undefined {
+    if (!name) {
+        return undefined;
+    }
+
+    const lower = name.toLowerCase();
+    const exact = list.find((x) => x.name.toLowerCase() === lower);
+
+    if (exact) {
+        return exact;
+    }
+
+    const n = normalize(name);
+
+    return (
+        list.find((x) => normalize(x.name) === n) ??
+        list.find(
+            (x) =>
+                normalize(x.name).includes(n) || n.includes(normalize(x.name)),
+        )
+    );
+}
+
+/**
+ * Auto-fill the cascade from reverse-geocoded parts (called by the parent when
+ * the map pin moves). Resolves top-down, fetching each dependent list and
+ * emitting the dataset's canonical name so the dropdowns display and the form
+ * stores a value that exists in the dataset. Best-effort: it stops at the first
+ * level that has no close match, leaving the rest for manual selection.
+ */
+async function applyGeo(geo: {
+    province?: string;
+    city?: string;
+    district?: string;
+    village?: string;
+}): Promise<void> {
+    const p = matchRegion(provinces.value, geo.province);
+
+    if (!p) {
+        return;
+    }
+
+    selectedProvinceId.value = p.id;
+    emit('update:province', p.name);
+    emit('update:city', '');
+    emit('update:district', '');
+    emit('update:village', '');
+    districts.value = [];
+    villages.value = [];
+
+    cities.value = await loadList(`regencies/${p.id}.json`);
+    const c = matchRegion(cities.value, geo.city);
+
+    if (!c) {
+        return;
+    }
+
+    selectedCityId.value = c.id;
+    emit('update:city', c.name);
+
+    districts.value = await loadList(`districts/${c.id}.json`);
+    const d = matchRegion(districts.value, geo.district);
+
+    if (!d) {
+        return;
+    }
+
+    selectedDistrictId.value = d.id;
+    emit('update:district', d.name);
+
+    villages.value = await loadList(`villages/${d.id}.json`);
+    const v = matchRegion(villages.value, geo.village);
+
+    if (v) {
+        emit('update:village', v.name);
+    }
+}
+
+defineExpose({ applyGeo });
+
 const onProvinceChange = async (val: any) => {
     const name = val as string;
 

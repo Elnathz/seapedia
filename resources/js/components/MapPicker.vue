@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import 'leaflet/dist/leaflet.css';
-import { LocateFixed, Search } from '@lucide/vue';
+import { Check, Loader2, LocateFixed, MapPin, Search, X } from '@lucide/vue';
 import type {
     DivIcon,
     LeafletMouseEvent,
@@ -20,9 +20,20 @@ const props = withDefaults(
     { height: '260px' },
 );
 
+interface GeoParts {
+    province?: string;
+    city?: string;
+    district?: string;
+    village?: string;
+    postal_code?: string;
+}
+
 const emit = defineEmits<{
-    'update:latitude': [value: number];
-    'update:longitude': [value: number];
+    'update:latitude': [value: number | null];
+    'update:longitude': [value: number | null];
+    // Best-effort address parts from reverse-geocoding a user-placed pin, so
+    // the parent form can auto-fill the region cascader + postal code.
+    'update:geo': [value: GeoParts];
 }>();
 
 // Fallback centre (Tugu Muda, Semarang) until the user drops a pin.
@@ -32,10 +43,11 @@ const mapEl = ref<HTMLElement | null>(null);
 const search = ref('');
 const searching = ref(false);
 const searchError = ref('');
+const reverseStatus = ref<'' | 'loading' | 'done'>('');
 
 // Leaflet touches `window` at import time, so it is loaded lazily inside
 // onMounted (client only) — a top-level import would crash Inertia SSR.
- 
+
 let L: any = null;
 let map: LMap | null = null;
 let marker: LMarker | null = null;
@@ -46,9 +58,18 @@ function round7(value: number): number {
     return Math.round(value * 1e7) / 1e7;
 }
 
-function placeMarker(lat: number, lng: number, pan = true): void {
+function placeMarker(
+    lat: number,
+    lng: number,
+    pan = true,
+    reverse = false,
+): void {
     emit('update:latitude', round7(lat));
     emit('update:longitude', round7(lng));
+
+    if (reverse) {
+        reverseGeocode(lat, lng);
+    }
 
     if (!map || !L || !pinIcon) {
         return;
@@ -63,12 +84,56 @@ function placeMarker(lat: number, lng: number, pan = true): void {
         }).addTo(map);
         marker!.on('dragend', () => {
             const p = marker!.getLatLng();
-            placeMarker(p.lat, p.lng, false);
+            placeMarker(p.lat, p.lng, false, true);
         });
     }
 
     if (pan) {
         map.setView([lat, lng], Math.max(map.getZoom(), 15));
+    }
+}
+
+function clearPoint(): void {
+    emit('update:latitude', null);
+    emit('update:longitude', null);
+    reverseStatus.value = '';
+
+    if (marker && map) {
+        map.removeLayer(marker);
+        marker = null;
+    }
+}
+
+/**
+ * Best-effort reverse-geocode: turn the dropped pin into Indonesian address
+ * parts and hand them up so the region cascader + postal code auto-fill. Names
+ * from Nominatim don't always match the region dataset exactly (§ agreed
+ * best-effort), so the parent treats every field as a suggestion the user can
+ * correct.
+ */
+async function reverseGeocode(lat: number, lng: number): Promise<void> {
+    reverseStatus.value = 'loading';
+
+    try {
+        const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&lat=${lat}&lon=${lng}`,
+            { headers: { 'Accept-Language': 'id' } },
+        );
+        const data = await res.json();
+        const a = data.address ?? {};
+
+        emit('update:geo', {
+            province: a.state,
+            city: a.city ?? a.county ?? a.town ?? a.municipality,
+            district: a.city_district ?? a.suburb ?? a.municipality,
+            village: a.village ?? a.neighbourhood ?? a.suburb ?? a.quarter,
+            postal_code: a.postcode,
+        });
+        reverseStatus.value = 'done';
+    } catch {
+        // A failed reverse lookup never blocks the pin — the coordinates are
+        // already set; the region fields just stay for manual entry.
+        reverseStatus.value = '';
     }
 }
 
@@ -94,6 +159,7 @@ async function geocode(): Promise<void> {
                 parseFloat(data[0].lat),
                 parseFloat(data[0].lon),
                 true,
+                true,
             );
         } else {
             searchError.value = 'Lokasi tidak ditemukan. Coba kata kunci lain.';
@@ -113,7 +179,8 @@ function useMyLocation(): void {
     }
 
     navigator.geolocation.getCurrentPosition(
-        (pos) => placeMarker(pos.coords.latitude, pos.coords.longitude, true),
+        (pos) =>
+            placeMarker(pos.coords.latitude, pos.coords.longitude, true, true),
         () => (searchError.value = 'Izin lokasi ditolak.'),
     );
 }
@@ -146,7 +213,7 @@ onMounted(async () => {
     }).addTo(map);
 
     map!.on('click', (e: LeafletMouseEvent) =>
-        placeMarker(e.latlng.lat, e.latlng.lng, false),
+        placeMarker(e.latlng.lat, e.latlng.lng, false, true),
     );
 
     if (props.latitude !== null && props.longitude !== null) {
@@ -168,7 +235,9 @@ onBeforeUnmount(() => {
     marker = null;
 });
 
-// External reset (dialog reopened for another address) re-centres the pin.
+// External reset (dialog reopened for another address) re-centres the pin —
+// but never re-reverse-geocodes, so editing an address doesn't overwrite its
+// saved region fields.
 watch(
     () => [props.latitude, props.longitude] as const,
     ([lat, lng]) => {
@@ -225,11 +294,54 @@ watch(
         <p v-if="searchError" class="text-xs text-destructive">
             {{ searchError }}
         </p>
-        <p v-else class="text-xs text-muted-foreground">
-            Klik peta atau geser pin untuk menandai lokasi.
-            <span v-if="latitude && longitude" class="tabular-nums">
-                ({{ latitude.toFixed(5) }}, {{ longitude.toFixed(5) }})
+
+        <!-- Confirmed state: an unmistakable "point is set" affordance so the
+             user isn't left wondering whether their tap registered. -->
+        <div
+            v-if="latitude !== null && longitude !== null"
+            class="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2"
+        >
+            <span
+                class="flex items-center gap-2 text-sm font-medium text-primary"
+            >
+                <Check class="size-4" />
+                Lokasi ditandai
+                <span
+                    class="text-xs font-normal text-muted-foreground tabular-nums"
+                >
+                    ({{ latitude.toFixed(5) }}, {{ longitude.toFixed(5) }})
+                </span>
             </span>
+            <button
+                type="button"
+                class="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-destructive"
+                @click="clearPoint"
+            >
+                <X class="size-3.5" /> Hapus titik
+            </button>
+        </div>
+
+        <!-- Unset state: tell the user exactly how to set the point. -->
+        <p
+            v-else
+            class="flex items-center gap-1.5 text-xs text-muted-foreground"
+        >
+            <MapPin class="size-3.5 shrink-0" />
+            Klik peta, geser pin, atau cari alamat untuk menandai lokasi.
+        </p>
+
+        <p
+            v-if="reverseStatus === 'loading'"
+            class="flex items-center gap-1.5 text-xs text-muted-foreground"
+        >
+            <Loader2 class="size-3.5 animate-spin" /> Mengisi wilayah dari peta…
+        </p>
+        <p
+            v-else-if="reverseStatus === 'done'"
+            class="text-xs text-muted-foreground"
+        >
+            Wilayah terisi otomatis dari peta — silakan periksa &amp; koreksi
+            bila perlu.
         </p>
     </div>
 </template>

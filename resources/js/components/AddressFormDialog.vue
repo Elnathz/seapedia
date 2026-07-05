@@ -50,8 +50,26 @@ const formProvince = ref('');
 const formCity = ref('');
 const formDistrict = ref('');
 const formVillage = ref('');
+const formPostal = ref('');
 const formLat = ref<number | null>(null);
 const formLng = ref<number | null>(null);
+const regionRef = ref<InstanceType<typeof RegionCascader> | null>(null);
+
+// Map pin moved → auto-fill postal code + resolve the region cascade from the
+// reverse-geocoded parts (best-effort; the user can still correct any field).
+function onGeo(geo: {
+    province?: string;
+    city?: string;
+    district?: string;
+    village?: string;
+    postal_code?: string;
+}) {
+    if (geo.postal_code) {
+        formPostal.value = geo.postal_code;
+    }
+
+    regionRef.value?.applyGeo(geo);
+}
 
 // A create form posts to store; an edit form to update the given record.
 const formBinding = computed(() =>
@@ -73,6 +91,7 @@ watch(
         formCity.value = props.editing?.city ?? '';
         formDistrict.value = props.editing?.district ?? '';
         formVillage.value = props.editing?.village ?? '';
+        formPostal.value = props.editing?.postal_code ?? '';
         formLat.value = props.editing?.latitude ?? null;
         formLng.value = props.editing?.longitude ?? null;
     },
@@ -150,6 +169,7 @@ function onSuccess() {
                 </div>
 
                 <RegionCascader
+                    ref="regionRef"
                     v-model:province="formProvince"
                     v-model:city="formCity"
                     v-model:district="formDistrict"
@@ -162,7 +182,7 @@ function onSuccess() {
                     <Input
                         id="postal_code"
                         name="postal_code"
-                        :default-value="editing?.postal_code ?? ''"
+                        v-model="formPostal"
                         required
                         maxlength="20"
                     />
@@ -174,6 +194,7 @@ function onSuccess() {
                     <MapPicker
                         v-model:latitude="formLat"
                         v-model:longitude="formLng"
+                        @update:geo="onGeo"
                     />
                     <input
                         type="hidden"
