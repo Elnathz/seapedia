@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { ArrowRight, ShoppingBag, Star } from '@lucide/vue';
+import { ArrowRight, ShoppingBag } from '@lucide/vue';
 import { Button } from '@/components/ui/button';
 import { formatIDR } from '@/lib/utils';
 
@@ -18,8 +18,6 @@ interface Product {
     image_path: string | null;
     store: Store;
     stock?: number;
-    rating?: number;
-    reviews_count?: number;
     discount_percentage?: number;
 }
 
@@ -126,33 +124,11 @@ defineProps<{ products: Product[] }>();
                                     {{ product.store.name }}
                                 </p>
                                 <p
+                                    v-if="typeof product.stock === 'number'"
                                     class="shrink-0 text-xs text-muted-foreground"
                                 >
-                                    Sisa
-                                    {{
-                                        product.stock ??
-                                        Math.floor(Math.random() * 50) + 1
-                                    }}
+                                    Sisa {{ product.stock }}
                                 </p>
-                            </div>
-
-                            <!-- Rating info -->
-                            <div class="mt-1 flex items-center gap-1">
-                                <Star
-                                    class="size-3 fill-amber-400 text-amber-400"
-                                />
-                                <span
-                                    class="text-xs font-medium text-foreground"
-                                    >{{
-                                        product.rating?.toFixed(1) ?? '4.8'
-                                    }}</span
-                                >
-                                <span class="text-xs text-muted-foreground"
-                                    >({{
-                                        product.reviews_count ??
-                                        Math.floor(Math.random() * 100) + 5
-                                    }})</span
-                                >
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { ArrowRight, Package, Star } from '@lucide/vue';
+import { ArrowRight, Package } from '@lucide/vue';
 import { Button } from '@/components/ui/button';
 
 interface PopularStore {
@@ -133,15 +133,6 @@ function storeInitials(name: string): string {
                                     class="size-3.5 text-muted-foreground/70"
                                 />
                                 <span>{{ store.products_count }} produk</span>
-                            </div>
-                            <div class="size-1 rounded-full bg-border"></div>
-                            <div class="flex items-center gap-1">
-                                <Star
-                                    class="size-3.5 fill-amber-400 text-amber-400"
-                                />
-                                <span class="font-medium text-foreground"
-                                    >4.9</span
-                                >
                             </div>
                         </div>
                     </div>
