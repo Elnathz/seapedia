@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n';
 import SellerProductController from '@/actions/App/Http/Controllers/Web/SellerProductController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import ProductImageUpload from '@/components/ProductImageUpload.vue';
 import RequiredMark from '@/components/RequiredMark.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -121,27 +122,6 @@ function addVariant() {
 
 function removeVariant(index: number) {
     variants.value.splice(index, 1);
-}
-const deletedImageIds = ref<number[]>([]);
-const newImagePreviews = ref<string[]>([]);
-const existingImages = computed(() => {
-    return (
-        props.product?.images?.filter(
-            (img) => !deletedImageIds.value.includes(img.id),
-        ) ?? []
-    );
-});
-
-function handleImageSelect(e: Event) {
-    const files = (e.target as HTMLInputElement).files;
-
-    if (!files) {
-        return;
-    }
-
-    newImagePreviews.value = Array.from(files).map((f) =>
-        URL.createObjectURL(f),
-    );
 }
 </script>
 
@@ -393,66 +373,8 @@ function handleImageSelect(e: Event) {
             </div>
 
             <div class="grid gap-2">
-                <Label>Gambar Produk (Maks. 5)</Label>
-                <div class="flex flex-wrap gap-4">
-                    <div
-                        v-for="img in existingImages"
-                        :key="'img-' + img.id"
-                        class="group relative size-24 overflow-hidden rounded-xl border"
-                    >
-                        <img
-                            :src="`/storage/${img.image_path}`"
-                            class="size-full object-cover"
-                        />
-                        <div
-                            class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
-                        >
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                size="sm"
-                                class="h-8 px-2"
-                                @click="deletedImageIds.push(img.id)"
-                                >Hapus</Button
-                            >
-                        </div>
-                    </div>
-
-                    <div
-                        v-for="(preview, idx) in newImagePreviews"
-                        :key="'new-' + idx"
-                        class="relative size-24 overflow-hidden rounded-xl border"
-                    >
-                        <img :src="preview" class="size-full object-cover" />
-                    </div>
-
-                    <label
-                        class="flex size-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-dashed text-muted-foreground transition-colors hover:bg-muted"
-                    >
-                        <span class="text-xl leading-none">+</span>
-                        <span class="text-[10px]">Pilih Gambar</span>
-                        <input
-                            type="file"
-                            name="images[]"
-                            multiple
-                            accept="image/*"
-                            class="hidden"
-                            @change="handleImageSelect"
-                        />
-                    </label>
-                </div>
-                <input
-                    v-for="id in deletedImageIds"
-                    :key="'del-' + id"
-                    type="hidden"
-                    name="deleted_image_ids[]"
-                    :value="id"
-                />
-                <p class="text-xs text-muted-foreground">
-                    Pilih gambar untuk mengupload. Gambar pertama akan menjadi
-                    gambar utama. Untuk mengubah gambar baru yang dipilih, klik
-                    Pilih Gambar lagi.
-                </p>
+                <Label>Gambar Produk</Label>
+                <ProductImageUpload :existing-images="product?.images ?? []" />
                 <InputError :message="errors.images" />
             </div>
 
