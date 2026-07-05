@@ -392,9 +392,13 @@ Driver Jobs, Admin, and Admin Discounts.
 Security is handled layer by layer:
 
 - **SQL injection.** Only Eloquent and the query builder touch the database, and
-  both bind parameters through PDO.
+  both bind parameters through PDO. Dedicated test cases validating SQLi immunity
+  (e.g., `' OR 1=1 --` probes on login, search, and comments) are implemented
+  in [`SecuritySqliTest.php`](file:///c:/Kuliah/Lomba/COMPFEST/Code/seapedia/tests/Feature/Security/SecuritySqliTest.php).
 - **Cross-site scripting.** Inertia and Vue escape user input on render. Raw HTML
-  is avoided, and sanitized where it is genuinely needed.
+  is avoided, and sanitized where it is genuinely needed. Active test cases verifying
+  XSS immunity (e.g., `<script>` payloads in review names or comments) are covered in
+  [`SecurityXssTest.php`](file:///c:/Kuliah/Lomba/COMPFEST/Code/seapedia/tests/Feature/Security/SecurityXssTest.php).
 - **Input validation.** Every web and API write goes through a Laravel Form
   Request with typed, strict rules before it reaches a controller.
 - **Sessions and CSRF.** Web routes use Laravel's CSRF protection
