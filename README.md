@@ -94,6 +94,11 @@ Everything after that is identical on all three operating systems.
    ```bash
    ./vendor/bin/sail up -d
    ```
+   > No `--build` flag needed. Sail uses its own pre-built image
+   > (`laravelsail/php85-composer`), not the project's `Dockerfile`. The
+   > `Dockerfile` here is the **production** multi-stage build (used by
+   > `docker-compose.prod.yml`), which runs `npm run build` automatically
+   > inside the container — it is not involved in local dev at all.
 
 5. **Initialize the application**
    Set the app key, build the database, and link storage:
@@ -105,11 +110,24 @@ Everything after that is identical on all three operating systems.
    `storage:link` matters here: seeded and uploaded product images will not
    load without it.
 
-6. **Install and run the frontend**
+6. **Build or run the frontend**
+
+   **Option A — just reviewing the app** (no live reload, simpler):
+   ```bash
+   ./vendor/bin/sail npm install
+   ./vendor/bin/sail npm run build
+   ```
+   This compiles assets once into `public/build/`. The app at
+   `http://localhost` will work immediately after, with no extra process
+   running.
+
+   **Option B — active development** (hot module replacement):
    ```bash
    ./vendor/bin/sail npm install
    ./vendor/bin/sail npm run dev
    ```
+   Starts the Vite dev server. Keep this terminal open while you work;
+   edits to Vue/TS/CSS files reload the browser instantly.
 
 7. **Open the app** at `http://localhost`.
 
