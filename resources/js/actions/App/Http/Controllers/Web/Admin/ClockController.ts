@@ -54,6 +54,61 @@ advance.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
         })
     
     advance.form = advanceForm
-const ClockController = { advance }
+/**
+* @see \App\Http\Controllers\Web\Admin\ClockController::reset
+ * @see app/Http/Controllers/Web/Admin/ClockController.php:45
+ * @route '/admin/clock/reset'
+ */
+export const reset = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: reset.url(options),
+    method: 'post',
+})
+
+reset.definition = {
+    methods: ["post"],
+    url: '/admin/clock/reset',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Web\Admin\ClockController::reset
+ * @see app/Http/Controllers/Web/Admin/ClockController.php:45
+ * @route '/admin/clock/reset'
+ */
+reset.url = (options?: RouteQueryOptions) => {
+    return reset.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Web\Admin\ClockController::reset
+ * @see app/Http/Controllers/Web/Admin/ClockController.php:45
+ * @route '/admin/clock/reset'
+ */
+reset.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: reset.url(options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Web\Admin\ClockController::reset
+ * @see app/Http/Controllers/Web/Admin/ClockController.php:45
+ * @route '/admin/clock/reset'
+ */
+    const resetForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: reset.url(options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Web\Admin\ClockController::reset
+ * @see app/Http/Controllers/Web/Admin/ClockController.php:45
+ * @route '/admin/clock/reset'
+ */
+        resetForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: reset.url(options),
+            method: 'post',
+        })
+    
+    reset.form = resetForm
+const ClockController = { advance, reset }
 
 export default ClockController

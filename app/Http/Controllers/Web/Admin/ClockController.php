@@ -17,13 +17,14 @@ class ClockController extends Controller
     ) {}
 
     /**
-     * Advance the simulated day by one tick and run the overdue sweep
-     * (§5.7, §5.9). Mirrored by `php artisan seapedia:advance-day` for a
+     * Advance the simulated day by N ticks (default 1) and run the overdue
+     * sweep (§5.7, §5.9). Mirrored by `php artisan seapedia:advance-day` for a
      * headless trigger.
      */
     public function advance(AdvanceClockRequest $request): RedirectResponse
     {
-        $next = $this->clock->advance(1);
+        $days = max(1, (int) $request->integer('days', 1));
+        $next = $this->clock->advance($days);
         $swept = $this->overdue->sweep();
 
         Inertia::flash('toast', [
@@ -31,6 +32,24 @@ class ClockController extends Controller
             'message' => __('Simulated day advanced to :date. :count overdue order(s) refunded.', [
                 'date' => $next->toDateString(),
                 'count' => $swept['refunded_count'],
+            ]),
+        ]);
+
+        return back();
+    }
+
+    /**
+     * Reset the simulated clock back to real "today" (§5.7). Advancing only
+     * ever moves time forward, so this is the way back after a demo jump.
+     */
+    public function reset(): RedirectResponse
+    {
+        $this->clock->reset();
+
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => __('Simulated clock reset to today (:date).', [
+                'date' => $this->clock->now()->toDateString(),
             ]),
         ]);
 

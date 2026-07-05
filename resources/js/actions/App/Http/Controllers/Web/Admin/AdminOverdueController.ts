@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Web\Admin\AdminOverdueController::index
- * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:19
+ * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:20
  * @route '/admin/overdue'
  */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\AdminOverdueController::index
- * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:19
+ * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:20
  * @route '/admin/overdue'
  */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\Admin\AdminOverdueController::index
- * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:19
+ * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:20
  * @route '/admin/overdue'
  */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Web\Admin\AdminOverdueController::index
- * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:19
+ * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:20
  * @route '/admin/overdue'
  */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Web\Admin\AdminOverdueController::index
- * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:19
+ * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:20
  * @route '/admin/overdue'
  */
     const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Web\Admin\AdminOverdueController::index
- * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:19
+ * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:20
  * @route '/admin/overdue'
  */
         indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Web\Admin\AdminOverdueController::index
- * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:19
+ * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:20
  * @route '/admin/overdue'
  */
         indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -77,6 +77,61 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
     
     index.form = indexForm
-const AdminOverdueController = { index }
+/**
+* @see \App\Http\Controllers\Web\Admin\AdminOverdueController::sweep
+ * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:47
+ * @route '/admin/overdue/sweep'
+ */
+export const sweep = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: sweep.url(options),
+    method: 'post',
+})
+
+sweep.definition = {
+    methods: ["post"],
+    url: '/admin/overdue/sweep',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\Web\Admin\AdminOverdueController::sweep
+ * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:47
+ * @route '/admin/overdue/sweep'
+ */
+sweep.url = (options?: RouteQueryOptions) => {
+    return sweep.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Web\Admin\AdminOverdueController::sweep
+ * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:47
+ * @route '/admin/overdue/sweep'
+ */
+sweep.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: sweep.url(options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\Web\Admin\AdminOverdueController::sweep
+ * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:47
+ * @route '/admin/overdue/sweep'
+ */
+    const sweepForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: sweep.url(options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Web\Admin\AdminOverdueController::sweep
+ * @see app/Http/Controllers/Web/Admin/AdminOverdueController.php:47
+ * @route '/admin/overdue/sweep'
+ */
+        sweepForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: sweep.url(options),
+            method: 'post',
+        })
+    
+    sweep.form = sweepForm
+const AdminOverdueController = { index, sweep }
 
 export default AdminOverdueController

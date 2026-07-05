@@ -108,6 +108,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware('is_admin')->prefix('admin')->name('admin.')->group(function () {
         Route::post('clock/advance', [AdminClockController::class, 'advance'])->name('clock.advance');
+        Route::post('clock/reset', [AdminClockController::class, 'reset'])->name('clock.reset');
 
         Route::get('promos', [AdminPromoController::class, 'index'])->name('promos.index');
         Route::post('promos', [AdminPromoController::class, 'store'])->name('promos.store');
@@ -131,6 +132,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('deliveries', [AdminDeliveryController::class, 'index'])->name('deliveries.index');
         Route::get('overdue', [AdminOverdueController::class, 'index'])->name('overdue.index');
+        Route::post('overdue/sweep', [AdminOverdueController::class, 'sweep'])->name('overdue.sweep');
 
         // Banners
         Route::get('banners/search-categories', [AdminBannerController::class, 'searchCategories'])->name('banners.search-categories');

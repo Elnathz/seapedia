@@ -223,6 +223,32 @@ class OverdueSweepTest extends TestCase
         $this->assertSame(0, $sellerReport['total_income']);
     }
 
+    public function test_admin_sweeps_overdue_orders_via_the_endpoint_without_advancing_time(): void
+    {
+        $seller = $this->userWithRole(RoleName::Seller);
+        $store = Store::factory()->create(['user_id' => $seller->id]);
+        $buyer = $this->userWithRole(RoleName::Buyer);
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        $order = $this->overdueOrder($buyer, $store, 50_000);
+        $balanceBeforeRefund = $buyer->wallet->refresh()->balance;
+        $clockBefore = app(ClockService::class)->now();
+
+        $this->actingAs($admin)->post(route('admin.overdue.sweep'))->assertRedirect();
+
+        $this->assertSame(OrderStatus::Dikembalikan, $order->refresh()->status);
+        $this->assertSame($balanceBeforeRefund + $order->grand_total, $buyer->wallet->refresh()->balance);
+        // The direct sweep must not move the clock — that's the whole point.
+        $this->assertSame($clockBefore->toDateString(), app(ClockService::class)->now()->toDateString());
+    }
+
+    public function test_a_non_admin_cannot_trigger_the_overdue_sweep(): void
+    {
+        $user = User::factory()->create(['is_admin' => false]);
+
+        $this->actingAs($user)->post(route('admin.overdue.sweep'))->assertForbidden();
+    }
+
     public function test_advancing_the_day_via_artisan_runs_the_sweep_end_to_end(): void
     {
         $seller = $this->userWithRole(RoleName::Seller);

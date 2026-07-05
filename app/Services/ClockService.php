@@ -36,4 +36,23 @@ class ClockService
 
         return $next;
     }
+
+    /**
+     * Drop the simulated clock so `now()` returns real wall-time again — the
+     * "kembali ke hari ini" reset. `advance()` only ever moves forward, so this
+     * is the sole way back to today. Safe to call when nothing is simulated.
+     */
+    public function reset(): void
+    {
+        Setting::query()->where('key', 'simulated_now')->delete();
+    }
+
+    /**
+     * Whether an admin has advanced the clock (so `now()` is simulated, not
+     * real time). Drives the admin UI's "simulasi aktif" badge + reset button.
+     */
+    public function isSimulated(): bool
+    {
+        return Setting::query()->where('key', 'simulated_now')->exists();
+    }
 }

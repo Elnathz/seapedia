@@ -25,6 +25,31 @@ class ClockAdvanceTest extends TestCase
         $this->assertSame($before->addDay()->toDateString(), $after->toDateString());
     }
 
+    public function test_admin_advances_multiple_days_at_once(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $before = app(ClockService::class)->now();
+
+        $this->actingAs($admin)
+            ->post(route('admin.clock.advance'), ['days' => 3])
+            ->assertRedirect();
+
+        $after = app(ClockService::class)->now();
+        $this->assertSame($before->addDays(3)->toDateString(), $after->toDateString());
+    }
+
+    public function test_admin_resets_the_simulated_clock_to_today(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        app(ClockService::class)->advance(5);
+        $this->assertTrue(app(ClockService::class)->isSimulated());
+
+        $this->actingAs($admin)->post(route('admin.clock.reset'))->assertRedirect();
+
+        $this->assertFalse(app(ClockService::class)->isSimulated());
+        $this->assertSame(now()->toDateString(), app(ClockService::class)->now()->toDateString());
+    }
+
     public function test_a_non_admin_cannot_advance_the_clock(): void
     {
         $user = User::factory()->create(['is_admin' => false]);
@@ -32,6 +57,13 @@ class ClockAdvanceTest extends TestCase
         $response = $this->actingAs($user)->post(route('admin.clock.advance'));
 
         $response->assertForbidden();
+    }
+
+    public function test_a_non_admin_cannot_reset_the_clock(): void
+    {
+        $user = User::factory()->create(['is_admin' => false]);
+
+        $this->actingAs($user)->post(route('admin.clock.reset'))->assertForbidden();
     }
 
     public function test_advance_initializes_from_real_time_when_unset(): void

@@ -12,13 +12,15 @@ class AdvanceClockRequest extends FormRequest
     }
 
     /**
-     * Thin by design — advancing the clock takes no input, it always
-     * moves exactly one tick (§5.7).
+     * `days` is how many one-day ticks (§5.7) to jump — the admin UI offers a
+     * +1 and a +3 shortcut. Optional; defaults to a single tick when absent.
      *
      * @return array<string, mixed>
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'days' => ['nullable', 'integer', 'min:1', 'max:30'],
+        ];
     }
 }
