@@ -31,6 +31,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { formatIDR } from '@/lib/utils';
+import { index as addressesIndex } from '@/routes/buyer/addresses';
 import { show as showWallet } from '@/routes/buyer/wallet';
 import { index as catalogIndex } from '@/routes/catalog';
 
@@ -47,6 +48,8 @@ interface AddressData {
     district?: string;
     village?: string;
     postal_code?: string;
+    latitude?: number | null;
+    longitude?: number | null;
 }
 
 interface AppliedDiscount {
@@ -142,6 +145,18 @@ const addressIdModel = computed({
 });
 
 const preview = computed(() => props.previews[deliveryMethod.value]);
+
+// The delivery fee is distance-based, so a shipping address without a map
+// point can't be checked out (the server rejects it too). Gate the pay button
+// and point the buyer at the address form to add the missing location.
+const selectedAddress = computed(
+    () => props.addresses.find((a) => a.id === addressId.value) ?? null,
+);
+const selectedAddressHasCoords = computed(() => {
+    const a = selectedAddress.value;
+
+    return a?.latitude != null && a?.longitude != null;
+});
 
 // Snapshot the known ids before opening the form so the address created
 // server-side — surfaced once the back() redirect refreshes props — can be
@@ -702,6 +717,7 @@ function confirmCheckout() {
                         class="w-full shadow-md shadow-primary/20"
                         :disabled="
                             !addressId ||
+                            !selectedAddressHasCoords ||
                             !preview.sufficient_balance ||
                             submitting
                         "
@@ -709,6 +725,18 @@ function confirmCheckout() {
                     >
                         {{ t('checkout.payNow') }}
                     </Button>
+
+                    <p
+                        v-if="addressId && !selectedAddressHasCoords"
+                        class="text-center text-sm text-destructive"
+                    >
+                        Alamat ini belum punya titik lokasi di peta.
+                        <Link
+                            :href="addressesIndex.url()"
+                            class="font-medium underline"
+                            >Lengkapi alamat</Link
+                        >
+                    </p>
 
                     <p
                         v-if="!preview.sufficient_balance"

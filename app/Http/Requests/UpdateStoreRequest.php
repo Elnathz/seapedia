@@ -31,8 +31,8 @@ class UpdateStoreRequest extends FormRequest
             'district' => ['nullable', 'string', 'max:100'],
             'village' => ['nullable', 'string', 'max:100'],
             'postal_code' => ['nullable', 'string', 'max:20'],
-            'origin_latitude' => ['nullable', 'numeric', 'between:-90,90'],
-            'origin_longitude' => ['nullable', 'numeric', 'between:-180,180'],
+            'origin_latitude' => ['required', 'numeric', 'between:-90,90'],
+            'origin_longitude' => ['required', 'numeric', 'between:-180,180'],
         ];
     }
 
@@ -46,6 +46,8 @@ class UpdateStoreRequest extends FormRequest
             'logo.mimes' => 'Format foto harus JPG, PNG, atau WEBP.',
             'logo.max' => 'Ukuran foto maksimal 2MB.',
             'logo.dimensions' => 'Resolusi foto minimal 200x200 piksel.',
+            'origin_latitude.required' => 'Tandai lokasi toko di peta terlebih dahulu.',
+            'origin_longitude.required' => 'Tandai lokasi toko di peta terlebih dahulu.',
         ];
     }
 }

@@ -42,6 +42,8 @@ class AddressManagementTest extends TestCase
             'village' => 'Senayan',
             'postal_code' => '12345',
             'full_address' => 'Jl. Merdeka No. 1',
+            'latitude' => -6.225,
+            'longitude' => 106.8,
         ]);
 
         $address = Address::query()->where('user_id', $buyer->id)->first();
@@ -66,6 +68,8 @@ class AddressManagementTest extends TestCase
                 'village' => 'Senayan',
                 'postal_code' => '12345',
                 'full_address' => 'Jl. Merdeka No. 1',
+                'latitude' => -6.225,
+                'longitude' => 106.8,
             ])
             ->assertRedirect(route('buyer.checkout.show'));
     }
@@ -98,6 +102,8 @@ class AddressManagementTest extends TestCase
             'village' => 'Cideng',
             'postal_code' => '10000',
             'full_address' => 'Somewhere else',
+            'latitude' => -6.17,
+            'longitude' => 106.83,
         ]);
 
         $response->assertForbidden();

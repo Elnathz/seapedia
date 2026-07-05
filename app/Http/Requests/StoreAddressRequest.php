@@ -25,8 +25,8 @@ class StoreAddressRequest extends FormRequest
             'village' => ['required', 'string', 'max:100'],
             'postal_code' => ['required', 'string', 'max:20'],
             'full_address' => ['required', 'string', 'max:500'],
-            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
-            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
+            'latitude' => ['required', 'numeric', 'between:-90,90'],
+            'longitude' => ['required', 'numeric', 'between:-180,180'],
             'is_default' => ['nullable', 'boolean'],
         ];
     }
@@ -40,6 +40,8 @@ class StoreAddressRequest extends FormRequest
             'recipient_name.max' => 'Nama penerima maksimal 100 karakter.',
             'phone.regex' => 'Nomor telepon hanya boleh berisi angka.',
             'full_address.max' => 'Alamat maksimal 500 karakter.',
+            'latitude.required' => 'Tandai lokasi di peta terlebih dahulu.',
+            'longitude.required' => 'Tandai lokasi di peta terlebih dahulu.',
         ];
     }
 }

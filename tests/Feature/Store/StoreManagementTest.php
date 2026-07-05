@@ -47,6 +47,8 @@ class StoreManagementTest extends TestCase
         $response = $this->actingAsSeller($seller)->post(route('seller.store.store'), [
             'name' => 'Toko Berkah',
             'description' => 'Toko kelontong kampus.',
+            'origin_latitude' => -7.05,
+            'origin_longitude' => 110.44,
         ]);
 
         $response->assertRedirect(route('seller.store.show'));
@@ -65,6 +67,8 @@ class StoreManagementTest extends TestCase
         $response = $this->actingAsSeller($seller)->post(route('seller.store.store'), [
             'name' => 'Toko Kedua',
             'description' => 'Toko lain.',
+            'origin_latitude' => -7.05,
+            'origin_longitude' => 110.44,
         ]);
 
         $response->assertForbidden();
@@ -93,6 +97,8 @@ class StoreManagementTest extends TestCase
         $response = $this->actingAsSeller($seller)->put(route('seller.store.update', $store), [
             'name' => 'Toko Berkah Baru',
             'description' => 'Deskripsi baru.',
+            'origin_latitude' => -7.05,
+            'origin_longitude' => 110.44,
         ]);
 
         $response->assertRedirect(route('seller.store.show'));
@@ -137,6 +143,8 @@ class StoreManagementTest extends TestCase
         $response = $this->actingAsSeller($seller)->put(route('seller.store.update', $store), [
             'name' => $store->name,
             'logo' => UploadedFile::fake()->image('logo.jpg', 400, 400),
+            'origin_latitude' => -7.05,
+            'origin_longitude' => 110.44,
         ]);
 
         $response->assertRedirect(route('seller.store.show'));
@@ -170,6 +178,8 @@ class StoreManagementTest extends TestCase
         $response = $this->actingAsSeller($intruder)->put(route('seller.store.update', $store), [
             'name' => 'Diretas',
             'description' => 'x',
+            'origin_latitude' => -7.05,
+            'origin_longitude' => 110.44,
         ]);
 
         $response->assertForbidden();

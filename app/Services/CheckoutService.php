@@ -121,6 +121,16 @@ class CheckoutService
                 ]);
             }
 
+            // The delivery fee is distance-based, so a shipping address without
+            // a map point can't be priced — block checkout rather than silently
+            // billing only the base fee. New addresses always carry coordinates
+            // (required at save), so this only guards legacy/point-less rows.
+            if ($address->latitude === null || $address->longitude === null) {
+                throw ValidationException::withMessages([
+                    'address_id' => [__('Alamat pengiriman belum punya titik lokasi. Edit alamat dan tandai lokasi di peta.')],
+                ]);
+            }
+
             // §MULTI-ROLE CONFLICT GUARD 1 — defense-in-depth (checkout layer)
             // CartService already rejects own-store products at add-time, but a
             // determined actor could POST directly to /buyer/checkout with a

@@ -235,6 +235,15 @@ class OrderConditionSeeder extends Seeder
             'recipient_name' => $user->name,
             'phone' => $user->phone ?? '081234567890',
             'full_address' => 'Jl. Demo No. 1, Semarang',
+            'province' => 'Jawa Tengah',
+            'city' => 'Kota Semarang',
+            'district' => 'Tembalang',
+            'village' => 'Sumurboto',
+            'postal_code' => '50269',
+            // Coordinates are mandatory now (distance-based delivery fee); a
+            // point-less default address would silently bill only the base fee.
+            'latitude' => -7.0525,
+            'longitude' => 110.4290,
             'is_default' => true,
         ]);
     }
