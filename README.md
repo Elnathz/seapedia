@@ -394,11 +394,11 @@ Security is handled layer by layer:
 - **SQL injection.** Only Eloquent and the query builder touch the database, and
   both bind parameters through PDO. Dedicated test cases validating SQLi immunity
   (e.g., `' OR 1=1 --` probes on login, search, and comments) are implemented
-  in [`SecuritySqliTest.php`](file:///c:/Kuliah/Lomba/COMPFEST/Code/seapedia/tests/Feature/Security/SecuritySqliTest.php).
+  in [`SecuritySqliTest.php`](tests/Feature/Security/SecuritySqliTest.php).
 - **Cross-site scripting.** Inertia and Vue escape user input on render. Raw HTML
   is avoided, and sanitized where it is genuinely needed. Active test cases verifying
   XSS immunity (e.g., `<script>` payloads in review names or comments) are covered in
-  [`SecurityXssTest.php`](file:///c:/Kuliah/Lomba/COMPFEST/Code/seapedia/tests/Feature/Security/SecurityXssTest.php).
+  [`SecurityXssTest.php`](tests/Feature/Security/SecurityXssTest.php).
 - **Input validation.** Every web and API write goes through a Laravel Form
   Request with typed, strict rules before it reaches a controller.
 - **Sessions and CSRF.** Web routes use Laravel's CSRF protection
@@ -422,6 +422,36 @@ Security is handled layer by layer:
   GD into a fresh PNG before it is stored. Re-encoding throws away anything that
   slipped past the MIME check (EXIF metadata, polyglot files, embedded scripts),
   so only clean pixel data ever lands on disk.
+
+### Security Testing Checklist (Manual & Automated)
+
+Evaluators can verify the application's security measures using this checklist:
+
+#### 1. Automated Security Validation
+Run the dedicated test suite targeting SQLi and XSS defenses:
+```bash
+./vendor/bin/sail artisan test --filter=Security
+```
+This runs `SecuritySqliTest` and `SecurityXssTest` to verify SQLi and XSS protection programmatically.
+
+#### 2. Manual XSS Testing
+1. Navigate to the public landing page (or `/reviews`) as a guest or logged-in user.
+2. In the "Ulasan Aplikasi" (Application Review) form, submit a comment containing a script tag:
+   ```html
+   <script>alert('xss-exploit')</script>
+   ```
+3. Submit the review. Notice that the comment displays exactly as plain text (`<script>alert('xss-exploit')</script>`) rather than executing an alert dialog.
+4. Verify by inspecting the network payload; the browser receives it safely escaped (`<\/script>`) ensuring no execution is possible.
+
+#### 3. Manual SQL Injection Testing
+1. Navigate to the search catalog page (`/catalog`).
+2. Type an SQL bypass payload into the search input:
+   ```sql
+   ' OR 1=1 --
+   ```
+3. Press enter. Verify that it returns either no products or only literal matches (instead of bypassing logic or dumping all rows), because the payload is treated strictly as a literal search string.
+4. Attempt a SQL injection in the login form using the same payload. The application rejects the authentication safely rather than bypassing it.
+
 
 ## Formatting and testing
 
