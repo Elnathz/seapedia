@@ -22,6 +22,7 @@ interface Store {
     id: number;
     name: string;
     slug: string;
+    logo_path: string | null;
     description: string | null;
     is_active: boolean;
     created_at: string;
@@ -57,12 +58,21 @@ function formatDate(dateStr: string): string {
 
         <!-- Store header -->
         <div class="mt-6 flex items-start gap-4">
-            <!-- Gradient avatar with initials -->
-            <div
-                class="flex size-16 shrink-0 items-center justify-center rounded-full text-xl font-bold text-white shadow-sm sm:size-20"
-                :class="getGradientClass(store.name)"
-            >
-                {{ getInitials(store.name) }}
+            <!-- Gradient avatar with initials / logo -->
+            <div class="shrink-0">
+                <img
+                    v-if="store.logo_path"
+                    :src="`/storage/${store.logo_path}`"
+                    :alt="store.name"
+                    class="size-16 rounded-full object-cover shadow-sm sm:size-20 border border-border bg-background"
+                />
+                <div
+                    v-else
+                    class="flex size-16 shrink-0 items-center justify-center rounded-full text-xl font-bold text-white shadow-sm sm:size-20"
+                    :class="getGradientClass(store.name)"
+                >
+                    {{ getInitials(store.name) }}
+                </div>
             </div>
             <div class="min-w-0 flex-1">
                 <div class="flex flex-wrap items-center gap-2">

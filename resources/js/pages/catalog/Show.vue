@@ -13,7 +13,7 @@ import { store as storeCartItem } from '@/actions/App/Http/Controllers/Web/Buyer
 import InputError from '@/components/InputError.vue';
 import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import ProductCard from '@/components/ProductCard.vue';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -52,6 +52,7 @@ interface Store {
     name: string;
     slug: string;
     is_active: boolean;
+    logo_path: string | null;
 }
 
 interface Product {
@@ -408,6 +409,12 @@ function confirmClearAndAdd() {
                         <Avatar
                             class="size-12 border-2 border-background shadow-sm transition-transform group-hover:scale-105"
                         >
+                            <AvatarImage
+                                v-if="product.store.logo_path"
+                                :src="`/storage/${product.store.logo_path}`"
+                                :alt="product.store.name"
+                                class="object-cover"
+                            />
                             <AvatarFallback
                                 class="bg-primary/10 text-base font-bold text-primary"
                                 >{{

@@ -60,6 +60,7 @@ interface JobData {
         delivery_method: DeliveryMethodKey;
         delivery_fee: number;
         created_sim_at: string;
+        sla_due_at: string | null;
         store: {
             id: number;
             name: string;
@@ -131,23 +132,37 @@ function confirmAction() {
     );
 }
 
-const elapsedTime = ref<string>('00:00:00');
+const timeRemaining = ref<string>('00:00:00');
+const isOverdue = ref(false);
+const isUrgent = ref(false);
 let timer: ReturnType<typeof setInterval>;
 
 onMounted(() => {
-    if (props.job.status === 'taken') {
-        const start = new Date(props.job.order.created_sim_at).getTime();
-        timer = setInterval(() => {
+    if (props.job.status === 'taken' && props.job.order.sla_due_at) {
+        const deadline = new Date(props.job.order.sla_due_at).getTime();
+        
+        const updateTimer = () => {
             const now = new Date().getTime();
-            const diff = now - start;
+            const diff = deadline - now;
 
             if (diff > 0) {
                 const h = Math.floor(diff / 3600000);
                 const m = Math.floor((diff % 3600000) / 60000);
                 const s = Math.floor((diff % 60000) / 1000);
-                elapsedTime.value = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                timeRemaining.value = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                isOverdue.value = false;
+                
+                // Urgent if less than 2 hours left
+                isUrgent.value = diff < 2 * 3600000;
+            } else {
+                timeRemaining.value = '00:00:00';
+                isOverdue.value = true;
+                isUrgent.value = true;
             }
-        }, 1000);
+        };
+
+        updateTimer();
+        timer = setInterval(updateTimer, 1000);
     }
 });
 
@@ -171,10 +186,10 @@ onUnmounted(() => {
             <div class="flex items-center gap-2">
                 <Badge
                     v-if="job.status === 'taken'"
-                    variant="destructive"
+                    :variant="isUrgent || isOverdue ? 'destructive' : 'secondary'"
                     class="font-mono text-sm"
                 >
-                    {{ elapsedTime }}
+                    {{ isOverdue ? 'Overdue' : timeRemaining }}
                 </Badge>
                 <Badge :variant="deliveryStatusBadgeVariant(job.status)">
                     {{ deliveryStatusLabel(job.status) }}

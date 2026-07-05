@@ -242,39 +242,6 @@ const navGroups = computed<NavGroup[]>(() => {
         </SidebarContent>
 
         <SidebarFooter>
-            <!-- Admin: Preview Halaman Publik -->
-            <div
-                v-if="auth.user?.is_admin"
-                class="mx-3 mb-3 flex flex-col gap-2 rounded-xl border border-border bg-muted/50 p-3"
-            >
-                <p
-                    class="text-xs font-semibold tracking-wider text-muted-foreground uppercase"
-                >
-                    Lihat Halaman
-                </p>
-                <Button
-                    as-child
-                    variant="outline"
-                    size="sm"
-                    class="w-full justify-between text-xs"
-                >
-                    <Link :href="catalogIndex.url()" target="_blank">
-                        Halaman Toko
-                        <ExternalLink class="size-3" />
-                    </Link>
-                </Button>
-                <Button
-                    as-child
-                    variant="outline"
-                    size="sm"
-                    class="w-full justify-between text-xs"
-                >
-                    <Link :href="catalogIndex.url()" target="_blank">
-                        Katalog Produk
-                        <ExternalLink class="size-3" />
-                    </Link>
-                </Button>
-            </div>
             <NavUser />
         </SidebarFooter>
     </Sidebar>

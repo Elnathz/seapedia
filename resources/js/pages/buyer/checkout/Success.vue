@@ -153,16 +153,19 @@ const deliveryMethodLabel = computed(() => {
         <div class="mt-6 flex w-full flex-col gap-3 sm:flex-row">
             <Button
                 as-child
-                size="lg"
-                class="flex-1 shadow-md shadow-primary/20"
+                class="h-12 w-full text-base font-semibold shadow-md shadow-primary/20 sm:flex-1"
             >
                 <Link :href="BuyerOrderController.show(order.id).url">
                     {{ t('checkout.successViewOrder') }}
                 </Link>
             </Button>
-            <Button as-child size="lg" variant="outline" class="flex-1">
+            <Button
+                as-child
+                variant="outline"
+                class="h-12 w-full text-base font-semibold sm:flex-1"
+            >
                 <Link :href="catalogIndex.url()">
-                    <ShoppingBag class="size-4" />
+                    <ShoppingBag class="mr-1.5 size-5" />
                     {{ t('checkout.successShopAgain') }}
                 </Link>
             </Button>
