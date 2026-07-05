@@ -203,20 +203,27 @@ const buyingNow = ref(false);
 // snaps back to 20. The backend also rejects over-stock; this is the UX guard.
 watch([quantity, currentStock], () => {
     const raw = quantity.value;
-    if (raw === '' || raw === null || raw === undefined) {
+
+    if (raw === null || raw === undefined || String(raw) === '') {
         return; // let the field sit empty briefly while the buyer retypes
     }
+
     let n = Math.floor(Number(raw));
+
     if (Number.isNaN(n)) {
         n = 1;
     }
+
     const max = currentStock.value;
+
     if (max > 0 && n > max) {
         n = max;
     }
+
     if (n < 1) {
         n = 1;
     }
+
     if (n !== Number(raw)) {
         quantity.value = n;
     }
@@ -527,7 +534,7 @@ function confirmClearAndAdd() {
                                     adding ||
                                     buyingNow ||
                                     currentStock <= 0 ||
-                                    (props.product.variants?.length > 0 &&
+                                    ((props.product.variants?.length ?? 0) > 0 &&
                                         !selectedVariant)
                                 "
                                 @click="addToCart(false, false)"
@@ -541,7 +548,7 @@ function confirmClearAndAdd() {
                                     adding ||
                                     buyingNow ||
                                     currentStock <= 0 ||
-                                    (props.product.variants?.length > 0 &&
+                                    ((props.product.variants?.length ?? 0) > 0 &&
                                         !selectedVariant)
                                 "
                                 @click="addToCart(false, true)"
