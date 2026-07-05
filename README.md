@@ -138,6 +138,38 @@ in `.env`, then run the same commands with the `./vendor/bin/sail` prefix
 dropped (`php artisan migrate:fresh --seed`, `npm run dev`, and so on). Docker is
 the path we test, so reach for it first if you just want the app up.
 
+### Troubleshooting
+
+#### `Access denied for user 'seapedia'@...` during migrate
+
+This happens when a MySQL Docker volume from a **previous run** already exists.
+Docker initialises the database user only on first boot; if the volume is
+already there it skips that step, so a changed password in `.env` is never
+applied.
+
+It affects **anyone** who has run this project before and is re-installing,
+not just the original developer. A fresh clone on a machine that has never run
+the project will not hit it.
+
+Fix — wipe the old volume and start fresh:
+
+```bash
+./vendor/bin/sail down -v   # stops containers AND deletes all volumes
+./vendor/bin/sail up -d     # MySQL re-initialises from scratch
+# wait ~15 s for MySQL to be ready, then:
+./vendor/bin/sail artisan migrate:fresh --seed
+./vendor/bin/sail artisan storage:link
+```
+
+> `down -v` deletes all database data. This is intentional for a clean
+> re-install; do not use it if you have data you want to keep.
+
+#### `The [public/storage] link already exists`
+
+This is a notice, not an error. The symlink was created by an earlier run.
+The app works fine; you can safely ignore the message.
+
+
 ## Admin account
 
 The seeder creates the `admin` user for you during `migrate:fresh --seed`. To
