@@ -93,7 +93,12 @@ watch(
     () => props.products.data,
     (newData) => {
         if (isLoadMore) {
-            allProducts.value.push(...newData);
+            // Dedupe by id when appending. The remembered list can already
+            // hold products a later page re-serves (random-sort pages, or a
+            // restored list after back-navigation), which otherwise pushed the
+            // "showing X of Y" count above the real total.
+            const seen = new Set(allProducts.value.map((p) => p.id));
+            allProducts.value.push(...newData.filter((p) => !seen.has(p.id)));
             isLoadMore = false;
         } else {
             allProducts.value = [...newData];
