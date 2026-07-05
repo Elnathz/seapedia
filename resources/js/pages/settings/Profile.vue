@@ -184,8 +184,8 @@ return;
     <div class="mx-auto w-full max-w-5xl space-y-8 px-4 pb-16 sm:px-6">
         <div class="flex flex-col gap-4">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight">Akun Saya</h1>
-                <p class="text-sm text-muted-foreground">
+                <h1 class="text-xl font-bold tracking-tight sm:text-2xl">Akun Saya</h1>
+                <p class="text-xs text-muted-foreground sm:text-sm">
                     Kelola identitas, role, dan keamanan akunmu.
                 </p>
             </div>
@@ -247,10 +247,13 @@ return;
 
                 <!-- Identity -->
                 <div class="min-w-0 flex-1 text-center sm:text-left">
-                    <h2 class="truncate text-2xl font-bold text-foreground">
+                    <h2 class="truncate text-xl font-bold text-foreground sm:text-2xl">
                         {{ user.name }}
                     </h2>
-                    <p class="truncate text-sm text-muted-foreground">
+                    <p class="truncate text-xs text-muted-foreground sm:text-sm">
+                        @{{ user.username }}
+                    </p>
+                    <p class="truncate text-xs text-muted-foreground">
                         {{ user.email }}
                     </p>
 

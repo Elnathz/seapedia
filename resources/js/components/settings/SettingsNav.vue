@@ -25,15 +25,15 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
             v-for="item in items"
             :key="toUrl(item.href)"
             :href="item.href"
-            class="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none active:scale-[0.97]"
+            class="inline-flex items-center gap-2 rounded-full px-2.5 py-1.5 text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none active:scale-[0.97] sm:px-3.5"
             :class="
                 isCurrentOrParentUrl(item.href)
                     ? 'bg-background text-foreground shadow-sm ring-1 ring-border/60'
                     : 'text-muted-foreground hover:text-foreground'
             "
         >
-            <component :is="item.icon" class="size-4" />
-            {{ item.title }}
+            <component :is="item.icon" class="size-4 shrink-0" />
+            <span class="hidden sm:inline">{{ item.title }}</span>
         </Link>
     </nav>
 </template>
