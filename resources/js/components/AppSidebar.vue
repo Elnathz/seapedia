@@ -4,7 +4,6 @@ import {
     AlertTriangle,
     BadgePercent,
     BarChart3,
-    ExternalLink,
     Images,
     Inbox,
     LayoutGrid,
@@ -26,7 +25,6 @@ import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import RoleBadge from '@/components/RoleBadge.vue';
-import { Button } from '@/components/ui/button';
 import {
     Sidebar,
     SidebarContent,
