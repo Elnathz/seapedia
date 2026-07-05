@@ -317,9 +317,13 @@ it is checked on the server, never on the role the UI happens to show.
   (advances by one day per run). A "Reset ke hari ini" button and
   `seapedia:reset-clock` command return the clock to real time. An overdue
   order that was never delivered is refunded to the buyer's wallet automatically,
-  the refund is written to the wallet history, and the order moves to
-  `Dikembalikan`. Refunds never double up, and seller income is not reversed
-  because it stays in escrow until delivery completes.
+  the refund is written to the wallet history, product stock is fully restored,
+  and the order moves to `Dikembalikan`. Refunds never double up, and seller
+  income is not reversed because it stays in escrow until delivery completes.
+- **Stock validation and safety guards.** Stock reduction during checkout is guarded
+  at the database level. The database transaction prevents negative stock levels,
+  and multiple concurrent checkouts are safe from race conditions.
+
 - **Delivery SLA and near-cancel urgency.** The spec requires SLA rules per
   method (line 454). Each order carries an `sla_due_at` deadline set by its
   delivery method: Instan 1 day, Besok 2 days, Reguler 4 days, measured in
