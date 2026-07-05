@@ -455,12 +455,22 @@ This runs `SecuritySqliTest` and `SecurityXssTest` to verify SQLi and XSS protec
 
 ## Formatting and testing
 
+If using Docker (Sail):
 ```bash
 ./vendor/bin/sail artisan test
 ./vendor/bin/sail pint
 ./vendor/bin/sail npm run lint
 ./vendor/bin/sail npm run format
 ```
+
+If running natively (without Docker):
+```bash
+php artisan test
+vendor/bin/pint
+npm run lint
+npm run format
+```
+
 
 ## Engineering decisions
 
