@@ -29,7 +29,7 @@ class AdminMonitorService
     public function snapshot(): array
     {
         return [
-            'simulated_now' => $this->clock->now()->toDateTimeString(),
+            'simulated_now' => $this->clock->now()->toIso8601String(),
             'users' => $this->userCounts(),
             'stores_count' => Store::query()->count(),
             'products_count' => Product::query()->count(),
