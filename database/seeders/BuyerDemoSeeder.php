@@ -88,12 +88,24 @@ class BuyerDemoSeeder extends Seeder
     }
 
     /**
-     * @param  array{province?: string, city?: string, district?: string, village?: string}  $region
+     * @param  array{province?: string, city?: string, district?: string, village?: string, latitude?: float, longitude?: float}  $region
      */
     private function seedAddressIfMissing(User $user, string $recipientName, string $phone, string $address, array $region = []): Address
     {
-        if ($user->addresses()->exists()) {
-            return $user->addresses()->first();
+        $existing = $user->addresses()->first();
+
+        if ($existing !== null) {
+            // Backfill coordinates on legacy/re-seed rows that lack a map
+            // point so the CheckoutService distance guard does not throw.
+            if ($existing->latitude === null && isset($region['latitude'])) {
+                $existing->update([
+                    'latitude'  => $region['latitude'],
+                    'longitude' => $region['longitude'] ?? null,
+                ]);
+                $existing->refresh();
+            }
+
+            return $existing;
         }
 
         return $this->addresses->createForUser($user, [
