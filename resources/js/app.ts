@@ -71,6 +71,12 @@ createInertiaApp({
                 return GuestLayout;
             case name.startsWith('auth/'):
                 return AuthLayout;
+            case name === 'settings/Profile':
+                // Profile is a rich, full-width account page that renders its
+                // own header + settings nav. Keep it out of the narrow
+                // SettingsLayout so the nav isn't duplicated and its 3-column
+                // grid isn't crushed into a 2xl column.
+                return DashboardLayout;
             case name.startsWith('settings/'):
                 return [DashboardLayout, SettingsLayout];
             default:
