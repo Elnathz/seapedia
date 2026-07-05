@@ -172,12 +172,21 @@ The app works fine; you can safely ignore the message.
 
 ## Admin account
 
-The seeder creates the `admin` user for you during `migrate:fresh --seed`. To
-promote an existing user to admin by hand, use Tinker:
+The seeder creates an `admin` account automatically when you run
+`migrate:fresh --seed`. **No manual steps needed** — just log in with
+`admin@seapedia.test` and the password `password` after seeding.
+
+<details>
+<summary>Manual fallback (only if the seeder was skipped)</summary>
+
+If you ran `migrate` without `--seed`, promote any existing user to admin
+via Tinker:
 
 ```bash
 ./vendor/bin/sail artisan tinker --execute="App\Models\User::where('username','admin')->update(['is_admin'=>true]);"
 ```
+
+</details>
 
 ## Demo credentials
 
