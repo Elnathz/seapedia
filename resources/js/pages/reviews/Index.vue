@@ -488,11 +488,12 @@ const resetFilters = () => {
                             v-for="link in reviews.links"
                             :key="link.label"
                         >
+                            <!-- Only render numeric page links; the paginator's
+                                 first/last entries are prev/next (rendered as
+                                 chevrons above/below) and their labels are
+                                 locale-dependent, so match on digits, not text. -->
                             <Button
-                                v-if="
-                                    !link.label.includes('Previous') &&
-                                    !link.label.includes('Next')
-                                "
+                                v-if="/^\d+$/.test(link.label)"
                                 as-child
                                 :variant="link.active ? 'default' : 'outline'"
                                 class="size-10 rounded-full"
