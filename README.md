@@ -1,9 +1,19 @@
 # SEAPEDIA
 
 A multi-role campus marketplace. Buyers, sellers, and drivers share one
-platform and one wallet, and switch roles per session. Built with Laravel 13
-(PHP 8.3), Inertia + Vue 3 (TypeScript), shadcn-vue, Tailwind 4, and MySQL 8,
-and it runs on Docker through Laravel Sail.
+platform and one wallet, and switch roles per session.
+
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Laravel 13, PHP 8.4, MySQL 8 |
+| Frontend | Vue 3 (TypeScript), Inertia.js |
+| UI | shadcn-vue, Tailwind CSS v4 |
+| Runtime | Docker via Laravel Sail (local), nginx + PHP-FPM (production) |
+| Maps | Leaflet + OpenStreetMap (no paid API key) |
+| API docs | Swagger / OpenAPI (L5-Swagger) |
+| Testing | PHPUnit (feature + unit), ESLint, Prettier, Pint |
 
 The graded requirements live in the committee brief, `docs/SEAPEDIA_SPEC.md`.
 That file is the source of truth for what this project must do. Our extended
@@ -74,6 +84,10 @@ Everything after that is identical on all three operating systems.
    points `APP_URL` at `http://localhost` and `DB_HOST` at the `mysql`
    container.
 
+   > **Timezone:** `APP_TIMEZONE` defaults to `Asia/Jakarta` (WIB, UTC+7). The
+   > admin dashboard clock and all SLA deadlines use this value. Change it if
+   > your server runs in a different timezone and the displayed time looks wrong.
+
 3. **Install PHP dependencies (first run only)**
    A fresh clone has no `vendor/` directory yet, so the `sail` script does not
    exist. Build one with a throwaway Composer container. No local PHP required:
@@ -110,6 +124,10 @@ Everything after that is identical on all three operating systems.
    `storage:link` matters here: seeded and uploaded product images will not
    load without it.
 
+   > **Seeder takes ~30–60 seconds** on a typical laptop — this is normal.
+   > It creates demo users, products, banners, discount codes, and one full
+   > checkout order with wallet transactions. Do not interrupt it.
+
 6. **Build or run the frontend**
 
    **Option A — just reviewing the app** (no live reload, simpler):
@@ -120,6 +138,16 @@ Everything after that is identical on all three operating systems.
    This compiles assets once into `public/build/`. The app at
    `http://localhost` will work immediately after, with no extra process
    running.
+
+   > **Must use `sail npm run build`, not bare `npm run build`.** The Vite build
+   > calls `php artisan wayfinder:generate` internally; running it outside the
+   > Sail container means `php` is not in PATH and the build fails with
+   > `/bin/sh: php: not found`. If you want to run it outside Sail (e.g. with
+   > a local PHP install), prefix the command with `DOCKER_BUILD=true` to skip
+   > the wayfinder step:
+   > ```bash
+   > DOCKER_BUILD=true npm run build
+   > ```
 
    **Option B — active development** (hot module replacement):
    ```bash
@@ -193,13 +221,40 @@ via Tinker:
 Every seeded account uses the password `password`. Usernames and display names
 are random Faker data, so log in with the fixed emails below.
 
-| Email                     | Role(s)                | Notes                                                                                                   |
-| ------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------- |
-| `admin@seapedia.test`     | Admin (`is_admin`)     | Admin monitoring dashboard, voucher/promo management, overdue time machine.                             |
-| `seller1@seapedia.test`   | Seller                 | Store "Toko Berkah" (3 products). Other sellers: `seller2@seapedia.test`..`seller7@seapedia.test`.      |
-| `buyer1@seapedia.test`    | Buyer                  | Wallet balance Rp 500.000, 1 address, active orders.                                                    |
-| `driver1@seapedia.test`   | Driver                 | 1 active job, 2 completed jobs.                                                                         |
-| `multi1@seapedia.test`    | Buyer, Seller, Driver  | Store "Warung Mama Lia" (3 products), Wallet balance Rp 300.000.                                        |
+| Email | Role(s) | Notes |
+| --- | --- | --- |
+| `admin@seapedia.test` | Admin (`is_admin`) | Admin monitoring dashboard, voucher/promo management, overdue time machine. |
+| `seller1@seapedia.test` | Seller | Store "Toko Berkah" (3 products). Other sellers: `seller2@seapedia.test`..`seller7@seapedia.test`. |
+| `buyer1@seapedia.test` | Buyer | Wallet balance Rp 500.000, 1 address, 1 completed order (seeded). |
+| `driver1@seapedia.test` | Driver | 1 active job, 2 completed jobs. |
+| `multi1@seapedia.test` | Buyer, Seller, Driver | Store "Warung Mama Lia" (3 products), Wallet balance Rp 300.000. |
+
+### Demo discount codes
+
+Use these at checkout to test the discount system. A voucher and a promo may
+be combined on the same order.
+
+**Vouchers** (single-use per order, applied after the promo):
+
+| Code | Type | Value | Cap | Min spend | Status |
+| --- | --- | --- | --- | --- | --- |
+| `HEMAT10` | % | 10% off | max Rp 20.000 | — | ✅ Active |
+| `EXPIRED5K` | Fixed | Rp 5.000 | — | — | ❌ Expired (demo rejection) |
+| `HABIS` | Fixed | Rp 15.000 | — | — | ❌ Used up (demo rejection) |
+| `NONAKTIF` | % | 20% off | max Rp 30.000 | — | ❌ Inactive (demo rejection) |
+
+**Promos** (store-wide, applied first):
+
+| Code | Type | Value | Min spend | Status |
+| --- | --- | --- | --- | --- |
+| `PROMO20K` | Fixed | Rp 20.000 off | min Rp 100.000 | ✅ Active |
+| `HEMAT50` | Fixed | Rp 5.000 off | — | ✅ Active |
+| `EXPIREDPROMO` | % | 15% off | — | ❌ Expired (demo rejection) |
+| `INACTIVE10` | % | 10% off | — | ❌ Inactive (demo rejection) |
+
+> **Try combining:** `PROMO20K` + `HEMAT10` on a cart ≥ Rp 100.000. The promo
+> cuts first, then the voucher takes 10% of what remains (capped at Rp 20.000).
+> PPN 12% is charged on the discounted subtotal, never on the delivery fee.
 
 ## Roles
 
@@ -256,13 +311,15 @@ it is checked on the server, never on the role the UI happens to show.
   types honour minimum-spend thresholds, maximum-discount caps, and usage
   limits, and expired or exhausted codes are rejected on the spot.
 - **Overdue refund / time machine.** Admins can advance the simulated clock to
-  test SLA deadlines. To move time forward, run
-  `./vendor/bin/sail artisan seapedia:advance-day` (one simulated day per run),
-  or use the Time Machine buttons on the admin overdue page. An overdue order
-  that was never delivered is refunded to the buyer's wallet automatically, the
-  refund is written to the wallet history, and the order moves to `Dikembalikan`.
-  Refunds never double up, and seller income is not reversed because it stays in
-  escrow until delivery completes.
+  test SLA deadlines. The easiest way is the **+1 Hari / +3 Hari buttons** on
+  the admin dashboard or the admin overdue page — no terminal needed. The
+  equivalent artisan command is `./vendor/bin/sail artisan seapedia:advance-day`
+  (advances by one day per run). A "Reset ke hari ini" button and
+  `seapedia:reset-clock` command return the clock to real time. An overdue
+  order that was never delivered is refunded to the buyer's wallet automatically,
+  the refund is written to the wallet history, and the order moves to
+  `Dikembalikan`. Refunds never double up, and seller income is not reversed
+  because it stays in escrow until delivery completes.
 - **Delivery SLA and near-cancel urgency.** The spec requires SLA rules per
   method (line 454). Each order carries an `sla_due_at` deadline set by its
   delivery method: Instan 1 day, Besok 2 days, Reguler 4 days, measured in
